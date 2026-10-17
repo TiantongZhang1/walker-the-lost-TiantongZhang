@@ -1,0 +1,59 @@
+# Engine caches and local editor state
+.godot/
+.DS_Store
+.idea/
+.vscode/
+
+# Video/audio and generated distribution packages stay outside source control.
+*.[mM][pP]3
+*.[mM][pP]4
+*.avi
+*.mov
+*.wav
+exports/
+builds/
+# Intermediates: synthesis WAVs, pose previews. Everything here is
+# reproducible by re-running the script that made it.
+build/
+
+# Local credentials/configuration
+.env
+.env.*
+!.env.example
+credentials/
+*.p12
+*.pfx
+
+# Git cannot ignore by size: inspect staged files before committing (>25 MB).
+
+# Film build intermediates. The reel's evidence (coverage.json, beat_sheet.json,
+# the input logs, _qc/REPORT.md) is tracked; the compositor's working clips and
+# the rendered media are not - both are reproducible, and the media is already
+# excluded by the *.mp4 rule above.
+youtube/*/clips/
+# A FILE glob, not a directory one: git does not descend into an excluded
+# directory, so `!` on paths inside `youtube/*/media/` never took effect.
+youtube/*/media/*
+# ...except the small stills the evidence ledger HASHES. A reviewer has to be
+# able to recompute those hashes from the repository, and a rendered beat video
+# is not the same thing as the evidence it shows. Add one `!` line per hashed
+# still as each film is built; walker-ninja's two entries are deliberately not
+# carried over, because this repository has no such stills yet.
+youtube/*/mp3/*.mp3
+# Lossless frame sequences from Movie Maker: 165 MB for two short takes, and
+# reproducible by `scripts/render_takes.py`. The encoded capture MP4s they
+# produce are the evidence, and their hashes are tracked even though the *.mp4
+# rule above keeps the files themselves out.
+youtube/*/capture/take-*/
+
+# Machine-local build state: rewritten on every `./art final`, full of absolute
+# paths, and it names the export under its pre-rename slug. Its one durable
+# fact — the master's SHA-256 — is recorded deliberately in
+# youtube/*/SOURCES.md instead, so it lives in exactly one place.
+youtube/*/build-state.json
+
+# Blender's own save-versions. Blender writes <name>.blend1 beside a file
+# every time it re-saves it, so these appear as soon as an asset is rebuilt.
+# Assignment 3 says to exclude them, and they are regenerated anyway.
+*.blend1
+*.blend2
