@@ -57,3 +57,7 @@ youtube/*/build-state.json
 # Assignment 3 says to exclude them, and they are regenerated anyway.
 *.blend1
 *.blend2
+
+# Test wrapper output. Churns on every run; the logs that are CITED are
+# copied into evidence/ deliberately, which is what a reviewer should read.
+logs/
