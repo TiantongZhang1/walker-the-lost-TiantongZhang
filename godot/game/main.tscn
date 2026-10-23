@@ -1,0 +1,60 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/floor_tile.png" id="1_floor"]
+[ext_resource type="PackedScene" path="res://features/player/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://features/traps/spike_trap.tscn" id="3_trap"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
+size = Vector2(640, 160)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
+size = Vector2(16, 360)
+
+[node name="Main" type="Node2D"]
+
+[node name="Floor" type="StaticBody2D" parent="."]
+position = Vector2(320, 280)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Floor"]
+texture_repeat = 2
+texture = ExtResource("1_floor")
+region_enabled = true
+region_rect = Rect2(0, 0, 640, 160)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
+shape = SubResource("RectangleShape2D_floor")
+
+[node name="WallLeft" type="StaticBody2D" parent="."]
+position = Vector2(-8, 180)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WallLeft"]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="WallRight" type="StaticBody2D" parent="."]
+position = Vector2(648, 180)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WallRight"]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="Traps" type="Node2D" parent="."]
+
+[node name="SpikeTrap1" parent="Traps" instance=ExtResource("3_trap")]
+position = Vector2(240, 200)
+
+[node name="SpikeTrap2" parent="Traps" instance=ExtResource("3_trap")]
+position = Vector2(320, 200)
+
+[node name="SpikeTrap3" parent="Traps" instance=ExtResource("3_trap")]
+position = Vector2(400, 200)
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(96, 150)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(320, 180)

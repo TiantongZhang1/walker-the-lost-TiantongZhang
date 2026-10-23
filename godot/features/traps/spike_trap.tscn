@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://features/traps/spike_trap.gd" id="1_trap"]
+[ext_resource type="Texture2D" path="res://assets/sprites/spike_trap.png" id="2_armed"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_trigger"]
+size = Vector2(16, 24)
+
+[node name="SpikeTrap" type="Node2D"]
+script = ExtResource("1_trap")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_armed")
+
+[node name="TriggerArea" type="Area2D" parent="."]
+collision_layer = 8
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerArea"]
+position = Vector2(0, -4)
+shape = SubResource("RectangleShape2D_trigger")
+
+[connection signal="body_entered" from="TriggerArea" to="." method="_on_trigger_body_entered"]
+[connection signal="body_exited" from="TriggerArea" to="." method="_on_trigger_body_exited"]
