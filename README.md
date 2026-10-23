@@ -13,30 +13,36 @@ people standing in the room you come home to.
 | | |
 |---|---|
 | Repository | <https://github.com/TiantongZhang1/walker-the-lost-TiantongZhang> |
-| Engine | Godot **4.7.2.stable.official** `ed1daf0bf`, GL Compatibility |
+| Engine | Godot **4.7.2.stable.official** `ed1daf0bf`, Forward+ |
 | Resolution | 640 × 360 logical, 1280 × 720 windowed, `canvas_items` stretch |
 | Scale convention | 16 px = 1 m |
 | Design document | `../the-lost-gdd/GDD.md` — moves into `design/` when A4 starts |
-| Automated checks | **none yet** |
+| Automated checks | **33 — 0 failures** (5 + 12 + 16), from a clean clone |
 
 ---
 
 ## Status, stated plainly
 
-**There is no game here yet.** This repository was created on 2026-10-17 to
-take the course's one permitted change of game, which must happen before
-Assignment 4. What exists today is:
+**Assignment 5 is in progress; neither shader is written yet.** What runs today
+is the prerequisite slice: a player who can walk and jump, a floor, and three
+spike traps that warn before they fire. Assignment 5 assumes a game exists from
+Assignment 2, and the change of game on 2026-10-17 left this repository empty,
+so the slice was built to give the shaders something to attach to.
 
-- the justification for the change, in `FRICTIONAL.md`
-- the build toolchain carried over from `walker-ninja-TiantongZhang`, with
-  every file classified in `TOOLCHAIN.md`
-- an empty Godot 4.7.2 project shell with the collision layers named
-- documentation skeletons with headings and no content
+- `CHANGE-BRIEF.md` — the Assignment 5 specification, committed before any
+  shader and before the first build prompt
+- `CLAUDE.md` — the agent draft; the author's review is a separate commit
+- `TEST-REPORT.md` — the baseline, and every check still outstanding
+- `FRICTIONAL.md` — the change-of-game justification and the working log
+- `TOOLCHAIN.md` — every file carried over from `walker-ninja`, classified
 
 Assignments 1–3 are **not** here. They were submitted from
 `walker-ninja-TiantongZhang` under the tags `a2-submitted` and `a3`, and that
 repository has not been modified since. Per the assignment rule, the tags
-continue here: this repository's first tag will be `a4`.
+continue here: this repository's first tag will be `a5`.
+
+**`godot/shaders/` is written by hand by the author and never by an agent.**
+`git diff --stat godot/shaders/` across any agent commit must print nothing.
 
 ## Run it
 
