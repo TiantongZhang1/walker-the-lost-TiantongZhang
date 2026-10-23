@@ -1,0 +1,66 @@
+[gd_scene load_steps=8 format=3]
+
+; A3 — the showcase scene the assignment asks for: a floor, one light, a
+; camera, and the three assets side by side at game scale.
+;
+; Scale reference: the player's collider is 18 x 28 px and the project's
+; convention is 16 px = 1 m, so the player is 1.125 x 1.75 m. The three assets
+; are 1.9 m apart, about one player-width of clear air between them.
+;
+; Each asset is placed at y = 0 on purpose. Their origins are at the centre of
+; their undersides, so sitting on the floor is the default and floating or
+; sinking would be visible immediately — that is the brief's P3 check made
+; into the scene's layout rather than left to a script.
+;
+; One light, as the assignment asks: the DirectionalLight3D below is the only
+; light node. The WorldEnvironment is not a second light, it supplies flat
+; ambient so that faces turned away from the sun are dim rather than pure
+; black. Without it the HUMAN CHECK in TEST-REPORT.md -- walk the camera round
+; each asset, including from behind and below, and look for missing faces --
+; could not be carried out, because every unlit face would look like a hole.
+
+[ext_resource type="PackedScene" path="res://assets/models/torch.glb" id="1_torch"]
+[ext_resource type="PackedScene" path="res://assets/models/spike_trap.glb" id="2_spike"]
+[ext_resource type="PackedScene" path="res://assets/models/slime.glb" id="3_slime"]
+
+[sub_resource type="Environment" id="Environment_show"]
+background_mode = 1
+background_color = Color(0.105882, 0.0862745, 0.12549, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.454902, 0.443137, 0.513726, 1)
+ambient_light_energy = 0.25
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_floor"]
+size = Vector2(30, 30)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
+albedo_color = Color(0.168627, 0.141176, 0.188235, 1)
+roughness = 0.9
+
+[node name="AssetShowcase" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_show")
+
+[node name="Floor" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_floor")
+surface_material_override/0 = SubResource("StandardMaterial3D_floor")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.353553, 0.353553, 0, 0.707107, 0.707107, -0.5, -0.612372, 0.612372, 0, 4, 0)
+light_energy = 1.0
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.995245, -0.0974379, 0, 0.0974379, 0.995245, 0, 0.9, 4.6)
+current = true
+fov = 45.0
+
+[node name="Torch" parent="." instance=ExtResource("1_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9, 0, 0)
+
+[node name="SpikeTrap" parent="." instance=ExtResource("2_spike")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Slime" parent="." instance=ExtResource("3_slime")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9, 0, 0)
