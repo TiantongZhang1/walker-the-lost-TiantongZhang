@@ -374,3 +374,78 @@ through to the shader, where `mix()` with `t = 2.0` extrapolates past
   0.45 s proves wrong in play, R2's duration is revised here with a date and the
   predictions in §6 are unaffected — they are parameterised by `warn_amount`,
   not by the clock.
+
+---
+
+# Revision 5.0.1 — 2026-10-23 — four decisions from the author
+
+The original above is unchanged. These four supersede it where they conflict.
+
+## §0 Renderer: **Forward+**, accepted **[decided]**
+
+`godot/project.godot` changes to Forward+ before anything is built, so the
+predictions in §6 and §7 follow the documented path instead of needing the
+Compatibility caveat.
+
+**Still owed: a real windowed run.** The author approved this before leaving and
+could not run it. A headless run uses a dummy renderer and proves nothing about
+whether Forward+ initialises on this hardware. The first time the slice is
+opened in the editor, this is confirmed or reverted, and the result is recorded
+in `TEST-REPORT.md`.
+
+## §3 R2 duration: **0.45 s stands, provisionally** **[decided]**
+
+Kept as the starting value, to be judged once the slice is playable. If play
+says otherwise it is revised here with a date; §6's predictions are unaffected,
+because they are parameterised by `warn_amount`, not by the clock.
+
+## §3 R3 retrigger: **restart**, not ignore **[decided]**
+
+> R3 (superseded). Retrigger mid-window: **restart.** Every `body_entered` on
+> `TriggerArea` sets `warn_amount` back to `0.0` and begins a fresh
+> `WARN_SECONDS` window, whatever the trap was doing. The author's rule is that
+> **every trigger gets its own full warning**.
+
+What this changes elsewhere:
+
+- **§5 evidence split, R3** now reads: trigger, wait 0.20 s, trigger again;
+  assert `warn_amount` dropped to `0.0` on the retrigger frame and that the
+  window ends 0.20 s later than it otherwise would have.
+- **§9 F3 is inverted.** Restarting is no longer the failure; failing to restart
+  is. See the revised table below.
+
+**A consequence, recorded rather than discovered later.** `Area2D.body_entered`
+fires on entry, not continuously, so a player standing still on a warning trap
+does **not** reset it and will be hit. But a player who steps off and back on
+repeatedly restarts the warning every time and is never hit. That is a real
+exploit of the restart rule, it is the price of "every trigger gets its own
+warning", and it is accepted deliberately rather than missed. It is listed as a
+known limitation in `TEST-REPORT.md` and is a candidate for a later cooldown.
+
+## §3 R4 time scale **[decided, with a reading flagged]**
+
+The author answered "先不用" — *don't use it for now*. That is read as **the game
+does not use `Engine.time_scale` anywhere**, not as a request to make the ramp
+ignore it.
+
+> R4 (superseded). The ramp uses Godot's ordinary scaled `delta` from
+> `_process`, with no special handling. **The Lost sets `Engine.time_scale`
+> nowhere**, so scaled and unscaled time coincide in play. The test sets
+> `time_scale = 0.5` anyway and records what happens, so the behaviour is
+> documented rather than assumed. While the tree is paused the trap's process
+> mode is `inherit`, so it stops and `warn_amount` holds.
+
+**If the intended meaning was "the warning must ignore `time_scale`", this is a
+two-line change** — divide the accumulator by `Engine.time_scale`, or accumulate
+from `Time.get_ticks_usec()` — plus one test expectation. Flagged for the author
+rather than silently assumed either way.
+
+## §9 revised failure cases
+
+| # | What could go wrong | The check that catches it |
+|---|---|---|
+| F1 | The `ShaderMaterial` is shared, so triggering one trap turns **all three** red. | Trigger trap 1 headlessly; assert traps 2 and 3 read `0.0`. |
+| F2 | The ramp advances per **frame**, so the warning is 0.45 s at 60 fps, 0.90 s at 30 and 0.19 s at 144. | R2 at all three pinned frame rates; game-time durations must agree. |
+| **F3** | **The window fails to restart** — a second trigger is ignored or merely extends the first, so the second entry gets a partial warning or none. | Trigger, wait 0.20 s, trigger again; assert `warn_amount` returned to `0.0` and the end time moved out by 0.20 s. |
+| F4 | `wetness_mask.png` is sampled with `source_color`, so the mask is decoded and the waterline lands in the wrong place. | The material test asserts each sampler's hints from the shader source; the Step 3 mutation deletes `source_color` and must exit 1. |
+| F5 | `warn_amount` is driven under a name the shader does not declare, so the write goes nowhere, silently. | The uniform-list assertion, plus the Step 2 rename mutation. |
