@@ -15,13 +15,13 @@ Every fact carries the file it came from. Check them; do not trust them.
 | Scale | 16 px = 1 m | `godot/features/player/player.gd:13` |
 
 **The object the colour effect changes.** A spike trap, drawn by one `Sprite2D`
-child of the trap's `Node2D` root — `godot/features/traps/spike_trap.tscn:15`.
+child of the trap's `Node2D` root — `godot/features/traps/spike_trap.tscn:21`.
 It is one sprite, not two: firing swaps the texture rather than moving a child,
 so the trap has exactly one material to drive. Three instances sit in the room
 at `godot/game/main.tscn:49`, `:52`, `:55`.
 
 Two Area2Ds, not interchangeable: `DetectArea`
-(`godot/features/traps/spike_trap.tscn:18`) is 66 px and starts the warning,
+(`godot/features/traps/spike_trap.tscn:25`) is 66 px and starts the warning,
 `HurtArea` is 16 px and is the only one that damages. DetectArea's width is
 **derived from `WARN_SECONDS`**, so changing one without the other breaks it.
 
@@ -32,7 +32,7 @@ Two Area2Ds, not interchangeable: `DetectArea`
 | The driven value | `var warn_amount: float` — `:50` |
 | State enum | `:27` |
 | Window length | `const WARN_SECONDS := 0.40` — `:39` |
-| What begins the state | `_on_detect_body_entered` — `:125`, wired at `godot/features/traps/spike_trap.tscn:34` |
+| What begins the state | `_on_detect_body_entered` — `:125`, wired at `godot/features/traps/spike_trap.tscn:41` |
 | Early end | `disarm()` — `:110` |
 | Test helper | `warning_remaining()` — `:119` |
 

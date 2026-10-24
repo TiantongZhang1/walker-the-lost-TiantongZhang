@@ -1,7 +1,13 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene format=3 uid="uid://bu2d4xwt7apve"]
 
-[ext_resource type="Script" path="res://features/traps/spike_trap.gd" id="1_trap"]
-[ext_resource type="Texture2D" path="res://assets/sprites/spike_trap.png" id="2_armed"]
+[ext_resource type="Script" uid="uid://dovlf3085iljr" path="res://features/traps/spike_trap.gd" id="1_trap"]
+[ext_resource type="Shader" uid="uid://c78fudgemjtly" path="res://shaders/trap_warning.gdshader" id="2_0gd4s"]
+[ext_resource type="Texture2D" uid="uid://cg5tg5fdmundp" path="res://assets/sprites/spike_trap.png" id="2_armed"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_o5oyd"]
+shader = ExtResource("2_0gd4s")
+shader_parameter/warn_amount = 0.0
+shader_parameter/warn_color = Color(0.839216, 0.235294, 0.184314, 1)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_detect"]
 size = Vector2(66, 24)
@@ -9,25 +15,26 @@ size = Vector2(66, 24)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hurt"]
 size = Vector2(16, 20)
 
-[node name="SpikeTrap" type="Node2D"]
+[node name="SpikeTrap" type="Node2D" unique_id=1618673729]
 script = ExtResource("1_trap")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1513205662]
+material = SubResource("ShaderMaterial_o5oyd")
 texture = ExtResource("2_armed")
 
-[node name="DetectArea" type="Area2D" parent="."]
+[node name="DetectArea" type="Area2D" parent="." unique_id=1479687286]
 collision_layer = 8
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectArea" unique_id=821740050]
 position = Vector2(0, -4)
 shape = SubResource("RectangleShape2D_detect")
 
-[node name="HurtArea" type="Area2D" parent="."]
+[node name="HurtArea" type="Area2D" parent="." unique_id=1445405599]
 collision_layer = 8
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtArea" unique_id=1079773855]
 position = Vector2(0, -2)
 shape = SubResource("RectangleShape2D_hurt")
 
