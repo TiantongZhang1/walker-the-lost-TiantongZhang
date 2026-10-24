@@ -47,7 +47,8 @@ run by me in Blender during Assignment 3, and are documented there.
 |---|---|
 | `CHANGE-BRIEF.md` | the Assignment 5 specification. The colour line and several rules were proposed by Claude and are tagged **[proposal]** in the file; I adopted them, typed them in, and must be able to explain them. The decisions in Revision 5.0.1 are mine. |
 | `../the-lost-gdd/GDD.md` | the game's design (Assignment 4). Not yet in this repository; it moves into `design/`. |
-| `godot/shaders/*.gdshader` | **not yet written.** Every line of both shaders and of the hint-experiment shader will be hand-written by me. No agent creates or edits them; `CLAUDE.md` states this and `git diff --stat godot/shaders/` is the check. |
+| `godot/shaders/trap_warning.gdshader` | **written by me, 2026-10-24, commit `f28d2de`** — on its own, before the driver existed. Four lines of my own typing from `CHANGE-BRIEF.md` §2; the colour line is the **[proposal]** I adopted there and can explain. Claude reviewed a draft of it in chat and listed six errors (a misspelt `shader_type`, a shader *mode* filled in as if it were a name, a stray backtick, `==` for `=`, and `warm_` for `warn_` twice); I fixed all six and typed the file myself. It did not write or edit the file. |
+| `godot/shaders/*.gdshader` — the rest | **not yet written.** The spatial shader, the hint-experiment shader and `standard_generated.gdshader` will be hand-written by me the same way. No agent creates or edits them; `CLAUDE.md` states this and `git diff --stat godot/shaders/` is the check. |
 | `LANGUAGE-NOTES.md` | **not yet written.** Mine, in my own words. |
 
 ## 4. Written by code
@@ -87,6 +88,8 @@ language notes. What it wrote:
 | `godot/features/player/player.gd` | move, jump, `take_damage` |
 | `godot/features/*/**.tscn`, `godot/game/main.tscn` | the scenes |
 | `godot/tests/test_trap_warning.gd` | the R1–R6 test |
+| `godot/features/traps/trap_warning_driver.gd` | the driver: reads `warn_amount`, writes the uniform. Never writes game state. |
+| `godot/tests/test_trap_shader_driver.gd` | the driver and uniform-interface test, 24 checks |
 | `godot/tests/test_input_map.gd` | the input-map smoke test |
 | `godot/tools/setup_input_map.gd` | one-off, wrote the input map through the engine |
 | `tools/make_sprites.py` | the sprite script |

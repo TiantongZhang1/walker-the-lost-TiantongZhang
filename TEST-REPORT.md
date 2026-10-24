@@ -1,6 +1,6 @@
 # TEST-REPORT.md — Assignment 5
 
-**Source revision:** `ca8151c`+ · **Godot** 4.7.2.stable.official `ed1daf0bf` ·
+**Source revision:** `480aa8b` · **Godot** 4.7.2.stable.official `ed1daf0bf` ·
 **Renderer** Forward+ *(confirmed on hardware 2026-10-24)* · **OS** Windows 11
 
 Every row below is either a recorded result or an explicit **not yet**. Nothing
@@ -23,6 +23,14 @@ shader work, run from a **fresh clone** of `732b5aa` with one `--import`:
 | `test_trap_warning.gd` | 30 | 0 | 22 checks, 0 failures | 0 |
 | `test_trap_warning.gd` | 60 | 0 | 22 checks, 0 failures | 0 |
 | `test_trap_warning.gd` | 144 | 0 | 22 checks, 0 failures | 0 |
+
+Added after the baseline, with the driver (`480aa8b`):
+
+| Test | fps | Exit | Result | `SHADER ERROR` lines |
+|---|---|---|---|---|
+| `test_trap_shader_driver.gd` | 30 | 0 | 24 checks, 0 failures | 0 |
+| `test_trap_shader_driver.gd` | 60 | 0 | 24 checks, 0 failures | 0 |
+| `test_trap_shader_driver.gd` | 144 | 0 | 24 checks, 0 failures | 0 |
 
 Import errors from a clean clone: **0**.
 
@@ -82,14 +90,54 @@ Identical at 30, 60 and 144 fps.
 Changing `WARN_SECONDS` without changing the shape now fails the suite.
 **22 checks, 0 failures** at each rate.
 
+## The driver, and the shader's declared interface
+
+`test_trap_shader_driver.gd`, added 2026-10-24 with the driver. **24 checks,
+0 failures** at 30, 60 and 144 fps.
+
+The shader itself is hand-written (commit `f28d2de`, author's own). Everything
+below is what a headless engine will say about it.
+
+| Asked of the engine | Answer |
+|---|---|
+| `shader_type` | `canvas_item` (`get_mode()` = 1) |
+| `warn_amount` | `TYPE_FLOAT`, `PROPERTY_HINT_RANGE`, hint string `0.0,1.0,0.001` |
+| `warn_color` | `TYPE_COLOR`, `PROPERTY_HINT_COLOR_NO_ALPHA` |
+| Sampler uniforms | 0, as §2 specifies |
+
+**`source_color` is visible to a headless run**, which was not assumed. A
+`vec3` carrying it is reported as `TYPE_COLOR` with `COLOR_NO_ALPHA`; a plain
+`vec3` comes back as `TYPE_VECTOR3`. Both hints are therefore asserted from
+the engine rather than only from the source text. Defaults still are not
+reported, so those two checks read the `.gdshader` file and say so.
+
+| In motion, at each frame rate | |
+|---|---|
+| Uniform reached 1.0 in | **0.417 s** at 60 fps (want 0.400 ± one frame) |
+| State/uniform pairs compared | **408** over 136 frames |
+| Worst gap between state and uniform, any frame | **0.000000000** |
+| Traps 2 and 3 peak uniform while trap 1 warned | **0.000000** |
+| `warn_color` after a full cycle | unchanged — the driver animates one uniform |
+
+**F1 is a real trap that was avoided, not a hypothetical.** A sub-resource
+inside a `PackedScene` is shared by every instance of that scene, so without
+`duplicate()` in `_ready()` the three traps held one `ShaderMaterial`. The
+test asserts three distinct instance ids.
+
+**F5 cannot be caught by a round trip.** `set_shader_parameter` on an
+undeclared name writes nowhere and reports nothing, and reading it back
+returns the stored value, so set-then-get passes on a broken contract. The
+driver asks `get_shader_uniform_list()` at startup and the test asserts the
+answer.
+
 ## The evidence table
 
 | Check | Status |
 |---|---|
 | Baseline | **done** — above |
-| Shaders parse | **not yet** — no shader exists |
+| Shaders parse | **partial** — `trap_warning.gdshader` parses, with uniform-list assertions, and no `SHADER ERROR` line in any run. The spatial shader does not exist yet. |
 | Both shader mutations exit 1 (semicolon, rename) | **not yet** |
-| Driver sampled at 30/60/144 through a real event, incl. retrigger | **partial** — the game state is, at all three rates (R1–R6, 16 checks). The *uniform* is not, because there is no uniform yet. |
+| Driver sampled at 30/60/144 through a real event, incl. retrigger | **partial** — the uniform now is, at all three rates, through a walk-in trigger: 408 pairs, worst gap 0.000000000. **Retrigger is checked on the state only** (`test_trap_warning.gd` R3); no scenario yet samples the uniform across a restart. |
 | Controlled values (HUMAN) | **not yet** |
 | In play (HUMAN) | **not yet** — nobody has played the slice |
 | Hint experiment (HUMAN) | **not yet** |
