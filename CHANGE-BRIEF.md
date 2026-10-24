@@ -603,3 +603,45 @@ takes the **modal** delta over 40 frames and asserts the two agree within 1 %.
 | 144 | 0.006944 (35/40) | 0.403 s | ±0.0069 | pass |
 
 **22 checks, 0 failures** at each rate.
+
+---
+
+# Revision 5.0.4 - 2026-10-24 - the warn_amount = 2.0 prediction, before the capture
+
+§10 asks whether `hint_range` clamps a value set from code and answers
+**"Prediction: no"**, to be settled by a capture at `warn_amount = 2.0`. It
+never wrote down what that capture should show. This revision does, **before
+the capture rig exists**, so the measurement can disagree with something.
+
+`mix(c, w, t)` is `c + t*(w - c)`, which at `t = 2.0` is `2w - c` -
+extrapolation past `warn_color`, not a stop at it. The result is written to
+`COLOR.rgb` and clamped to [0, 1] there, which is where two channels die.
+
+| Pixel | Channel | Raw float at t = 2.0 | 8-bit |
+|---|---|---|---|
+| **A** `(8, 12)` | R | 1.5137 | **255** (clamped) |
+| | G | 0.3059 | **78** |
+| | B | 0.1686 | **43** |
+| **B** `(8, 3)` | R | 1.1373 | **255** (clamped) |
+| | G | -0.0941 | **0** (clamped) |
+| | B | -0.2627 | **0** (clamped) |
+
+**Predicted: A becomes `255, 78, 43` and B becomes pure `255, 0, 0`.**
+
+The same arithmetic reproduces §6's three existing rows exactly (42/42/51,
+128/51/49, 214/60/47 for A), so this is the brief's own formula extended, not
+a second method.
+
+**What each outcome means.**
+
+- Those values measured: `hint_range` constrains the Inspector only, the
+  write passes straight through, and `mix()` extrapolates. §10's prediction
+  holds.
+- `214, 60, 47` measured instead: the value was clamped to 1.0 somewhere
+  between `set_shader_parameter` and the shader. §10 is wrong, and the
+  question becomes where - the material, the uniform upload, or the hint.
+- Anything else: record it and find out why before explaining it.
+
+B is the more useful pixel of the two. Two of its three channels go negative
+before the clamp, so a correct extrapolation makes it **pure red** - a result
+no other hypothesis produces by accident.

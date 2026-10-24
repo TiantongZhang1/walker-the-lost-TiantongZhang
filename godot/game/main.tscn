@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" path="res://assets/sprites/floor_tile.png" id="1_floor"]
 [ext_resource type="PackedScene" path="res://features/player/player.tscn" id="2_player"]
 [ext_resource type="PackedScene" path="res://features/traps/spike_trap.tscn" id="3_trap"]
+[ext_resource type="Script" path="res://tools/capture_rig.gd" id="4_capture"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(640, 160)
@@ -60,3 +61,6 @@ position = Vector2(96, 150)
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(320, 180)
+
+[node name="CaptureRig" type="Node" parent="."]
+script = ExtResource("4_capture")

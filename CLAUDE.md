@@ -18,7 +18,7 @@ Every fact carries the file it came from. Check them; do not trust them.
 child of the trap's `Node2D` root — `godot/features/traps/spike_trap.tscn:22`.
 It is one sprite, not two: firing swaps the texture rather than moving a child,
 so the trap has exactly one material to drive. Three instances sit in the room
-at `godot/game/main.tscn:49`, `:52`, `:55`.
+at `godot/game/main.tscn:50`, `:52`, `:55`.
 
 Two Area2Ds, not interchangeable: `DetectArea`
 (`godot/features/traps/spike_trap.tscn:26`) is 66 px and starts the warning,
