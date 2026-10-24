@@ -1,0 +1,82 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+  frame rate: 60 fps declared, modal delta 0.016667 s (40/40 frames)
+
+-- the shader's declared interface --
+PASS      the shader loads
+PASS      shader_type is canvas_item   [mode=1]
+FAIL      declares warn_amount
+PASS      declares warn_color
+
+-- F1/R6: one material per trap --
+ERROR: Shader does not declare a uniform named 'warn_amount'; every write from this driver would be discarded in silence.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://features/traps/trap_warning_driver.gd:70)
+       [1] _load_room (res://tests/test_trap_shader_driver.gd:126)
+       [2] _scenario_per_instance (res://tests/test_trap_shader_driver.gd:217)
+       [3] _init (res://tests/test_trap_shader_driver.gd:341)
+       [4] _resolve_fps (res://tests/test_trap_shader_driver.gd:118)
+ERROR: Shader does not declare a uniform named 'warn_amount'; every write from this driver would be discarded in silence.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://features/traps/trap_warning_driver.gd:70)
+       [1] _load_room (res://tests/test_trap_shader_driver.gd:126)
+       [2] _scenario_per_instance (res://tests/test_trap_shader_driver.gd:217)
+       [3] _init (res://tests/test_trap_shader_driver.gd:341)
+       [4] _resolve_fps (res://tests/test_trap_shader_driver.gd:118)
+ERROR: Shader does not declare a uniform named 'warn_amount'; every write from this driver would be discarded in silence.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://features/traps/trap_warning_driver.gd:70)
+       [1] _load_room (res://tests/test_trap_shader_driver.gd:126)
+       [2] _scenario_per_instance (res://tests/test_trap_shader_driver.gd:217)
+       [3] _init (res://tests/test_trap_shader_driver.gd:341)
+       [4] _resolve_fps (res://tests/test_trap_shader_driver.gd:118)
+PASS      trap has a driver holding a material
+PASS      trap has a driver holding a material
+PASS      trap has a driver holding a material
+FAIL  F5  every driver found its uniform declared
+PASS  F1  the three materials are three different objects   [3 distinct of 3]
+PASS      the sprite shows the per-instance copy, not the scene's
+
+-- the uniform follows the state, frame by frame --
+ERROR: Shader does not declare a uniform named 'warn_amount'; every write from this driver would be discarded in silence.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://features/traps/trap_warning_driver.gd:70)
+       [1] _load_room (res://tests/test_trap_shader_driver.gd:126)
+       [2] _scenario_tracks_state (res://tests/test_trap_shader_driver.gd:251)
+       [3] _init (res://tests/test_trap_shader_driver.gd:342)
+       [4] _scenario_per_instance (res://tests/test_trap_shader_driver.gd:244)
+       [5] _teardown (res://tests/test_trap_shader_driver.gd:145)
+ERROR: Shader does not declare a uniform named 'warn_amount'; every write from this driver would be discarded in silence.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://features/traps/trap_warning_driver.gd:70)
+       [1] _load_room (res://tests/test_trap_shader_driver.gd:126)
+       [2] _scenario_tracks_state (res://tests/test_trap_shader_driver.gd:251)
+       [3] _init (res://tests/test_trap_shader_driver.gd:342)
+       [4] _scenario_per_instance (res://tests/test_trap_shader_driver.gd:244)
+       [5] _teardown (res://tests/test_trap_shader_driver.gd:145)
+ERROR: Shader does not declare a uniform named 'warn_amount'; every write from this driver would be discarded in silence.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://features/traps/trap_warning_driver.gd:70)
+       [1] _load_room (res://tests/test_trap_shader_driver.gd:126)
+       [2] _scenario_tracks_state (res://tests/test_trap_shader_driver.gd:251)
+       [3] _init (res://tests/test_trap_shader_driver.gd:342)
+       [4] _scenario_per_instance (res://tests/test_trap_shader_driver.gd:244)
+       [5] _teardown (res://tests/test_trap_shader_driver.gd:145)
+PASS      the player reached trap 1 by walking   [0.82 s of travel]
+PASS  R2  the uniform took 0.417 s to reach 1.0 (want 0.400 +- 0.0167)   [one frame = 0.0167 s]
+PASS      enough frames were compared to mean something   [408 state/uniform pairs over 136 frames]
+PASS      the uniform never differed from the state in any frame   [worst gap 0.000000000 at row -1]
+PASS  R6  traps 2 and 3 never lit while trap 1 warned   [their peak uniform was 0.000000]
+PASS      the uniform is back at 0.0 once the trap re-arms   [0.000000]
+PASS      the driver left warn_color alone through the whole cycle   [(0.8392, 0.2353, 0.1843, 1.0)]
+
+17 checks, 2 failures
+Proves: the declared interface, and that the state reaches the
+uniform unchanged, on this trap's own material. Proves nothing
+about colour - a headless run draws nothing.

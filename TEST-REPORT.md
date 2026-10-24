@@ -1,6 +1,6 @@
 # TEST-REPORT.md — Assignment 5
 
-**Source revision:** `480aa8b` · **Godot** 4.7.2.stable.official `ed1daf0bf` ·
+**Source revision:** `7e8a40a`+ · **Godot** 4.7.2.stable.official `ed1daf0bf` ·
 **Renderer** Forward+ *(confirmed on hardware 2026-10-24)* · **OS** Windows 11
 
 Every row below is either a recorded result or an explicit **not yet**. Nothing
@@ -130,13 +130,67 @@ returns the stored value, so set-then-get passes on a broken contract. The
 driver asks `get_shader_uniform_list()` at startup and the test asserts the
 answer.
 
+## The two shader mutations
+
+Assignment 5 Step 2: break the shader twice, confirm the test exits 1, restore
+it. The author made both edits; no agent touched `godot/shaders/`. Logs are in
+`evidence/a5-mutations/`, and after the restore
+`git diff HEAD -- godot/shaders/` printed nothing — the file is byte-for-byte
+`f28d2de` again.
+
+| | **1. semicolon deleted** | **2. uniform renamed** |
+|---|---|---|
+| Edit | `shader_type canvas_item` loses its `;` | `warn_amount` → `warn_level`, both occurrences, so it still compiles |
+| `SHADER ERROR` lines | **2** | **0** |
+| `test_trap_shader_driver.gd` | 17 checks, **4 failures**, exit **1** | 17 checks, **2 failures**, exit **1** |
+| `test_trap_warning.gd` | 22 checks, 0 failures, exit **1** | 22 checks, 0 failures, exit **0** |
+
+```
+SHADER ERROR: Expected a ';' after 'shader_type canvas_item'.
+```
+
+**Mutation 1 is caught twice over.** A shader that fails to parse returns an
+empty uniform list, so `declares warn_amount`, `declares warn_color` and F5 all
+fail. But note the second row: **the state suite passed all 22 of its own
+checks with a completely broken shader.** It exited 1 only because
+`scripts/run-test.sh` greps for `SHADER ERROR` — Godot prints that line and
+still exits 0. Without the wrapper this mutation goes by in silence.
+
+**Mutation 2 is the one that matters, because nothing reports it.** The shader
+compiles. There is no error line, the wrapper has nothing to grep, and the
+state suite exits **0**. The driver writes `warn_amount` into a material whose
+shader declares no such uniform; `set_shader_parameter` accepts it and says
+nothing. Two assertions catch it:
+
+```
+FAIL      declares warn_amount
+FAIL  F5  every driver found its uniform declared
+```
+
+**And this is why a set-then-get round trip is worth nothing here.** Under
+mutation 2, with the trap unable to turn red at all, these still passed:
+
+```
+PASS  R2  the uniform took 0.417 s to reach 1.0 (want 0.400 +- 0.0167)
+PASS      the uniform never differed from the state in any frame   [worst gap 0.000000000]
+PASS      the uniform is back at 0.0 once the trap re-arms
+```
+
+`get_shader_parameter` returns what the material stored. It never asks the
+shader whether anything reads it. Assignment 5 lists this exact failure under
+"What the agent is likely to get wrong"; mutation 2 reproduces it deliberately,
+in its quieter form.
+
+**After the restore:** `test_trap_shader_driver.gd` 24 checks / 0 failures and
+`test_trap_warning.gd` 22 / 0, both at 30, 60 and 144 fps, all exit 0.
+
 ## The evidence table
 
 | Check | Status |
 |---|---|
 | Baseline | **done** — above |
 | Shaders parse | **partial** — `trap_warning.gdshader` parses, with uniform-list assertions, and no `SHADER ERROR` line in any run. The spatial shader does not exist yet. |
-| Both shader mutations exit 1 (semicolon, rename) | **not yet** |
+| Both shader mutations exit 1 (semicolon, rename) | **done** — above. The third mutation, `source_color` on the spatial shader's colour sampler, waits on that shader. |
 | Driver sampled at 30/60/144 through a real event, incl. retrigger | **partial** — the uniform now is, at all three rates, through a walk-in trigger: 408 pairs, worst gap 0.000000000. **Retrigger is checked on the state only** (`test_trap_warning.gd` R3); no scenario yet samples the uniform across a restart. |
 | Controlled values (HUMAN) | **not yet** |
 | In play (HUMAN) | **not yet** — nobody has played the slice |

@@ -1,0 +1,201 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+test_trap_warning  —  TEST_FPS=60, engine modal delta 0.016667 (60.0 fps, 40/40 frames)
+                      one frame = 0.0167 s
+PASS      declared and measured frame rate agree   [TEST_FPS=60, modal delta implies 60.0]
+
+-- R1/R2/R6: walk into trap 1 --
+ERROR: Shader does not declare a uniform named 'warn_amount'; every write from this driver would be discarded in silence.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://features/traps/trap_warning_driver.gd:70)
+       [1] _load_room (res://tests/test_trap_warning.gd:84)
+       [2] _scenario_walk_in (res://tests/test_trap_warning.gd:111)
+       [3] _init (res://tests/test_trap_warning.gd:391)
+       [4] _resolve_fps (res://tests/test_trap_warning.gd:383)
+ERROR: Shader does not declare a uniform named 'warn_amount'; every write from this driver would be discarded in silence.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://features/traps/trap_warning_driver.gd:70)
+       [1] _load_room (res://tests/test_trap_warning.gd:84)
+       [2] _scenario_walk_in (res://tests/test_trap_warning.gd:111)
+       [3] _init (res://tests/test_trap_warning.gd:391)
+       [4] _resolve_fps (res://tests/test_trap_warning.gd:383)
+ERROR: Shader does not declare a uniform named 'warn_amount'; every write from this driver would be discarded in silence.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://features/traps/trap_warning_driver.gd:70)
+       [1] _load_room (res://tests/test_trap_warning.gd:84)
+       [2] _scenario_walk_in (res://tests/test_trap_warning.gd:111)
+       [3] _init (res://tests/test_trap_warning.gd:391)
+       [4] _resolve_fps (res://tests/test_trap_warning.gd:383)
+PASS  R1  armed trap reads 0.0
+PASS      player reached trap 1 by walking   [0.82 s of travel]
+PASS  R1  first warning frame is 0.0   [warn_amount=0.0000]
+PASS  R6  trap 2 unaffected
+PASS  R6  trap 3 unaffected
+PASS  R2  window lasted 0.417 s (want 0.400 +- 0.0167)   [one frame = 0.0167 s]
+PASS  R1  reaches 1.0 at FIRING   [warn_amount=1.0000]
+PASS      ramp peaked just under 1.0 before firing   [peak=1.0000]
+
+-- R3: retrigger restarts the window --
+ERROR: Shader does not declare a uniform named 'warn_amount'; every write from this driver would be discarded in silence.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://features/traps/trap_warning_driver.gd:70)
+       [1] _load_room (res://tests/test_trap_warning.gd:84)
+       [2] _scenario_retrigger (res://tests/test_trap_warning.gd:151)
+       [3] _init (res://tests/test_trap_warning.gd:392)
+       [4] _scenario_walk_in (res://tests/test_trap_warning.gd:145)
+       [5] _teardown (res://tests/test_trap_warning.gd:103)
+ERROR: Shader does not declare a uniform named 'warn_amount'; every write from this driver would be discarded in silence.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://features/traps/trap_warning_driver.gd:70)
+       [1] _load_room (res://tests/test_trap_warning.gd:84)
+       [2] _scenario_retrigger (res://tests/test_trap_warning.gd:151)
+       [3] _init (res://tests/test_trap_warning.gd:392)
+       [4] _scenario_walk_in (res://tests/test_trap_warning.gd:145)
+       [5] _teardown (res://tests/test_trap_warning.gd:103)
+ERROR: Shader does not declare a uniform named 'warn_amount'; every write from this driver would be discarded in silence.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://features/traps/trap_warning_driver.gd:70)
+       [1] _load_room (res://tests/test_trap_warning.gd:84)
+       [2] _scenario_retrigger (res://tests/test_trap_warning.gd:151)
+       [3] _init (res://tests/test_trap_warning.gd:392)
+       [4] _scenario_walk_in (res://tests/test_trap_warning.gd:145)
+       [5] _teardown (res://tests/test_trap_warning.gd:103)
+PASS      player reversed out of the detection zone mid-window   [warn_amount was 0.208]
+PASS  R3  re-entry reset warn_amount toward 0   [0.208 -> 0.042]
+PASS  R3  the window was restarted, not extended   [remaining 0.317 -> 0.383]
+PASS      re-entry happened inside the window
+
+-- R5: disarm mid-window --
+ERROR: Shader does not declare a uniform named 'warn_amount'; every write from this driver would be discarded in silence.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://features/traps/trap_warning_driver.gd:70)
+       [1] _load_room (res://tests/test_trap_warning.gd:84)
+       [2] _scenario_early_end (res://tests/test_trap_warning.gd:190)
+       [3] _init (res://tests/test_trap_warning.gd:393)
+       [4] _scenario_retrigger (res://tests/test_trap_warning.gd:184)
+       [5] _teardown (res://tests/test_trap_warning.gd:103)
+ERROR: Shader does not declare a uniform named 'warn_amount'; every write from this driver would be discarded in silence.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://features/traps/trap_warning_driver.gd:70)
+       [1] _load_room (res://tests/test_trap_warning.gd:84)
+       [2] _scenario_early_end (res://tests/test_trap_warning.gd:190)
+       [3] _init (res://tests/test_trap_warning.gd:393)
+       [4] _scenario_retrigger (res://tests/test_trap_warning.gd:184)
+       [5] _teardown (res://tests/test_trap_warning.gd:103)
+ERROR: Shader does not declare a uniform named 'warn_amount'; every write from this driver would be discarded in silence.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://features/traps/trap_warning_driver.gd:70)
+       [1] _load_room (res://tests/test_trap_warning.gd:84)
+       [2] _scenario_early_end (res://tests/test_trap_warning.gd:190)
+       [3] _init (res://tests/test_trap_warning.gd:393)
+       [4] _scenario_retrigger (res://tests/test_trap_warning.gd:184)
+       [5] _teardown (res://tests/test_trap_warning.gd:103)
+PASS      ramp was part-way up before disarm   [warn_amount=0.542]
+PASS  R5  snaps to 0.0 in the same frame
+PASS  R5  still 0.0 on the next frame, no fade   [warn_amount=0.0000]
+
+-- R4: Engine.time_scale = 0.5 --
+ERROR: Shader does not declare a uniform named 'warn_amount'; every write from this driver would be discarded in silence.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://features/traps/trap_warning_driver.gd:70)
+       [1] _load_room (res://tests/test_trap_warning.gd:84)
+       [2] _scenario_time_scale (res://tests/test_trap_warning.gd:216)
+       [3] _init (res://tests/test_trap_warning.gd:394)
+       [4] _scenario_early_end (res://tests/test_trap_warning.gd:209)
+       [5] _teardown (res://tests/test_trap_warning.gd:103)
+ERROR: Shader does not declare a uniform named 'warn_amount'; every write from this driver would be discarded in silence.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://features/traps/trap_warning_driver.gd:70)
+       [1] _load_room (res://tests/test_trap_warning.gd:84)
+       [2] _scenario_time_scale (res://tests/test_trap_warning.gd:216)
+       [3] _init (res://tests/test_trap_warning.gd:394)
+       [4] _scenario_early_end (res://tests/test_trap_warning.gd:209)
+       [5] _teardown (res://tests/test_trap_warning.gd:103)
+ERROR: Shader does not declare a uniform named 'warn_amount'; every write from this driver would be discarded in silence.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://features/traps/trap_warning_driver.gd:70)
+       [1] _load_room (res://tests/test_trap_warning.gd:84)
+       [2] _scenario_time_scale (res://tests/test_trap_warning.gd:216)
+       [3] _init (res://tests/test_trap_warning.gd:394)
+       [4] _scenario_early_end (res://tests/test_trap_warning.gd:209)
+       [5] _teardown (res://tests/test_trap_warning.gd:103)
+PASS  R4  window is still 0.400 s of GAME time at time_scale 0.5   [measured 0.4000 s]
+
+-- F6: a player who keeps walking is hit --
+ERROR: Shader does not declare a uniform named 'warn_amount'; every write from this driver would be discarded in silence.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://features/traps/trap_warning_driver.gd:70)
+       [1] _load_room (res://tests/test_trap_warning.gd:84)
+       [2] _scenario_actually_hits (res://tests/test_trap_warning.gd:306)
+       [3] _init (res://tests/test_trap_warning.gd:395)
+       [4] _scenario_time_scale (res://tests/test_trap_warning.gd:230)
+       [5] _teardown (res://tests/test_trap_warning.gd:103)
+ERROR: Shader does not declare a uniform named 'warn_amount'; every write from this driver would be discarded in silence.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://features/traps/trap_warning_driver.gd:70)
+       [1] _load_room (res://tests/test_trap_warning.gd:84)
+       [2] _scenario_actually_hits (res://tests/test_trap_warning.gd:306)
+       [3] _init (res://tests/test_trap_warning.gd:395)
+       [4] _scenario_time_scale (res://tests/test_trap_warning.gd:230)
+       [5] _teardown (res://tests/test_trap_warning.gd:103)
+ERROR: Shader does not declare a uniform named 'warn_amount'; every write from this driver would be discarded in silence.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://features/traps/trap_warning_driver.gd:70)
+       [1] _load_room (res://tests/test_trap_warning.gd:84)
+       [2] _scenario_actually_hits (res://tests/test_trap_warning.gd:306)
+       [3] _init (res://tests/test_trap_warning.gd:395)
+       [4] _scenario_time_scale (res://tests/test_trap_warning.gd:230)
+       [5] _teardown (res://tests/test_trap_warning.gd:103)
+PASS  F6  player was still short of the trap when it warned   [dx = -33.6 px]
+PASS  F6  player is over the trap when the spikes arrive   [dx = +6.4 px (hurt box +-13)]
+PASS  F6  the trap actually took a life   [health 5 -> 4]
+
+-- geometry: the derivation, and the zones --
+ERROR: Shader does not declare a uniform named 'warn_amount'; every write from this driver would be discarded in silence.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://features/traps/trap_warning_driver.gd:70)
+       [1] _load_room (res://tests/test_trap_warning.gd:84)
+       [2] _scenario_geometry (res://tests/test_trap_warning.gd:265)
+       [3] _init (res://tests/test_trap_warning.gd:396)
+       [4] _scenario_actually_hits (res://tests/test_trap_warning.gd:330)
+       [5] _teardown (res://tests/test_trap_warning.gd:103)
+ERROR: Shader does not declare a uniform named 'warn_amount'; every write from this driver would be discarded in silence.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://features/traps/trap_warning_driver.gd:70)
+       [1] _load_room (res://tests/test_trap_warning.gd:84)
+       [2] _scenario_geometry (res://tests/test_trap_warning.gd:265)
+       [3] _init (res://tests/test_trap_warning.gd:396)
+       [4] _scenario_actually_hits (res://tests/test_trap_warning.gd:330)
+       [5] _teardown (res://tests/test_trap_warning.gd:103)
+ERROR: Shader does not declare a uniform named 'warn_amount'; every write from this driver would be discarded in silence.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _ready (res://features/traps/trap_warning_driver.gd:70)
+       [1] _load_room (res://tests/test_trap_warning.gd:84)
+       [2] _scenario_geometry (res://tests/test_trap_warning.gd:265)
+       [3] _init (res://tests/test_trap_warning.gd:396)
+       [4] _scenario_actually_hits (res://tests/test_trap_warning.gd:330)
+       [5] _teardown (res://tests/test_trap_warning.gd:103)
+PASS      DetectArea half-width matches SPEED * WARN - player half   [shape says 33.0 px, derivation says 33.4 px]
+PASS  R6  the three detection zones do not overlap   [175..241  287..353  399..465]
+
+22 checks, 0 failures
+Proves: the game state behind the effect. Proves nothing about colour —
+a headless run draws nothing. The look is checked by hand in TEST-REPORT.md.
