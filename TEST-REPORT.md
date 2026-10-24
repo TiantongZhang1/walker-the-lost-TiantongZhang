@@ -1,7 +1,7 @@
 # TEST-REPORT.md — Assignment 5
 
 **Source revision:** `732b5aa` · **Godot** 4.7.2.stable.official `ed1daf0bf` ·
-**Renderer** Forward+ *(set 2026-10-23, see Unconfirmed)* · **OS** Windows 11
+**Renderer** Forward+ *(confirmed on hardware 2026-10-24)* · **OS** Windows 11
 
 Every row below is either a recorded result or an explicit **not yet**. Nothing
 is marked done that has not been run.
@@ -65,12 +65,31 @@ of **game** time at 30 / 60 / 144 — unchanged, as R4 says.
 | Texture data — curl ratio | **not applicable as planned** — the brief's material plan uses code-written colour and data textures and no normal map. If that changes, the calibration pair comes with it. |
 | Import settings — `.import` diffs the editor rewrote | **not yet** — the editor has not been opened on this project |
 
+## Renderer, confirmed
+
+A real windowed run, 2026-10-24. Not a headless run: headless reports
+`forward_plus` and `vulkan` while leaving the adapter name empty and the window
+0 × 0, because it initialises no device. The adapter name is the evidence.
+
+```
+Vulkan 1.4.357 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 5080 Laptop GPU
+--- renderer check ---
+  project.godot asks for : forward_plus
+  actually running       : forward_plus
+  driver                 : vulkan
+  adapter                : NVIDIA GeForce RTX 5080 Laptop GPU
+  adapter vendor         : NVIDIA
+  window size            : (1280, 720)
+----------------------
+```
+
+Exit code 0, no errors. §6 and §7 of `CHANGE-BRIEF.md` therefore keep the
+Forward+/Mobile assumption their predictions are written under.
+
 ## Known limitations
 
-1. **Forward+ has never run on real hardware here.** It was set today and every
-   run since has been headless, which uses a dummy renderer and draws nothing.
-   The first windowed editor run confirms it or reverts it to Compatibility,
-   and this report is updated either way.
+1. ~~Forward+ has never run on real hardware here.~~ **Resolved 2026-10-24** —
+   see "Renderer, confirmed" below.
 2. **The restart exploit.** R3 restarts the warning on every entry, so a player
    who steps off the trap and back on repeatedly is never hit. This is the
    accepted price of "every trigger gets its own warning" and is recorded in

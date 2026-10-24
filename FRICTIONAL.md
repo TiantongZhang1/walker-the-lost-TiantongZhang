@@ -235,3 +235,36 @@ run draws nothing.
   deliberately absent — Assignment 5 grades shaders, and the brief's boundaries
   say movement and input do not change, so building them now would only give
   that boundary more to not touch. This is a limitation, not an oversight.
+
+---
+
+## 2026-10-24 — Forward+ confirmed, and the check that nearly wasn't one
+
+The open item from yesterday is closed. Forward+ initialises on this machine:
+Vulkan 1.4.357, NVIDIA GeForce RTX 5080 Laptop GPU, window 1280 × 720, exit 0.
+`CHANGE-BRIEF.md` §6 and §7 keep the Forward+/Mobile assumption their
+predictions are written under, and no Compatibility caveat is needed.
+
+**The part worth recording is how nearly this check proved nothing.** My first
+instinct was to have Tiantong read the editor's Output panel and tell me what
+it said. Two things were wrong with that:
+
+1. They pressed F5 and looked at the **game** window, which has no panels. The
+   Output panel is in the editor window. A check that depends on someone
+   finding the right pane is a check that can quietly not happen.
+2. More seriously — the headless runs had **already been reporting
+   `forward_plus` and `vulkan`**. If I had asked for those two lines and got
+   them back, I would have "confirmed" Forward+ from a dummy renderer that had
+   initialised no device at all.
+
+What distinguishes the two is the **adapter name**: headless leaves it empty
+and the window 0 × 0. So `godot/game/main.gd` prints the adapter and the window
+size as well as the method, and the real run is the one that names the GPU.
+Running it windowed with `--quit-after` made the whole thing a single command
+whose output is the evidence, instead of a question about what someone saw.
+
+This is the same shape as the `CLAUDE.md` line numbers yesterday: the thing
+that caught it was making the check mechanical, not looking harder.
+
+**Still open after this:** whether 0.45 s is enough warning to react to. That
+one genuinely cannot be mechanised — it needs Tiantong to play the slice.

@@ -387,11 +387,25 @@ The original above is unchanged. These four supersede it where they conflict.
 predictions in §6 and §7 follow the documented path instead of needing the
 Compatibility caveat.
 
-**Still owed: a real windowed run.** The author approved this before leaving and
-could not run it. A headless run uses a dummy renderer and proves nothing about
-whether Forward+ initialises on this hardware. The first time the slice is
-opened in the editor, this is confirmed or reverted, and the result is recorded
-in `TEST-REPORT.md`.
+**Confirmed 2026-10-24 by a real windowed run.** Forward+ initialises on this
+hardware; §6 and §7 keep the Forward+/Mobile assumption and need no
+Compatibility caveat.
+
+```
+Vulkan 1.4.357 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 5080 Laptop GPU
+--- renderer check ---
+  project.godot asks for : forward_plus
+  actually running       : forward_plus
+  driver                 : vulkan
+  adapter                : NVIDIA GeForce RTX 5080 Laptop GPU
+  adapter vendor         : NVIDIA
+  window size            : (1280, 720)
+----------------------
+```
+
+The headless runs had reported `forward_plus` and `vulkan` too, with an
+**empty** adapter name and a 0 × 0 window — the dummy renderer naming a driver
+it never initialised. The non-empty adapter is what makes this a real check.
 
 ## §3 R2 duration: **0.45 s stands, provisionally** **[decided]**
 

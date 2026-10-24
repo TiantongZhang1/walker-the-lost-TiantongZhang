@@ -104,9 +104,9 @@ Presentation code may read game state. It never writes it.
 
 ## Unconfirmed
 
-- **Forward+ has never been run on real hardware here.** It was set on
-  2026-10-23 and every run since has been headless, which uses a dummy
-  renderer. The first windowed editor run confirms it or reverts it.
+- ~~Forward+ has never been run on real hardware here.~~ **Confirmed
+  2026-10-24**: Vulkan 1.4.357, NVIDIA GeForce RTX 5080 Laptop GPU, window
+  1280 × 720. Evidence in `TEST-REPORT.md`.
 - Whether 0.45 s is enough warning to react to is unjudged; nobody has played
   the slice yet.
 - Whether `source_color` changes the value the shader receives is **predicted
