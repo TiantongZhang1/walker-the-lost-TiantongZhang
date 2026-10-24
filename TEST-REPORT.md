@@ -1,6 +1,6 @@
 # TEST-REPORT.md — Assignment 5
 
-**Source revision:** `7e8a40a`+ · **Godot** 4.7.2.stable.official `ed1daf0bf` ·
+**Source revision:** `051fd21`+ · **Godot** 4.7.2.stable.official `ed1daf0bf` ·
 **Renderer** Forward+ *(confirmed on hardware 2026-10-24)* · **OS** Windows 11
 
 Every row below is either a recorded result or an explicit **not yet**. Nothing
@@ -184,6 +184,46 @@ in its quieter form.
 **After the restore:** `test_trap_shader_driver.gd` 24 checks / 0 failures and
 `test_trap_warning.gd` 22 / 0, both at 30, 60 and 144 fps, all exit 0.
 
+## Controlled values — measured, and what they settle
+
+**Author's run, 2026-10-24 19:56:26**, real windowed run, Forward+ on an
+NVIDIA GeForce RTX 5080 Laptop GPU, window 1280 × 720, logical 640 × 360.
+Captured in-engine with `godot/tools/capture_rig.gd` (F5), not with a
+screenshot tool. Files and the raw report: `captures/a5/`.
+
+| `warn_amount` | Pixel | Measured | H1 predicted | Δ | H2 predicted |
+|---|---|---|---|---|---|
+| 0.0 | A | `42, 42, 51` | `42, 42, 51` | **0, 0, 0** | — |
+| 0.0 | B | `138, 144, 161` | `138, 144, 161` | **0, 0, 0** | — |
+| 0.5 | A | `128, 51, 49` | `128, 51, 49` | **0, 0, 0** | `107, 27, 29` |
+| 0.5 | B | `176, 102, 104` | `176, 102, 104` | **0, 0, 0** | — |
+| 1.0 | A | `214, 60, 47` | `214, 60, 47` | **0, 0, 0** | `171, 12, 7` |
+| 1.0 | B | `214, 60, 47` | `214, 60, 47` | **0, 0, 0** | — |
+| 2.0 | A | `255, 78, 43` | `255, 78, 43` | **0, 0, 0** | — |
+| 2.0 | B | `255, 0, 0` | `255, 0, 0` | **0, 0, 0** | — |
+
+**Worst channel difference across all eight: 0.** Nothing to explain, which
+is only worth saying because the predictions were committed first — §6 on
+2026-10-23, the 2.0 row as revision 5.0.4 earlier on 2026-10-24, both before
+the rig existed.
+
+Two open questions close here.
+
+**§6 — does `source_color` change the value the shader receives?** No, not in
+a 2D `canvas_item` shader with HDR 2D off. **H1 holds; H2 is refuted by 20 to
+43 counts per channel**, far outside any rounding. `COLOR` carries the
+texture's stored values, the uniform arrives as written, and the mix happens
+in one space. Note that this is a statement about the *value*, not about the
+hint being inert: the engine still reports the uniform as `TYPE_COLOR` with
+`PROPERTY_HINT_COLOR_NO_ALPHA` rather than `TYPE_VECTOR3`.
+
+**§10 — does `hint_range` clamp a value set from code?** No. `2.0` passed
+through `set_shader_parameter` untouched and `mix()` extrapolated past
+`warn_color` instead of stopping at it. Pixel B is the decisive one: two of
+its three channels go negative before the write to `COLOR.rgb` clamps them,
+so a real extrapolation produces pure `255, 0, 0` — which is what was
+measured. A clamp at 1.0 would have produced `214, 60, 47`.
+
 ## The evidence table
 
 | Check | Status |
@@ -192,8 +232,8 @@ in its quieter form.
 | Shaders parse | **partial** — `trap_warning.gdshader` parses, with uniform-list assertions, and no `SHADER ERROR` line in any run. The spatial shader does not exist yet. |
 | Both shader mutations exit 1 (semicolon, rename) | **done** — above. The third mutation, `source_color` on the spatial shader's colour sampler, waits on that shader. |
 | Driver sampled at 30/60/144 through a real event, incl. retrigger | **partial** — the uniform now is, at all three rates, through a walk-in trigger: 408 pairs, worst gap 0.000000000. **Retrigger is checked on the state only** (`test_trap_warning.gd` R3); no scenario yet samples the uniform across a restart. |
-| Controlled values (HUMAN) | **not yet** |
-| In play (HUMAN) | **not yet** — nobody has played the slice |
+| Controlled values (HUMAN) | **done** — above, all eight exact. **The OS-screenshot comparison the assignment also asks for is still outstanding.** |
+| In play (HUMAN) | **partial** — the red has now been seen on screen, but only as the rig's four-frame sweep. Nobody has walked into a trap and judged whether 0.40 s is enough warning. |
 | Hint experiment (HUMAN) | **not yet** |
 | Interface sweep (HUMAN) | **not yet** |
 | One shader, two materials (HUMAN) | **not yet** |

@@ -1,0 +1,28 @@
+=== controlled-value capture, trap 1 ===
+  when     : 2026-10-24T19:56:26
+  engine   : 4.7.2-stable (official)
+  renderer : NVIDIA GeForce RTX 5080 Laptop GPU
+  viewport : (640.0, 360.0)
+  window   : (1280, 720), logical x2
+  pixel A  : sprite-local (8, 12) -> logical (208, 204) -> image (416, 408)
+  pixel B  : sprite-local (8, 3) -> logical (208, 195) -> image (416, 390)
+  files    : D:/Graduate/2026Fall/7270/walker-the-lost-TiantongZhang/captures/a5/
+
+  warn_amount | pixel | measured      | H1 predicted  | delta       | H2
+  ------------+-------+---------------+---------------+-------------+--------------
+          0.0 |     A |  42,  42,  51 |  42,  42,  51 |  +0, +0, +0 | 
+          0.0 |     B | 138, 144, 161 | 138, 144, 161 |  +0, +0, +0 | 
+          0.5 |     A | 128,  51,  49 | 128,  51,  49 |  +0, +0, +0 | 107, 27, 29
+          0.5 |     B | 176, 102, 104 | 176, 102, 104 |  +0, +0, +0 | 
+          1.0 |     A | 214,  60,  47 | 214,  60,  47 |  +0, +0, +0 | 171, 12,  7
+          1.0 |     B | 214,  60,  47 | 214,  60,  47 |  +0, +0, +0 | 
+          2.0 |     A | 255,  78,  43 | 255,  78,  43 |  +0, +0, +0 | 
+          2.0 |     B | 255,   0,   0 | 255,   0,   0 |  +0, +0, +0 | 
+
+  worst channel difference: 0
+  EXACT. H1 holds: the shader receives warn_color as written,
+  and hint_range did not clamp the 2.0 written from code.
+
+  Also do by hand, at the 1.0 capture: one OS screenshot of the same
+  frame, sample the same pixel, and record which you trust and why.
+=== end capture ===
