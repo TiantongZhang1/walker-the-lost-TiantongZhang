@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://dovlf3085iljr" path="res://features/traps/spike_trap.gd" id="1_trap"]
 [ext_resource type="Shader" uid="uid://c78fudgemjtly" path="res://shaders/trap_warning.gdshader" id="2_0gd4s"]
 [ext_resource type="Texture2D" uid="uid://cg5tg5fdmundp" path="res://assets/sprites/spike_trap.png" id="2_armed"]
+[ext_resource type="Script" path="res://features/traps/trap_warning_driver.gd" id="3_driver"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_o5oyd"]
 shader = ExtResource("2_0gd4s")
@@ -37,5 +38,8 @@ collision_mask = 2
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HurtArea" unique_id=1079773855]
 position = Vector2(0, -2)
 shape = SubResource("RectangleShape2D_hurt")
+
+[node name="WarningDriver" type="Node" parent="."]
+script = ExtResource("3_driver")
 
 [connection signal="body_entered" from="DetectArea" to="." method="_on_detect_body_entered"]
