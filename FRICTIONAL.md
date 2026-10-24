@@ -491,3 +491,40 @@ One thing does **not** come across even then. The trap's sprite stays
 code-drawn, because §6 fixed its two pixels before anything was drawn and the
 predictions describe the sprite rather than the reverse. Swapping it would
 void the measurement this assignment is built on.
+
+---
+
+## 2026-10-24 — the capture rig, and a bug that looked like a working shader
+
+**Claude's work, verified before handing it over.** On its first real windowed
+run the rig reported this, four times identically:
+
+```
+  0.0 | A |  23,  20,  27        2.0 | B |  23,  20,  27
+```
+
+`23, 20, 27` is `Color(0.09, 0.08, 0.105)` — `default_clear_color` from
+`project.godot`. It was sampling empty background, so every value came back
+the same, and the first reading of that table was "the shader does nothing".
+
+The cause: `get_viewport().get_texture()` returns the **window**, 1280 × 720,
+not the 640 × 360 logical surface. `canvas_items` stretch scales on the way
+out, so logical pixel `(208, 204)` is image pixel `(416, 408)`. The rig now
+derives the factor from the image rather than assuming it, and prints both
+coordinates so the mapping is visible in the report.
+
+Worth recording because of how it failed. A wrong sample point does not throw,
+does not warn, and does not look empty — it returns a plausible colour, four
+consistent rows, and a confident conclusion about someone's shader. The only
+reason it was caught is that the rig printed predictions beside measurements
+instead of just saving PNGs. Had it saved four files and left the comparison
+to a human eye, "the trap looks the same in all four" is exactly what a broken
+sample point and a broken shader have in common.
+
+Second, smaller: `simplify_path()` strips a trailing slash, so the first run
+wrote `captures/a5warn_0_0.png` in the parent directory rather than
+`captures/a5/warn_0_0.png`.
+
+After the fix, from a real run on the RTX 5080 with Forward+: **all eight
+predicted values exact, worst channel difference 0.** The author's own run is
+what gets recorded in `TEST-REPORT.md`; this one existed to find the bug.

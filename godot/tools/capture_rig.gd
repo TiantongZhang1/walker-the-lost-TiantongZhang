@@ -56,6 +56,30 @@ const PREDICT_A_H2 := {
 
 var _busy := false
 
+## Every line this rig prints, also written to captures/a5/REPORT.txt.
+## The normal Windows build has no console, so print() alone would put
+## the measurement somewhere nobody can read it.
+var _lines: PackedStringArray = []
+var _dir := ""
+
+
+func _say(line: String) -> void:
+	print(line)
+	_lines.append(line)
+
+
+## CAPTURE_ON_START=1 runs the sweep without anyone pressing a key and then
+## quits. It exists so the rig can be verified end to end, and so a reviewer
+## can reproduce the capture without being told where to click. It is still a
+## real windowed run: the frames are drawn by the GPU, not by a dummy device.
+func _ready() -> void:
+	if OS.get_environment("CAPTURE_ON_START") != "1":
+		return
+	await get_tree().create_timer(1.0).timeout
+	await _sweep()
+	await get_tree().create_timer(0.2).timeout
+	get_tree().quit(0)
+
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	var key := event as InputEventKey
@@ -81,7 +105,12 @@ func _sweep() -> void:
 		_busy = false
 		return
 
+	# simplify_path() strips the trailing slash, which once put every file in
+	# the parent directory with "a5" glued to the front of its name.
 	var dir := (ProjectSettings.globalize_path("res://") + "../" + OUT_SUBDIR).simplify_path()
+	if not dir.ends_with("/"):
+		dir += "/"
+	_dir = dir
 	if DirAccess.make_dir_recursive_absolute(dir) != OK and not DirAccess.dir_exists_absolute(dir):
 		push_error("Could not create the capture directory: " + dir)
 		_busy = false
@@ -100,12 +129,17 @@ func _sweep() -> void:
 	var pa := _viewport_pixel(trap, PIXEL_A)
 	var pb := _viewport_pixel(trap, PIXEL_B)
 
-	print("\n=== controlled-value capture, trap 1 ===")
-	print("  renderer : ", RenderingServer.get_video_adapter_name())
-	print("  viewport : ", get_viewport().get_visible_rect().size)
-	print("  pixel A  : sprite-local %s -> viewport %s" % [PIXEL_A, pa])
-	print("  pixel B  : sprite-local %s -> viewport %s" % [PIXEL_B, pb])
-	print("  files    : ", dir)
+	_lines.clear()
+	_say("=== controlled-value capture, trap 1 ===")
+	_say("  when     : " + Time.get_datetime_string_from_system())
+	_say("  engine   : " + Engine.get_version_info().get("string", "?"))
+	_say("  renderer : " + RenderingServer.get_video_adapter_name())
+	_say("  viewport : " + str(get_viewport().get_visible_rect().size))
+	var k0 := int(get_window().size.x / get_viewport().get_visible_rect().size.x)
+	_say("  window   : %s, logical x%d" % [get_window().size, k0])
+	_say("  pixel A  : sprite-local %s -> logical %s -> image %s" % [PIXEL_A, pa, pa * k0])
+	_say("  pixel B  : sprite-local %s -> logical %s -> image %s" % [PIXEL_B, pb, pb * k0])
+	_say("  files    : " + dir)
 
 	var rows: Array = []
 	for value in VALUES:
@@ -115,9 +149,15 @@ func _sweep() -> void:
 		await RenderingServer.frame_post_draw
 		await RenderingServer.frame_post_draw
 		var img := get_viewport().get_texture().get_image()
+		# The root viewport's texture is the WINDOW, 1280 x 720, not the 640 x
+		# 360 logical surface - `canvas_items` stretch scales on the way out.
+		# Sampling the logical coordinate directly read empty background and
+		# reported every value as the clear colour, four times identically,
+		# which looked like a shader that did nothing.
+		var k := img.get_width() / get_viewport().get_visible_rect().size.x
 		var path := dir + "warn_%s.png" % String.num(value, 1).replace(".", "_")
 		var err := img.save_png(path)
-		rows.append([value, _at(img, pa), _at(img, pb), err])
+		rows.append([value, _at(img, pa * k), _at(img, pb * k), err])
 
 	# Put it back exactly as it was before the key was pressed.
 	driver.material.set_shader_parameter(&"warn_amount", 0.0)
@@ -144,8 +184,9 @@ func _at(img: Image, p: Vector2i) -> Vector3i:
 
 
 func _report(rows: Array) -> void:
-	print("\n  warn_amount | pixel | measured      | H1 predicted  | delta       | H2")
-	print("  ------------+-------+---------------+---------------+-------------+--------------")
+	_say("")
+	_say("  warn_amount | pixel | measured      | H1 predicted  | delta       | H2")
+	_say("  ------------+-------+---------------+---------------+-------------+--------------")
 	var worst := 0
 	for row in rows:
 		var value: float = row[0]
@@ -158,20 +199,36 @@ func _report(rows: Array) -> void:
 			if pair[0] == "A" and PREDICT_A_H2.has(value):
 				var alt: Vector3i = PREDICT_A_H2[value]
 				h2 = "%3d,%3d,%3d" % [alt.x, alt.y, alt.z]
-			print("  %11s | %5s | %3d, %3d, %3d | %3d, %3d, %3d | %+3d,%+3d,%+3d | %s"
+			_say("  %11s | %5s | %3d, %3d, %3d | %3d, %3d, %3d | %+3d,%+3d,%+3d | %s"
 				% [String.num(value, 1), pair[0],
 				   got.x, got.y, got.z, want.x, want.y, want.z,
 				   d.x, d.y, d.z, h2])
-	print("\n  worst channel difference: %d" % worst)
+	_say("")
+	_say("  worst channel difference: %d" % worst)
 	if worst == 0:
-		print("  EXACT. H1 holds: the shader receives warn_color as written,")
-		print("  and hint_range did not clamp the 2.0 written from code.")
+		_say("  EXACT. H1 holds: the shader receives warn_color as written,")
+		_say("  and hint_range did not clamp the 2.0 written from code.")
 	elif worst <= 2:
-		print("  Within a step or two - acceptable, but say so and show the capture.")
+		_say("  Within a step or two - acceptable, but say so and show the capture.")
 	else:
-		print("  MORE THAN A STEP OR TWO. The brief calls this a finding, not an")
-		print("  error: record it with the capture and find out why before")
-		print("  explaining it. Compare against H2 in the last column.")
-	print("\n  Also do by hand, at the 1.0 capture: one OS screenshot of the same")
-	print("  frame, sample the same pixel, and record which you trust and why.")
-	print("=== end capture ===\n")
+		_say("  MORE THAN A STEP OR TWO. The brief calls this a finding, not an")
+		_say("  error: record it with the capture and find out why before")
+		_say("  explaining it. Compare against H2 in the last column.")
+	_say("")
+	_say("  Also do by hand, at the 1.0 capture: one OS screenshot of the same")
+	_say("  frame, sample the same pixel, and record which you trust and why.")
+	_say("=== end capture ===")
+	_write_report()
+
+
+## The ordinary Windows build has no console, so print() alone would put the
+## measurement somewhere nobody can read. The report lands beside the PNGs.
+func _write_report() -> void:
+	var path := _dir + "REPORT.txt"
+	var f := FileAccess.open(path, FileAccess.WRITE)
+	if f == null:
+		push_error("Could not write " + path)
+		return
+	f.store_string("\n".join(_lines) + "\n")
+	f.close()
+	print("  report written: ", path)
