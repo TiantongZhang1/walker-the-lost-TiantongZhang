@@ -463,3 +463,77 @@ rather than silently assumed either way.
 | **F3** | **The window fails to restart** — a second trigger is ignored or merely extends the first, so the second entry gets a partial warning or none. | Trigger, wait 0.20 s, trigger again; assert `warn_amount` returned to `0.0` and the end time moved out by 0.20 s. |
 | F4 | `wetness_mask.png` is sampled with `source_color`, so the mask is decoded and the waterline lands in the wrong place. | The material test asserts each sampler's hints from the shader source; the Step 3 mutation deletes `source_color` and must exit 1. |
 | F5 | `warn_amount` is driven under a name the shader does not declare, so the write goes nowhere, silently. | The uniform-list assertion, plus the Step 2 rename mutation. |
+
+---
+
+# Revision 5.0.2 — 2026-10-24 — the trap could not hit anyone
+
+**The observation is the author's**, on seeing the trap behave: the spikes
+should come out as the player *approaches*, not after they have walked past.
+
+**It is not a matter of feel. The trap was unable to hit a walking player at
+all**, and the arithmetic says so:
+
+| | |
+|---|---|
+| Trigger width (revision 5.0.1) | 16 px — the trap's own tile |
+| Player collider half-width | 5 px |
+| Overlap the player crosses | 26 px |
+| Player speed | 96 px/s |
+| **Time inside the trigger** | **0.27 s** |
+| **Warning window** | **0.45 s** |
+
+The player left the trigger 0.18 s before the spikes arrived, by which point
+they were 17 px clear. There was no value of anything that made this trap
+dangerous.
+
+**The suite had already measured it and not noticed.** R3's scenario printed
+`player walked out of the trigger mid-window [warn_amount was 0.630]` — the
+player gone at 63 % of the warning — and passed, because every check in it
+asked whether the *timing* was right and none asked whether the trap *worked*.
+
+## What changes
+
+**R2 duration: 0.30 s** (was 0.45 s). **[decided]**
+
+**The trap gets two Area2Ds instead of one.** A single area could not be
+widened without the player taking damage from three tiles away.
+
+| Node | Size | Job |
+|---|---|---|
+| `DetectArea` | **48 × 24 px** | notices the player; starts the warning |
+| `HurtArea` | **16 × 20 px** | the trap's own tile; the only thing that damages |
+
+**`DetectArea`'s width is derived, not chosen.** For a player who keeps walking
+to be centred over the trap when the spikes arrive:
+
+```
+detect half-width = Player.SPEED × WARN_SECONDS − player half-width
+                  = 96 × 0.30 − 5
+                  = 23.8 px        →  48 px wide
+```
+
+Predicted offset at the moment of firing: **−0.2 px**. Measured: **+3.2 px**,
+inside the ±13 px hurt box. Changing `WARN_SECONDS` without changing this shape
+breaks the trap, which is said in a comment above the constant.
+
+The three traps stay 80 px apart: detection zones are 216–264, 296–344 and
+376–424, with 32 px gaps, so R6 is still demonstrable.
+
+## A new rule, and the check it gets
+
+> **R7.** A player who walks into the detection zone at full speed and does
+> not react **is hit**. The warning exists to be reacted to; a warning that
+> cannot be failed is decoration.
+
+`test_trap_warning.gd` scenario F6 drives the player in with real input and
+asserts three things at once: that the player is still short of the trap when
+it warns, that they are over it when the spikes arrive, and that a life was
+actually lost. Measured at 30, 60 and 144 fps: **−25.6 px**, **+3.2 px**,
+**health 5 → 4**, identical at all three.
+
+## What does not change
+
+§6's pixel predictions. They are parameterised by `warn_amount`, not by the
+clock, exactly as revision 5.0.1 said they would be. §7's hint experiment is
+untouched.

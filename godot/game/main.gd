@@ -8,6 +8,11 @@ extends Node2D
 ## proves nothing.
 
 func _ready() -> void:
+	# Headless loads this scene once per test scenario, and its answer is
+	# worthless there anyway: the dummy renderer names a driver it never
+	# initialised. Only a real run has anything to say.
+	if DisplayServer.get_name() == "headless":
+		return
 	var method: String = ProjectSettings.get_setting(
 		"rendering/renderer/rendering_method", "<unset>")
 	print("--- renderer check ---")

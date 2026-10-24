@@ -268,3 +268,73 @@ that caught it was making the check mechanical, not looking harder.
 
 **Still open after this:** whether 0.45 s is enough warning to react to. That
 one genuinely cannot be mechanised — it needs Tiantong to play the slice.
+
+---
+
+## 2026-10-24 (later) — a green suite for a trap that could not hit anyone
+
+Tiantong looked at the trap and said the spikes should come out as the player
+approaches, not after they have walked past. That turned out not to be a
+preference. **The trap could not hit a walking player at any speed**: the
+trigger was 16 px, the player crossed it in 0.27 s, and the warning was
+0.45 s. The spikes always arrived after the player had gone.
+
+**Nineteen checks had been passing over this.** Worse, the suite had *printed*
+the evidence and I had read past it. R3's scenario logs
+
+```
+PASS      player walked out of the trigger mid-window   [warn_amount was 0.630]
+```
+
+The player was gone at 63 % of the warning. I had written that line as a
+precondition for testing the retrigger rule and never asked why it was
+possible.
+
+Every check in the suite measured the **timing of the warning**. Not one asked
+whether the trap **worked**. That is the kind of hole a passing test suite
+hides best, because the greenness is real — the rules it checks are all
+correctly implemented. The specification simply did not contain the rule that
+mattered, so nothing was there to fail.
+
+### The fix, and the number that was not chosen
+
+One area could not just be widened: the player would have taken damage from
+three tiles away. So detection and damage are now separate — `DetectArea`
+48 × 24 px notices the player, `HurtArea` 16 × 20 px is the only thing that
+hurts.
+
+The 48 px is derived from the warning length rather than picked:
+
+```
+detect half-width = SPEED × WARN_SECONDS − player half-width
+                  = 96 × 0.30 − 5 = 23.8 px
+```
+
+Predicted offset when the spikes arrive: −0.2 px. Measured: +3.2 px. Both
+inside the ±13 px hurt box.
+
+Tiantong chose 0.30 s over 0.45 s. **I had given them the wrong numbers to
+choose from** — I wrote `half-width = d + 5` instead of `d − 5` and quoted
+48/96/125 px for the three options when the right answers were 48/76/105. The
+direction of the choice was unaffected, but the table was wrong and I corrected
+it before implementing rather than quietly building to the right number.
+
+### What is now checked that was not
+
+Scenario **F6** drives the player in with real input, does not react, and
+asserts the player is short of the trap when it warns, over it when the spikes
+arrive, and one life down afterwards. −25.6 px, +3.2 px, health 5 → 4,
+identical at 30, 60 and 144 fps. 19 checks, 0 failures at each rate.
+
+### And a check that could not fail
+
+Fixing the scenes moved two lines that `CLAUDE.md` cites. Yesterday's reference
+checker said both were fine, because all it verified was that the line number
+*existed* — and it did, pointing at the wrong node. A reference check that
+cannot fail when the target moves is not a check.
+
+`tools/check_claude_refs.py` now pairs every reference with a substring the
+target line must contain, and fails on drift, on a reference missing from its
+table, and on the file going over 120 lines. It caught both drifted references
+immediately. Same lesson as the renderer check this morning: the fix is to make
+the check mechanical, not to look harder.

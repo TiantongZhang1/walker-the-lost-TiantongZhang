@@ -15,7 +15,7 @@ extends SceneTree
 ## the shader will later read. What it cannot show: anything about colour.
 
 const MAIN := "res://game/main.tscn"
-const WARN := 0.45  # SpikeTrap.WARN_SECONDS
+const WARN := 0.30  # SpikeTrap.WARN_SECONDS, revision 5.0.2
 
 var _checks := 0
 var _failures := 0
@@ -153,19 +153,23 @@ func _scenario_retrigger() -> void:
 	_key(KEY_D, true)
 	await _until(_is_warning.bind(t1))
 
-	# Keep walking: the player crosses the trigger and leaves it.
+	# The detection zone is 48 px wide and takes 0.6 s to walk across, which is
+	# longer than the window, so the player cannot leave by the far side in
+	# time. Reverse out of the near edge instead - a few frames either way.
+	_key(KEY_D, false)
+	_key(KEY_A, true)
 	var left := await _until(_is_clear_of.bind(t1), 1.0)
 	var before_restart: float = t1.warn_amount
 	var remaining_before: float = t1.warning_remaining()
-	_check("    player walked out of the trigger mid-window", left >= 0.0,
+	_check("    player reversed out of the detection zone mid-window", left >= 0.0,
 		"warn_amount was %.3f" % before_restart)
 
-	# Turn around and walk back in.
-	_key(KEY_D, false)
-	_key(KEY_A, true)
+	# Walk forward into it again.
+	_key(KEY_A, false)
+	_key(KEY_D, true)
 	var back := await _until(_is_touching.bind(t1), 1.0)
 	await process_frame
-	_key(KEY_A, false)
+	_key(KEY_D, false)
 
 	_check("R3  re-entry reset warn_amount toward 0", t1.warn_amount < before_restart,
 		"%.3f -> %.3f" % [before_restart, t1.warn_amount])
@@ -247,8 +251,49 @@ func _peak_since(sampler: Sampler, from_row: int, column: int) -> float:
 	return peak
 
 
+## The check this suite did not have, and should have. Revision 5.0.1's trap
+## could never hit anyone: its 16 px trigger took 0.27 s to cross and its
+## warning was 0.45 s, so the spikes always arrived after the player had gone.
+## Sixteen checks passed anyway, because every one of them measured the timing
+## of the warning and none asked whether the trap worked.
+func _scenario_actually_hits() -> void:
+	print("
+-- F6: a player who keeps walking is hit --")
+	var bits := await _load_room()
+	var main: Node = bits[0]
+	var traps: Array = bits[1]
+	var sampler: Sampler = bits[2]
+	var t1: SpikeTrap = traps[0]
+	var player: Node = main.get_node("Player")
+	var hp_before: int = player.health
+
+	# Walk in and DO NOT stop or react.
+	_key(KEY_D, true)
+	await _until(_is_warning.bind(t1))
+	var dx_at_warn: float = player.global_position.x - t1.global_position.x
+	await _until(_is_firing.bind(t1))
+	var dx_at_fire: float = player.global_position.x - t1.global_position.x
+	await process_frame
+	_key(KEY_D, false)
+
+	_check("F6  player was still short of the trap when it warned",
+		dx_at_warn < -20.0, "dx = %+.1f px" % dx_at_warn)
+	_check("F6  player is over the trap when the spikes arrive",
+		absf(dx_at_fire) < 13.0, "dx = %+.1f px (hurt box +-13)" % dx_at_fire)
+	_check("F6  the trap actually took a life",
+		player.health == hp_before - 1,
+		"health %d -> %d" % [hp_before, player.health])
+	await _teardown(main, sampler)
+
+
 func _overlapping(trap: Node) -> bool:
-	var area: Area2D = trap.get_node("TriggerArea")
+	var area: Area2D = trap.get_node("DetectArea")
+	return area.get_overlapping_bodies().size() > 0
+
+
+## Standing on the trap itself, not merely noticed by it.
+func _on_the_trap(trap: Node) -> bool:
+	var area: Area2D = trap.get_node("HurtArea")
 	return area.get_overlapping_bodies().size() > 0
 
 
@@ -263,6 +308,7 @@ func _init() -> void:
 	await _scenario_retrigger()
 	await _scenario_early_end()
 	await _scenario_time_scale()
+	await _scenario_actually_hits()
 
 	print("\n%d checks, %d failures" % [_checks, _failures])
 	print("Proves: the game state behind the effect. Proves nothing about colour —")

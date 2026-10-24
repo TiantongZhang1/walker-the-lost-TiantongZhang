@@ -13,9 +13,9 @@ extends Node2D
 ##       and 1.0 at the instant FIRING begins.
 ##   R2  WARNING ramps 0 -> 1 linearly over WARN_SECONDS of game time, so the
 ##       window lasts the same at 30, 60 and 144 fps.
-##   R3  Retrigger restarts: a fresh body_entered while ARMED or WARNING puts
-##       warn_amount back to 0.0 and begins a new window. While the trap is
-##       busy (FIRING, RETRACTING, COOLDOWN) an entry does nothing.
+##   R3  Retrigger restarts: a fresh DetectArea entry while ARMED or WARNING
+##       puts warn_amount back to 0.0 and begins a new window. While the trap
+##       is busy (FIRING, RETRACTING, COOLDOWN) an entry does nothing.
 ##   R4  Ordinary scaled delta. The Lost sets Engine.time_scale nowhere.
 ##   R5  disarm() snaps warn_amount to 0.0 in the same frame, with no fade.
 ##   R6  Each instance owns its own state, so three traps warn independently.
@@ -26,10 +26,18 @@ signal player_hit
 
 enum State { ARMED, WARNING, FIRING, RETRACTING, COOLDOWN }
 
-## The warning window. Provisional at 0.45 s per CHANGE-BRIEF.md revision
-## 5.0.1; judged once the slice is playable, and revised in the brief if play
-## says otherwise.
-const WARN_SECONDS := 0.45
+## The warning window. 0.30 s per CHANGE-BRIEF.md revision 5.0.2, after the
+## 0.45 s of revision 5.0.1 turned out to make the trap unable to hit a
+## walking player at all.
+##
+## DetectArea's width in spike_trap.tscn is DERIVED from this number:
+##
+##     detect half-width = Player.SPEED * WARN_SECONDS - player half-width
+##                       = 96 * 0.30 - 5  =  24 px        (48 px wide)
+##
+## so a player who keeps walking is centred over the trap when the spikes
+## arrive. Change WARN_SECONDS and that shape has to change with it.
+const WARN_SECONDS := 0.30
 const FIRE_SECONDS := 0.18
 const RETRACT_SECONDS := 0.22
 const COOLDOWN_SECONDS := 0.60
@@ -44,9 +52,12 @@ var warn_amount := 0.0
 var state := State.ARMED
 
 var _elapsed := 0.0
-var _bodies_inside: Array[Node2D] = []
 
 @onready var _sprite: Sprite2D = $Sprite2D
+## Only bodies standing on the trap itself are hurt. DetectArea is far wider,
+## because it has to notice the player early enough for the warning to mean
+## something; being seen is not the same as being hit.
+@onready var _hurt_area: Area2D = $HurtArea
 
 
 func _process(delta: float) -> void:
@@ -86,7 +97,7 @@ func _enter(next: State) -> void:
 			warn_amount = 1.0
 			_sprite.texture = TEX_FIRED
 			fired.emit()
-			for body in _bodies_inside:
+			for body in _hurt_area.get_overlapping_bodies():
 				if body.has_method("take_damage"):
 					body.take_damage(1)
 					player_hit.emit()
@@ -112,14 +123,8 @@ func warning_remaining() -> float:
 	return maxf(WARN_SECONDS - _elapsed, 0.0)
 
 
-func _on_trigger_body_entered(body: Node2D) -> void:
-	if not _bodies_inside.has(body):
-		_bodies_inside.append(body)
+func _on_detect_body_entered(_body: Node2D) -> void:
 	# R3: restart from ARMED or WARNING. A busy trap ignores the entry;
 	# re-arming mid-strike would let a player cancel a trap by touching it.
 	if state == State.ARMED or state == State.WARNING:
 		_enter(State.WARNING)
-
-
-func _on_trigger_body_exited(body: Node2D) -> void:
-	_bodies_inside.erase(body)

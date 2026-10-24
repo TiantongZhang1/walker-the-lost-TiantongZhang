@@ -1,6 +1,6 @@
 # TEST-REPORT.md — Assignment 5
 
-**Source revision:** `732b5aa` · **Godot** 4.7.2.stable.official `ed1daf0bf` ·
+**Source revision:** `ca8151c`+ · **Godot** 4.7.2.stable.official `ed1daf0bf` ·
 **Renderer** Forward+ *(confirmed on hardware 2026-10-24)* · **OS** Windows 11
 
 Every row below is either a recorded result or an explicit **not yet**. Nothing
@@ -20,9 +20,9 @@ shader work, run from a **fresh clone** of `732b5aa` with one `--import`:
 |---|---|---|---|---|
 | `test_input_map.gd` | 60 | 0 | 5 checks, 0 failures | 0 |
 | `check_assets_3d.gd` | 60 | 0 | ALL CHECKS PASSED (12 measurements) | 0 |
-| `test_trap_warning.gd` | 30 | 0 | 16 checks, 0 failures | 0 |
-| `test_trap_warning.gd` | 60 | 0 | 16 checks, 0 failures | 0 |
-| `test_trap_warning.gd` | 144 | 0 | 16 checks, 0 failures | 0 |
+| `test_trap_warning.gd` | 30 | 0 | 19 checks, 0 failures | 0 |
+| `test_trap_warning.gd` | 60 | 0 | 19 checks, 0 failures | 0 |
+| `test_trap_warning.gd` | 144 | 0 | 19 checks, 0 failures | 0 |
 
 Import errors from a clean clone: **0**.
 
@@ -32,21 +32,29 @@ intact.
 
 ## R2 — frame-rate independence
 
-The one number this assignment exists to make trustworthy. Specified: 0.45 s,
-tolerance one frame period.
+Specified: **0.30 s** (revision 5.0.2), tolerance one frame period.
 
 | fps | Measured window | One frame | Within tolerance |
 |---|---|---|---|
-| 30 | **0.467 s** | 0.0333 s | yes (+0.017 s, half a frame) |
-| 60 | **0.467 s** | 0.0167 s | yes (+0.017 s, one frame) |
-| 144 | **0.451 s** | 0.0069 s | yes (+0.001 s) |
+| 30 | **0.300 s** | 0.0333 s | yes |
+| 60 | **0.300 s** | 0.0167 s | yes |
+| 144 | **0.306 s** | 0.0069 s | yes (+0.006 s, under one frame) |
 
-The overshoot is the frame that crosses the boundary: the ramp is checked once
-per `_process`, so the window ends on the first frame at or past 0.45 s. It
-shrinks as the frame rate rises, which is what it should do.
+Under `Engine.time_scale = 0.5` the window is unchanged in game time, as R4
+says.
 
-Under `Engine.time_scale = 0.5` the window measured 0.4667 / 0.4500 / 0.4514 s
-of **game** time at 30 / 60 / 144 — unchanged, as R4 says.
+## F6 — the trap can actually hit someone
+
+The check this suite did not have until 2026-10-24, added because the author
+noticed the trap was firing after the player had already walked past.
+
+| | |
+|---|---|
+| Player offset when the trap warns | **−25.6 px** (short of the trap) |
+| Player offset when the spikes arrive | **+3.2 px** (hurt box is ±13) |
+| Health | **5 → 4** |
+
+Identical at 30, 60 and 144 fps. **19 checks, 0 failures** at each rate.
 
 ## The evidence table
 
@@ -91,7 +99,7 @@ Forward+/Mobile assumption their predictions are written under.
 1. ~~Forward+ has never run on real hardware here.~~ **Resolved 2026-10-24** —
    see "Renderer, confirmed" below.
 2. **The restart exploit.** R3 restarts the warning on every entry, so a player
-   who steps off the trap and back on repeatedly is never hit. This is the
+   who backs out of the detection zone and re-enters repeatedly is never hit. This is the
    accepted price of "every trigger gets its own warning" and is recorded in
    `CHANGE-BRIEF.md` revision 5.0.1 rather than discovered later. A cooldown on
    re-entry would fix it and is not in scope here.
