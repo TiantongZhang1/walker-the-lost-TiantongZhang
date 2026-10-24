@@ -15,7 +15,7 @@ extends SceneTree
 ## the shader will later read. What it cannot show: anything about colour.
 
 const MAIN := "res://game/main.tscn"
-const WARN := 0.30  # SpikeTrap.WARN_SECONDS, revision 5.0.2
+const WARN := 0.40  # SpikeTrap.WARN_SECONDS, revision 5.0.3
 
 var _checks := 0
 var _failures := 0
@@ -132,8 +132,12 @@ func _scenario_walk_in() -> void:
 	var peak := _peak_since(sampler, first_row, 1)
 
 	var frame := 1.0 / _fps
+	# The brief's tolerance is ONE frame period. The ramp is checked once per
+	# _process, so the window ends on the first frame at or past WARN_SECONDS
+	# and the overshoot is bounded by exactly that. The 1 ms is for the
+	# non-uniform frames at 144 fps, not slack.
 	_check("R2  window lasted %.3f s (want %.3f +- %.4f)" % [dur, WARN, frame],
-		_near(dur, WARN, frame * 1.5), "one frame = %.4f s" % frame)
+		_near(dur, WARN, frame + 0.001), "one frame = %.4f s" % frame)
 	_check("R1  reaches 1.0 at FIRING", _near(t1.warn_amount, 1.0, 0.001),
 		"warn_amount=%.4f" % t1.warn_amount)
 	_check("    ramp peaked just under 1.0 before firing", peak <= 1.0 and peak > 0.80,
@@ -221,7 +225,7 @@ func _scenario_time_scale() -> void:
 	var dur := await _until(_is_firing.bind(t1), 12.0)
 	var frame := 1.0 / _fps
 	_check("R4  window is still %.3f s of GAME time at time_scale 0.5" % WARN,
-		_near(dur, WARN, frame * 1.5), "measured %.4f s" % dur)
+		_near(dur, WARN, frame + 0.001), "measured %.4f s" % dur)
 	Engine.time_scale = 1.0
 	await _teardown(main, sampler)
 
@@ -249,6 +253,46 @@ func _peak_since(sampler: Sampler, from_row: int, column: int) -> float:
 	for i in range(from_row, sampler.log.size()):
 		peak = maxf(peak, sampler.log[i][column])
 	return peak
+
+
+## DetectArea's width is derived from WARN_SECONDS, and the three zones must
+## not overlap or R6 cannot fail. Both are asserted here, so changing the
+## warning length without changing the shape is caught by the suite instead of
+## by someone noticing the trap feels wrong.
+func _scenario_geometry() -> void:
+	print("
+-- geometry: the derivation, and the zones --")
+	var bits := await _load_room()
+	var main: Node = bits[0]
+	var traps: Array = bits[1]
+	var sampler: Sampler = bits[2]
+	var player: Node = main.get_node("Player")
+
+	var half: float = _detect_half(traps[0])
+	var want: float = player.SPEED * WARN - 5.0
+	_check("    DetectArea half-width matches SPEED * WARN - player half",
+		absf(half - want) <= 1.0,
+		"shape says %.1f px, derivation says %.1f px" % [half, want])
+
+	var zones: Array = []
+	for trap in traps:
+		var cx: float = trap.global_position.x
+		var h: float = _detect_half(trap)
+		zones.append([cx - h, cx + h])
+	var clear := true
+	for i in range(zones.size() - 1):
+		if zones[i + 1][0] <= zones[i][1]:
+			clear = false
+	_check("R6  the three detection zones do not overlap", clear,
+		"%.0f..%.0f  %.0f..%.0f  %.0f..%.0f" % [
+			zones[0][0], zones[0][1], zones[1][0], zones[1][1],
+			zones[2][0], zones[2][1]])
+	await _teardown(main, sampler)
+
+
+func _detect_half(trap: Node) -> float:
+	var cs: CollisionShape2D = trap.get_node("DetectArea/CollisionShape2D")
+	return (cs.shape as RectangleShape2D).size.x * 0.5
 
 
 ## The check this suite did not have, and should have. Revision 5.0.1's trap
@@ -299,16 +343,57 @@ func _on_the_trap(trap: Node) -> bool:
 
 # -------------------------------------------------------------------- entry
 
+## The rate the engine is ACTUALLY running at.
+##
+## This used to read Engine.max_fps, which --fixed-fps does not set, so every
+## run believed it was at 60 regardless. The tolerance was then 2x too tight
+## at 30 fps and 3.6x too loose at 144 - strict enough to fail a correct
+## result, and slack enough to pass a wrong one.
+##
+## --fixed-fps is consumed by the engine and never appears in
+## OS.get_cmdline_args(), so scripts/run-test.sh passes it as TEST_FPS. That
+## is cross-checked against the engine's own delta.
+##
+## The delta is sampled as a MODE over many frames, not from one or two. At
+## --fixed-fps 144 the frames are not uniform: 1/144 s is 6944.44 us and Godot
+## works in whole microseconds, so the delta alternates between 0.006944
+## (144 fps) and 0.006667 (150 fps) with the occasional 0.008. A two-frame
+## sample caught one of those outliers and reported 120 fps.
+func _resolve_fps() -> void:
+	var declared := float(OS.get_environment("TEST_FPS"))
+	for i in 5:
+		await process_frame
+	var counts := {}
+	for i in 40:
+		await process_frame
+		var key := "%.6f" % root.get_process_delta_time()
+		counts[key] = counts.get(key, 0) + 1
+	var best := ""
+	var best_n := 0
+	for k in counts:
+		if counts[k] > best_n:
+			best_n = counts[k]
+			best = k
+	var measured := 1.0 / float(best)
+
+	_fps = declared if declared > 0.0 else measured
+	print("test_trap_warning  —  TEST_FPS=%d, engine modal delta %s (%.1f fps, %d/40 frames)"
+		% [int(declared), best, measured, best_n])
+	print("                      one frame = %.4f s" % (1.0 / _fps))
+	_check("    declared and measured frame rate agree",
+		declared > 0.0 and absf(declared - measured) / declared < 0.01,
+		"TEST_FPS=%.0f, modal delta implies %.1f" % [declared, measured])
+
+
 func _init() -> void:
-	_fps = float(Engine.max_fps) if Engine.max_fps > 0 else 60.0
-	print("test_trap_warning  —  pinned at %d fps, one frame = %.4f s"
-		% [int(_fps), 1.0 / _fps])
+	await _resolve_fps()
 
 	await _scenario_walk_in()
 	await _scenario_retrigger()
 	await _scenario_early_end()
 	await _scenario_time_scale()
 	await _scenario_actually_hits()
+	await _scenario_geometry()
 
 	print("\n%d checks, %d failures" % [_checks, _failures])
 	print("Proves: the game state behind the effect. Proves nothing about colour —")

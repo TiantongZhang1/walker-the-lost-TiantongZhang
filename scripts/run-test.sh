@@ -39,6 +39,10 @@ cd "$here" || exit 1
 mkdir -p logs
 log="logs/$(basename "$1" .gd)_${2}fps.log"
 
+# --fixed-fps is consumed by the engine and never reaches the script, so the
+# declared rate is passed separately; the test cross-checks it against the
+# engine's own delta rather than believing either on its own.
+export TEST_FPS="$2"
 timeout 120 "$GODOT" --headless --path godot --script "res://tests/$1" --fixed-fps "$2" 2>&1 | tee "$log"
 status=$?
 

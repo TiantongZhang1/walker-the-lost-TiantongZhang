@@ -47,13 +47,13 @@ shape = SubResource("RectangleShape2D_wall")
 [node name="Traps" type="Node2D" parent="."]
 
 [node name="SpikeTrap1" parent="Traps" instance=ExtResource("3_trap")]
-position = Vector2(240, 200)
+position = Vector2(208, 200)
 
 [node name="SpikeTrap2" parent="Traps" instance=ExtResource("3_trap")]
 position = Vector2(320, 200)
 
 [node name="SpikeTrap3" parent="Traps" instance=ExtResource("3_trap")]
-position = Vector2(400, 200)
+position = Vector2(432, 200)
 
 [node name="Player" parent="." instance=ExtResource("2_player")]
 position = Vector2(96, 150)

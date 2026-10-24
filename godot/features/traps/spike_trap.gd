@@ -26,18 +26,17 @@ signal player_hit
 
 enum State { ARMED, WARNING, FIRING, RETRACTING, COOLDOWN }
 
-## The warning window. 0.30 s per CHANGE-BRIEF.md revision 5.0.2, after the
-## 0.45 s of revision 5.0.1 turned out to make the trap unable to hit a
-## walking player at all.
+## The warning window. 0.40 s per CHANGE-BRIEF.md revision 5.0.3.
 ##
 ## DetectArea's width in spike_trap.tscn is DERIVED from this number:
 ##
 ##     detect half-width = Player.SPEED * WARN_SECONDS - player half-width
-##                       = 96 * 0.30 - 5  =  24 px        (48 px wide)
+##                       = 96 * 0.40 - 5  =  33 px        (66 px wide)
 ##
 ## so a player who keeps walking is centred over the trap when the spikes
-## arrive. Change WARN_SECONDS and that shape has to change with it.
-const WARN_SECONDS := 0.30
+## arrive. Change WARN_SECONDS and that shape has to change with it -
+## test_trap_warning.gd asserts the relationship rather than trusting it.
+const WARN_SECONDS := 0.40
 const FIRE_SECONDS := 0.18
 const RETRACT_SECONDS := 0.22
 const COOLDOWN_SECONDS := 0.60

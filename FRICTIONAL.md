@@ -338,3 +338,64 @@ target line must contain, and fails on drift, on a reference missing from its
 table, and on the file going over 120 lines. It caught both drifted references
 immediately. Same lesson as the renderer check this morning: the fix is to make
 the check mechanical, not to look harder.
+
+---
+
+## 2026-10-24 (later still) — 0.40 s, and a test that did not know what speed it was running at
+
+Tiantong moved the warning from 0.30 s to 0.40 s. `DetectArea` follows by the
+derivation set up in the last entry — 66 px — and that is now **asserted** by
+the suite rather than maintained by hand: one check that the shape equals
+`SPEED × WARN_SECONDS − 5`, another that the three detection zones do not
+overlap. The second one earned itself immediately: at the old 80 px spacing the
+wider zones left 4 px of clearance, so the traps moved to 112 px apart.
+
+### The frame rate the test believed in was wrong
+
+Making that change turned up something worse than the trap bug.
+
+The test read `Engine.max_fps` to work out its frame period. **`--fixed-fps`
+does not set `Engine.max_fps`.** It was zero on every run, so the test fell
+back to 60 and judged all three rates against a 60 fps tolerance:
+
+| Run at | Tolerance used | Should have been | |
+|---|---|---|---|
+| 30 | 0.0167 | 0.0333 | 2× too strict |
+| 60 | 0.0167 | 0.0167 | right by accident |
+| 144 | 0.0167 | 0.0069 | 2.4× too loose |
+
+Everything had passed, so nothing drew attention to it. It surfaced only
+because 0.40 s at 30 fps finally overshot the bogus tolerance and failed — a
+**correct** result failing a **wrong** check. If the duration had stayed at
+0.30 I would still not know.
+
+The measured durations in the last two entries were real. The verdict "within
+one frame of specification" was not reliably earned at 30 or 144.
+
+### Then the fix was wrong too
+
+First attempt: read `--fixed-fps` from `OS.get_cmdline_args()`. It is not there
+— the engine consumes it. Second attempt: measure the delta from the engine
+over two frames. That reported **120 fps** on a `--fixed-fps 144` run.
+
+Not a cap. 1/144 s is 6944.44 µs and Godot works in whole microseconds, so at
+144 the frames are **not uniform**: 0.006944 (144 fps) 35 times in 40,
+0.006667 (150 fps) four times, 0.008 once. 30, 60 and 240 divide evenly into a
+second and are perfectly uniform. My two-frame sample had landed on an outlier.
+
+So: `run-test.sh` exports `TEST_FPS`, the test takes the **modal** delta over
+40 frames, and the two are cross-checked within 1 %. A tolerance derived from
+the wrong number is worse than no tolerance at all, so the test now fails if
+they disagree.
+
+With the real frame periods, R2's tolerance went back to **one frame period**,
+which is what this brief said all along — the 1.5× was slack I had added to
+make a wrong number work.
+
+### What I keep relearning
+
+Three times in two days: the renderer check that would have passed on a dummy
+device, the reference checker that only verified a line number existed, and now
+a frame-rate tolerance computed from a constant nobody set. Each one looked
+green. Each was caught by making the check compute something it could be wrong
+about, not by reading more carefully.

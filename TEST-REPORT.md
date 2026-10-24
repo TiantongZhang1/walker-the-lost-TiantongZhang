@@ -20,9 +20,9 @@ shader work, run from a **fresh clone** of `732b5aa` with one `--import`:
 |---|---|---|---|---|
 | `test_input_map.gd` | 60 | 0 | 5 checks, 0 failures | 0 |
 | `check_assets_3d.gd` | 60 | 0 | ALL CHECKS PASSED (12 measurements) | 0 |
-| `test_trap_warning.gd` | 30 | 0 | 19 checks, 0 failures | 0 |
-| `test_trap_warning.gd` | 60 | 0 | 19 checks, 0 failures | 0 |
-| `test_trap_warning.gd` | 144 | 0 | 19 checks, 0 failures | 0 |
+| `test_trap_warning.gd` | 30 | 0 | 22 checks, 0 failures | 0 |
+| `test_trap_warning.gd` | 60 | 0 | 22 checks, 0 failures | 0 |
+| `test_trap_warning.gd` | 144 | 0 | 22 checks, 0 failures | 0 |
 
 Import errors from a clean clone: **0**.
 
@@ -32,29 +32,55 @@ intact.
 
 ## R2 — frame-rate independence
 
-Specified: **0.30 s** (revision 5.0.2), tolerance one frame period.
+Specified: **0.40 s** (revision 5.0.3), tolerance **one frame period**.
 
-| fps | Measured window | One frame | Within tolerance |
-|---|---|---|---|
-| 30 | **0.300 s** | 0.0333 s | yes |
-| 60 | **0.300 s** | 0.0167 s | yes |
-| 144 | **0.306 s** | 0.0069 s | yes (+0.006 s, under one frame) |
+| fps | Modal delta (of 40 frames) | Window | Tolerance | |
+|---|---|---|---|---|
+| 30 | 0.033333 — 39/40 | **0.433 s** | ±0.0333 | pass |
+| 60 | 0.016667 — 40/40 | **0.417 s** | ±0.0167 | pass |
+| 144 | 0.006944 — 35/40 | **0.403 s** | ±0.0069 | pass |
+
+The overshoot is bounded by one frame because the ramp is checked once per
+`_process`, so the window ends on the first frame at or past `WARN_SECONDS`.
+It shrinks as the frame rate rises, which is what it should do.
+
+**The frames at 144 fps are not uniform.** 1/144 s is 6944.44 µs and Godot
+works in whole microseconds, so the delta alternates between 0.006944 (144 fps)
+and 0.006667 (150 fps) with the occasional 0.008. 30, 60 and 240 divide evenly
+and are uniform. The test takes the modal delta over 40 frames for this reason.
+
+**The frame period itself was wrong until 2026-10-24.** The test read
+`Engine.max_fps`, which `--fixed-fps` does not set, so every run judged itself
+against a 60 fps tolerance — 2× too strict at 30, 2.4× too loose at 144. The
+durations recorded in earlier revisions were real; the verdict "within one
+frame" was not reliably earned. `scripts/run-test.sh` now exports `TEST_FPS`
+and the test cross-checks it against the engine's modal delta within 1 %.
 
 Under `Engine.time_scale = 0.5` the window is unchanged in game time, as R4
 says.
 
 ## F6 — the trap can actually hit someone
 
-The check this suite did not have until 2026-10-24, added because the author
-noticed the trap was firing after the player had already walked past.
+Added 2026-10-24 after the author noticed the trap was firing once the player
+had already walked past.
 
 | | |
 |---|---|
-| Player offset when the trap warns | **−25.6 px** (short of the trap) |
-| Player offset when the spikes arrive | **+3.2 px** (hurt box is ±13) |
+| Player offset when the trap warns | **−33.6 px** (short of the trap) |
+| Player offset when the spikes arrive | **+6.4 px** (hurt box is ±13) |
 | Health | **5 → 4** |
 
-Identical at 30, 60 and 144 fps. **19 checks, 0 failures** at each rate.
+Identical at 30, 60 and 144 fps.
+
+## Geometry — the derivation is asserted, not maintained
+
+| | |
+|---|---|
+| `DetectArea` half-width | 33 px; `SPEED × WARN_SECONDS − 5` = 33.4 px |
+| Detection zones | 175–241, 287–353, 399–465 — no overlap |
+
+Changing `WARN_SECONDS` without changing the shape now fails the suite.
+**22 checks, 0 failures** at each rate.
 
 ## The evidence table
 

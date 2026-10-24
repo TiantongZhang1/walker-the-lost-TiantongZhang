@@ -537,3 +537,69 @@ actually lost. Measured at 30, 60 and 144 fps: **−25.6 px**, **+3.2 px**,
 §6's pixel predictions. They are parameterised by `warn_amount`, not by the
 clock, exactly as revision 5.0.1 said they would be. §7's hint experiment is
 untouched.
+
+---
+
+# Revision 5.0.3 — 2026-10-24 — 0.40 s, and the test was lying about the frame rate
+
+**R2 duration: 0.40 s** (was 0.30 s in 5.0.2, 0.45 s in 5.0.1). **[decided]**
+
+`DetectArea` follows from it, as revision 5.0.2 established it must:
+
+```
+detect half-width = 96 × 0.40 − 5 = 33.4 px        →  66 px wide
+```
+
+Predicted offset when the spikes arrive: **+0.4 px**. Measured: **+6.4 px**,
+inside the ±13 px hurt box.
+
+**Trap spacing 80 px → 112 px** (now at x = 208, 320, 432). At 80 px the 66 px
+detection zones left only 4 px of clear space between them once the player's
+own width was counted; one more increase to `WARN_SECONDS` and they would have
+overlapped, quietly making R6 untestable. The zones are now 175–241, 287–353,
+399–465.
+
+**Two new checks make the derivation self-enforcing**, so this cannot drift
+again by hand:
+
+- `DetectArea`'s half-width must equal `Player.SPEED × WARN_SECONDS − 5`.
+- The three detection zones must not overlap.
+
+## The test had been measuring against the wrong frame rate
+
+Found while making this change, and it invalidates how the earlier R2 numbers
+were judged.
+
+The test read `Engine.max_fps` to learn its frame period. **`--fixed-fps` does
+not set `Engine.max_fps`**, so every run computed its tolerance as if it were
+at 60 fps:
+
+| Run at | Tolerance used | Tolerance it should have used | |
+|---|---|---|---|
+| 30 fps | 0.0167 s | 0.0333 s | **2× too strict** — fails a correct result |
+| 60 fps | 0.0167 s | 0.0167 s | correct by accident |
+| 144 fps | 0.0167 s | 0.0069 s | **2.4× too loose** — passes a wrong one |
+
+The measured durations in revisions 5.0.1 and 5.0.2 were real; the verdict
+"within one frame" was not reliably earned at two of the three rates.
+
+**Also: the frames at 144 fps are not uniform.** 1/144 s is 6944.44 µs and
+Godot works in whole microseconds, so the delta alternates between 0.006944
+(144 fps) and 0.006667 (150 fps), with the occasional 0.008. 30, 60 and 240
+divide evenly and are perfectly uniform. A two-frame sample of the delta at
+144 caught an outlier and reported 120 fps.
+
+**The fix:** `scripts/run-test.sh` exports `TEST_FPS`, because `--fixed-fps` is
+consumed by the engine and never reaches `OS.get_cmdline_args()`. The test
+takes the **modal** delta over 40 frames and asserts the two agree within 1 %.
+
+**R2's tolerance is now one frame period**, as this brief always said — not the
+1.5× the test had been using — plus 1 ms for the 144 fps jitter.
+
+| fps | Modal delta | Window | Tolerance | |
+|---|---|---|---|---|
+| 30 | 0.033333 (39/40 frames) | 0.433 s | ±0.0333 | pass |
+| 60 | 0.016667 (40/40) | 0.417 s | ±0.0167 | pass |
+| 144 | 0.006944 (35/40) | 0.403 s | ±0.0069 | pass |
+
+**22 checks, 0 failures** at each rate.

@@ -21,7 +21,7 @@ so the trap has exactly one material to drive. Three instances sit in the room
 at `godot/game/main.tscn:49`, `:52`, `:55`.
 
 Two Area2Ds, not interchangeable: `DetectArea`
-(`godot/features/traps/spike_trap.tscn:18`) is 48 px and starts the warning,
+(`godot/features/traps/spike_trap.tscn:18`) is 66 px and starts the warning,
 `HurtArea` is 16 px and is the only one that damages. DetectArea's width is
 **derived from `WARN_SECONDS`**, so changing one without the other breaks it.
 
@@ -29,12 +29,12 @@ Two Area2Ds, not interchangeable: `DetectArea`
 
 | | |
 |---|---|
-| The driven value | `var warn_amount: float` — `:51` |
+| The driven value | `var warn_amount: float` — `:50` |
 | State enum | `:27` |
-| Window length | `const WARN_SECONDS := 0.30` — `:40` |
-| What begins the state | `_on_detect_body_entered` — `:126`, wired at `godot/features/traps/spike_trap.tscn:34` |
-| Early end | `disarm()` — `:111` |
-| Test helper | `warning_remaining()` — `:120` |
+| Window length | `const WARN_SECONDS := 0.40` — `:39` |
+| What begins the state | `_on_detect_body_entered` — `:125`, wired at `godot/features/traps/spike_trap.tscn:34` |
+| Early end | `disarm()` — `:110` |
+| Test helper | `warning_remaining()` — `:119` |
 
 `warn_amount` is advanced only by that script. Presentation reads it and must
 never write it.
