@@ -399,3 +399,95 @@ device, the reference checker that only verified a line number existed, and now
 a frame-rate tolerance computed from a constant nobody set. Each one looked
 green. Each was caught by making the check compute something it could be wrong
 about, not by reading more carefully.
+
+---
+
+## 2026-10-24 — I wrote the shader, and the tooling fought me before the language did
+
+Four lines. The language was the easy part; getting the file to exist was not.
+
+My first draft had six errors and Claude listed all six: `shader_typt` for
+`shader_type`; `shader_test_1` where the **mode** goes, because I had read that
+keyword as a name field when it only takes one of five fixed values; a stray
+backtick I had copied along with the Markdown; `==` for `=`; and `warm_` for
+`warn_` in both uniform names while `fragment()` still said `warn_`.
+
+That last one is **F5 from my own §9**, and I wrote it by accident on the first
+try. This time the compiler would have caught it, because `fragment()`
+referenced an undeclared name. The dangerous direction is the other one — had
+the *driver* been the file with the typo, nothing would have reported anything.
+
+Then two dead ends in the editor, both from advice that was wrong about this
+version of Godot:
+
+- FileSystem → right-click → **新建** has only 文件夹 / 场景 / 脚本 / 资源 /
+  文本文件. There is no Shader entry.
+- 文本文件 refuses `.gdshader`: its filter is `*.txt, *.md, *.cfg, *.ini,
+  *.log`, so the dialog answered "扩展名无效".
+
+I made the file outside Godot in the end. Worth writing down because the
+correct in-editor route is not where you would look for it: it is on the
+**node**, not in the file browser — Sprite2D → Inspector → Material → New
+ShaderMaterial → its Shader property → New Shader, and the "Built-in" box must
+stay unchecked or the shader goes inside the `.tscn` and
+`git diff --stat godot/shaders/` can never see it again.
+
+Committed on its own as `f28d2de`, before the driver existed.
+
+### Opening the editor cost two things
+
+`project.godot` lost `renderer/rendering_method` — `ProjectSettings.save()`
+drops every line equal to the engine default, and Forward+ **is** the default.
+The comment above those lines had predicted exactly this. Restored.
+
+And the editor rewrote `spike_trap.tscn` with `uid=` and `unique_id=`
+attributes, moving three nodes down the file. `CLAUDE.md` cited their old line
+numbers. `tools/check_claude_refs.py` caught all three by content — then caught
+them again when adding the driver node shifted them a second time. Five and six
+on its tally. I have still never caught one by reading.
+
+### The two mutations, and which one frightened me
+
+| | semicolon deleted | uniform renamed |
+|---|---|---|
+| `SHADER ERROR` | 2 lines | **none** |
+| `test_trap_warning.gd` | 22/0, exit **1** | 22/0, exit **0** |
+| `test_trap_shader_driver.gd` | 4 failures, exit 1 | 2 failures, exit 1 |
+
+The first one is the textbook case and the suite handled it. But look at the
+second row: **the state suite passed all 22 of its own checks against a shader
+that did not parse.** It only failed because `run-test.sh` greps for
+`SHADER ERROR`, which Godot prints while exiting 0. I had copied that grep out
+of the assignment without really believing it was load-bearing.
+
+Mutation 2 is worse and quieter. The shader compiles, nothing is printed, the
+state suite exits 0, and the trap simply never turns red. What still passed:
+
+```
+PASS  the uniform never differed from the state in any frame  [worst gap 0.000000000]
+```
+
+Perfect agreement, on a trap that cannot light up. `get_shader_parameter`
+returns what the *material* stored; it never asks the shader whether anything
+reads it. A set-then-get test would have called this healthy — which is the
+failure the assignment lists under "What the agent is likely to get wrong",
+reproduced here on purpose.
+
+### A decision about scope, mine
+
+I asked whether this repository should be carrying across the art and audio
+from `walker-ninja` — eight character poses, four sound effects, a music loop —
+instead of the code-drawn blocks it uses now. It should: the assignment says
+"you build one game" and that Assignments 3–10 each add a layer, so whatever is
+missing now stays missing through A10.
+
+**But not during Assignment 5.** The brief's own boundaries put the player,
+the HUD and the audio outside this change, and "boundaries kept" is a scored
+line. Porting them now would buy a prettier film at the cost of the thing the
+film is about. So: finish A5, tag it, submit it, and port the art and audio
+immediately afterwards as the first work of Assignment 6.
+
+One thing does **not** come across even then. The trap's sprite stays
+code-drawn, because §6 fixed its two pixels before anything was drawn and the
+predictions describe the sprite rather than the reverse. Swapping it would
+void the measurement this assignment is built on.
