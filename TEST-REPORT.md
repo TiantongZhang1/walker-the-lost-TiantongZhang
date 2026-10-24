@@ -231,8 +231,15 @@ Forward+/Mobile assumption their predictions are written under.
    accepted price of "every trigger gets its own warning" and is recorded in
    `CHANGE-BRIEF.md` revision 5.0.1 rather than discovered later. A cooldown on
    re-entry would fix it and is not in scope here.
-3. **The player has move and jump only.** No combat, no magic, no dodge roll.
-   Deliberate: the brief's boundaries say movement and input do not change.
+3. **The player has move and jump only, and the slice has no audio.** No
+   combat, no magic, no dodge roll; the sprites are code-drawn blocks. The
+   art and audio from `walker-ninja` — eight character poses, four sound
+   effects, a music loop, all with provenance already recorded there — are
+   **not** carried across in this revision. Deliberate, and dated 2026-10-24
+   in `FRICTIONAL.md`: the player, the HUD and the audio are outside this
+   change's boundaries, and the port happens after `a5` is tagged, as the
+   first work of Assignment 6. The trap's sprite stays code-drawn
+   permanently, because §6's predictions were computed before it was drawn.
 4. **No human check has been performed yet.** Every HUMAN row above is
    outstanding. A passing headless suite establishes that the state behaves;
    it establishes nothing about what the screen shows.
