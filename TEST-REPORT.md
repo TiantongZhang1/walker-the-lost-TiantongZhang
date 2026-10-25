@@ -480,6 +480,10 @@ Forward+/Mobile assumption their predictions are written under.
    change's boundaries, and the port happens after `a5` is tagged, as the
    first work of Assignment 6. The trap's sprite stays code-drawn
    permanently, because §6's predictions were computed before it was drawn.
-4. **No human check has been performed yet.** Every HUMAN row above is
-   outstanding. A passing headless suite establishes that the state behaves;
-   it establishes nothing about what the screen shows.
+4. **The human checks are done except one judgement.** Four of the five
+   HUMAN rows are measured and recorded above. What is left is not a
+   measurement: whether any setting in the interface sweep *breaks* the
+   look rather than merely changing it. Sixteen PNGs are in
+   `captures/a5/materials/` and the author has not yet written a verdict on
+   them. A passing headless suite establishes that the state behaves; it
+   establishes nothing about what the screen shows.
