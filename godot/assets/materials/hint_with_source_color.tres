@@ -1,0 +1,22 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3]
+
+; CHANGE-BRIEF.md section 7, the quad that DOES decode.
+;
+; Both samplers are bound to the same file. The only difference between this
+; material and hint_without_source_color.tres is the bool: this one reads
+; through the sampler declared `source_color, filter_nearest`.
+;
+; Predicted on screen: 64, 128, 192 - the file's own values, unchanged.
+; Sampling decodes sRGB -> linear, the unshaded shader hands that straight to
+; ALBEDO, and the display encodes linear -> sRGB. The two are inverses.
+
+[ext_resource type="Shader" path="res://shaders/hint_bands.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" path="res://assets/textures/hint_bands.png" id="2_bands"]
+
+[resource]
+resource_name = "hint_with_source_color"
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/bands_srgb = ExtResource("2_bands")
+shader_parameter/bands_data = ExtResource("2_bands")
+shader_parameter/use_source_color = true

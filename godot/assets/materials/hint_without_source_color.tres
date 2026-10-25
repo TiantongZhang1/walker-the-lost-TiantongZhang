@@ -1,0 +1,23 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3]
+
+; CHANGE-BRIEF.md section 7, the quad that does NOT decode.
+;
+; Same shader, same file in both sampler slots, same everything - except the
+; bool, which routes the read through the sampler declared `filter_nearest`
+; with no source_color.
+;
+; Predicted on screen: 137, 188, 225. That sampler never decodes, so the
+; stored value is handed to ALBEDO as though it were already linear and the
+; display encodes it anyway: one encode too many. 64 -> 137 is the largest
+; error and the band to look at first.
+
+[ext_resource type="Shader" path="res://shaders/hint_bands.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" path="res://assets/textures/hint_bands.png" id="2_bands"]
+
+[resource]
+resource_name = "hint_without_source_color"
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/bands_srgb = ExtResource("2_bands")
+shader_parameter/bands_data = ExtResource("2_bands")
+shader_parameter/use_source_color = false
