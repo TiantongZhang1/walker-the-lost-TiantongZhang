@@ -9,21 +9,23 @@ Every fact carries the file it came from. Check them; do not trust them.
 | Fact | Value | Reference |
 |---|---|---|
 | Engine | Godot **4.7.2.stable.official** `ed1daf0bf` | banner printed by every `scripts/run-test.sh` run |
-| Renderer | **Forward+** | `godot/project.godot:63`, and `config/features` at `:15` |
+| Renderer | **Forward+** | `godot/project.godot:15` (`config/features`). Not `rendering_method`: it equals the default, so editor saves delete it |
 | Main scene | `res://game/main.tscn` | `godot/project.godot:14` |
 | Logical resolution | 640 × 360, nearest-neighbour filtering | `godot/project.godot:19`, `:59` |
 | Scale | 16 px = 1 m | `godot/features/player/player.gd:13` |
 
-**The object the colour effect changes.** A spike trap, drawn by one `Sprite2D`
-child of the trap's `Node2D` root — `godot/features/traps/spike_trap.tscn:22`.
-It is one sprite, not two: firing swaps the texture rather than moving a child,
-so the trap has exactly one material to drive. Three instances sit in the room
-at `godot/game/main.tscn:50`, `:52`, `:55`.
+**Scenes are referenced by node name, never by line.** An editor save
+rewrites a `.tscn`: it renumbers nodes, strips `;` comments and drops any
+property equal to its default. Names survive; `tools/check_claude_refs.py`
+asserts them.
 
-Two Area2Ds, not interchangeable: `DetectArea`
-(`godot/features/traps/spike_trap.tscn:26`) is 66 px and starts the warning,
-`HurtArea` is 16 px and is the only one that damages. DetectArea's width is
-**derived from `WARN_SECONDS`**, so changing one without the other breaks it.
+**The object the colour effect changes.** A spike trap in
+`godot/features/traps/spike_trap.tscn`, drawn by one `Sprite2D` — one sprite,
+not two, because firing swaps the texture rather than moving a child, so there
+is exactly one material to drive. `SpikeTrap1/2/3` sit in
+`godot/game/main.tscn`. Two Area2Ds there, not interchangeable: `DetectArea`
+is 66 px and starts the warning, `HurtArea` is 16 px and is the only one that
+damages. DetectArea's width is **derived from `WARN_SECONDS`**.
 
 **The script that owns the game state.** `godot/features/traps/spike_trap.gd`.
 
@@ -32,31 +34,30 @@ Two Area2Ds, not interchangeable: `DetectArea`
 | The driven value | `var warn_amount: float` — `:50` |
 | State enum | `:27` |
 | Window length | `const WARN_SECONDS := 0.40` — `:39` |
-| What begins the state | `_on_detect_body_entered` — `:125`, wired at `godot/features/traps/spike_trap.tscn:45` |
 | Early end | `disarm()` — `:110` |
 | Test helper | `warning_remaining()` — `:119` |
+| What begins the state | `_on_detect_body_entered` — `:125`, wired to `DetectArea` in the scene |
 
 `warn_amount` is advanced only by that script. Presentation reads it and must
 never write it.
 
-**The thing that reads it.** `godot/features/traps/trap_warning_driver.gd`, a
-child `Node` of each trap (`godot/features/traps/spike_trap.tscn:42`), tested
-by `godot/tests/test_trap_shader_driver.gd`. It duplicates the
-`ShaderMaterial` in `_ready()` — sub-resources are shared across scene
-instances, so without that all three traps warn together — and writes one
-uniform at `process_priority = 100`, after the state machine.
+**The thing that reads it.** `godot/features/traps/trap_warning_driver.gd`,
+the `WarningDriver` child of each trap, tested by
+`godot/tests/test_trap_shader_driver.gd`. It duplicates the `ShaderMaterial`
+in `_ready()` — sub-resources are shared across scene instances, so otherwise
+all three warn together — and writes one uniform at `process_priority = 100`.
 
 **The player.** `godot/features/player/player.gd` — move and jump only, plus
 `take_damage()` at `:42`. Combo, magic and roll are absent on purpose.
 
-**The 3D object for the textured shader.** The slime in
-`godot/scenes/asset_showcase.tscn:65`, from `res://assets/models/slime.glb`;
-the scene also holds a `WorldEnvironment` (`:42`), a `DirectionalLight3D`
-named `Sun` (`:49`) and a `Camera3D` (`:54`). **Its material today comes from
-the imported `.glb`** — no `.tres` override exists yet.
+**The 3D objects for the textured shader.** Two slimes in
+`godot/scenes/asset_showcase.tscn`. `Slime` takes `stone_dry.tres` **from the
+importer** (`use_external` on `A3_SlimeBody` in `slime.glb.import`, so a
+reimport keeps it); `SlimeFlooded` overrides the node with
+`stone_flooded.tres`. Same geometry, same light — `Sun` is energy 1.0, which
+being the default is not written in the file. `CameraMaterials` frames both.
 
-**Test commands.** Always through the wrapper; it is the only thing that fails
-on a `SHADER ERROR` or `SCRIPT ERROR` that Godot prints while still exiting 0.
+**Test commands.** Always through the wrapper: it is the only thing that fails on a `SHADER ERROR` or `SCRIPT ERROR`, which Godot prints while exiting 0.
 
 ```bash
 godot --headless --path godot --import     # once after cloning
@@ -71,11 +72,9 @@ the wrapper resolves it relative to the repository and `GODOT=` overrides it —
 
 ### Headless facts
 
-- A headless run uses a **dummy renderer and draws nothing**. It can show that
-  a shader parses, what it declares, and what a float was on a given frame —
-  nothing about colour, contrast or look.
-- It does **not** report uniform defaults. Assert names, types and hints with
-  `get_shader_uniform_list()`; read defaults from the shader source text.
+- A headless run uses a **dummy renderer and draws nothing**. It can show a
+  shader parses, what it declares, and a float on a given frame — never colour.
+- It does **not** report uniform defaults. Assert names, types and hints with `get_shader_uniform_list()`; read defaults from the shader source.
 - Never add `--rendering-driver` to a test command.
 - Sample a uniform from a high-`process_priority` node, so it reads after every
   other `_process()` in the frame — `godot/tests/test_trap_warning.gd:33`.
@@ -115,5 +114,5 @@ movement and input do not change. Presentation reads game state, never writes.
   not clamp a value set from code. `TEST-REPORT.md`, `captures/a5/`.
 - Drafted by the session that built the repository, not a cold agent: more
   accurate, and so a weaker thing for a human review to test.
-  `tools/check_claude_refs.py` asserts every reference above by content, and
-  has now caught five that drifted when the editor rewrote a scene.
+  `tools/check_claude_refs.py` asserts all 45 claims above. It has caught
+  seventeen, three of which a bare `:NN` had hidden from it.

@@ -57,9 +57,4 @@ jump={
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
-; Stated explicitly although Forward+ is the engine default, so that
-; project.godot NAMES its renderer. ProjectSettings.save() drops lines
-; equal to the default, so the editor may remove these again.
-renderer/rendering_method="forward_plus"
-renderer/rendering_method.mobile="mobile"
 environment/defaults/default_clear_color=Color(0.09, 0.08, 0.105, 1)

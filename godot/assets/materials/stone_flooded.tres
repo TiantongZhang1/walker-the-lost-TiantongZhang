@@ -1,0 +1,31 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=3]
+
+; CHANGE-BRIEF.md section 8, the flooded column. Floor 1's dungeon below the
+; waterline: the same stone, standing in water.
+;
+; Three values differ from stone_dry.tres, which is one more than the
+; assignment requires:
+;
+;   water_darkening  0.0  -> 0.55   the mask now darkens ALBEDO where it pools
+;   water_roughness  0.85 -> 0.08   wet stone reflects sharply; dry does not
+;   tint             white -> (0.85, 1.0, 0.90)
+;
+; The tint is the brief's "slightly green-shifted". The exact numbers are
+; chosen here, not in the brief: red down 15 %, blue down 10 %, green left
+; alone - enough to read as standing water without turning the stone into a
+; different rock.
+
+[ext_resource type="Shader" path="res://shaders/dungeon_surface.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" path="res://assets/textures/stone_albedo.png" id="2_albedo"]
+[ext_resource type="Texture2D" path="res://assets/textures/wetness_mask.png" id="3_mask"]
+
+[resource]
+resource_name = "stone_flooded"
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/stone_albedo = ExtResource("2_albedo")
+shader_parameter/wetness_mask = ExtResource("3_mask")
+shader_parameter/tint = Color(0.85, 1, 0.9, 1)
+shader_parameter/roughness_dry = 0.85
+shader_parameter/water_darkening = 0.55
+shader_parameter/water_roughness = 0.08
