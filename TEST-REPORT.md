@@ -1,6 +1,6 @@
 # TEST-REPORT.md — Assignment 5
 
-**Source revision:** `051fd21`+ · **Godot** 4.7.2.stable.official `ed1daf0bf` ·
+**Source revision:** `244e766`+ · **Godot** 4.7.2.stable.official `ed1daf0bf` ·
 **Renderer** Forward+ *(confirmed on hardware 2026-10-24)* · **OS** Windows 11
 
 Every row below is either a recorded result or an explicit **not yet**. Nothing
@@ -275,22 +275,102 @@ pixel moves, with nothing announcing it. `get_viewport().get_texture()` reads
 the rendered frame before any of that applies. One agreeing sample is not
 evidence that a method is sound; it is evidence that it was sound once.
 
+## Part 3 - the textured shader, the materials, the hint experiment
+
+`test_materials.gd`: **48 checks, 0 failures**, run from a **fresh cache** -
+`godot/.godot` deleted, reimported, **0 import errors**. `.import` files are
+parsed with `ConfigFile`, and an *absent* key fails as well as a wrong one,
+because absent means the importer used its own default and the file never
+said so.
+
+The full audit - every material's uniform values, every sampler's hints, six
+findings - is `godot/MATERIALS.md`.
+
+### The hint experiment, measured
+
+Real windowed run, Forward+ on an RTX 5080, 2026-10-25. Scene:
+`godot/scenes/hint_experiment.tscn`; capture and report in `captures/a5/`.
+
+| Stored in the file | With `source_color` | Predicted | Without | Predicted |
+|---|---|---|---|---|
+| 64 | **64** | 64 | **137** | 137 |
+| 128 | **128** | 128 | **188** | 188 |
+| 192 | **192** | 192 | **225** | 225 |
+
+**All six exact.** §7's reasoning holds: the decoding sampler and the display
+encode are inverses, so the number that comes out is the number that went in;
+the other sampler never decodes, the display encodes anyway, and every band
+is one sRGB encode too bright.
+
+`capture_hint.gd` asserts the pipeline rather than reading the `.tscn` for it
+- Linear tonemap, exposure 1.0, glow / fog / volumetric fog / adjustments /
+SSAO / SSR / SDFGI off, no light, `render_mode unshaded`. Every one of those
+is a default value, so none is written to the scene file and reading it would
+prove nothing.
+
+### The third mutation, done twice
+
+§7 and §8 each have a colour sampler, so both were mutated.
+
+| | **3a** `bands_srgb` | **3b** `stone_albedo` |
+|---|---|---|
+| Edit | `source_color` deleted from the hint shader's colour sampler | deleted from the textured shader's |
+| `SHADER ERROR` | **0** | **0** |
+| `get_shader_uniform_list()` | **unchanged** | **unchanged** |
+| `test_materials.gd` | 48 checks, **1 failure**, exit **1** | 48 checks, **1 failure**, exit **1** |
+| The failing check | `bands_srgb declares source_color` | `F4  the COLOUR sampler declares source_color` |
+
+**3a also broke the measurement, visibly.** With the hint deleted the capture
+read **137, 188, 225 on both quads**: the two sides of the experiment became
+identical and its entire result disappeared. That capture is
+`evidence/a5-mutations/mutation3a-hint-sampler_capture.png`.
+
+Both restored afterwards; `git diff HEAD -- godot/shaders/` prints nothing.
+
+### Why three different checks, not one
+
+| Mutation | `SHADER ERROR` | Caught by |
+|---|---|---|
+| 1 - semicolon deleted | 2 lines | the wrapper's grep, **and** an empty uniform list |
+| 2 - uniform renamed | none | **only** the uniform-list assertion |
+| 3 - `source_color` deleted from a sampler | none | **only** the shader source text |
+
+No one of those three catches the other two. Mutation 3 is invisible to the
+uniform list because **the engine does not report `source_color` on a sampler
+at all** - `stone_albedo` and `wetness_mask` both come back as type 24, hint
+17, `"Texture2D"`, identical. On a `vec3` the same keyword *is* visible,
+which is what makes the sampler case easy to assume away. `test_materials.gd`
+asserts that blindness directly, so a later rewrite that replaces the
+source-text check with a uniform-list one fails loudly.
+
+### Import settings
+
+**The editor rewrote none of them.** It has now been opened on this project
+several times, including sessions that drew the 3D scene. The only `.import`
+change in the whole assignment is the `use_external` block this work added to
+`slime.glb.import` by hand.
+
+That is not luck: every texture carries `detect_3d/compress_to=0`, set when
+the textures were written, which is the setting that otherwise makes the
+editor rewrite `compress/mode` the first time a texture is drawn in 3D. There
+is no editor-written diff to explain.
+
 ## The evidence table
 
 | Check | Status |
 |---|---|
 | Baseline | **done** — above |
-| Shaders parse | **partial** — `trap_warning.gdshader` parses, with uniform-list assertions, and no `SHADER ERROR` line in any run. The spatial shader does not exist yet. |
-| Both shader mutations exit 1 (semicolon, rename) | **done** — above. The third mutation, `source_color` on the spatial shader's colour sampler, waits on that shader. |
+| Shaders parse | **done** — all three parse, with uniform-list assertions for each and no `SHADER ERROR` line in any passing run. |
+| All shader mutations exit 1 | **done** — four: semicolon, rename, and `source_color` deleted from each of the two colour samplers. |
 | Driver sampled at 30/60/144 through a real event, incl. retrigger | **partial** — the uniform now is, at all three rates, through a walk-in trigger: 408 pairs, worst gap 0.000000000. **Retrigger is checked on the state only** (`test_trap_warning.gd` R3); no scenario yet samples the uniform across a restart. |
 | Controlled values (HUMAN) | **done** — all eight exact, and the OS-screenshot comparison is recorded above with which one is trusted and why. |
 | In play (HUMAN) | **done** — played 2026-10-24; 0.40 s judged enough to react; R6 holds in a live frame. |
-| Hint experiment (HUMAN) | **not yet** |
+| Hint experiment (HUMAN) | **done** — all six bands exact, above; capture in `captures/a5/`. |
 | Interface sweep (HUMAN) | **not yet** |
 | One shader, two materials (HUMAN) | **not yet** |
-| Material wiring after fresh import; `source_color` mutation exits 1 | **not yet** |
+| Material wiring after fresh import; `source_color` mutation exits 1 | **done** — 48 checks from an empty cache, and both colour-sampler mutations exit 1. |
 | Texture data — curl ratio | **not applicable as planned** — the brief's material plan uses code-written colour and data textures and no normal map. If that changes, the calibration pair comes with it. |
-| Import settings — `.import` diffs the editor rewrote | **not yet** — the editor has not been opened on this project |
+| Import settings | **done** — the editor rewrote **none**; `detect_3d/compress_to=0` is why. Explained above. |
 
 ## Renderer, confirmed
 

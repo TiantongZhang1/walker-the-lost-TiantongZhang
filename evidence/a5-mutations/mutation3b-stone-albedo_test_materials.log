@@ -1,0 +1,70 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+
+-- dungeon_surface.gdshader, as declared --
+PASS      the shader loads
+PASS      shader_type is spatial   [mode=0]
+PASS      declares stone_albedo
+PASS      declares wetness_mask
+PASS      declares tint
+PASS      declares roughness_dry
+PASS      declares water_darkening
+PASS      declares water_roughness
+PASS      both textures are sampler uniforms
+PASS      tint is a source_color vec3 (TYPE_COLOR, COLOR_NO_ALPHA)   [type=20 hint=21]
+PASS      all three floats carry hint_range(0.0, 1.0)   [3 of 3]
+PASS      at least two group_uniforms groups
+FAIL  F4  the COLOUR sampler declares source_color   [uniform sampler2D stone_albedo :filter_linear_mipmap;]
+PASS  F4  the DATA sampler does NOT declare source_color   [uniform sampler2D wetness_mask : filter_linear_mipmap, hint_default_black;]
+PASS      both samplers set a filter explicitly
+
+-- the engine cannot see source_color on a sampler --
+PASS      the two samplers are INDISTINGUISHABLE to get_shader_uniform_list   [type=24 hint=17 Texture2D for both]
+PASS      therefore F4 is checked by reading the source, above
+
+-- hint_bands.gdshader --
+PASS      the shader loads
+PASS      shader_type is spatial
+PASS      render_mode unshaded
+PASS      declares both samplers and the bool
+PASS      use_source_color is a bool
+PASS      bands_srgb declares source_color
+PASS      bands_data does NOT
+PASS      both are filter_nearest - a 3-texel image must not be blended
+
+-- one shader, two materials --
+PASS      both materials load
+PASS      both reference the SAME Shader object   [res://shaders/dungeon_surface.gdshader]
+PASS      they differ in exactly tint, water_darkening, water_roughness   [["tint", "water_darkening", "water_roughness"]]
+PASS      stone_dry matches section 8   [water_darkening=0.00, water_roughness=0.85]
+PASS      stone_dry binds both textures
+PASS      stone_flooded matches section 8   [water_darkening=0.55, water_roughness=0.08]
+PASS      stone_flooded binds both textures
+
+-- the hint pair: same file, same shader, one bool apart --
+PASS      both load
+PASS      same Shader object
+PASS      the bool differs, true then false
+PASS      all four sampler slots hold the SAME file   [res://assets/textures/hint_bands.png]
+
+-- import settings, parsed with ConfigFile --
+PASS      stone_albedo.png.import   [compress/mode=2, compress/normal_map=2, mipmaps/generate=true]
+PASS      wetness_mask.png.import   [compress/mode=0, compress/normal_map=2, mipmaps/generate=true]
+PASS      hint_bands.png.import   [compress/mode=0, compress/normal_map=2, mipmaps/generate=false]
+
+-- what hint_bands.png actually stores --
+PASS      the file loads
+PASS      it is 3 x 1   [(3, 1)]
+PASS      texels are 64, 128, 192 as section 7 predicts from   [[64, 128, 192]]
+
+-- how the material reaches the mesh --
+PASS      slime.glb.import sets use_external on A3_SlimeBody
+PASS      it points at stone_dry.tres
+PASS      the imported model has a Slime_Body mesh
+PASS      its surface material IS stone_dry.tres, after import   [res://assets/materials/stone_dry.tres]
+PASS      the showcase holds a second slime
+PASS      its body is overridden with stone_flooded.tres   [res://assets/materials/stone_flooded.tres]
+
+48 checks, 1 failure
+Proves: declared interfaces, resource wiring and import settings.
+Proves nothing about look - see captures/a5/ for that.
