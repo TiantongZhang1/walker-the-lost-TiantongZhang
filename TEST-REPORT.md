@@ -224,6 +224,57 @@ its three channels go negative before the write to `COLOR.rgb` clamps them,
 so a real extrapolation produces pure `255, 0, 0` — which is what was
 measured. A clamp at 1.0 would have produced `214, 60, 47`.
 
+## In play, and the OS-screenshot comparison
+
+**The author played the slice on 2026-10-24** — walked into all three traps
+with A/D and jump, repeatedly, and judged the warning:
+
+> **0.40 s is enough time to react.**
+
+So revision 5.0.3's duration stands, and §11's open question ("whether 0.40 s
+is actually enough warning … cannot be made before the slice is playable")
+closes. It was unanswerable until today, because the red did not exist.
+
+`captures/a5/os-screenshot_in-play.png` is an OS screenshot of one live frame
+during that session, taken by hand with Snipping Tool. It was not posed: it
+caught trap 1 mid-strike with the player already past it.
+
+### R6, proved again without any instrument
+
+Three traps in one real frame, sampled out of that screenshot:
+
+| Trap | Measured | |
+|---|---|---|
+| 1 | `214, 60, 47` — all 28 sampled pixels, one value | `warn_amount` = 1.0 |
+| 2 | `138, 144, 161` and `42, 42, 51` | `warn_amount` = 0.0 |
+| 3 | `138, 144, 161` and `42, 42, 51` | `warn_amount` = 0.0 |
+
+Traps 2 and 3 are reading §6's `warn_amount = 0.0` row exactly. This is F1
+failing to happen in ordinary play, with no capture rig, no headless run and
+no synthesized input — the strongest form of that evidence in this report.
+
+### Engine capture against OS screenshot
+
+| | Pixel colour |
+|---|---|
+| In-engine capture at `warn_amount` = 1.0 | `214, 60, 47` |
+| OS screenshot, live frame | **`214, 60, 47`** — 728 pixels, a single value |
+
+**They agree exactly, which was not expected** — the assignment warns that an
+OS screenshot goes through the display colour profile and desktop scaling.
+Here it did not: 100 % scaling, an sRGB profile with no transform, no HDR, and
+nearest filtering at an integer 2× means the tool copied framebuffer values
+through unchanged. There is no anti-aliasing in the sample either; 728 pixels
+share one value.
+
+**Which is trusted: the engine capture.** Not because the screenshot was
+wrong this time, but because its being right depended on four conditions that
+are properties of this desktop rather than of the game. Change the scaling,
+enable HDR, attach a wide-gamut display or switch capture tools and the same
+pixel moves, with nothing announcing it. `get_viewport().get_texture()` reads
+the rendered frame before any of that applies. One agreeing sample is not
+evidence that a method is sound; it is evidence that it was sound once.
+
 ## The evidence table
 
 | Check | Status |
@@ -232,8 +283,8 @@ measured. A clamp at 1.0 would have produced `214, 60, 47`.
 | Shaders parse | **partial** — `trap_warning.gdshader` parses, with uniform-list assertions, and no `SHADER ERROR` line in any run. The spatial shader does not exist yet. |
 | Both shader mutations exit 1 (semicolon, rename) | **done** — above. The third mutation, `source_color` on the spatial shader's colour sampler, waits on that shader. |
 | Driver sampled at 30/60/144 through a real event, incl. retrigger | **partial** — the uniform now is, at all three rates, through a walk-in trigger: 408 pairs, worst gap 0.000000000. **Retrigger is checked on the state only** (`test_trap_warning.gd` R3); no scenario yet samples the uniform across a restart. |
-| Controlled values (HUMAN) | **done** — above, all eight exact. **The OS-screenshot comparison the assignment also asks for is still outstanding.** |
-| In play (HUMAN) | **partial** — the red has now been seen on screen, but only as the rig's four-frame sweep. Nobody has walked into a trap and judged whether 0.40 s is enough warning. |
+| Controlled values (HUMAN) | **done** — all eight exact, and the OS-screenshot comparison is recorded above with which one is trusted and why. |
+| In play (HUMAN) | **done** — played 2026-10-24; 0.40 s judged enough to react; R6 holds in a live frame. |
 | Hint experiment (HUMAN) | **not yet** |
 | Interface sweep (HUMAN) | **not yet** |
 | One shader, two materials (HUMAN) | **not yet** |

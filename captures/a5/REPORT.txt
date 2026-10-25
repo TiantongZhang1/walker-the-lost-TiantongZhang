@@ -1,5 +1,5 @@
 === controlled-value capture, trap 1 ===
-  when     : 2026-10-24T19:56:26
+  when     : 2026-10-24T20:21:17
   engine   : 4.7.2-stable (official)
   renderer : NVIDIA GeForce RTX 5080 Laptop GPU
   viewport : (640.0, 360.0)

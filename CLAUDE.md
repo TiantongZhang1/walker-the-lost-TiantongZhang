@@ -109,10 +109,10 @@ movement and input do not change. Presentation reads game state, never writes.
 
 - ~~Forward+ untried on real hardware.~~ **Confirmed 2026-10-24**: Vulkan
   1.4.357, RTX 5080 Laptop, 1280 × 720. Evidence in `TEST-REPORT.md`.
-- Whether 0.40 s is enough warning to react to is unjudged; nobody has played
-  the slice, and no run has drawn the red at all.
-- Whether `source_color` changes the value the shader *receives* is predicted
-  both ways in `CHANGE-BRIEF.md` §6; only a capture settles it.
+- ~~Whether 0.40 s is enough warning.~~ **Played 2026-10-24: it is.**
+- ~~Whether `source_color` changes the value the shader *receives*.~~
+  **Measured 2026-10-24: it does not** (H1, exact), and `hint_range` does
+  not clamp a value set from code. `TEST-REPORT.md`, `captures/a5/`.
 - Drafted by the session that built the repository, not a cold agent: more
   accurate, and so a weaker thing for a human review to test.
   `tools/check_claude_refs.py` asserts every reference above by content, and
