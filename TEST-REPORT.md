@@ -355,6 +355,55 @@ the textures were written, which is the setting that otherwise makes the
 editor rewrite `compress/mode` the first time a texture is drawn in 3D. There
 is no editor-written diff to explain.
 
+### The interface sweep
+
+`capture_materials.gd`, real windowed run 2026-10-25, under §8's lighting:
+one `DirectionalLight3D` at energy 1.0, ambient 0.25, SSAO off. Each of the
+four uniforms set to minimum, shipped value and maximum **on
+`stone_flooded.tres` only**, one PNG per step in `captures/a5/materials/`.
+The number is the mean colour of that slime's middle region.
+
+| Uniform | min | shipped | max |
+|---|---|---|---|
+| `tint` | `43, 46, 42` at black | `53, 62, 58` at `(0.85, 1, 0.9)` | `57, 62, 61` at white |
+| `roughness_dry` | **`32, 43, 39`** at 0.00 | `53, 62, 58` at 0.85 | `52, 60, 56` at 1.00 |
+| `water_darkening` | `56, 65, 61` at 0.00 | `53, 62, 58` at 0.55 | `51, 59, 55` at 1.00 |
+| `water_roughness` | `53, 61, 57` at 0.00 | `53, 62, 58` at 0.08 | **`41, 50, 46`** at 1.00 |
+
+**The dry slime read `50, 56, 55` in all twelve rows, unchanged to the
+count.** One material was being driven and only its object moved — twelve
+independent demonstrations of it, not one.
+
+**The setting that changes the look most is `roughness_dry = 0.0`**, and it
+changes it in the direction that surprises: the stone gets *darker*, not
+shinier. At roughness 0 the surface is a mirror, and what it has to reflect
+is a near-black background, so the diffuse response it had is replaced by a
+reflection of nothing. `water_roughness = 1.0` darkens for the mirror-image
+reason: the sharp highlight that made wet stone read as wet is gone.
+
+**What this measure cannot show.** It is a mean over a region, so it
+flattens local contrast — `water_darkening` at 1.00 moves the mean by only 5
+counts even though the mortar channels darken a great deal, because the
+channels are a small fraction of the visible area. Whether any of these
+*breaks* the look rather than merely changing it is a judgement from the
+PNGs, and it is the author's.
+
+### One shader, two materials
+
+| | |
+|---|---|
+| Edit | `stone_flooded.water_darkening` 0.55 → 0.00, at run time, nothing else touched |
+| Flooded slime | `53, 62, 58` → `56, 65, 61` — **moved 3** |
+| Dry slime | `50, 56, 55` → `50, 56, 55` — **moved 0** |
+
+One material changed; only its object moved. Both materials still reference
+the same `Shader` resource, which `test_materials.gd` asserts by object
+identity, not by path string.
+
+**The other half of this check is outstanding**: edit one line of the
+*shader* and record that **both** objects change. That needs a `.gdshader`
+edit and so belongs to the author.
+
 ## The evidence table
 
 | Check | Status |
@@ -366,8 +415,8 @@ is no editor-written diff to explain.
 | Controlled values (HUMAN) | **done** — all eight exact, and the OS-screenshot comparison is recorded above with which one is trusted and why. |
 | In play (HUMAN) | **done** — played 2026-10-24; 0.40 s judged enough to react; R6 holds in a live frame. |
 | Hint experiment (HUMAN) | **done** — all six bands exact, above; capture in `captures/a5/`. |
-| Interface sweep (HUMAN) | **not yet** |
-| One shader, two materials (HUMAN) | **not yet** |
+| Interface sweep (HUMAN) | **measured** — all four uniforms at min/default/max, above, with a PNG each. The judgement of what breaks the look is the author's and is still outstanding. |
+| One shader, two materials (HUMAN) | **half done** — one material value moved only its own object, measured above. The shader-edit half, where both must move, is outstanding. |
 | Material wiring after fresh import; `source_color` mutation exits 1 | **done** — 48 checks from an empty cache, and both colour-sampler mutations exit 1. |
 | Texture data — curl ratio | **not applicable as planned** — the brief's material plan uses code-written colour and data textures and no normal map. If that changes, the calibration pair comes with it. |
 | Import settings | **done** — the editor rewrote **none**; `detect_3d/compress_to=0` is why. Explained above. |
