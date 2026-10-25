@@ -1,56 +1,30 @@
-[gd_scene load_steps=6 format=3]
-
-; CHANGE-BRIEF.md section 7. Two quads, one shader, two materials; the only
-; difference between them is which sampler writes ALBEDO.
-;
-; Comments in a .tscn do not survive an editor save, so what this scene is for
-; is written in MATERIALS.md, and test_materials.gd asserts the Environment's
-; settings rather than trusting that they are still written here.
-;
-; Conditions the measurement depends on, all set below and all asserted:
-;   tonemap Linear at exposure 1.0   - any other curve rewrites the values
-;   glow, fog, adjustments off       - each one would add to them
-;   ambient off, shader unshaded     - no light may scale ALBEDO
-;   orthogonal camera, quads flat on - no perspective foreshortening
+[gd_scene format=3 uid="uid://bbno8hdx6t1pm"]
 
 [ext_resource type="Material" path="res://assets/materials/hint_with_source_color.tres" id="1_with"]
 [ext_resource type="Material" path="res://assets/materials/hint_without_source_color.tres" id="2_without"]
 
 [sub_resource type="Environment" id="Environment_hint"]
 background_mode = 1
-background_color = Color(0, 0, 0, 1)
-ambient_light_source = 0
-tonemap_mode = 0
-tonemap_exposure = 1.0
-tonemap_white = 1.0
-ssr_enabled = false
-ssao_enabled = false
-ssil_enabled = false
-sdfgi_enabled = false
-glow_enabled = false
-fog_enabled = false
-volumetric_fog_enabled = false
-adjustment_enabled = false
 
 [sub_resource type="QuadMesh" id="QuadMesh_band"]
 size = Vector2(1.2, 0.6)
 
-[node name="HintExperiment" type="Node3D"]
+[node name="HintExperiment" type="Node3D" unique_id=184536776]
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=99282535]
 environment = SubResource("Environment_hint")
 
-[node name="QuadWithSourceColor" type="MeshInstance3D" parent="."]
+[node name="QuadWithSourceColor" type="MeshInstance3D" parent="." unique_id=746148101]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.7, 0, 0)
 mesh = SubResource("QuadMesh_band")
 surface_material_override/0 = ExtResource("1_with")
 
-[node name="QuadWithoutSourceColor" type="MeshInstance3D" parent="."]
+[node name="QuadWithoutSourceColor" type="MeshInstance3D" parent="." unique_id=311639723]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 0, 0)
 mesh = SubResource("QuadMesh_band")
 surface_material_override/0 = ExtResource("2_without")
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="Camera3D" type="Camera3D" parent="." unique_id=624496520]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
 projection = 1
 current = true

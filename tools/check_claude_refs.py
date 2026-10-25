@@ -69,6 +69,13 @@ CONTAINS = {
     "godot/shaders/hint_bands.gdshader": [
         "bands_srgb", "bands_data", "use_source_color", "unshaded",
     ],
+    # Godot's own output, saved for reading. Nothing loads it; it is here so
+    # LANGUAGE-NOTES.md can cite its lines, and it is covered by the same
+    # ownership rule as the hand-written three.
+    "godot/shaders/standard_generated.gdshader": [
+        "texture_albedo : source_color", "texture_normal :",
+        "ALBEDO = albedo.rgb", "ROUGHNESS =", "NORMAL_MAP =",
+    ],
     "godot/assets/materials/stone_dry.tres": ["dungeon_surface.gdshader"],
     "godot/assets/materials/stone_flooded.tres": ["dungeon_surface.gdshader"],
 }

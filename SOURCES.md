@@ -50,6 +50,7 @@ run by me in Blender during Assignment 3, and are documented there.
 | `godot/shaders/trap_warning.gdshader` | **written by me, 2026-10-24, commit `f28d2de`** — on its own, before the driver existed. Four lines of my own typing from `CHANGE-BRIEF.md` §2; the colour line is the **[proposal]** I adopted there and can explain. Claude reviewed a draft of it in chat and listed six errors (a misspelt `shader_type`, a shader *mode* filled in as if it were a name, a stray backtick, `==` for `=`, and `warm_` for `warn_` twice); I fixed all six and typed the file myself. It did not write or edit the file. |
 | `godot/shaders/*.gdshader` — the rest | **not yet written.** The spatial shader, the hint-experiment shader and `standard_generated.gdshader` will be hand-written by me the same way. No agent creates or edits them; `CLAUDE.md` states this and `git diff --stat godot/shaders/` is the check. |
 | `LANGUAGE-NOTES.md` | **not yet written.** Mine, in my own words. |
+| `godot/shaders/standard_generated.gdshader` | **neither mine nor Claude's — Godot wrote it.** Produced by the editor's *Convert to ShaderMaterial* on a StandardMaterial3D with albedo, normal-map and roughness textures enabled, as Assignment 5 Step 4 instructs, and saved unedited. Nothing in the game loads it; it exists to be read and cited in `LANGUAGE-NOTES.md`. The scratch scene that produced it was discarded. |
 
 ## 4. Written by code
 
