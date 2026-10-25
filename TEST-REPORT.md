@@ -400,9 +400,29 @@ One material changed; only its object moved. Both materials still reference
 the same `Shader` resource, which `test_materials.gd` asserts by object
 identity, not by path string.
 
-**The other half of this check is outstanding**: edit one line of the
-*shader* and record that **both** objects change. That needs a `.gdshader`
-edit and so belongs to the author.
+Then the other half. The author added one line to `dungeon_surface.gdshader`
+— `ALBEDO *= 0.5;` at the end of `fragment()` — and nothing else:
+
+| | Before | After | Moved |
+|---|---|---|---|
+| Dry slime | `50, 56, 55` | `42, 47, 45` | **8** |
+| Flooded slime | `53, 62, 58` | `49, 55, 51` | **7** |
+
+**Both moved.** One value in one material moves one object; one line in the
+shader moves both. The material holds the parameters, the shader holds the
+code, and the two materials hold the same `Shader` object between them.
+Capture: `evidence/a5-mutations/shader-edit_both-objects-darken.png`. The
+line was removed afterwards and the shader is byte-for-byte its commit.
+
+**That run also found a bug in the measuring tool, not in the thing
+measured.** With the scene darkened, the material-edit step moved the mean
+3 → 2 and `capture_materials.gd` reported `UNEXPECTED`, because its check
+was written as "flooded must move more than 2 counts". Halving the
+brightness halved the dynamic range and so tightened a threshold that had
+nothing to do with what was being tested. It is now relative — the flooded
+slime must move while the dry one does not — which is the comparison the
+check was always about. A threshold in absolute counts gets stricter every
+time a scene gets darker, and says nothing when it does.
 
 ## The evidence table
 
@@ -416,7 +436,7 @@ edit and so belongs to the author.
 | In play (HUMAN) | **done** — played 2026-10-24; 0.40 s judged enough to react; R6 holds in a live frame. |
 | Hint experiment (HUMAN) | **done** — all six bands exact, above; capture in `captures/a5/`. |
 | Interface sweep (HUMAN) | **measured** — all four uniforms at min/default/max, above, with a PNG each. The judgement of what breaks the look is the author's and is still outstanding. |
-| One shader, two materials (HUMAN) | **half done** — one material value moved only its own object, measured above. The shader-edit half, where both must move, is outstanding. |
+| One shader, two materials (HUMAN) | **done** — one material value moved only its own object (3 against 0); one shader line moved both (8 and 7). Both measured above. |
 | Material wiring after fresh import; `source_color` mutation exits 1 | **done** — 48 checks from an empty cache, and both colour-sampler mutations exit 1. |
 | Texture data — curl ratio | **not applicable as planned** — the brief's material plan uses code-written colour and data textures and no normal map. If that changes, the calibration pair comes with it. |
 | Import settings | **done** — the editor rewrote **none**; `detect_3d/compress_to=0` is why. Explained above. |

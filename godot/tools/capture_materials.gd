@@ -105,11 +105,21 @@ func _init() -> void:
 		_distance(before[1], after[1])])
 	_say("    dry      %s -> %s   moved %d" % [_fmt(before[0]), _fmt(after[0]),
 		_distance(before[0], after[0])])
-	if _distance(before[0], after[0]) == 0 and _distance(before[1], after[1]) > 2:
-		_say("    One material changed; only its object moved. Both still")
-		_say("    reference the same Shader resource.")
+	# Relative, not a fixed number of counts. The first version demanded the
+	# flooded slime move more than 2, and reported UNEXPECTED during the
+	# shader-edit demonstration: ALBEDO *= 0.5 halved the scene's dynamic
+	# range, so the same material change moved the mean 2 instead of 3 and
+	# tripped a threshold that had nothing to do with what was being tested.
+	# A threshold in absolute counts silently tightens as a scene darkens.
+	var moved_flooded := _distance(before[1], after[1])
+	var moved_dry := _distance(before[0], after[0])
+	if moved_dry == 0 and moved_flooded > 0:
+		_say("    One material changed; only its object moved (%d against %d)."
+			% [moved_flooded, moved_dry])
+		_say("    Both still reference the same Shader resource.")
 	else:
-		_say("    UNEXPECTED - the dry slime moved, or the flooded one did not.")
+		_say("    UNEXPECTED - dry moved %d (want 0), flooded moved %d (want > 0)."
+			% [moved_dry, moved_flooded])
 
 	_say("")
 	_say("  Still the author's to judge, from the PNGs above: whether the")
