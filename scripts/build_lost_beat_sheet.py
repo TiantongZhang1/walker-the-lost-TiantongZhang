@@ -16,6 +16,7 @@ replaces them with the measured length.
 """
 from __future__ import annotations
 
+import base64
 import io
 import json
 import pathlib
@@ -72,17 +73,22 @@ def footage_shot(window, show):
             "window_s": window, "show": show}
 
 
-def still_shot(title, media, label, notes, lines, show):
+def still_shot(title, media, label, image_label, show):
+    """`asset` mode lays out {code}{image}. `code` stays EMPTY: the checker
+    rejects displayed code that has no excerpt record, and these beats show a
+    capture, not source. The measured numbers are composed into the picture by
+    scripts/compose_lost_evidence.py, read verbatim from the recorded report,
+    which is also what gets hashed."""
+    data = base64.b64encode((MEDIA / media).read_bytes()).decode("ascii")
     return {"type": "GRAPHIC", "class": "SHOW", "source": "remotion",
             "motion": "reveal", "evidence_media": "media/" + media, "show": show,
             "remotion": {"pattern": "GodotDevWorkbench", "props": {
                 "mode": "asset", "title": title,
                 "project": "walker-the-lost-TiantongZhang",
-                "path": label, "source": "media/" + media,
-                "image": "media/" + media, "codeFontSize": 22,
-                "treeLabel": "Engine capture - real windowed run, Forward+, RTX 5080",
-                "inspectorLabel": "Measured, beside the prediction committed first",
-                "notes": notes, "lines": lines}}}
+                "path": label, "source": label,
+                "code": "", "startLine": 1, "codeFontSize": 22,
+                "image": "data:image/png;base64," + data,
+                "imageLabel": image_label}}}
 
 
 METADATA = {
@@ -161,7 +167,10 @@ B.append(beat(
     "This is the whole shader. Four lines of declaration and one line that "
     "changes a colour. Mix takes the pixel the sprite already has, the warning "
     "red, and a number between them. The number is not time - it is game "
-    "state, and it arrives from outside. Note what the first argument is: "
+    "state, and it arrives from outside. The window is four tenths of a "
+    "second, and the detection box that starts it is one seven five - not a "
+    "number anybody chose, but the walking speed multiplied by that window. "
+    "Note what the first argument is: "
     "COLOR, not a texture sample. COLOR already carries the sprite's texture "
     "multiplied by its modulate. Sampling the texture again by hand would "
     "throw that multiplication away, and a trap the game had faded out would "
@@ -182,16 +191,13 @@ B.append(beat(
 
 B.append(beat(
     "B03", "RESULT",
-    "C1 RESULT. take-w, trap 1's window. Frames 97-132 of the recorded take; "
-    "the log gives t 1.617 to 2.200 and player_x 174.4 to 230.4.",
-    "There it is in motion. The warning starts at player x one seven four "
-    "point four, and the detection box begins at one seven five - that edge "
-    "was derived from the warning length, not chosen. Four tenths of a second "
-    "of ramp, then the spikes. The player is still short of the trap when the "
-    "red begins and standing on it when the strike lands, which is the whole "
-    "point: a warning that cannot be failed is decoration.",
-    13,
-    footage_shot([1.40, 2.45],
+    "C1 RESULT. take-w, trap 1's cycle. The log puts the warning at frame 109, "
+    "t 1.82, player_x 174.4; the window runs 0.30-4.85 s so the footage "
+    "outlasts the narration.",
+    "There it is. Red before the player arrives, spikes while they are "
+    "standing on it.",
+    6,
+    footage_shot([0.30, 4.85],
                  [{"at": "0.05", "event": "the trap is flush and nearly invisible"},
                   {"at": "0.22", "event": "the red begins, player still short of it"},
                   {"at": "0.70", "event": "full red, player centred"},
@@ -224,15 +230,13 @@ B.append(beat(
 
 B.append(beat(
     "B05", "RESULT",
-    "C2 RESULT. take-w across all three traps. The take's own probe counted "
-    "zero frames in 361 with more than one trap lit.",
-    "Watch the red move. Three traps, one shader, three materials, and the "
-    "warning never appears on two of them at once. The capture driver counted "
-    "that itself: three hundred and sixty one frames sampled, zero frames with "
-    "more than one trap lit. The headless suite asserts the same rule once per "
-    "scenario. This is every frame of a real run.",
-    16,
-    footage_shot([1.40, 4.70],
+    "C2 RESULT. take-w across all three traps, 0.60-11.40 s. The take's own "
+    "probe counted zero frames in 709 with more than one trap lit.",
+    "Watch the red move. Three traps, one shader, three materials - and the "
+    "warning never appears on two at once. The driver counted it: seven "
+    "hundred and nine frames, zero with more than one lit.",
+    10,
+    footage_shot([0.60, 11.40],
                  [{"at": "0.04", "event": "trap one warns, two and three stay flush"},
                   {"at": "0.34", "event": "trap one retracts"},
                   {"at": "0.52", "event": "trap two takes the red"},
@@ -273,15 +277,9 @@ B.append(beat(
     "eighty eight, two twenty five. All six were predicted in writing two days "
     "before anything could render them, and all six landed exactly.",
     27,
-    still_shot("The hint is worth seventy three counts", "B07-hint-experiment.png",
-               "captures/a5/hint_experiment.png",
-               [{"label": "Predicted first",
-                 "value": "CHANGE-BRIEF.md section 7, committed 2026-10-23, before the scene existed."},
-                {"label": "Worst channel difference", "value": "0 of 6"}],
-               ["stored   with source_color   without",
-                "    64        64              137",
-                "   128       128              188",
-                "   192       192              225"],
+    still_shot("The hint is worth seventy three counts", "B07-evidence.png",
+               "captures/a5/hint_experiment.png + HINT-REPORT.txt",
+               "engine capture above, recorded numbers below, rendered verbatim",
                [{"at": "0.06", "event": "the two quads appear"},
                 {"at": "0.40", "event": "the measured table reveals"},
                 {"at": "0.80", "event": "64 -> 137 is marked as the largest error"}])))
@@ -323,14 +321,9 @@ B.append(beat(
     "count, while the flooded one moved for every uniform. One material, one "
     "object.",
     28,
-    still_shot("One shader, two materials", "B09-two-materials.png",
-               "captures/a5/materials/00-baseline.png",
-               [{"label": "Three values apart",
-                 "value": "water_darkening 0.00 / 0.55, water_roughness 0.85 / 0.08, tint white / 0.85,1,0.90"},
-                {"label": "The dry slime, 12 sweep rows", "value": "50, 56, 55 - unchanged every time"}],
-               ["stone_dry      water_darkening 0.00   water_roughness 0.85",
-                "stone_flooded  water_darkening 0.55   water_roughness 0.08",
-                "one SHADER line moved both:  dry 8 counts, flooded 7"],
+    still_shot("One shader, two materials", "B09-evidence.png",
+               "captures/a5/materials/00-baseline.png + SWEEP-REPORT.txt",
+               "engine capture above, two of the four swept uniforms below",
                [{"at": "0.06", "event": "the pair appears"},
                 {"at": "0.42", "event": "the highlight on the flooded slime is marked"},
                 {"at": "0.78", "event": "the sweep numbers reveal"}])))
@@ -372,15 +365,9 @@ B.append(beat(
     "the suite now asserts the blindness itself so nobody simplifies that check "
     "away later.",
     28,
-    still_shot("The same scene, four words lighter", "B11-hint-mutated.png",
-               "evidence/a5-mutations/mutation3a-hint-sampler_capture.png",
-               [{"label": "SHADER ERROR lines", "value": "0"},
-                {"label": "What the uniform list said", "value": "unchanged"},
-                {"label": "What caught it", "value": "one assertion reading the source text"}],
-               ["stored   with source_color   without",
-                "    64       137              137",
-                "   128       188              188",
-                "   192       225              225"],
+    still_shot("The same scene, four words lighter", "B11-evidence.png",
+               "evidence/a5-mutations/ - captured with the shader mutated",
+               "the same scene with source_color deleted; both quads identical",
                [{"at": "0.08", "event": "both quads appear, identical"},
                 {"at": "0.46", "event": "the table reveals - the left column has moved"},
                 {"at": "0.84", "event": "SHADER ERROR: 0 is marked"}])))
@@ -461,10 +448,40 @@ B.append(beat(
          "slug": "claude-liam-walker-the-lost-gamedev"}}}))
 
 
+# Fields the narration pass writes back. Rebuilding the sheet used to drop
+# them, so every change to a camera window cost a full re-synthesis; they are
+# carried over for any beat whose spoken words are byte-identical.
+SPOKEN = ("actual_duration_s", "audio_file", "render_duration_s")
+
+
+def carry_measured_audio(beats: list[dict]) -> int:
+    out = REEL / "beat_sheet.json"
+    if not out.is_file():
+        return 0
+    try:
+        old_beats = json.load(io.open(out, encoding="utf-8"))["beats"]
+    except (ValueError, KeyError):
+        return 0
+    by_id = {b["beat_id"]: b for b in old_beats}
+    kept = 0
+    for b in beats:
+        prev = by_id.get(b["beat_id"])
+        if prev is None or prev.get("narration_text") != b["narration_text"]:
+            continue
+        if not any(k in prev for k in SPOKEN):
+            continue
+        for k in SPOKEN:
+            if k in prev:
+                b[k] = prev[k]
+        kept += 1
+    return kept
+
+
 def main() -> int:
     MEDIA.mkdir(parents=True, exist_ok=True)
     for name, src in STILLS.items():
         shutil.copyfile(ROOT / src, MEDIA / name)
+    kept = carry_measured_audio(B)
     doc = {"metadata": METADATA, "beats": B}
     out = REEL / "beat_sheet.json"
     io.open(out, "w", encoding="utf-8", newline="\n").write(
@@ -473,6 +490,8 @@ def main() -> int:
     words = sum(len(b["narration_text"].split()) for b in B)
     est = sum(b["estimated_duration_s"] for b in B)
     print("wrote %s" % out)
+    print("  kept measured audio on %d of %d beats (narration unchanged)"
+          % (kept, len(B)))
     print("  %d beats, %d narration words, %.0f s estimated (%.1f min)"
           % (len(B), words, est, est / 60.0))
     pairs = [(B[i]["beat_id"], B[i + 1]["beat_id"]) for i in range(len(B) - 1)

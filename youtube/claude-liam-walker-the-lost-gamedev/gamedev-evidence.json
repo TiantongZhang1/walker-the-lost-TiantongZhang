@@ -277,7 +277,7 @@
     },
     {
       "path": "tests/capture_shader.gd",
-      "sha256": "f808fb9cc8850f53c1ca5d9a29f51f188add93d55ab5468c0283dc28f74cd543",
+      "sha256": "9ffb77fdb4a54053b3d14fbdac0e33984319f90db4b627d1b8e587f4ace06f19",
       "role": "test",
       "component_ids": [
         "evidence-harness"
@@ -573,19 +573,19 @@
     {
       "code_beat": "B02",
       "result_beat": "B03",
-      "observation": "C1 RESULT. take-w, trap 1's window. Frames 97-132 of the recorded take; the log gives t 1.617 to 2.200 and player_x 174.4 to 230.4.",
+      "observation": "C1 RESULT. take-w, trap 1's cycle. The log puts the warning at frame 109, t 1.82, player_x 174.4; the window runs 0.30-4.85 s so the footage outlasts the narration.",
       "media": {
         "path": "capture/take-w.mp4",
-        "sha256": "7cf23f5e2d23dcaa197095797937300ca82340908b7b13cbc80eb8a058c59800"
+        "sha256": "0c25306cad0840056fbc2c8700b001f4cfd45f32bad498098efdae63c75aaec3"
       }
     },
     {
       "code_beat": "B04",
       "result_beat": "B05",
-      "observation": "C2 RESULT. take-w across all three traps. The take's own probe counted zero frames in 361 with more than one trap lit.",
+      "observation": "C2 RESULT. take-w across all three traps, 0.60-11.40 s. The take's own probe counted zero frames in 709 with more than one trap lit.",
       "media": {
         "path": "capture/take-w.mp4",
-        "sha256": "7cf23f5e2d23dcaa197095797937300ca82340908b7b13cbc80eb8a058c59800"
+        "sha256": "0c25306cad0840056fbc2c8700b001f4cfd45f32bad498098efdae63c75aaec3"
       }
     },
     {
@@ -593,8 +593,8 @@
       "result_beat": "B07",
       "observation": "C3 RESULT. captures/a5/hint_experiment.png, real windowed run. All six bands exact against the prediction committed on 2026-10-23.",
       "media": {
-        "path": "media/B07-hint-experiment.png",
-        "sha256": "c11078dd7d85b444a61f48a9e3be712c89584c18307843dcb3fb99db3727e82c"
+        "path": "media/B07-evidence.png",
+        "sha256": "ed87b8add150fb3a923d52fa97ffb9b25fdf007a5410676f37bdcdeefea933c4"
       }
     },
     {
@@ -602,8 +602,8 @@
       "result_beat": "B09",
       "observation": "C4 RESULT. captures/a5/materials/00-baseline.png under section 8's lighting. Sweep numbers from captures/a5/materials/SWEEP-REPORT.txt.",
       "media": {
-        "path": "media/B09-two-materials.png",
-        "sha256": "0822f8ab22895ff3e144bab1b089d5a649ad2f1fd1d702061316cb8146e4ab70"
+        "path": "media/B09-evidence.png",
+        "sha256": "0e1ccfeb203f4081e5ce6f8c237a5fab37f2b91f459e92b8146b4a5dd5362468"
       }
     },
     {
@@ -611,8 +611,8 @@
       "result_beat": "B11",
       "observation": "C5 RESULT. evidence/a5-mutations/mutation3a-hint-sampler_capture.png, the capture taken with the mutation in place. Restored afterwards.",
       "media": {
-        "path": "media/B11-hint-mutated.png",
-        "sha256": "cdd6e115cb34abcd065e08d571e6574d014997a9050f149365813dd660f9c209"
+        "path": "media/B11-evidence.png",
+        "sha256": "0f263d3972284d0d7c1f7db269cec1148eb3c18dd68aa971486740c7b6726ee4"
       }
     }
   ]

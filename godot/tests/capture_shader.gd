@@ -24,9 +24,16 @@ extends SceneTree
 ## printed when all three hold.
 
 const MAIN := "res://game/main.tscn"
-const SETTLE_S := 0.8
-const WALK_S := 4.6
-const TAIL_S := 0.6
+const SETTLE_S := 1.0
+## Walk, stop, walk, stop. The pauses are not padding: at a constant 96 px/s
+## the player crosses all three detection zones in under four seconds, and a
+## result beat then has one second of footage under twenty seconds of
+## narration. Stopping between traps lets each cycle finish on screen and
+## gives the film something to hold on. The player still only ever walks -
+## the pauses are the key being released, nothing is slowed or retimed.
+const LEGS: Array[float] = [1.45, 1.30, 1.30]
+const PAUSE_S := 1.9
+const TAIL_S := 1.0
 
 var _log: Array[String] = []
 var _t := 0.0
@@ -61,9 +68,11 @@ func _init() -> void:
 	root.add_child(probe)
 
 	await _hold(SETTLE_S)
-	_key(KEY_D, true)
-	await _hold(WALK_S)
-	_key(KEY_D, false)
+	for leg in LEGS:
+		_key(KEY_D, true)
+		await _hold(leg)
+		_key(KEY_D, false)
+		await _hold(PAUSE_S)
 	await _hold(TAIL_S)
 
 	_write_log()

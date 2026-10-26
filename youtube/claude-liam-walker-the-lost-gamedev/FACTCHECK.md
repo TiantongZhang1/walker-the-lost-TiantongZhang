@@ -40,11 +40,12 @@ Source revision `0b45339`. Godot **4.7.2.stable.official** `ed1daf0bf`,
 
 | claim | evidence |
 |---|---|
-| "The warning starts at player x one seven four point four" | `youtube/claude-liam-walker-the-lost-gamedev/capture/logs/take-w-inputs.jsonl`, first frame where `warn[0] > 0`: frame 97, `player_x: 174.4`. |
+| "the detection box that starts it is one seven five" (B02) | `capture/logs/take-w-inputs.jsonl`, first frame where `warn[0] > 0`: t 1.82, `player_x: 174.4`. Trap 1 at x = 208 with a 66 px `DetectArea` gives 175. |
 | "the detection box begins at one seven five" | Trap 1 at x = 208, `DetectArea` 66 px wide → 208 − 33 = 175. Asserted by `test_trap_warning.gd`'s geometry scenario, which also derives the half-width as `SPEED × WARN_SECONDS − 5`. |
 | "that edge was derived from the warning length, not chosen" | `CHANGE-BRIEF.md` revision 5.0.3, and the comment above `WARN_SECONDS` in `spike_trap.gd:31-38`. |
-| "Four tenths of a second of ramp, then the spikes" | Take log: trap 1 warns frame 97, ends frame 132. 35 frames at 60 fps = 0.583 s, which is WARN_SECONDS 0.40 plus FIRE_SECONDS 0.18. The **ramp** is the first 24 frames. |
-| "still short of the trap when the red begins and standing on it when the strike lands" | `test_trap_warning.gd` F6: −33.6 px at the warning, +6.4 px at the strike, hurt box ±13. Identical at 30, 60 and 144 fps. |
+| "The window is four tenths of a second" (B02) | `spike_trap.gd:39`. In the take, trap 1 is lit for 35 frames at 60 fps = 0.583 s, which is WARN_SECONDS 0.40 plus FIRE_SECONDS 0.18; the **ramp** is the first 24. |
+| "Red before the player arrives, spikes while they are standing on it" | `test_trap_warning.gd` F6: −33.6 px at the warning, +6.4 px at the strike, hurt box ±13. Identical at 30, 60 and 144 fps. |
+| The take is 11.80 s with pauses between traps | `capture_shader.gd` releases the key between legs. The pauses are the key being released; nothing is slowed, looped or retimed, and `SHOTLIST.md` records both window spans. |
 
 ## B04 — the driver
 
@@ -59,7 +60,7 @@ Source revision `0b45339`. Godot **4.7.2.stable.official** `ed1daf0bf`,
 
 | claim | evidence |
 |---|---|
-| "three hundred and sixty one frames sampled, zero frames with more than one trap lit" | `godot/tests/capture_shader.gd`'s probe counts both and prints them. The recorded render says `CAPTURE OK take w: three warnings, 3 hit(s), R6 held every frame`, with `frames sampled: 361` and `frames with >1 trap lit: 0`. |
+| "seven hundred and nine frames, zero with more than one lit" | `godot/tests/capture_shader.gd`'s probe counts both and prints them. The recorded render says `CAPTURE OK take w: three warnings, 3 hit(s), R6 held every frame`, with `frames sampled: 709` and `frames with >1 trap lit: 0`. Recomputed from the committed log: 709 rows, 0 with more than one trap above zero. |
 | "The headless suite asserts the same rule once per scenario" | `test_trap_shader_driver.gd`: "traps 2 and 3 never lit while trap 1 warned", peak 0.000000 over 408 state/uniform pairs. |
 
 ## B06 — the hint experiment
@@ -121,7 +122,7 @@ Source revision `0b45339`. Godot **4.7.2.stable.official** `ed1daf0bf`,
 | "the driver, four test suites, the capture rigs and the material audit" by Claude | `SOURCES.md` §7, and every one of those commits carries the Claude trailer. |
 | "eight predicted pixels exact, six predicted bands exact" | `captures/a5/REPORT.txt` and `captures/a5/HINT-REPORT.txt`. |
 | "two point zero passed straight through and the pixel went pure red" | Pixel B at `warn_amount = 2.0` measured `255, 0, 0`; a clamp to 1.0 would have given `214, 60, 47`. `CHANGE-BRIEF.md` revision 5.0.4 predicted it first. |
-| "R6 held 361 of 361 frames" (panel) | The take's own probe, above. |
+| "R6 held 709 of 709 frames" (panel) | The take's own probe, above. |
 | "the slice has no audio and no art beyond code-drawn blocks" | `TEST-REPORT.md` known limitation 3, with the dated decision to port after `a5`. |
 | "no normal map, so no curl check" (panel) | `CHANGE-BRIEF.md` §8 says so and says what it forgoes. |
 
