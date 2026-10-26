@@ -1,0 +1,119 @@
+{
+  "metadata": {
+    "title": "TheLostShaders_TiantongZhang",
+    "slug": "claude-liam-walker-the-lost-gamedev",
+    "topic": "WALKER - GODOT SHADERS AND MATERIALS TEARDOWN",
+    "kind": "gamedev",
+    "playlist": "Brutalist",
+    "brand": "claude-liam",
+    "audience": "Course reviewers reading a Godot shader and material pass",
+    "register": "Teardown",
+    "engine": "kokoro",
+    "voice": "am_onyx",
+    "voice_kokoro": "am_onyx",
+    "palette": "claude",
+    "style_preset": "claude",
+    "ground": "#FAF9F5",
+    "aspect_ratio": "16:9",
+    "fit": "contain",
+    "captions": false,
+    "channel_title": "@NikBearBrown",
+    "channel": "@NikBearBrown",
+    "folderLabel": "@NikBearBrown",
+    "greeting": "Sawubona, Liam",
+    "greeting_note": "hello lexicon: Sawubona (Zulu), one word. Wagwan is Bear's alone.",
+    "mode": "walker",
+    "teaching_contract": "code-then-result-v1",
+    "game": "godot"
+  },
+  "beats": [
+    {
+      "beat_id": "B00",
+      "act": "ASK",
+      "role_note": "WALKER BOOKEND 1/4 - ClaudeComposerAsk. Reconstructed prompt, said aloud to be a reconstruction. Liam named in the first breath.",
+      "narration_text": "Sawubona - this is Liam, in for Bear. The prompt on screen is a reconstruction. It was written to be illustrative and it is not a transcript. The game under it is real: a dungeon slice in Godot four, and this time the thing we are taking apart is not the game logic. It is the four shaders, and the question of what a hint actually does.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 22,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "type-on",
+        "show": [
+          {
+            "at": "0.03",
+            "event": "composer card fades in"
+          },
+          {
+            "at": "0.12",
+            "event": "greeting lands"
+          },
+          {
+            "at": "0.30",
+            "event": "the Walker prompt types on"
+          },
+          {
+            "at": "0.80",
+            "event": "RECONSTRUCTION label stays visible"
+          }
+        ],
+        "remotion": {
+          "pattern": "ClaudeComposerAsk",
+          "props": {
+            "greeting": "Sawubona, Liam",
+            "topic": "WALKER - GODOT SHADERS AND MATERIALS TEARDOWN",
+            "segment": "The Lost, lit",
+            "command": "Please use Walker to convert my game design document about The Lost - a side-view dungeon crawler where every hazard announces itself before it can hurt you - into a Godot project, and then help me write the shader that does the announcing by hand, while you write the driver and the tests that prove it.",
+            "label": "RECONSTRUCTION"
+          }
+        }
+      }
+    },
+    {
+      "beat_id": "B01",
+      "act": "RESULT",
+      "role_note": "WALKER BOOKEND 2/4 - hesitant writer. One working single-word correction, with measured time to complete it.",
+      "narration_text": "Here is what actually changed. Three shaders, written by hand, line by line. A spike trap that turns - correction - that ramps red across four tenths of a second before it fires. Two materials from one shader on two identical slimes. And a three pixel image, sampled twice through the same file, that settles what source colour does to a number. Ninety-nine automated checks stand behind that, and four deliberate breakages stand behind the checks.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 38,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "write-on",
+        "show": [
+          {
+            "at": "0.05",
+            "event": "the summary begins writing"
+          },
+          {
+            "at": "0.34",
+            "event": "'turns' struck through, 'ramps' written in"
+          },
+          {
+            "at": "0.70",
+            "event": "the counts land"
+          }
+        ],
+        "remotion": {
+          "pattern": "BrutalistHesitantWriter",
+          "props": {
+            "title": "What was built",
+            "correction": {
+              "from": "turns",
+              "to": "ramps"
+            },
+            "lines": [
+              "3 hand-written shaders",
+              "1 agent-written driver + 99 checks",
+              "4 mutations, each caught by a different net",
+              "Every predicted pixel committed before it was measured"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

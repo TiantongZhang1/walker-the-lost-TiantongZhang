@@ -61,3 +61,7 @@ youtube/*/build-state.json
 # Test wrapper output. Churns on every run; the logs that are CITED are
 # copied into evidence/ deliberately, which is what a reviewer should read.
 logs/
+
+# A5's film. The 4K PNG sequence and the encoded capture stay out by the rules
+# above; this one still is tracked because TEST-REPORT.md cites it.
+!captures/a5/warning-ramp-contact-sheet.png

@@ -21,10 +21,11 @@ import shutil
 import subprocess
 import sys
 
-# Assignment 1's four walkthrough takes, then Assignment 2's two gamedev takes.
+# Assignment 1's four walkthrough takes, Assignment 2's two gamedev takes,
+# then Assignment 5's single shader take.
 # Both films' captures encode with the same settings, so a frame from either is
 # the same kind of evidence.
-TAKES = ("a", "b", "c", "d", "p", "t")
+TAKES = ("a", "b", "c", "d", "p", "t", "w")
 FPS = 60
 WIDTH, HEIGHT = 3840, 2160
 
