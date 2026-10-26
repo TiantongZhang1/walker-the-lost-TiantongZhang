@@ -31,10 +31,10 @@
       "beat_id": "B00",
       "act": "ASK",
       "role_note": "WALKER BOOKEND 1/4 - ClaudeComposerAsk. Reconstructed prompt, said aloud to be a reconstruction. Liam named in the first breath.",
-      "narration_text": "Sawubona - this is Liam, in for Bear. The prompt on screen is a reconstruction. It was written to be illustrative and it is not a transcript. The game under it is real: a dungeon slice in Godot four, and this time the thing we are taking apart is not the game logic. It is the four shaders, and the question of what a hint actually does.",
+      "narration_text": "Sawubona - this is Liam, in for Bear. The prompt on screen is a reconstruction, written to be illustrative. It is not a transcript. The game under it is real: a dungeon slice in Godot four. What we are taking apart today is not the game logic. It is three hand-written shaders, and one stubborn question - what does a hint actually do to a number.",
       "voice": "am_onyx",
       "engine": "kokoro",
-      "estimated_duration_s": 22,
+      "estimated_duration_s": 23,
       "shot": {
         "type": "GRAPHIC",
         "class": "SHOW",
@@ -46,16 +46,16 @@
             "event": "composer card fades in"
           },
           {
-            "at": "0.12",
+            "at": "0.14",
             "event": "greeting lands"
           },
           {
-            "at": "0.30",
+            "at": "0.32",
             "event": "the Walker prompt types on"
           },
           {
-            "at": "0.80",
-            "event": "RECONSTRUCTION label stays visible"
+            "at": "0.82",
+            "event": "RECONSTRUCTION label holds"
           }
         ],
         "remotion": {
@@ -64,7 +64,7 @@
             "greeting": "Sawubona, Liam",
             "topic": "WALKER - GODOT SHADERS AND MATERIALS TEARDOWN",
             "segment": "The Lost, lit",
-            "command": "Please use Walker to convert my game design document about The Lost - a side-view dungeon crawler where every hazard announces itself before it can hurt you - into a Godot project, and then help me write the shader that does the announcing by hand, while you write the driver and the tests that prove it.",
+            "command": "Please use Walker to convert my game design document about The Lost - a side-view dungeon crawler where every hazard announces itself before it can hurt you - into a Godot project. I will write the shader that does the announcing by hand; you write the driver and the tests that prove it.",
             "label": "RECONSTRUCTION"
           }
         }
@@ -73,11 +73,11 @@
     {
       "beat_id": "B01",
       "act": "RESULT",
-      "role_note": "WALKER BOOKEND 2/4 - hesitant writer. One working single-word correction, with measured time to complete it.",
-      "narration_text": "Here is what actually changed. Three shaders, written by hand, line by line. A spike trap that turns - correction - that ramps red across four tenths of a second before it fires. Two materials from one shader on two identical slimes. And a three pixel image, sampled twice through the same file, that settles what source colour does to a number. Ninety-nine automated checks stand behind that, and four deliberate breakages stand behind the checks.",
+      "role_note": "WALKER BOOKEND 2/4 - hesitant writer, one working single-word correction with measured time to complete it.",
+      "narration_text": "Here is what actually changed. A spike trap that turns - correction - that ramps red across four tenths of a second before it fires. Two materials from one shader, on two identical slimes. And a three-pixel image, sampled twice through the same file, that settles an argument about colour. Ninety-nine automated checks stand behind that, and four deliberate breakages stand behind the checks.",
       "voice": "am_onyx",
       "engine": "kokoro",
-      "estimated_duration_s": 38,
+      "estimated_duration_s": 36,
       "shot": {
         "type": "GRAPHIC",
         "class": "SHOW",
@@ -85,15 +85,15 @@
         "motion": "write-on",
         "show": [
           {
-            "at": "0.05",
+            "at": "0.06",
             "event": "the summary begins writing"
           },
           {
-            "at": "0.34",
+            "at": "0.30",
             "event": "'turns' struck through, 'ramps' written in"
           },
           {
-            "at": "0.70",
+            "at": "0.72",
             "event": "the counts land"
           }
         ],
@@ -106,11 +106,767 @@
               "to": "ramps"
             },
             "lines": [
-              "3 hand-written shaders",
-              "1 agent-written driver + 99 checks",
+              "3 hand-written shaders, 4 materials",
+              "1 agent-written driver, 99 checks",
               "4 mutations, each caught by a different net",
               "Every predicted pixel committed before it was measured"
             ]
+          }
+        }
+      }
+    },
+    {
+      "beat_id": "B02",
+      "act": "BUILD",
+      "role_note": "C1 CODE. trap_warning.gdshader in full, hand-written. Paired with B03.",
+      "narration_text": "This is the whole shader. Four lines of declaration and one line that changes a colour. Mix takes the pixel the sprite already has, the warning red, and a number between them. The number is not time - it is game state, and it arrives from outside. Note what the first argument is: COLOR, not a texture sample. COLOR already carries the sprite's texture multiplied by its modulate. Sampling the texture again by hand would throw that multiplication away, and a trap the game had faded out would ignore the fade entirely.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 32,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "code-highlight",
+        "show": [
+          {
+            "at": "0.04",
+            "event": "the excerpt is framed"
+          },
+          {
+            "at": "0.18",
+            "event": "line 2 highlights"
+          },
+          {
+            "at": "0.38",
+            "event": "line 3 highlights"
+          },
+          {
+            "at": "0.62",
+            "event": "line 6 highlights"
+          }
+        ],
+        "remotion": {
+          "pattern": "GodotDevWorkbench",
+          "props": {
+            "mode": "code",
+            "title": "One line changes the colour",
+            "project": "walker-the-lost-TiantongZhang",
+            "path": "godot/shaders/trap_warning.gdshader  lines 1-7",
+            "source": "godot/shaders/trap_warning.gdshader",
+            "code": "shader_type canvas_item;\nuniform float warn_amount : hint_range(0.0, 1.0) = 0.0;\nuniform vec3 warn_color: source_color = vec3(0.839216, 0.235294, 0.184314);\n\nvoid fragment(){\nCOLOR.rgb = mix(COLOR.rgb, warn_color, warn_amount);\n}",
+            "startLine": 1,
+            "codeFontSize": 26,
+            "inspectorLabel": "Source notes - not Inspector values",
+            "notes": [
+              {
+                "label": "Why COLOR, not TEXTURE",
+                "value": "COLOR arrives as texture x modulate x vertex colour. Re-sampling discards two of the three."
+              },
+              {
+                "label": "Why not TIME",
+                "value": "TIME is global engine time. It cannot express time since THIS trap armed."
+              }
+            ],
+            "cues": [
+              {
+                "at": 3.0,
+                "line": 2,
+                "label": "the driven uniform, 0 to 1"
+              },
+              {
+                "at": 11.0,
+                "line": 3,
+                "label": "the warning red, set by the material"
+              },
+              {
+                "at": 19.0,
+                "line": 6,
+                "label": "the one line that changes a colour"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "beat_id": "B03",
+      "act": "RESULT",
+      "role_note": "C1 RESULT. take-w, trap 1's window. Frames 97-132 of the recorded take; the log gives t 1.617 to 2.200 and player_x 174.4 to 230.4.",
+      "narration_text": "There it is in motion. The warning starts at player x one seven four point four, and the detection box begins at one seven five - that edge was derived from the warning length, not chosen. Four tenths of a second of ramp, then the spikes. The player is still short of the trap when the red begins and standing on it when the strike lands, which is the whole point: a warning that cannot be failed is decoration.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 13,
+      "shot": {
+        "type": "FOOTAGE",
+        "class": "SHOW",
+        "source": "capture",
+        "motion": "gameplay",
+        "capture": "take-w",
+        "evidence_media": "capture/take-w.mp4",
+        "window_s": [
+          1.4,
+          2.45
+        ],
+        "show": [
+          {
+            "at": "0.05",
+            "event": "the trap is flush and nearly invisible"
+          },
+          {
+            "at": "0.22",
+            "event": "the red begins, player still short of it"
+          },
+          {
+            "at": "0.70",
+            "event": "full red, player centred"
+          },
+          {
+            "at": "0.86",
+            "event": "the spikes arrive"
+          }
+        ]
+      }
+    },
+    {
+      "beat_id": "B04",
+      "act": "BUILD",
+      "role_note": "C2 CODE. trap_warning_driver.gd 62-76, agent-written. Paired with B05.",
+      "narration_text": "The shader is the author's; this driver is not. It does two things. It duplicates the material, because a sub-resource inside a packed scene is shared by every instance of that scene - without this line all three traps hold one material and warn together. Then, once a frame, it copies the trap's state into the uniform. It reads game state and never writes it. And it asks the shader whether that uniform exists, because setting a name the shader does not declare writes nowhere and reports nothing.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 34,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "code-highlight",
+        "show": [
+          {
+            "at": "0.05",
+            "event": "the excerpt is framed"
+          },
+          {
+            "at": "0.24",
+            "event": "line 65 highlights"
+          },
+          {
+            "at": "0.58",
+            "event": "line 68 highlights"
+          },
+          {
+            "at": "0.82",
+            "event": "line 76 highlights"
+          }
+        ],
+        "remotion": {
+          "pattern": "GodotDevWorkbench",
+          "props": {
+            "mode": "code",
+            "title": "One material per trap, one write per frame",
+            "project": "walker-the-lost-TiantongZhang",
+            "path": "godot/features/traps/trap_warning_driver.gd  lines 62-76",
+            "source": "godot/features/traps/trap_warning_driver.gd",
+            "code": "\t# R6. duplicate() is shallow, which is what is wanted: the Shader itself\n\t# stays shared (it is read-only program text) while the parameter block\n\t# becomes this trap's own.\n\tmaterial = shared.duplicate() as ShaderMaterial\n\t_sprite.material = material\n\n\tuniform_declared = _declares(material.shader, UNIFORM_WARN)\n\tif not uniform_declared:\n\t\tpush_error(\"Shader does not declare a uniform named '%s'; every write from this driver would be discarded in silence.\" % UNIFORM_WARN)\n\n\nfunc _process(_delta: float) -> void:\n\tif material == null:\n\t\treturn\n\tmaterial.set_shader_parameter(UNIFORM_WARN, _trap.warn_amount)",
+            "startLine": 62,
+            "codeFontSize": 23,
+            "inspectorLabel": "Source notes - not Inspector values",
+            "notes": [
+              {
+                "label": "F1, avoided",
+                "value": "Sub-resources are shared across scene instances. Without duplicate() one red lights all three."
+              },
+              {
+                "label": "F5, caught at startup",
+                "value": "set_shader_parameter on an undeclared name is silent. The driver asks the shader instead."
+              }
+            ],
+            "cues": [
+              {
+                "at": 8.0,
+                "line": 65,
+                "label": "this trap's own parameter block"
+              },
+              {
+                "at": 20.0,
+                "line": 68,
+                "label": "ask the shader what it declares"
+              },
+              {
+                "at": 28.0,
+                "line": 76,
+                "label": "state in, uniform out, once a frame"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "beat_id": "B05",
+      "act": "RESULT",
+      "role_note": "C2 RESULT. take-w across all three traps. The take's own probe counted zero frames in 361 with more than one trap lit.",
+      "narration_text": "Watch the red move. Three traps, one shader, three materials, and the warning never appears on two of them at once. The capture driver counted that itself: three hundred and sixty one frames sampled, zero frames with more than one trap lit. The headless suite asserts the same rule once per scenario. This is every frame of a real run.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 16,
+      "shot": {
+        "type": "FOOTAGE",
+        "class": "SHOW",
+        "source": "capture",
+        "motion": "gameplay",
+        "capture": "take-w",
+        "evidence_media": "capture/take-w.mp4",
+        "window_s": [
+          1.4,
+          4.7
+        ],
+        "show": [
+          {
+            "at": "0.04",
+            "event": "trap one warns, two and three stay flush"
+          },
+          {
+            "at": "0.34",
+            "event": "trap one retracts"
+          },
+          {
+            "at": "0.52",
+            "event": "trap two takes the red"
+          },
+          {
+            "at": "0.84",
+            "event": "trap three, and the first two are dark"
+          }
+        ]
+      }
+    },
+    {
+      "beat_id": "B06",
+      "act": "BUILD",
+      "role_note": "C3 CODE. hint_bands.gdshader 1-7, hand-written. Paired with B07.",
+      "narration_text": "Two samplers. The same file is bound to both. The only difference between them is four words on line four - source colour - and a boolean picks which one reaches the screen. Unshaded matters here: without it the light would scale the result and the numbers would measure the lamp instead of the sampler. Nearest filtering matters too, because the image is three pixels wide and linear filtering would blend the answer.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 30,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "code-highlight",
+        "show": [
+          {
+            "at": "0.04",
+            "event": "the excerpt is framed"
+          },
+          {
+            "at": "0.14",
+            "event": "line 2 highlights"
+          },
+          {
+            "at": "0.40",
+            "event": "line 4 highlights"
+          },
+          {
+            "at": "0.60",
+            "event": "line 5 highlights"
+          }
+        ],
+        "remotion": {
+          "pattern": "GodotDevWorkbench",
+          "props": {
+            "mode": "code",
+            "title": "The same file, sampled two ways",
+            "project": "walker-the-lost-TiantongZhang",
+            "path": "godot/shaders/hint_bands.gdshader  lines 1-7",
+            "source": "godot/shaders/hint_bands.gdshader",
+            "code": "shader_type spatial;\nrender_mode unshaded;\n\nuniform sampler2D bands_srgb : source_color, filter_nearest;\nuniform sampler2D bands_data : filter_nearest;\n\nuniform bool use_source_color = true;",
+            "startLine": 1,
+            "codeFontSize": 26,
+            "inspectorLabel": "Source notes - not Inspector values",
+            "notes": [
+              {
+                "label": "Why unshaded",
+                "value": "Any lighting multiplies ALBEDO and the measured band stops being a statement about the sampler."
+              },
+              {
+                "label": "Why nearest",
+                "value": "The image is 3 x 1. Linear filtering averages neighbouring bands and no predicted value survives."
+              }
+            ],
+            "cues": [
+              {
+                "at": 2.0,
+                "line": 2,
+                "label": "no lighting may touch this"
+              },
+              {
+                "at": 10.0,
+                "line": 4,
+                "label": "this one decodes"
+              },
+              {
+                "at": 16.0,
+                "line": 5,
+                "label": "this one does not"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "beat_id": "B07",
+      "act": "RESULT",
+      "role_note": "C3 RESULT. captures/a5/hint_experiment.png, real windowed run. All six bands exact against the prediction committed on 2026-10-23.",
+      "narration_text": "Both quads, one frame. The file stores sixty four, one twenty eight and one ninety two. Through the sampler that decodes, those are the numbers that come out - decoding and the display's encoding are inverses. Through the one that does not, every band is brighter: one thirty seven, one eighty eight, two twenty five. All six were predicted in writing two days before anything could render them, and all six landed exactly.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 27,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "reveal",
+        "evidence_media": "media/B07-hint-experiment.png",
+        "show": [
+          {
+            "at": "0.06",
+            "event": "the two quads appear"
+          },
+          {
+            "at": "0.40",
+            "event": "the measured table reveals"
+          },
+          {
+            "at": "0.80",
+            "event": "64 -> 137 is marked as the largest error"
+          }
+        ],
+        "remotion": {
+          "pattern": "GodotDevWorkbench",
+          "props": {
+            "mode": "asset",
+            "title": "The hint is worth seventy three counts",
+            "project": "walker-the-lost-TiantongZhang",
+            "path": "captures/a5/hint_experiment.png",
+            "source": "media/B07-hint-experiment.png",
+            "image": "media/B07-hint-experiment.png",
+            "codeFontSize": 22,
+            "treeLabel": "Engine capture - real windowed run, Forward+, RTX 5080",
+            "inspectorLabel": "Measured, beside the prediction committed first",
+            "notes": [
+              {
+                "label": "Predicted first",
+                "value": "CHANGE-BRIEF.md section 7, committed 2026-10-23, before the scene existed."
+              },
+              {
+                "label": "Worst channel difference",
+                "value": "0 of 6"
+              }
+            ],
+            "lines": [
+              "stored   with source_color   without",
+              "    64        64              137",
+              "   128       128              188",
+              "   192       192              225"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "beat_id": "B08",
+      "act": "BUILD",
+      "role_note": "C4 CODE. dungeon_surface.gdshader fragment, lines 15-27, hand-written. Paired with B09. Author's comments are in Chinese and shown verbatim.",
+      "narration_text": "The spatial shader. One read from the mask, one read from the stone, and then two outputs. Albedo gets the stone darkened where the mask says water pools. Roughness is mixed between a dry value and a wet one by the same mask. Two numbers written, and Godot does the lighting - in plain GLSL the whole reflectance model would be yours to write. The mask is data, not a picture: its numbers mean how submerged, not how bright.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 31,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "code-highlight",
+        "show": [
+          {
+            "at": "0.05",
+            "event": "the excerpt is framed"
+          },
+          {
+            "at": "0.20",
+            "event": "line 17 highlights"
+          },
+          {
+            "at": "0.52",
+            "event": "line 23 highlights"
+          },
+          {
+            "at": "0.76",
+            "event": "line 26 highlights"
+          }
+        ],
+        "remotion": {
+          "pattern": "GodotDevWorkbench",
+          "props": {
+            "mode": "code",
+            "title": "Two outputs, one mask",
+            "project": "walker-the-lost-TiantongZhang",
+            "path": "godot/shaders/dungeon_surface.gdshader  lines 15-27",
+            "source": "godot/shaders/dungeon_surface.gdshader",
+            "code": "void fragment() {\n\t// 遮罩：0 表示干燥，1 表示完全湿润。\n\tfloat w = texture(wetness_mask, UV).r;\n\n\t// 石头本色乘上颜色调整。\n\tvec3 base = texture(stone_albedo, UV).rgb * tint;\n\n\t// 越湿越暗。\n\tALBEDO = base * (1.0 - w * water_darkening);\n\n\t// 根据湿度，在干燥和湿润粗糙度之间插值。\n\tROUGHNESS = mix(roughness_dry, water_roughness, w);\n}",
+            "startLine": 15,
+            "codeFontSize": 23,
+            "inspectorLabel": "Source notes - not Inspector values",
+            "notes": [
+              {
+                "label": "Data, not a picture",
+                "value": "wetness_mask is sampled without source_color. Decoded, 0.5 would become 0.21 and the waterline would move."
+              },
+              {
+                "label": "What Godot does next",
+                "value": "ALBEDO and ROUGHNESS feed the engine's lighting. Plain GLSL would make you write the BRDF."
+              }
+            ],
+            "cues": [
+              {
+                "at": 4.0,
+                "line": 17,
+                "label": "how submerged, 0 to 1"
+              },
+              {
+                "at": 14.0,
+                "line": 23,
+                "label": "darkened where water pools"
+              },
+              {
+                "at": 22.0,
+                "line": 26,
+                "label": "dry to wet, by the same mask"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "beat_id": "B09",
+      "act": "RESULT",
+      "role_note": "C4 RESULT. captures/a5/materials/00-baseline.png under section 8's lighting. Sweep numbers from captures/a5/materials/SWEEP-REPORT.txt.",
+      "narration_text": "Same mesh, same light, same shader. The difference is three values in a text file. The right-hand slime is darker, slightly green, and carries a sharp highlight where the dry one is matte - that highlight is roughness nought point nought eight. Across twelve sweep captures the dry slime measured fifty, fifty six, fifty five every single time, unchanged to the count, while the flooded one moved for every uniform. One material, one object.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 28,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "reveal",
+        "evidence_media": "media/B09-two-materials.png",
+        "show": [
+          {
+            "at": "0.06",
+            "event": "the pair appears"
+          },
+          {
+            "at": "0.42",
+            "event": "the highlight on the flooded slime is marked"
+          },
+          {
+            "at": "0.78",
+            "event": "the sweep numbers reveal"
+          }
+        ],
+        "remotion": {
+          "pattern": "GodotDevWorkbench",
+          "props": {
+            "mode": "asset",
+            "title": "One shader, two materials",
+            "project": "walker-the-lost-TiantongZhang",
+            "path": "captures/a5/materials/00-baseline.png",
+            "source": "media/B09-two-materials.png",
+            "image": "media/B09-two-materials.png",
+            "codeFontSize": 22,
+            "treeLabel": "Engine capture - real windowed run, Forward+, RTX 5080",
+            "inspectorLabel": "Measured, beside the prediction committed first",
+            "notes": [
+              {
+                "label": "Three values apart",
+                "value": "water_darkening 0.00 / 0.55, water_roughness 0.85 / 0.08, tint white / 0.85,1,0.90"
+              },
+              {
+                "label": "The dry slime, 12 sweep rows",
+                "value": "50, 56, 55 - unchanged every time"
+              }
+            ],
+            "lines": [
+              "stone_dry      water_darkening 0.00   water_roughness 0.85",
+              "stone_flooded  water_darkening 0.55   water_roughness 0.08",
+              "one SHADER line moved both:  dry 8 counts, flooded 7"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "beat_id": "B10",
+      "act": "BUILD",
+      "role_note": "C5 CODE. hint_bands.gdshader lines 4-5, the two samplers at reading size. The mutation deleted source_color from line 4 and was restored. Paired with B11.",
+      "narration_text": "Back to those two lines. Delete source colour from the first one and nothing complains. The shader still compiles. There is no shader error in the log. And here is the part that matters: ask the engine to describe both uniforms and it returns the same answer for each - type twenty four, hint seventeen, texture two D. The engine cannot see this hint on a sampler at all. On a vector three it can. So a test built on the uniform list passes while the thing it was written to protect is gone.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 36,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "code-highlight",
+        "show": [
+          {
+            "at": "0.05",
+            "event": "two lines, large"
+          },
+          {
+            "at": "0.16",
+            "event": "source_color highlights on line 4"
+          },
+          {
+            "at": "0.55",
+            "event": "the two lines are shown as identical to the engine"
+          }
+        ],
+        "remotion": {
+          "pattern": "GodotDevWorkbench",
+          "props": {
+            "mode": "code",
+            "title": "The hint the engine cannot see",
+            "project": "walker-the-lost-TiantongZhang",
+            "path": "godot/shaders/hint_bands.gdshader  lines 4-5",
+            "source": "godot/shaders/hint_bands.gdshader",
+            "code": "uniform sampler2D bands_srgb : source_color, filter_nearest;\nuniform sampler2D bands_data : filter_nearest;",
+            "startLine": 4,
+            "codeFontSize": 30,
+            "inspectorLabel": "Source notes - not Inspector values",
+            "notes": [
+              {
+                "label": "What the engine reports",
+                "value": "stone_albedo and wetness_mask both come back type 24, hint 17, 'Texture2D'. Identical."
+              },
+              {
+                "label": "The asymmetry",
+                "value": "On a vec3 the same keyword IS visible - TYPE_COLOR with COLOR_NO_ALPHA instead of TYPE_VECTOR3."
+              }
+            ],
+            "cues": [
+              {
+                "at": 4.0,
+                "line": 4,
+                "label": "delete four words here"
+              },
+              {
+                "at": 18.0,
+                "line": 5,
+                "label": "and this line is now its twin"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "beat_id": "B11",
+      "act": "RESULT",
+      "role_note": "C5 RESULT. evidence/a5-mutations/mutation3a-hint-sampler_capture.png, the capture taken with the mutation in place. Restored afterwards.",
+      "narration_text": "This is the same scene with those four words gone. Both quads now read one thirty seven, one eighty eight, two twenty five. The two sides of the experiment have become identical and its entire result has disappeared - silently. No error, no warning, no change in the uniform list. The only thing that caught it was a test that reads the shader's source text, and the suite now asserts the blindness itself so nobody simplifies that check away later.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 28,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "reveal",
+        "evidence_media": "media/B11-hint-mutated.png",
+        "show": [
+          {
+            "at": "0.08",
+            "event": "both quads appear, identical"
+          },
+          {
+            "at": "0.46",
+            "event": "the table reveals - the left column has moved"
+          },
+          {
+            "at": "0.84",
+            "event": "SHADER ERROR: 0 is marked"
+          }
+        ],
+        "remotion": {
+          "pattern": "GodotDevWorkbench",
+          "props": {
+            "mode": "asset",
+            "title": "The same scene, four words lighter",
+            "project": "walker-the-lost-TiantongZhang",
+            "path": "evidence/a5-mutations/mutation3a-hint-sampler_capture.png",
+            "source": "media/B11-hint-mutated.png",
+            "image": "media/B11-hint-mutated.png",
+            "codeFontSize": 22,
+            "treeLabel": "Engine capture - real windowed run, Forward+, RTX 5080",
+            "inspectorLabel": "Measured, beside the prediction committed first",
+            "notes": [
+              {
+                "label": "SHADER ERROR lines",
+                "value": "0"
+              },
+              {
+                "label": "What the uniform list said",
+                "value": "unchanged"
+              },
+              {
+                "label": "What caught it",
+                "value": "one assertion reading the source text"
+              }
+            ],
+            "lines": [
+              "stored   with source_color   without",
+              "    64       137              137",
+              "   128       188              188",
+              "   192       225              225"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "beat_id": "B12",
+      "act": "VERDICT",
+      "role_note": "WALKER BOOKEND 3/4 - verdict. Implemented work, limitations and human judgment kept apart. Human/AI split stated.",
+      "narration_text": "So. Written by hand, by the author: three shaders and the language notes. Written by Claude: the driver, four test suites, the capture rigs and the material audit. Measured, not asserted: eight predicted pixels exact, six predicted bands exact, and hint range does not clamp a value set from code - two point zero passed straight through and the pixel went pure red. What no headless run established: any of it. The dummy renderer draws nothing, so every colour claim here came from a windowed capture on real hardware. Still open: the slice has no audio and no art beyond code-drawn blocks, and that port is Assignment Six's first job.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 44,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "reveal",
+        "show": [
+          {
+            "at": "0.05",
+            "event": "the three columns appear"
+          },
+          {
+            "at": "0.40",
+            "event": "the measured column fills"
+          },
+          {
+            "at": "0.80",
+            "event": "the open column holds"
+          }
+        ],
+        "remotion": {
+          "pattern": "ClaudeVerdictArtifact",
+          "props": {
+            "title": "Verdict",
+            "columns": [
+              {
+                "heading": "By hand, the author",
+                "items": [
+                  "trap_warning.gdshader",
+                  "dungeon_surface.gdshader",
+                  "hint_bands.gdshader",
+                  "LANGUAGE-NOTES.md, 36 references"
+                ]
+              },
+              {
+                "heading": "By Claude, reviewed",
+                "items": [
+                  "the material driver",
+                  "99 automated checks",
+                  "two capture rigs",
+                  "MATERIALS.md audit"
+                ]
+              },
+              {
+                "heading": "Measured, not asserted",
+                "items": [
+                  "8 predicted pixels, 0 error",
+                  "6 predicted bands, 0 error",
+                  "hint_range does not clamp",
+                  "R6 held 361 of 361 frames"
+                ]
+              },
+              {
+                "heading": "Still open",
+                "items": [
+                  "no audio, no art yet",
+                  "one sweep judgement outstanding",
+                  "no normal map, so no curl check"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "beat_id": "B13",
+      "act": "TURN",
+      "role_note": "WALKER BOOKEND 4/4 - Your Turn. One bounded change with a prediction, not blind copying. Liam signs off here.",
+      "narration_text": "Your turn. Take the prompt on screen, then do the bounded version yourself: open the warning shader, change nothing, and predict what the base plate pixel becomes at a warning of nought point five. Mix is linear - the arithmetic is one line. Then set it from code and capture the frame in engine, not with a screenshot tool, and see whether your number survives contact. If it does not, that is a finding, not a mistake. Write down which one you trust and why. Liam, signing off.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 35,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "type-on",
+        "show": [
+          {
+            "at": "0.04",
+            "event": "the composer card returns"
+          },
+          {
+            "at": "0.26",
+            "event": "the prompt types on"
+          },
+          {
+            "at": "0.74",
+            "event": "the bounded exercise holds"
+          }
+        ],
+        "remotion": {
+          "pattern": "ClaudeComposerAsk",
+          "props": {
+            "greeting": "Your turn",
+            "topic": "WALKER - ONE BOUNDED CHANGE",
+            "segment": "predict, then measure",
+            "command": "Please use Walker to add a second controlled value to my shader capture rig, write the predicted pixel into the brief before the rig can run, and tell me plainly if the capture disagrees with what I wrote.",
+            "label": "YOUR TURN"
+          }
+        }
+      }
+    },
+    {
+      "beat_id": "B14",
+      "act": "OUTRO",
+      "role_note": "LOCKED ClaudeTitleOutro. Exact title, @NikBearBrown, one slug-seeded mascot, no subline, stock jingle only. No narration.",
+      "narration_text": "",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 5,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "hold",
+        "remotion": {
+          "pattern": "ClaudeTitleOutro",
+          "props": {
+            "title": "TheLostShaders_TiantongZhang",
+            "channel": "@NikBearBrown",
+            "slug": "claude-liam-walker-the-lost-gamedev"
           }
         }
       }

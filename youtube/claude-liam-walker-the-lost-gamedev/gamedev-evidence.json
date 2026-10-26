@@ -1,0 +1,619 @@
+{
+  "schema_version": 1,
+  "game": "godot",
+  "teaching_contract": "code-then-result-v1",
+  "files": [
+    {
+      "path": "assets/materials/hint_with_source_color.tres",
+      "sha256": "d0cc3942a17cede35fc458f20e1935f693da9df647a1f9cbbfc00465b0dcf88b",
+      "role": "resource",
+      "component_ids": [
+        "hint-experiment"
+      ]
+    },
+    {
+      "path": "assets/materials/hint_without_source_color.tres",
+      "sha256": "7474f7295672800e04fadf05f7e53b38564161abb57475e3663c799e6b4d00ec",
+      "role": "resource",
+      "component_ids": [
+        "hint-experiment"
+      ]
+    },
+    {
+      "path": "assets/materials/stone_dry.tres",
+      "sha256": "bc581715fcc84b89e31f1602677145f9f3ac106105f4b594277ce7ac52395592",
+      "role": "resource",
+      "component_ids": [
+        "textured-surface"
+      ]
+    },
+    {
+      "path": "assets/materials/stone_flooded.tres",
+      "sha256": "88f009cdde1cdd68f887e244d62990d1e25cb52f17b33d74baa7ed4065a91c50",
+      "role": "resource",
+      "component_ids": [
+        "textured-surface"
+      ]
+    },
+    {
+      "path": "assets/models/slime.glb",
+      "sha256": "24adf32e1841d061fde85c5d4b7525fc7b8c0f8d74bffdf963bf6275df1e3ef7",
+      "role": "asset",
+      "component_ids": [
+        "textured-surface"
+      ]
+    },
+    {
+      "path": "assets/models/slime.glb.import",
+      "sha256": "2e241d19caa05cfadc4d0030a46b68bb63ce75c46c056dbf8a72fab8ee562387",
+      "role": "config",
+      "component_ids": [
+        "textured-surface"
+      ]
+    },
+    {
+      "path": "assets/sprites/floor_tile.png",
+      "sha256": "b776420e7c80440fdc5df43408aa4de7fccd2c933dce9696d0ea09e0d9ea47e2",
+      "role": "asset",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/sprites/floor_tile.png.import",
+      "sha256": "9a1e225a839fab3b55427c8c246e609fcee47d4f92ee1b41f3217c38abe72651",
+      "role": "config",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/sprites/player.png",
+      "sha256": "77f2ea5387cc7ae9c3aa32f347ce2c291f33862bb9e4711cbf113bc5b2d5415f",
+      "role": "asset",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/sprites/player.png.import",
+      "sha256": "7cdff40a8f823860b78b80661c3098c5f69d7c315322d2894277eca3efb603e1",
+      "role": "config",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/sprites/spike_trap.png",
+      "sha256": "4d62674bd9a99fc7d913f7900ae3bfb882c3fed6e79fdeb160270825626d0b56",
+      "role": "asset",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/sprites/spike_trap.png.import",
+      "sha256": "a6383079033be57f9694951595f994df155fe121d59a8e2a91d7b8e1ea9938af",
+      "role": "config",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/sprites/spike_trap_fired.png",
+      "sha256": "ceceb1e50dcadb6c4f082414c6ddb595a082bc1448af60829261b21779d27b9a",
+      "role": "asset",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/sprites/spike_trap_fired.png.import",
+      "sha256": "9ca9aec7c7567267f9e34d9fed6d37c73850279614a3e92a85e5f78d74055e9d",
+      "role": "config",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/textures/hint_bands.png",
+      "sha256": "deb9df2a9689dd2297f2d37a3fa2759104f49dbb2eb3e33c00e1fa6292060ca6",
+      "role": "asset",
+      "component_ids": [
+        "hint-experiment"
+      ]
+    },
+    {
+      "path": "assets/textures/hint_bands.png.import",
+      "sha256": "c492510107d0c34663cd6da088345cf1b1017a19bb6a525a7dfc1f328fe7f342",
+      "role": "config",
+      "component_ids": [
+        "hint-experiment"
+      ]
+    },
+    {
+      "path": "assets/textures/stone_albedo.png",
+      "sha256": "0142f6743a97f7395138f4df394ec1e771b0e8d466ee63e0eee1c896adc2472a",
+      "role": "asset",
+      "component_ids": [
+        "textured-surface"
+      ]
+    },
+    {
+      "path": "assets/textures/stone_albedo.png.import",
+      "sha256": "a3c500bbcd7104804bc999551ebdb8d72c27848ee8246a415278407a233825f4",
+      "role": "config",
+      "component_ids": [
+        "textured-surface"
+      ]
+    },
+    {
+      "path": "assets/textures/wetness_mask.png",
+      "sha256": "9c2dc6ab6f25c8431db3e4c908e889328eb5425e7c582479209645de27b7d215",
+      "role": "asset",
+      "component_ids": [
+        "textured-surface"
+      ]
+    },
+    {
+      "path": "assets/textures/wetness_mask.png.import",
+      "sha256": "2e9245698fbea6c984d688a68f88156b34c4ac3d938cab80699fff93cc364c00",
+      "role": "config",
+      "component_ids": [
+        "textured-surface"
+      ]
+    },
+    {
+      "path": "features/player/player.gd",
+      "sha256": "e9b7f6158f673e8e7d9e2ad654e9b62d742da703e8eebad1444c6bba4ae0c526",
+      "role": "runtime",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "features/player/player.tscn",
+      "sha256": "ded3d51c8361751636b6a302fd160a4a6c35dce5a90949f4ca30acbe016c5557",
+      "role": "level",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "features/traps/spike_trap.gd",
+      "sha256": "879c7837572469d97af7f8f5baf7e4a7a0607cd2f32855ce825cdc2ace84237b",
+      "role": "runtime",
+      "component_ids": [
+        "warning-shader"
+      ]
+    },
+    {
+      "path": "features/traps/spike_trap.tscn",
+      "sha256": "77fcf7eef59b0eca2d1d2d1dfca397c172fea57e8adb982e76fdf73cb37fdf84",
+      "role": "level",
+      "component_ids": [
+        "warning-shader"
+      ]
+    },
+    {
+      "path": "features/traps/trap_warning_driver.gd",
+      "sha256": "70141535bc9ef681017306038a63684b15dbc4bfd5b1db45e47b0e3060de84d9",
+      "role": "runtime",
+      "component_ids": [
+        "material-driver"
+      ]
+    },
+    {
+      "path": "game/main.gd",
+      "sha256": "7847f868d92d055ff35aea9704118d493e458a2eeb670f8f22ff175a80610973",
+      "role": "runtime",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "game/main.tscn",
+      "sha256": "37b2730a4dc60a9d9d6f301260f998244b5f6a7abc5d3fa00fd0ee99597e810b",
+      "role": "level",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "project.godot",
+      "sha256": "80c64914a6d29f476994120eaf015dd630585b71af6b9bacccdab1862a07d2d9",
+      "role": "config",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "scenes/asset_showcase.tscn",
+      "sha256": "5fe142458d8f9a840a5a2ce38db8d9eacecdf84cb6ba612d973bd9fdad3a05e2",
+      "role": "level",
+      "component_ids": [
+        "textured-surface"
+      ]
+    },
+    {
+      "path": "scenes/hint_experiment.tscn",
+      "sha256": "4e32c118c382a6bfe278d807d30a61eef1b44665d215a8b9bff9d16e3e2416a3",
+      "role": "level",
+      "component_ids": [
+        "hint-experiment"
+      ]
+    },
+    {
+      "path": "shaders/dungeon_surface.gdshader",
+      "sha256": "c7bae132bea2f181df27b43ff25d8e1d98ee9e55fc97ff86e56d5631186704e9",
+      "role": "runtime",
+      "component_ids": [
+        "textured-surface"
+      ]
+    },
+    {
+      "path": "shaders/hint_bands.gdshader",
+      "sha256": "09436e06463e23044704ec43ef40bb714dbd9a5dc1495ba09e558d72566acb17",
+      "role": "runtime",
+      "component_ids": [
+        "hint-experiment"
+      ]
+    },
+    {
+      "path": "shaders/standard_generated.gdshader",
+      "sha256": "ca1c191c44fb614ae64a258fce3efbc13b77fdc82f480e98ac4582e30805650d",
+      "role": "runtime",
+      "component_ids": [
+        "generated-reference"
+      ]
+    },
+    {
+      "path": "shaders/trap_warning.gdshader",
+      "sha256": "a7f8a03652590fe86a8b0c7fe630053937cd3ec31360d89380c9ae61f84fe442",
+      "role": "runtime",
+      "component_ids": [
+        "warning-shader"
+      ]
+    },
+    {
+      "path": "tests/capture_shader.gd",
+      "sha256": "f808fb9cc8850f53c1ca5d9a29f51f188add93d55ab5468c0283dc28f74cd543",
+      "role": "test",
+      "component_ids": [
+        "evidence-harness"
+      ]
+    },
+    {
+      "path": "tests/check_assets_3d.gd",
+      "sha256": "8dd874a37e36b7237d4502d6a06124f32da1ad68e52327b0c467d1c2b2107bc1",
+      "role": "test",
+      "component_ids": [
+        "evidence-harness"
+      ]
+    },
+    {
+      "path": "tests/test_input_map.gd",
+      "sha256": "62496aa9cc9086d36e973d665ea759137b99cc9ba69967787f722c9ef32ccd96",
+      "role": "test",
+      "component_ids": [
+        "evidence-harness"
+      ]
+    },
+    {
+      "path": "tests/test_materials.gd",
+      "sha256": "d049160ec691bb630be8b7c6152aaa2fc2cbdcd523a6cebf98517ade0226c6f0",
+      "role": "test",
+      "component_ids": [
+        "textured-surface"
+      ]
+    },
+    {
+      "path": "tests/test_trap_shader_driver.gd",
+      "sha256": "a650d7172cbd2fb66e4f1cee32363e2ce6988a317bf0b8c49b683a8aabab696c",
+      "role": "test",
+      "component_ids": [
+        "material-driver"
+      ]
+    },
+    {
+      "path": "tests/test_trap_warning.gd",
+      "sha256": "1cedb12543b51aeb2e5de2266a1711375f9a97c0582454428362ac01ff9b460b",
+      "role": "test",
+      "component_ids": [
+        "evidence-harness"
+      ]
+    },
+    {
+      "path": "tools/capture_hint.gd",
+      "sha256": "d2883a65011a959d8226c45ee48c282591f095607dec880f172d4e6b3ead4a74",
+      "role": "test",
+      "component_ids": [
+        "hint-experiment"
+      ]
+    },
+    {
+      "path": "tools/capture_materials.gd",
+      "sha256": "714538090ee67ae89a81dbaeb3c25ba1b9781b75ad56dae1f03653516d95f83f",
+      "role": "test",
+      "component_ids": [
+        "textured-surface"
+      ]
+    },
+    {
+      "path": "tools/capture_rig.gd",
+      "sha256": "e5dc0177eefd769692e569a8d194ce23b89cef6b201d7169a70b422e5a4ac41c",
+      "role": "test",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "tools/write_textures.gd",
+      "sha256": "440e56b79880331faf3352235661b37badf4ddd2511d126afc1ab15802cd5838",
+      "role": "test",
+      "component_ids": [
+        "hint-experiment"
+      ]
+    }
+  ],
+  "components": [
+    {
+      "id": "warning-shader",
+      "explanation": "The hand-written canvas_item shader that turns a spike trap red, and the trap whose state drives it. One Sprite2D, one material, one line inside fragment(). The state machine owns warn_amount and the shader only reads it.",
+      "beat_ids": [
+        "B02",
+        "B03"
+      ],
+      "files": [
+        "shaders/trap_warning.gdshader",
+        "features/traps/spike_trap.gd",
+        "features/traps/spike_trap.tscn"
+      ]
+    },
+    {
+      "id": "material-driver",
+      "explanation": "Agent-written presentation. Duplicates the ShaderMaterial per trap instance so three traps do not share one warn_amount, asks the shader at startup whether the uniform it is about to write exists, and copies state into that uniform once a frame after the state machine has run.",
+      "beat_ids": [
+        "B04",
+        "B05"
+      ],
+      "files": [
+        "features/traps/trap_warning_driver.gd",
+        "tests/test_trap_shader_driver.gd"
+      ]
+    },
+    {
+      "id": "hint-experiment",
+      "explanation": "One unshaded spatial shader with two samplers bound to the same three-pixel file, differing only by source_color, and a bool that picks which reaches ALBEDO. The scene fixes the pipeline the measurement depends on: Linear tonemap at exposure 1.0, no light, every post effect off.",
+      "beat_ids": [
+        "B06",
+        "B07",
+        "B10",
+        "B11"
+      ],
+      "files": [
+        "shaders/hint_bands.gdshader",
+        "scenes/hint_experiment.tscn",
+        "assets/materials/hint_with_source_color.tres",
+        "assets/materials/hint_without_source_color.tres",
+        "assets/textures/hint_bands.png",
+        "assets/textures/hint_bands.png.import",
+        "tools/write_textures.gd",
+        "tools/capture_hint.gd"
+      ]
+    },
+    {
+      "id": "textured-surface",
+      "explanation": "The hand-written spatial shader, its colour and data samplers and four grouped parameters, with two materials that differ in three values. One slime takes its material from the importer so a reimport keeps it; the other overrides at the node, so the pair is identical geometry under identical light.",
+      "beat_ids": [
+        "B08",
+        "B09"
+      ],
+      "files": [
+        "shaders/dungeon_surface.gdshader",
+        "assets/materials/stone_dry.tres",
+        "assets/materials/stone_flooded.tres",
+        "assets/textures/stone_albedo.png",
+        "assets/textures/stone_albedo.png.import",
+        "assets/textures/wetness_mask.png",
+        "assets/textures/wetness_mask.png.import",
+        "scenes/asset_showcase.tscn",
+        "assets/models/slime.glb",
+        "assets/models/slime.glb.import",
+        "tools/capture_materials.gd",
+        "tests/test_materials.gd"
+      ]
+    },
+    {
+      "id": "the-room",
+      "explanation": "What the shader is attached to and what drives it in play: the three-trap room, the player who can only walk and jump, the code-drawn sprites the pixel predictions were written against, and the project settings that fix the renderer and resolution.",
+      "beat_ids": [
+        "B03",
+        "B05"
+      ],
+      "files": [
+        "game/main.tscn",
+        "game/main.gd",
+        "features/player/player.gd",
+        "features/player/player.tscn",
+        "assets/sprites/spike_trap.png",
+        "assets/sprites/spike_trap.png.import",
+        "assets/sprites/spike_trap_fired.png",
+        "assets/sprites/spike_trap_fired.png.import",
+        "assets/sprites/player.png",
+        "assets/sprites/player.png.import",
+        "assets/sprites/floor_tile.png",
+        "assets/sprites/floor_tile.png.import",
+        "project.godot",
+        "tools/capture_rig.gd"
+      ]
+    },
+    {
+      "id": "evidence-harness",
+      "explanation": "What the claims rest on. The state suite at three pinned frame rates, the input-map check, Assignment 3's geometry check carried across, and the capture driver that records the warning as real motion and asserts its own outcome before a frame counts as evidence.",
+      "beat_ids": [
+        "B03",
+        "B05",
+        "B12"
+      ],
+      "files": [
+        "tests/test_trap_warning.gd",
+        "tests/test_input_map.gd",
+        "tests/check_assets_3d.gd",
+        "tests/capture_shader.gd"
+      ]
+    },
+    {
+      "id": "generated-reference",
+      "explanation": "Godot's own output, produced by converting a StandardMaterial3D with albedo, normal-map and roughness textures enabled. Nothing loads it. It is in the project to be read: its line 7 marks the albedo sampler as colour and its line 19 leaves the normal map as data, which is the distinction the hand-written shader makes on its own lines 3 and 4.",
+      "beat_ids": [
+        "B10"
+      ],
+      "files": [
+        "shaders/standard_generated.gdshader"
+      ]
+    }
+  ],
+  "excerpts": [
+    {
+      "beat_id": "B02",
+      "path": "shaders/trap_warning.gdshader",
+      "start_line": 1,
+      "end_line": 7,
+      "text": "shader_type canvas_item;\nuniform float warn_amount : hint_range(0.0, 1.0) = 0.0;\nuniform vec3 warn_color: source_color = vec3(0.839216, 0.235294, 0.184314);\n\nvoid fragment(){\nCOLOR.rgb = mix(COLOR.rgb, warn_color, warn_amount);\n}"
+    },
+    {
+      "beat_id": "B04",
+      "path": "features/traps/trap_warning_driver.gd",
+      "start_line": 62,
+      "end_line": 76,
+      "text": "\t# R6. duplicate() is shallow, which is what is wanted: the Shader itself\n\t# stays shared (it is read-only program text) while the parameter block\n\t# becomes this trap's own.\n\tmaterial = shared.duplicate() as ShaderMaterial\n\t_sprite.material = material\n\n\tuniform_declared = _declares(material.shader, UNIFORM_WARN)\n\tif not uniform_declared:\n\t\tpush_error(\"Shader does not declare a uniform named '%s'; every write from this driver would be discarded in silence.\" % UNIFORM_WARN)\n\n\nfunc _process(_delta: float) -> void:\n\tif material == null:\n\t\treturn\n\tmaterial.set_shader_parameter(UNIFORM_WARN, _trap.warn_amount)"
+    },
+    {
+      "beat_id": "B06",
+      "path": "shaders/hint_bands.gdshader",
+      "start_line": 1,
+      "end_line": 7,
+      "text": "shader_type spatial;\nrender_mode unshaded;\n\nuniform sampler2D bands_srgb : source_color, filter_nearest;\nuniform sampler2D bands_data : filter_nearest;\n\nuniform bool use_source_color = true;"
+    },
+    {
+      "beat_id": "B08",
+      "path": "shaders/dungeon_surface.gdshader",
+      "start_line": 15,
+      "end_line": 27,
+      "text": "void fragment() {\n\t// 遮罩：0 表示干燥，1 表示完全湿润。\n\tfloat w = texture(wetness_mask, UV).r;\n\n\t// 石头本色乘上颜色调整。\n\tvec3 base = texture(stone_albedo, UV).rgb * tint;\n\n\t// 越湿越暗。\n\tALBEDO = base * (1.0 - w * water_darkening);\n\n\t// 根据湿度，在干燥和湿润粗糙度之间插值。\n\tROUGHNESS = mix(roughness_dry, water_roughness, w);\n}"
+    },
+    {
+      "beat_id": "B10",
+      "path": "shaders/hint_bands.gdshader",
+      "start_line": 4,
+      "end_line": 5,
+      "text": "uniform sampler2D bands_srgb : source_color, filter_nearest;\nuniform sampler2D bands_data : filter_nearest;"
+    }
+  ],
+  "exclusions": [
+    {
+      "path": "MATERIALS.md",
+      "reason": "The part 3 material audit. Assignment 5 names this path, so it sits inside the Godot project, but it is a document about the game rather than a file the game loads."
+    },
+    {
+      "path": "assets/models/torch.glb",
+      "reason": "Assignment 3's torch, carried across with the showcase scene. No shader or material in this assignment touches it."
+    },
+    {
+      "path": "assets/models/torch.glb.import",
+      "reason": "sidecar of the above"
+    },
+    {
+      "path": "assets/models/spike_trap.glb",
+      "reason": "Assignment 3's 3D spike trap. The trap this film explains is the 2D one; the model appears only as scenery in the showcase scene."
+    },
+    {
+      "path": "assets/models/spike_trap.glb.import",
+      "reason": "sidecar of the above"
+    },
+    {
+      "path": "tests/route_driver.gd",
+      "reason": "Walker-ninja's fixed input route, carried across with Assignment 3's files. Its marks are for that level and it is not used here; tests/capture_shader.gd is this film's driver."
+    },
+    {
+      "path": "tests/test_keyboard.gd",
+      "reason": "Walker-ninja's keyboard smoke test, carried across. Superseded here by tests/test_input_map.gd, which is in evidence-harness."
+    },
+    {
+      "path": "tools/setup_input_map.gd",
+      "reason": "One-off that wrote the input map through the engine on 2026-10-23. Not runtime code and nothing in the film depends on re-running it."
+    },
+    {
+      "path": "assets/.gitkeep",
+      "reason": "Empty .gitkeep placeholder. It holds a directory in git and contains nothing authored."
+    },
+    {
+      "path": "features/.gitkeep",
+      "reason": "Empty .gitkeep placeholder. It holds a directory in git and contains nothing authored."
+    },
+    {
+      "path": "game/.gitkeep",
+      "reason": "Empty .gitkeep placeholder. It holds a directory in git and contains nothing authored."
+    },
+    {
+      "path": "levels/.gitkeep",
+      "reason": "Empty .gitkeep placeholder. It holds a directory in git and contains nothing authored."
+    },
+    {
+      "path": "scenes/.gitkeep",
+      "reason": "Empty .gitkeep placeholder. It holds a directory in git and contains nothing authored."
+    },
+    {
+      "path": "ui/.gitkeep",
+      "reason": "Empty .gitkeep placeholder. It holds a directory in git and contains nothing authored."
+    }
+  ],
+  "code_result_pairs": [
+    {
+      "code_beat": "B02",
+      "result_beat": "B03",
+      "observation": "C1 RESULT. take-w, trap 1's window. Frames 97-132 of the recorded take; the log gives t 1.617 to 2.200 and player_x 174.4 to 230.4.",
+      "media": {
+        "path": "capture/take-w.mp4",
+        "sha256": "7cf23f5e2d23dcaa197095797937300ca82340908b7b13cbc80eb8a058c59800"
+      }
+    },
+    {
+      "code_beat": "B04",
+      "result_beat": "B05",
+      "observation": "C2 RESULT. take-w across all three traps. The take's own probe counted zero frames in 361 with more than one trap lit.",
+      "media": {
+        "path": "capture/take-w.mp4",
+        "sha256": "7cf23f5e2d23dcaa197095797937300ca82340908b7b13cbc80eb8a058c59800"
+      }
+    },
+    {
+      "code_beat": "B06",
+      "result_beat": "B07",
+      "observation": "C3 RESULT. captures/a5/hint_experiment.png, real windowed run. All six bands exact against the prediction committed on 2026-10-23.",
+      "media": {
+        "path": "media/B07-hint-experiment.png",
+        "sha256": "c11078dd7d85b444a61f48a9e3be712c89584c18307843dcb3fb99db3727e82c"
+      }
+    },
+    {
+      "code_beat": "B08",
+      "result_beat": "B09",
+      "observation": "C4 RESULT. captures/a5/materials/00-baseline.png under section 8's lighting. Sweep numbers from captures/a5/materials/SWEEP-REPORT.txt.",
+      "media": {
+        "path": "media/B09-two-materials.png",
+        "sha256": "0822f8ab22895ff3e144bab1b089d5a649ad2f1fd1d702061316cb8146e4ab70"
+      }
+    },
+    {
+      "code_beat": "B10",
+      "result_beat": "B11",
+      "observation": "C5 RESULT. evidence/a5-mutations/mutation3a-hint-sampler_capture.png, the capture taken with the mutation in place. Restored afterwards.",
+      "media": {
+        "path": "media/B11-hint-mutated.png",
+        "sha256": "cdd6e115cb34abcd065e08d571e6574d014997a9050f149365813dd660f9c209"
+      }
+    }
+  ]
+}
