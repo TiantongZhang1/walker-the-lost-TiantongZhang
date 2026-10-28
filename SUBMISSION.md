@@ -53,7 +53,9 @@ line in the reel's `FACTCHECK.md`. The outro card's mascot and jingle come
 from the course toolkit and are the instructor's. `ATTRIBUTION.md` is the full
 accounting, game and film kept apart because the answer differs.
 
-**Final film URL and filename:** `TheLostShaders_TiantongZhang.mp4`. The compiler writes it under the reel slug as `youtube/claude-liam-walker-the-lost-gamedev/exports/landscape/claude-liam-walker-the-lost-gamedev.mp4`; it was renamed for submission and not re-encoded, so the SHA-256 below is the compiler's own output. 3840 x 2160, 30 fps, 478.0 s, 29.9 MB. OneDrive link added with the upload.
+**Final film URL and filename:** `TheLostShaders_TiantongZhang.mp4` — <https://northeastern-my.sharepoint.com/:u:/g/personal/zhang_tiant_northeastern_edu/IQAnbVS5_1aSRKanWn1XDlFrAS2uCaavkNFX0FcELukDiLY?e=0RMDwY>
+
+The compiler writes it under the reel slug as `youtube/claude-liam-walker-the-lost-gamedev/exports/landscape/claude-liam-walker-the-lost-gamedev.mp4`; it was renamed for submission and not re-encoded, so the SHA-256 below is the compiler's own output. 3840 x 2160, 30 fps, 478.0 s, 29.9 MB. The file is **not in this repository** — `.gitignore` keeps MP4s out — so the hash below is how you check that the download is the film this tag describes.
 
 **Final film SHA-256:** `6ee3fb47064b2004caa433bdcbc8bf5d1570669df8f8b06051b26b41829c5c7d`
 
