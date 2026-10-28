@@ -203,10 +203,11 @@ youtube/          the explainer film and its documents
 2. **No normal map, so no curl check.** `CHANGE-BRIEF.md` §8 chose code-written
    textures, which forgoes the Poly Haven calibration pair the check needs.
    Said in the specification, not discovered afterwards.
-3. **One human judgement is still open** — whether any setting in the interface
-   sweep *breaks* the look rather than merely changing it. The twelve sweep
-   captures are in `captures/a5/materials/`; the measurements are recorded and
-   the verdict is not.
+3. ~~**One human judgement is still open.**~~ **Closed 2026-10-28:**
+   `tint` at 0 breaks the look — the albedo is multiplied to black and the
+   flooded slime reads as a silhouette rather than as stone. The other three
+   uniforms only change it. `TEST-REPORT.md` limitation 4 carries the full
+   wording, and the film says it too.
 4. **The retrigger exploit.** A player who steps off the detection zone and
    back on restarts the warning every time and is never hit. Accepted in
    revision 5.0.1 as the price of "every trigger gets its own full warning".

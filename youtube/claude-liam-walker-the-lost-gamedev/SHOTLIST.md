@@ -3,7 +3,7 @@
 What is on screen and when. The narration was written against this, not the
 other way round, so a beat that has nothing to show does not exist.
 
-**18 beats, 7:48 of measured narration.** Timings inside a beat are fractions
+**18 beats, 7:58 of measured narration.** Timings inside a beat are fractions
 of that beat's own measured length; the cue times in the beat sheet are those
 fractions multiplied by the narration Kokoro actually produced.
 

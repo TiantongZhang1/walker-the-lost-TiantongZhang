@@ -26,7 +26,7 @@
     "teaching_contract": "code-then-result-v1",
     "game": "godot",
     "build": {
-      "at": "2026-10-28T17:14:35",
+      "at": "2026-10-28T18:28:10",
       "cut": "master",
       "filled": 18,
       "of": 18,
@@ -91,7 +91,7 @@
         "status": "VIDEO",
         "src": "media\\B00.mp4",
         "filled_by": "remotion:ClaudeComposerAsk",
-        "at": "2026-10-28T17:14:35"
+        "at": "2026-10-28T18:28:10"
       }
     },
     {
@@ -163,7 +163,7 @@
         "status": "VIDEO",
         "src": "media\\B01.mp4",
         "filled_by": "remotion:BrutalistHesitantWriter",
-        "at": "2026-10-28T17:14:35"
+        "at": "2026-10-28T18:28:10"
       }
     },
     {
@@ -251,7 +251,7 @@
         "status": "VIDEO",
         "src": "media\\B02.mp4",
         "filled_by": "remotion:GodotDevWorkbench",
-        "at": "2026-10-28T17:14:35"
+        "at": "2026-10-28T18:28:10"
       }
     },
     {
@@ -299,7 +299,7 @@
         "status": "VIDEO",
         "src": "media\\B03.mp4",
         "filled_by": "media",
-        "at": "2026-10-28T17:14:35"
+        "at": "2026-10-28T18:28:10"
       }
     },
     {
@@ -341,7 +341,7 @@
         "status": "STILL",
         "src": "media\\B03A.png",
         "filled_by": "still",
-        "at": "2026-10-28T17:14:35"
+        "at": "2026-10-28T18:28:10"
       }
     },
     {
@@ -429,7 +429,7 @@
         "status": "VIDEO",
         "src": "media\\B04.mp4",
         "filled_by": "remotion:GodotDevWorkbench",
-        "at": "2026-10-28T17:14:35"
+        "at": "2026-10-28T18:28:10"
       }
     },
     {
@@ -477,7 +477,7 @@
         "status": "VIDEO",
         "src": "media\\B05.mp4",
         "filled_by": "media",
-        "at": "2026-10-28T17:14:35"
+        "at": "2026-10-28T18:28:10"
       }
     },
     {
@@ -565,7 +565,7 @@
         "status": "VIDEO",
         "src": "media\\B06.mp4",
         "filled_by": "remotion:GodotDevWorkbench",
-        "at": "2026-10-28T17:14:35"
+        "at": "2026-10-28T18:28:10"
       }
     },
     {
@@ -607,7 +607,7 @@
         "status": "STILL",
         "src": "media\\B07.png",
         "filled_by": "still",
-        "at": "2026-10-28T17:14:35"
+        "at": "2026-10-28T18:28:10"
       }
     },
     {
@@ -695,7 +695,7 @@
         "status": "VIDEO",
         "src": "media\\B08.mp4",
         "filled_by": "remotion:GodotDevWorkbench",
-        "at": "2026-10-28T17:14:35"
+        "at": "2026-10-28T18:28:10"
       }
     },
     {
@@ -737,7 +737,7 @@
         "status": "STILL",
         "src": "media\\B09.png",
         "filled_by": "still",
-        "at": "2026-10-28T17:14:35"
+        "at": "2026-10-28T18:28:10"
       }
     },
     {
@@ -816,7 +816,7 @@
         "status": "VIDEO",
         "src": "media\\B10.mp4",
         "filled_by": "remotion:GodotDevWorkbench",
-        "at": "2026-10-28T17:14:35"
+        "at": "2026-10-28T18:28:10"
       }
     },
     {
@@ -858,7 +858,7 @@
         "status": "STILL",
         "src": "media\\B11.png",
         "filled_by": "still",
-        "at": "2026-10-28T17:14:35"
+        "at": "2026-10-28T18:28:10"
       }
     },
     {
@@ -946,14 +946,14 @@
         "status": "VIDEO",
         "src": "media\\B11A.mp4",
         "filled_by": "remotion:GodotDevWorkbench",
-        "at": "2026-10-28T17:14:35"
+        "at": "2026-10-28T18:28:10"
       }
     },
     {
       "beat_id": "B11B",
       "act": "RESULT",
-      "role_note": "C6 RESULT. captures/a5/materials/, the interface sweep: every non-texture uniform of dungeon_surface.gdshader at both ends of its range. Grid composed by scripts/compose_a5_extras.py; the numbers are SWEEP-REPORT.txt verbatim. Also carries limitation 3, still open.",
-      "narration_text": "An interface is only worth declaring if every control does something, so here is all four of them at both ends. Tint. Dry roughness. Water darkening. Water roughness - two groups, four uniforms, twelve frames, and the mean colour of the slime after each one. The dry slime is in every frame on purpose. It carries the other material, and across the whole sweep it does not move: fifty, fifty six, fifty five, twelve times. Only the flooded one changes. Whether any of these settings breaks the look rather than merely changing it is a human judgement, and it is the one thing in this assignment I am still recording as open.",
+      "role_note": "C6 RESULT. captures/a5/materials/, the interface sweep: every non-texture uniform of dungeon_surface.gdshader at both ends of its range. Grid composed by scripts/compose_a5_extras.py; the numbers are SWEEP-REPORT.txt verbatim. Also carries the author's verdict on the sweep, given 2026-10-28, which closed the last open HUMAN row.",
+      "narration_text": "An interface is only worth declaring if every control does something, so here is all four of them at both ends. Tint. Dry roughness. Water darkening. Water roughness - two groups, four uniforms, twelve frames, and the mean colour of the slime after each one. The dry slime is in every frame on purpose. It carries the other material, and across the whole sweep it does not move: fifty, fifty six, fifty five, twelve times. Only the flooded one changes. Whether any of these settings breaks the look rather than merely changing it is a human judgement, so here is mine. Tint at zero breaks it. That is not a darker stone, it is no stone - the albedo is multiplied to black and the texture goes with it, and the flooded slime reads as a silhouette. The other three only change it. Dry roughness at zero is the most extreme of them and it is still obviously stone, just a very wet one.",
       "voice": "am_onyx",
       "engine": "kokoro",
       "estimated_duration_s": 40,
@@ -981,14 +981,14 @@
           }
         ]
       },
-      "actual_duration_s": 33.19,
+      "actual_duration_s": 43.28,
       "audio_file": "mp3/beat-B11B.mp3",
-      "render_duration_s": 33.2,
+      "render_duration_s": 43.3,
       "build": {
         "status": "STILL",
         "src": "media\\B11B.png",
         "filled_by": "still",
-        "at": "2026-10-28T17:14:35"
+        "at": "2026-10-28T18:28:10"
       }
     },
     {
@@ -1049,7 +1049,7 @@
         "status": "VIDEO",
         "src": "media\\B12.mp4",
         "filled_by": "remotion:ClaudeVerdictArtifact",
-        "at": "2026-10-28T17:14:35"
+        "at": "2026-10-28T18:28:10"
       }
     },
     {
@@ -1104,7 +1104,7 @@
         "status": "VIDEO",
         "src": "media\\B13.mp4",
         "filled_by": "remotion:ClaudeComposerAsk",
-        "at": "2026-10-28T17:14:35"
+        "at": "2026-10-28T18:28:10"
       }
     },
     {
@@ -1140,7 +1140,7 @@
         "status": "VIDEO",
         "src": "media\\B14.mp4",
         "filled_by": "remotion:ClaudeTitleOutro",
-        "at": "2026-10-28T17:14:35"
+        "at": "2026-10-28T18:28:10"
       }
     }
   ]

@@ -53,9 +53,9 @@ line in the reel's `FACTCHECK.md`. The outro card's mascot and jingle come
 from the course toolkit and are the instructor's. `ATTRIBUTION.md` is the full
 accounting, game and film kept apart because the answer differs.
 
-**Final film URL and filename:** `TheLostShaders_TiantongZhang.mp4` (built as `youtube/claude-liam-walker-the-lost-gamedev/exports/landscape/claude-liam-walker-the-lost-gamedev.mp4`). 3840 x 2160, 30 fps, 467.9 s, 28.9 MB. OneDrive link added with the upload.
+**Final film URL and filename:** `TheLostShaders_TiantongZhang.mp4`. The compiler writes it under the reel slug as `youtube/claude-liam-walker-the-lost-gamedev/exports/landscape/claude-liam-walker-the-lost-gamedev.mp4`; it was renamed for submission and not re-encoded, so the SHA-256 below is the compiler's own output. 3840 x 2160, 30 fps, 478.0 s, 29.9 MB. OneDrive link added with the upload.
 
-**Final film SHA-256:** `874b73bb29c73ae2d37695360c20340589e269fb327cedb9665b95234b78b6e6`
+**Final film SHA-256:** `6ee3fb47064b2004caa433bdcbc8bf5d1570669df8f8b06051b26b41829c5c7d`
 
 ---
 
@@ -169,10 +169,14 @@ and drawn verbatim — change a report and the card changes with it.
 2. **No normal map, so no curl check.** `CHANGE-BRIEF.md` §8 chose
    code-written textures, which forgoes the Poly Haven calibration pair the
    check needs. Said plainly there rather than discovered here.
-3. **One human judgement is still open.** Whether any setting in the
-   interface sweep *breaks* the look rather than merely changing it. The
-   twelve sweep captures are in `captures/a5/materials/`; the measurements
-   are recorded and the verdict is not.
+3. ~~**One human judgement is still open.**~~ **Closed 2026-10-28.**
+   Whether any setting in the interface sweep *breaks* the look rather than
+   merely changing it, judged by looking at the twelve sweep captures in
+   `captures/a5/materials/`: **`tint` at 0 breaks the look; the other three only change it.** Tint at zero is not a darker stone, it is no stone -- the albedo is multiplied to black and the texture goes with it, and the flooded slime reads as a silhouette. `roughness_dry` at 0 is the next most extreme (flooded mean 32, 43, 39, the lowest of the twelve) and it still reads as stone, just a very wet one. `water_darkening` and `water_roughness` move the surface across their whole range without ever leaving it.
+
+   It is listed here rather than quietly deleted because it was a known
+   limitation of this submission for four days, and the date it closed is
+   part of the record.
 4. **The retrigger exploit.** A player who steps off the detection zone and
    back on restarts the warning every time and is never hit. Accepted in
    revision 5.0.1 as the price of "every trigger gets its own full warning".

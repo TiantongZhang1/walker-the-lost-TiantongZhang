@@ -625,7 +625,7 @@
     {
       "code_beat": "B11A",
       "result_beat": "B11B",
-      "observation": "C6 RESULT. captures/a5/materials/, the interface sweep: every non-texture uniform of dungeon_surface.gdshader at both ends of its range. Grid composed by scripts/compose_a5_extras.py; the numbers are SWEEP-REPORT.txt verbatim. Also carries limitation 3, still open.",
+      "observation": "C6 RESULT. captures/a5/materials/, the interface sweep: every non-texture uniform of dungeon_surface.gdshader at both ends of its range. Grid composed by scripts/compose_a5_extras.py; the numbers are SWEEP-REPORT.txt verbatim. Also carries the author's verdict on the sweep, given 2026-10-28, which closed the last open HUMAN row.",
       "media": {
         "path": "media/B11B.png",
         "sha256": "2de6c8885bd8834070c2975bf9c98815eb81015b65b466171427e2a2e8f41b2e"

@@ -545,10 +545,14 @@ Forward+/Mobile assumption their predictions are written under.
    change's boundaries, and the port happens after `a5` is tagged, as the
    first work of Assignment 6. The trap's sprite stays code-drawn
    permanently, because §6's predictions were computed before it was drawn.
-4. **The human checks are done except one judgement.** Four of the five
-   HUMAN rows are measured and recorded above. What is left is not a
-   measurement: whether any setting in the interface sweep *breaks* the
-   look rather than merely changing it. The twelve sweep captures are in
-   `captures/a5/materials/` and the author has not yet written a verdict on
-   them. A passing headless suite establishes that the state behaves; it
-   establishes nothing about what the screen shows.
+4. **The human checks are all done.** All five HUMAN rows are measured or
+   judged and recorded above. The last one was not a measurement: whether
+   any setting in the interface sweep *breaks* the look rather than merely
+   changing it, over the twelve sweep captures in `captures/a5/materials/`.
+
+   **Author's verdict, 2026-10-28.** **`tint` at 0 breaks the look; the other three only change it.** Tint at zero is not a darker stone, it is no stone -- the albedo is multiplied to black and the texture goes with it, and the flooded slime reads as a silhouette. `roughness_dry` at 0 is the next most extreme (flooded mean 32, 43, 39, the lowest of the twelve) and it still reads as stone, just a very wet one. `water_darkening` and `water_roughness` move the surface across their whole range without ever leaving it.
+
+   Nothing headless could have produced that line. A passing suite
+   establishes that the state behaves; it establishes nothing about what
+   the screen shows, which is why this row was carried as open for four
+   days rather than filled in from the means.

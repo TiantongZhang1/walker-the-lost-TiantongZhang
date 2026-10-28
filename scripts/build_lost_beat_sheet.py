@@ -560,7 +560,8 @@ B.append(beat(
     "C6 RESULT. captures/a5/materials/, the interface sweep: every "
     "non-texture uniform of dungeon_surface.gdshader at both ends of its "
     "range. Grid composed by scripts/compose_a5_extras.py; the numbers are "
-    "SWEEP-REPORT.txt verbatim. Also carries limitation 3, still open.",
+    "SWEEP-REPORT.txt verbatim. Also carries the author's verdict on the "
+    "sweep, given 2026-10-28, which closed the last open HUMAN row.",
     "An interface is only worth declaring if every control does something, so "
     "here is all four of them at both ends. Tint. Dry roughness. Water "
     "darkening. Water roughness - two groups, four uniforms, twelve frames, "
@@ -568,8 +569,12 @@ B.append(beat(
     "every frame on purpose. It carries the other material, and across the "
     "whole sweep it does not move: fifty, fifty six, fifty five, twelve "
     "times. Only the flooded one changes. Whether any of these settings "
-    "breaks the look rather than merely changing it is a human judgement, and "
-    "it is the one thing in this assignment I am still recording as open.",
+    "breaks the look rather than merely changing it is a human judgement, so "
+    "here is mine. Tint at zero breaks it. That is not a darker stone, it is "
+    "no stone - the albedo is multiplied to black and the texture goes with "
+    "it, and the flooded slime reads as a silhouette. The other three only "
+    "change it. Dry roughness at zero is the most extreme of them and it is "
+    "still obviously stone, just a very wet one.",
     40,
     still_shot("Four uniforms, both ends, one material moving", "B11B",
                "captures/a5/materials/ - engine capture, Forward+, RTX 5080",
