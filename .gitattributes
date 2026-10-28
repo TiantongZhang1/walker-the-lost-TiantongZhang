@@ -1,0 +1,47 @@
+# Line endings are part of the evidence here.
+#
+# gamedev-evidence.json hashes 44 source files by their bytes ON DISK, and
+# the course checker recomputes those hashes from a clone. Git's autocrlf is
+# on by default on Windows, so a fresh clone there rewrote every LF to CRLF
+# and the checker failed on the first file it looked at:
+#
+#     Godot gamedev evidence FAIL: Source hash mismatch:
+#     assets/materials/hint_with_source_color.tres
+#
+# 982 bytes in the repository, 1004 in the clone - twenty-two carriage
+# returns that nobody typed. Found on 2026-10-28 by cloning the a5 tag into
+# an empty directory and running the checker against it, which is the only
+# way it shows up: the machine the film was built on has the right bytes.
+#
+# So: no conversion, anywhere. What is committed is what lands on disk.
+* -text
+
+# One exception. cmd.exe is happier with CRLF in a batch file, and nothing
+# hashes this one.
+*.bat text eol=crlf
+
+# Seven files the ledger hashes are CRLF in the author's working tree and LF
+# in the repository: they were typed in an editor that writes CRLF, and
+# autocrlf normalised them on the way in. The hashes were taken over the
+# bytes on disk, so a clone has to reproduce the CRLF or the checker fails -
+# which is what `* -text` alone did, on features/traps/spike_trap.gd.
+#
+# These lines change no committed blob and no file on disk. They only say
+# what checkout should write, and `godot/shaders/*` in particular keeps the
+# exact four commits the author made: `git log -- godot/shaders/` is
+# unchanged by this, and no agent has edited a .gdshader.
+#
+# If the author ever renormalises these to LF, rebuild the ledger in the same
+# commit - scripts/build_lost_ledger.py re-reads every one of them.
+godot/features/traps/spike_trap.gd text eol=crlf
+godot/game/main.gd                 text eol=crlf
+godot/game/main.tscn               text eol=crlf
+godot/shaders/dungeon_surface.gdshader text eol=crlf
+godot/shaders/hint_bands.gdshader      text eol=crlf
+godot/shaders/trap_warning.gdshader    text eol=crlf
+# standard_generated.gdshader is NOT in that list: Godot's editor
+# wrote it with LF and it is LF on disk. A `*.gdshader` glob caught it
+# and the next clean clone failed on exactly that file. The list is
+# per file because the split is per file, not per extension - two .gd
+# files here are CRLF and the rest are LF.
+godot/tests/test_trap_warning.gd   text eol=crlf
