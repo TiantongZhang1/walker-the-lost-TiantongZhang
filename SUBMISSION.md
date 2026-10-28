@@ -59,6 +59,43 @@ accounting, game and film kept apart because the answer differs.
 
 ---
 
+## Verified from a clean clone of the tag
+
+Not from this machine. `git clone --branch a5` into an empty directory, then,
+in that directory:
+
+| Step | Result |
+|---|---|
+| `./art godot-gamedev --check` (the course checker) | **PASS** — 44 source files, 14 exclusions, 7 components, 6 exact excerpts, 6 code-result pairs |
+| `godot --headless --path godot --import` | **0 import errors** from a cold cache |
+| `test_materials.gd` 60 | 48 checks, 0 failures |
+| `test_trap_warning.gd` 144 | 22 checks, 0 failures |
+| `test_trap_shader_driver.gd` 30 | 24 checks, 0 failures |
+| `test_input_map.gd` 60 | 5 checks, 0 failures |
+| `check_assets_3d.gd` 60 | ALL CHECKS PASSED |
+| `scripts/build_lost_ledger.py` | rebuilds `gamedev-evidence.json` **byte-identical** to the committed one |
+| `scripts/compose_a5_extras.py` then `scripts/compose_lost_evidence.py` | rebuilds all five evidence cards and both grids **byte-identical** |
+
+**It did not pass the first four times, and that is the point of doing it.**
+The machine the film was built on had the right bytes, so every check run
+there was green while a clone was unverifiable:
+
+1. `core.autocrlf` rewrote every LF to CRLF on checkout, so the first file
+   the checker hashed was 1004 bytes against the 982 it expected.
+2. With that fixed, seven files went the other way — they are CRLF in my
+   working tree and LF in the repository, and the ledger hashed the bytes on
+   disk. They now carry an explicit `text eol=crlf`. **No shader blob was
+   rewritten to achieve this**; renormalising them would have put an agent
+   commit into `git log -- godot/shaders/`, which is the clearest evidence of
+   authorship this assignment has.
+3. A `*.gdshader` glob in that fix over-reached onto
+   `standard_generated.gdshader`, which Godot wrote with LF. The rule is per
+   file because the split is per file.
+4. `capture/take-w.mp4` — 342 KB, and the result half of two of the six pairs
+   — was excluded by a `*.mp4` rule meant for 4K masters, so the checker
+   reported `Missing or escaping source` and a reviewer could verify nothing.
+   It is tracked now; the 33 MB frame sequence behind it still is not.
+
 ## Summary of my work
 
 I wrote three shaders by hand, line by line, and Claude Code wrote the driver,

@@ -121,8 +121,11 @@ Both settle claims the film makes out loud in B02 and B08.
 
 ## 7. What a reviewer should check first
 
-1. `python -I scripts/build_lost_ledger.py` — rebuilds the ledger from the
-   repository and refuses if any panel's text has drifted from its file.
+1. `python -X utf8 scripts/build_lost_ledger.py` — rebuilds the ledger from
+   the repository and refuses if any panel's text has drifted from its file.
+   From a clean clone of `a5` it rewrites `gamedev-evidence.json`
+   byte-identically. (`-I` is wrong here: it implies `-E`, which drops
+   `PYTHONUTF8`, and `dungeon_surface.gdshader` carries Chinese comments.)
 2. `./art godot-gamedev --check <reel> --game <project>` — hashes, inventory,
    source lines, associations. Needs `PYTHONUTF8=1` on a non-UTF-8 locale.
 3. `git log --format='%h %an' -- godot/shaders/` — every commit, one author.
