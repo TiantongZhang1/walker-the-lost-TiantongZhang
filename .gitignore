@@ -49,10 +49,24 @@ youtube/*/media/*
 !youtube/*/media/B11B.png
 youtube/*/mp3/*.mp3
 # Lossless frame sequences from Movie Maker: 165 MB for two short takes, and
-# reproducible by `scripts/render_takes.py`. The encoded capture MP4s they
-# produce are the evidence, and their hashes are tracked even though the *.mp4
-# rule above keeps the files themselves out.
+# reproducible by `scripts/render_takes.py`.
 youtube/*/capture/take-*/
+
+# The ENCODED capture is a different matter and is tracked. The *.mp4 rule
+# above was written for 4K masters; take-w.mp4 is 342 KB, and the evidence
+# ledger hashes it as the result half of two code-then-result pairs. With it
+# excluded, a reviewer who cloned the tag got
+# `Missing or escaping source: capture/take-w.mp4` from the course checker
+# and could not verify anything. Found 2026-10-28 by cloning a5 into an empty
+# directory and running the checker there.
+!youtube/*/capture/take-w.mp4
+
+# scripts/frame_footage_beats.py computes the two gameplay cards' numbers
+# from this at build time, and the `logs/` rule below was hiding it. Git does
+# not descend into an excluded directory, so the directory is un-excluded
+# first and then the one file inside it.
+!youtube/*/capture/logs/
+!youtube/*/capture/logs/take-w-inputs.jsonl
 
 # Machine-local build state: rewritten on every `./art final`, full of absolute
 # paths, and it names the export under its pre-rename slug. Its one durable
@@ -77,3 +91,9 @@ logs/
 # Python bytecode caches.
 __pycache__/
 *.pyc
+
+# Re-stated AFTER the `logs/` rule above, which would otherwise win: a later
+# pattern beats an earlier one, and the directory has to be un-excluded
+# before git will look inside it.
+!youtube/*/capture/logs/
+!youtube/*/capture/logs/take-w-inputs.jsonl
