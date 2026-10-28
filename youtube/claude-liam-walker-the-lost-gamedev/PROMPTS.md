@@ -30,21 +30,24 @@ survives. The film deliberately does **not** say the answer out loud.
 
 ## Generative prompts
 
-**None.** No generative model produced any asset in this repository, so there
-is no prompt to log, no model version to pin and no terms to record. Every
-texture and sprite the film shows is written by committed code:
-`tools/make_sprites.py` and `godot/tools/write_textures.gd`.
+**None for any asset in the game.** No image model, 3D generator or audio
+model produced a file under `godot/`, so there is no prompt to log, no model
+version to pin and no terms to record for the game. Every texture and sprite
+the film shows is written by committed code: `tools/make_sprites.py` and
+`godot/tools/write_textures.gd`.
 
-The constraint the course places on such prompts — no named living artist, no
-brand, no copyrighted character — is therefore satisfied vacuously, and
-`../../ASSET-LOG.md` has nothing to list for this assignment.
+**One generative model runs in this film, and its input is not a prompt but a
+script.** The narration is **Kokoro** text-to-speech, voice `am_onyx`, run
+locally. What it is given is the exact sentence to say, and every one of those
+sentences is in `beat_sheet.json` as `narration_text`, checked line by line in
+`FACTCHECK.md` and listed beat by beat in `SHOTLIST.md`. There is no creative
+instruction to archive separately: the model chooses the voice and nothing
+else, and archiving the "prompt" would mean committing the narration twice.
 
-## Agent prompts behind the work
+The constraint the course places on generative prompts — no named living
+artist, no brand, no copyrighted character, no existing music — holds. It is
+satisfied vacuously for the game, and for the narration by the fact that the
+text is the film's own script.
 
-Assignment 5's Step 1 and Step 2 prompts were run against this repository and
-their effects are in the git history rather than in this film. The film shows
-the *result* of that division — which files carry a Claude trailer and which
-do not — in B12, and `git log --format='%h %an' -- godot/shaders/` is the
-check a reviewer can run in one line.
-
-Nothing in this film was produced by a paid call.
+`../../ASSET-LOG.md` therefore has nothing to list for this assignment, and
+says so in those words rather than being left blank.

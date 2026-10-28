@@ -1,6 +1,6 @@
 # TEST-REPORT.md — Assignment 5
 
-**Source revision:** `244e766`+ · **Godot** 4.7.2.stable.official `ed1daf0bf` ·
+**Source revision:** `e8aee89`+ · **Godot** 4.7.2.stable.official `ed1daf0bf` ·
 **Renderer** Forward+ *(confirmed on hardware 2026-10-24)* · **OS** Windows 11
 
 Every row below is either a recorded result or an explicit **not yet**. Nothing
@@ -424,6 +424,71 @@ slime must move while the dry one does not — which is the comparison the
 check was always about. A threshold in absolute counts gets stricter every
 time a scene gets darker, and says nothing when it does.
 
+## The film, and the take behind it
+
+`youtube/claude-liam-walker-the-lost-gamedev/`. The evidence ledger passes
+the course checker:
+
+```
+status PASS · 44 source files · 14 exclusions · 7 components
+              5 exact excerpts · 5 code_result_pairs · code-then-result-v1
+```
+
+### The take — the warning as real motion
+
+`godot/tests/capture_shader.gd` walks the player east through all three traps
+with a held key through the real input map, pausing between them. Nothing is
+teleported, no state is written, and nothing is slowed or retimed — the
+pauses are the key being released.
+
+| | |
+|---|---|
+| Rendered | 3840 × 2160, 60 fps, **710 frames**, 11.83 s |
+| Traps that fired | **all three** |
+| Health | 5 → 2 |
+| **Frames with more than one trap lit** | **0 of 709 sampled** |
+| Warning onsets | t 1.82 at x 174.4 · t 4.90 at x 286.4 · t 7.98 at x 398.4 |
+
+**That first onset is the geometry, observed.** `DetectArea`'s zone begins at
+175 and the warning starts at 174.4 — the derivation in revision 5.0.3 was
+computed before the trap existed and is now watched happening.
+
+**R6 in motion.** The headless suite asserts the rule once per scenario;
+this take checks every frame of a real run and the red never appears on two
+traps at once. `captures/a5/warning-ramp-contact-sheet.png` holds five frames
+of one window — armed, 0.23, 0.49, 1.00, firing — with traps 2 and 3 grey in
+every one.
+
+### Two mistakes the film work found, both in the measuring, not the measured
+
+**A beat with twenty seconds of narration over one second of footage.** The
+first take ran 6.03 s and the result beats were written as essays. A result
+beat's job is "watch this". The take now pauses between traps and the two
+footage beats were cut to one or two sentences each, so the picture outlasts
+the voice: B03 4.54 s of narration against a 4.55 s window, B05 10.73 s
+against 10.80 s.
+
+**Props the component does not have.** The scene listing advertises
+`treeLabel`, `inspectorLabel`, `notes` and `cues`; the component's actual
+schema also has `image` and `tree` but no `lines`, and in `asset` mode it
+lays out `{code}{image}` — so the measured tables would have rendered
+nowhere. The fix is the previous film's: `code` stays empty on result beats,
+because the checker rejects displayed code with no excerpt record, and the
+numbers are composed into the picture instead, read verbatim from the
+recorded reports and hashed.
+
+The first composite then overflowed its own footer. `compose_lost_evidence.py`
+now computes whether the rows fit, shrinks the type, and raises rather than
+drawing over the bottom of the card.
+
+### What the film cannot establish
+
+Everything it says about colour came from a windowed capture on this
+hardware. The checker verifies hashes, inventory, source lines, excerpt
+adjacency and hash-bound media. It does not verify that any explanation is
+true, and `FACTCHECK.md` separates the six claims that are reasoning from
+the ones that are measurement.
+
 ## The evidence table
 
 | Check | Status |
@@ -483,7 +548,7 @@ Forward+/Mobile assumption their predictions are written under.
 4. **The human checks are done except one judgement.** Four of the five
    HUMAN rows are measured and recorded above. What is left is not a
    measurement: whether any setting in the interface sweep *breaks* the
-   look rather than merely changing it. Sixteen PNGs are in
+   look rather than merely changing it. The twelve sweep captures are in
    `captures/a5/materials/` and the author has not yet written a verdict on
    them. A passing headless suite establishes that the state behaves; it
    establishes nothing about what the screen shows.

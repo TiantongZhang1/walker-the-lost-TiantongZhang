@@ -13,6 +13,28 @@ Three things happen here that could not happen earlier:
 """
 import io, json, os, subprocess
 
+# ---------------------------------------------------------------------------
+# REFUSES TO RUN. TOOLCHAIN.md marks this file **Reshape**: the logic is
+# reusable, the data inside it is walker-ninja's. It was never reshaped, and
+# ROOT below still chdir's into walker-ninja-TiantongZhang - so running it
+# from this repository rewrites ANOTHER repository's beat sheet. That
+# happened twice on 2026-10-28, the first time following BUILD-PROMPT.md
+# step 6; both times it was undone with `git checkout --`. BUILD-PROMPT.md
+# no longer names it.
+#
+# Nothing here needs it. generate_audio_kokoro.py writes actual_duration_s
+# and audio_file back itself, and this reel's cue times and panel sizes are
+# authored in scripts/build_lost_beat_sheet.py against the measured
+# narration and a rendered frame.
+#
+# To reuse it, reshape it: take the reel folder as an argument, delete the
+# walker-ninja beat ids and ranges below, and remove this guard.
+raise SystemExit(
+    __file__ + ": kept as a worked example, not runnable. It chdir's into "
+    "walker-ninja-TiantongZhang and rewrites that repository. See "
+    "TOOLCHAIN.md.")
+# ---------------------------------------------------------------------------
+
 ROOT = r"D:\Graduate\2026Fall\7270\walker-ninja-TiantongZhang"
 os.chdir(ROOT)
 REEL = "youtube/claude-liam-walker-ninja-gamedev"

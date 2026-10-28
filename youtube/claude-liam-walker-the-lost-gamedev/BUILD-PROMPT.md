@@ -1,7 +1,8 @@
 # BUILD-PROMPT.md — how this reel is rebuilt from the repository
 
 Everything below runs from the repository root,
-`walker-the-lost-TiantongZhang`, against source revision `0b45339`.
+`walker-the-lost-TiantongZhang`, against source revision `e8aee89` — the revision every code
+panel, hash and capture in the film was taken from.
 
 `$GODOT` is the editor binary. It is not on PATH on the machine this was
 built on; `scripts/run-test.sh` resolves it relative to the repository and
@@ -101,8 +102,8 @@ comments in Chinese. Expected:
 
 ```json
 {"status": "PASS", "source_files": 44, "exclusions": 14, "components": 7,
- "exact_excerpts": 5, "teaching_contract": "code-then-result-v1",
- "code_result_pairs": 5}
+ "exact_excerpts": 6, "teaching_contract": "code-then-result-v1",
+ "code_result_pairs": 6}
 ```
 
 It checks hashes, inventory, source lines and associations. It does not check
@@ -113,15 +114,49 @@ Those are `FACTCHECK.md`'s and `COMPONENTS.md`'s job.
 
 ```bash
 cd "$ART"
-python -I runtime/scripts/generate_audio_kokoro.py <reel>     # am_onyx, local
-python -I scripts/finalise_beat_timing.py <reel>              # measured, not estimated
-python -I runtime/scripts/remotion_scenes.py <reel> --beat B02   # pilot, inspect it
-python -I runtime/scripts/remotion_scenes.py <reel>              # the rest
+PYTHONUTF8=1 python -X utf8 runtime/scripts/generate_audio_kokoro.py <reel>
+PYTHONUTF8=1 python -X utf8 runtime/scripts/remotion_scenes.py <reel> --only B02 --force
+PYTHONUTF8=1 python -X utf8 runtime/scripts/remotion_scenes.py <reel>
 ./art final <reel> --height 2160 --fps 30 --out <reel>/exports/landscape
 ```
 
-Render one new component as a pilot and look at it before batching. Preserve
-every approval, audio and QC gate.
+**There is no timing step, and `scripts/finalise_beat_timing.py` must not be
+run.** An earlier version of this file told you to, and on 2026-10-28 doing so
+rewrote **walker-ninja-TiantongZhang**'s beat sheet: that script was copied
+across unreshaped and still `chdir`s into the other repository. It and
+`scripts/fit_beat_panels.py` now refuse to run; `TOOLCHAIN.md` marks both
+**Reshape**. Nothing is lost by skipping them —
+`generate_audio_kokoro.py` writes `actual_duration_s` and `audio_file` back
+into the beat sheet itself, and this reel's cue times are authored in
+`scripts/build_lost_beat_sheet.py` against that measured narration, so step 4
+is rerun after the audio rather than a separate pass editing the sheet in
+place.
+
+`-I` is wrong for the toolkit's scripts: it implies `-E`, which drops
+`PYTHONUTF8`. Use `-X utf8` and no `-I`.
+
+The flag is `--only <BID>`, not `--beat`. Without `--force`,
+`remotion_scenes.py` skips any beat that already has an `media/<BID>.mp4`,
+whatever changed in its props — so after editing a beat, force that one beat
+by name. Render one new component as a pilot and **extract a frame and look at
+it** before batching. The B11A pilot was clipped: eighteen lines were asked for
+at font 20 and the panel showed thirteen, so the second half of the comparison
+and two of three notes were off-screen, and no automatic check noticed.
+Preserve every approval, audio and QC gate.
+
+**Panel capacities, every one measured off a rendered frame.** None of these
+is enforced by a schema, and overflowing any of them clips silently.
+
+| Surface | Holds | What overflowing looks like |
+|---|---|---|
+| `GodotDevWorkbench` code panel | about **13 wrapped rows** at `codeFontSize` 23 — count ROWS, not source lines; a long `uniform` line wraps to two | the excerpt stops mid-file and a cue can point at a line nobody can see |
+| `GodotDevWorkbench` notes column | **2** cards, about **8 wrapped rows of value text between them** — roughly 160 characters of value in total, wrapping near 21 characters a row | the second card is cut off mid-sentence |
+| `ClaudeVerdictArtifact` | about **8** `artifactLines`; the card is sized from its content with no cap, at ~69 px a line over a ~283 px chrome | the card grows past 1080, clips top and bottom, and covers the handle |
+| `BrutalistHesitantWriter` context card | **2** rows of `detail` at about 37 characters each | the third row sets on and below the card's bottom border |
+
+Bring the content down to the panel. Do not shrink `codeFontSize` below 23 to
+fit more in — Remotion accepts a smaller value without complaint and the panel
+clips anyway, which is how the first B11A lost half its comparison.
 
 ## 7. What must be true at handoff
 

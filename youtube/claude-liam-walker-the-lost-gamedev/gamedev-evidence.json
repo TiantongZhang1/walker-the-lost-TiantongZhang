@@ -509,6 +509,13 @@
       "start_line": 4,
       "end_line": 5,
       "text": "uniform sampler2D bands_srgb : source_color, filter_nearest;\nuniform sampler2D bands_data : filter_nearest;"
+    },
+    {
+      "beat_id": "B11A",
+      "path": "shaders/standard_generated.gdshader",
+      "start_line": 3,
+      "end_line": 12,
+      "text": "shader_type spatial;\nrender_mode blend_mix, depth_draw_opaque, cull_back, diffuse_burley, specular_schlick_ggx;\n\nuniform vec4 albedo : source_color;\nuniform sampler2D texture_albedo : source_color, filter_linear_mipmap, repeat_enable;\nuniform ivec2 albedo_texture_size;\nuniform float point_size : hint_range(0.1, 128.0, 0.1);\n\nuniform float roughness : hint_range(0.0, 1.0);\nuniform sampler2D texture_metallic : hint_default_white, filter_linear_mipmap, repeat_enable;"
     }
   ],
   "exclusions": [
@@ -582,7 +589,7 @@
     {
       "code_beat": "B04",
       "result_beat": "B05",
-      "observation": "C2 RESULT. take-w across all three traps, 0.60-11.40 s. The take's own probe counted zero frames in 709 with more than one trap lit.",
+      "observation": "C2 RESULT. take-w across all three traps, 0.60-11.33 s. The take's own probe counted zero frames in 709 with more than one trap lit.",
       "media": {
         "path": "capture/take-w.mp4",
         "sha256": "0c25306cad0840056fbc2c8700b001f4cfd45f32bad498098efdae63c75aaec3"
@@ -593,8 +600,8 @@
       "result_beat": "B07",
       "observation": "C3 RESULT. captures/a5/hint_experiment.png, real windowed run. All six bands exact against the prediction committed on 2026-10-23.",
       "media": {
-        "path": "media/B07-evidence.png",
-        "sha256": "ed87b8add150fb3a923d52fa97ffb9b25fdf007a5410676f37bdcdeefea933c4"
+        "path": "media/B07.png",
+        "sha256": "43efdff9da1266fffd4548f88d34fd235b699d71f558b13d8ec790b9c0c2cefe"
       }
     },
     {
@@ -602,8 +609,8 @@
       "result_beat": "B09",
       "observation": "C4 RESULT. captures/a5/materials/00-baseline.png under section 8's lighting. Sweep numbers from captures/a5/materials/SWEEP-REPORT.txt.",
       "media": {
-        "path": "media/B09-evidence.png",
-        "sha256": "0e1ccfeb203f4081e5ce6f8c237a5fab37f2b91f459e92b8146b4a5dd5362468"
+        "path": "media/B09.png",
+        "sha256": "3fbe454cc7dfc93bbca29abe01943e49bace3115fd3f5aa5164333e3def682e8"
       }
     },
     {
@@ -611,8 +618,17 @@
       "result_beat": "B11",
       "observation": "C5 RESULT. evidence/a5-mutations/mutation3a-hint-sampler_capture.png, the capture taken with the mutation in place. Restored afterwards.",
       "media": {
-        "path": "media/B11-evidence.png",
-        "sha256": "0f263d3972284d0d7c1f7db269cec1148eb3c18dd68aa971486740c7b6726ee4"
+        "path": "media/B11.png",
+        "sha256": "38a0683e44e15ca4e4e65d049c952e2f5236c6ff5199e77ceeadf582c12d34da"
+      }
+    },
+    {
+      "code_beat": "B11A",
+      "result_beat": "B11B",
+      "observation": "C6 RESULT. captures/a5/materials/, the interface sweep: every non-texture uniform of dungeon_surface.gdshader at both ends of its range. Grid composed by scripts/compose_a5_extras.py; the numbers are SWEEP-REPORT.txt verbatim. Also carries limitation 3, still open.",
+      "media": {
+        "path": "media/B11B.png",
+        "sha256": "2de6c8885bd8834070c2975bf9c98815eb81015b65b466171427e2a2e8f41b2e"
       }
     }
   ]

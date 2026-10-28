@@ -4,7 +4,7 @@ One row per spoken claim. "Where" is a file a reviewer can re-read or a
 command they can re-run, not a memory of having seen it. Paths are relative to
 the repository root unless they start with `godot/`.
 
-Source revision `0b45339`. Godot **4.7.2.stable.official** `ed1daf0bf`,
+Source revision `e8aee89`. Godot **4.7.2.stable.official** `ed1daf0bf`,
 **Forward+**, NVIDIA GeForce RTX 5080 Laptop GPU.
 
 ---
@@ -46,6 +46,17 @@ Source revision `0b45339`. Godot **4.7.2.stable.official** `ed1daf0bf`,
 | "The window is four tenths of a second" (B02) | `spike_trap.gd:39`. In the take, trap 1 is lit for 35 frames at 60 fps = 0.583 s, which is WARN_SECONDS 0.40 plus FIRE_SECONDS 0.18; the **ramp** is the first 24. |
 | "Red before the player arrives, spikes while they are standing on it" | `test_trap_warning.gd` F6: −33.6 px at the warning, +6.4 px at the strike, hurt box ±13. Identical at 30, 60 and 144 fps. |
 | The take is 11.80 s with pauses between traps | `capture_shader.gd` releases the key between legs. The pauses are the key being released; nothing is slowed, looped or retimed, and `SHOTLIST.md` records both window spans. |
+
+## B03A — the four controlled values
+
+| claim | evidence |
+|---|---|
+| "Nought. Nought point five. One. And two" | `captures/a5/REPORT.txt`, rows at `warn_amount` 0.0, 0.5, 1.0 and 2.0; the frames are `captures/a5/warn_0_0.png`, `warn_0_5.png`, `warn_1_0.png`, `warn_2_0.png`, written by `godot/tools/capture_rig.gd` in a real windowed run on 2026-10-24. |
+| "All eight pixel values were written into the brief before the capture rig existed" | The 0.0 / 0.5 / 1.0 rows are `CHANGE-BRIEF.md` §6, committed 2026-10-23. The 2.0 row is revision 5.0.4, dated 2026-10-24 and written **before** the rig could run — the revision says so in its own first line. |
+| "all eight landed exact — worst channel difference, zero" | `captures/a5/REPORT.txt`: every `delta` column reads `+0, +0, +0`, and the report's own summary line is `worst channel difference: 0`. |
+| "Two point zero went straight through the hint" | Pixel A measured `255, 78, 43` and pixel B `255, 0, 0`, both matching revision 5.0.4's prediction. A clamp to 1.0 anywhere between `set_shader_parameter` and the shader would have given `214, 60, 47` for both. |
+| "two of the spike tip's channels go negative, the write to COLOR clamps them" | `mix(c, w, 2.0)` is `2w − c`; for pixel B that is G `−0.0941` and B `−0.2627` before the clamp at `COLOR.rgb`. The arithmetic is revision 5.0.4's table and it reproduces §6's three existing rows exactly, so it is the brief's own formula extended rather than a second method. |
+| "a result no other explanation produces by accident" | Reasoning, not measurement: it rests on two channels going negative, which only extrapolation does. Listed at the end with the others. |
 
 ## B04 — the driver
 
@@ -114,6 +125,30 @@ Source revision `0b45339`. Godot **4.7.2.stable.official** `ed1daf0bf`,
 | "No error, no warning, no change in the uniform list" | Same run: `SHADER ERROR` count 0. `evidence/a5-mutations/mutation3a-hint-sampler_test_materials.log`. |
 | "the suite now asserts the blindness itself" | `test_materials.gd`, `_scenario_blind_spot`, with the reason in its docstring. |
 
+## B11A — what Godot writes itself
+
+| claim | evidence |
+|---|---|
+| "the only shader here I did not write … saved what Godot produced without touching it" | `godot/shaders/standard_generated.gdshader:1` is the engine's own header: *"Shader automatically converted from Godot Engine 4.7.2.stable's StandardMaterial3D."* `SOURCES.md` §3 records that the scratch scene that produced it was discarded and that nothing in the game loads it. |
+| "The Godot shading language is GLSL ES three point oh with the scaffolding taken away" | The Godot 4 *Shading language* page states the basis. **Partly reasoning:** "scaffolding taken away" is a characterisation, supported on screen by the absence of `main()` and by `shader_type` on line 3. |
+| "There is no main function anywhere in this file" | `grep -c "void main" godot/shaders/standard_generated.gdshader` returns 0. |
+| "Line three declares a shader type instead" | `standard_generated.gdshader:3` — `shader_type spatial;`, highlighted on screen at that line number. |
+| "that one word decides which built-ins exist and which outputs you are allowed to write" | Godot 4 *Shading language*: the shader type selects the built-in set. Demonstrated inside this repository too — `trap_warning.gdshader:1` is `canvas_item` and writes `COLOR`; `dungeon_surface.gdshader:1` is `spatial` and writes `ALBEDO`. |
+| "line seven against line twelve. Both are sampler two D, and both carry a hint" | `standard_generated.gdshader:7` — `uniform sampler2D texture_albedo : source_color, filter_linear_mipmap, repeat_enable;` and `:12` — `uniform sampler2D texture_metallic : hint_default_white, filter_linear_mipmap, repeat_enable;`. Both are inside the 3–12 excerpt on screen. |
+| "The metallic texture's hint only says what to assume when no texture is bound" | That is what `hint_default_white` means: the fallback when the sampler has no texture. It performs no sRGB decode, and `source_color` does not appear on that line. |
+| "the same split I drew by hand: colour sampler on line three … data mask on line four" | `dungeon_surface.gdshader:3` — `uniform sampler2D stone_albedo : source_color, filter_linear_mipmap;` and `:4` — `uniform sampler2D wetness_mask : filter_linear_mipmap, hint_default_black;`. Both are quoted verbatim in the beat's two notes, and both carry a `hint_default_*` against Godot's own `hint_default_white` — the same hint family, not a loose analogy. |
+| "Godot's own generator puts the line in exactly the place I put it" | The comparison above. The decision predates seeing the generated file: `CHANGE-BRIEF.md` §8, committed 2026-10-23, specifies the mask as data *without* `source_color` and says why. |
+
+## B11B — the interface sweep
+
+| claim | evidence |
+|---|---|
+| "all four of them at both ends … Tint. Dry roughness. Water darkening. Water roughness" | `dungeon_surface.gdshader`, `group_uniforms surface` (`tint`, `roughness_dry`) and `group_uniforms water` (`water_darkening`, `water_roughness`) — the four of `CHANGE-BRIEF.md` §8's table. The card shows each at min and max; the default of each is in the report. |
+| "two groups, four uniforms, twelve frames" | `captures/a5/materials/SWEEP-REPORT.txt` has 4 uniforms × 3 values = **12** sweep rows, and `captures/a5/materials/sweep-*.png` is 12 files. An earlier cut of this narration said *sixteen*, counting every PNG in the folder including the baseline, the two material-edit frames and the composed grid — while B09 said twelve, so the film contradicted itself. Corrected 2026-10-28. |
+| "across the whole sweep it does not move: fifty, fifty six, fifty five, twelve times" | The `dry` column of all twelve sweep rows in `SWEEP-REPORT.txt` reads `50, 56, 55`. The baseline row reads the same, and the two-material check records `dry 50, 56, 55 -> 50, 56, 55   moved 0`. |
+| "Only the flooded one changes" | The `flooded` column in the same table moves for every one of the four uniforms — widest for `tint` (43, 46, 42 → 57, 62, 61) and `roughness_dry` (32, 43, 39 → 52, 60, 56). |
+| "it is the one thing in this assignment I am still recording as open" | `TEST-REPORT.md` known limitation 3 and `SUBMISSION.md` limitation 3: whether any setting *breaks* the look rather than merely changing it is a human judgement, and the verdict is not written. Recorded as open rather than quietly dropped. |
+
 ## B12 — verdict
 
 | claim | evidence |
@@ -124,7 +159,13 @@ Source revision `0b45339`. Godot **4.7.2.stable.official** `ed1daf0bf`,
 | "two point zero passed straight through and the pixel went pure red" | Pixel B at `warn_amount = 2.0` measured `255, 0, 0`; a clamp to 1.0 would have given `214, 60, 47`. `CHANGE-BRIEF.md` revision 5.0.4 predicted it first. |
 | "R6 held 709 of 709 frames" (panel) | The take's own probe, above. |
 | "the slice has no audio and no art beyond code-drawn blocks" | `TEST-REPORT.md` known limitation 3, with the dated decision to port after `a5`. |
-| "no normal map, so no curl check" (panel) | `CHANGE-BRIEF.md` §8 says so and says what it forgoes. |
+| "no normal map, so no curl check" (panel) | `CHANGE-BRIEF.md` §8 says so and says what it forgoes, and names it as the next step rather than as an oversight. |
+| "Every texture in this repository was written by code — two committed generators, nothing downloaded, no generative model, nothing to license" | `godot/tools/write_textures.gd` and `tools/make_sprites.py`; `ATTRIBUTION.md` §1 lists all seven files beside the script that draws each. The claim is scoped to **textures** and to the **game**. The film's narration is itself a generative model's output (Kokoro TTS) and is recorded as such in `ATTRIBUTION.md` §2.1 and `SOURCES.md` §5. |
+| "one game source revision, e eight a e e eight nine" (panel: `revision e8aee89`) | `SUBMISSION.md` records it, and `git diff e8aee89..a5 -- godot/` confirms every later commit changes film documentation only and no file under `godot/`. |
+| "a capture rig that sampled the window's clear colour instead of the frame" | The first of the two mistakes caught in Claude's own work, found by pulling a frame out and looking at it rather than by a check. |
+| "a framing pass that … quietly put a card inside a card — which the automatic gate passed" | `scripts/frame_footage_beats.py`, the docstring on `frame_beat()`: the first version read `media/<bid>.mp4` and wrote back to it, so a second run framed its own output. Gate V passed it, because a nested card still fills the frame and still has contrast. Each step now keeps its own input. |
+| "Both were found by pulling a frame out and looking at it" | True of both — and of two more found on 2026-10-28, after this line was written: a code panel that clipped half its excerpt, and every Remotion beat freezing at its composition's default length because nothing set `durationSeconds`. `SHOTLIST.md` records the first and `bind_timing_to_audio` in `scripts/build_lost_beat_sheet.py` the second. Neither was caught by a check either. |
+| "The next step for the shaders themselves is a normal map" | A stated intention, not a measurement. |
 
 ## B13 — your turn
 
@@ -144,7 +185,11 @@ establish nothing about what the screen shows, and the film says so in B12.
 
 ## Claims that are reasoning, not measurement
 
-Marked **not measured** above, and repeated here so they are easy to find:
+Marked **not measured** above, and repeated here so they are easy to find.
+This list was **four** until B03A and B11A were written on 2026-10-28, each
+of which added one. Leaving them off to keep B12's on-screen count true
+would have been the exact dishonesty this section exists to prevent, so the
+panel was corrected to **six** and re-rendered instead.
 
 1. That a faded-out trap would ignore the fade if the shader re-sampled the
    texture. No fade exists in the game.
@@ -153,3 +198,10 @@ Marked **not measured** above, and repeated here so they are easy to find:
 3. That the driver never writes game state. A reviewable property of an
    88-line file, not an assertion.
 4. That plain GLSL would make you write the reflectance model. General.
+5. That pure red at `warn_amount = 2.0` is "a result no other explanation
+   produces by accident" (B03A). The measurement is exact and recorded; the
+   claim about *other* explanations is an argument about what else could have
+   produced it.
+6. That the Godot shading language is "GLSL ES 3.0 with the scaffolding taken
+   away" (B11A). The basis is documented; the characterisation is mine, and
+   what is on screen supports it rather than proving it.

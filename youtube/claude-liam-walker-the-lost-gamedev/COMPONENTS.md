@@ -10,7 +10,7 @@ at nearest filtering, 16 px = 1 m.
 
 ---
 
-## 1. `warning-shader` — the thing being announced · B02, B03
+## 1. `warning-shader` — the thing being announced · B02, B03, B03A
 
 **Where** `godot/shaders/trap_warning.gdshader`,
 `godot/features/traps/spike_trap.{gd,tscn}`
@@ -106,7 +106,7 @@ version that survives an editor save.
 
 ---
 
-## 4. `textured-surface` — one shader, two materials · B08, B09
+## 4. `textured-surface` — one shader, two materials · B08, B09, B11B
 
 **Where** `godot/shaders/dungeon_surface.gdshader`, `stone_dry.tres` and
 `stone_flooded.tres`, two textures and their `.import` sidecars,
@@ -166,7 +166,7 @@ boundaries. The port is Assignment 6's first job, dated in `FRICTIONAL.md`.
 
 ---
 
-## 6. `evidence-harness` — what the claims rest on · B03, B05, B12
+## 6. `evidence-harness` — what the claims rest on · B03, B03A, B05, B12
 
 **Where** `godot/tests/test_trap_warning.gd`, `test_input_map.gd`,
 `check_assets_3d.gd`, `capture_shader.gd`, run through `scripts/run-test.sh`.
@@ -192,15 +192,23 @@ rename needs the uniform list, and `source_color` needs the source text.
 
 ---
 
-## 7. `generated-reference` — Godot's own answer · B10
+## 7. `generated-reference` — Godot's own answer · B10, B11A, B11B
 
 **Where** `godot/shaders/standard_generated.gdshader`, 48 lines. Nothing
 loads it.
 
-**Why it is in the project** Line 7 marks the albedo sampler `source_color`;
-line 19 leaves the normal map without it. That is the same distinction the
-hand-written shader makes on its own lines 3 and 4 — the engine's own code
-agreeing with the author's, which is stronger than either alone.
+**Why it is in the project** Line 7 marks the albedo sampler
+`source_color`. Line 12 gives the metallic sampler `hint_default_white` and
+no `source_color`, and line 19 does the same for the normal map. That is the
+distinction the hand-written shader makes on its own lines 3 and 4 — and on
+the same hint family, `hint_default_black` against Godot's
+`hint_default_white` — so the engine's own code agrees with the author's,
+which is stronger than either alone.
+
+**What B11A shows** Lines 3–12, because the code panel holds about thirteen
+wrapped rows and the pair worth comparing (7 against 12) both sit inside
+them. The first cut asked for 3–20 and the render clipped at 17, taking the
+second half of the comparison with it.
 
 **Provenance** Produced by the editor's *Convert to ShaderMaterial* on a
 StandardMaterial3D with albedo, normal-map and roughness textures enabled, and

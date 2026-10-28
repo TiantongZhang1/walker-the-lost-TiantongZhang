@@ -114,5 +114,5 @@ movement and input do not change. Presentation reads game state, never writes.
   not clamp a value set from code. `TEST-REPORT.md`, `captures/a5/`.
 - Drafted by the session that built the repository, not a cold agent: more
   accurate, and so a weaker thing for a human review to test.
-  `tools/check_claude_refs.py` asserts all 45 claims above. It has caught
+  `tools/check_claude_refs.py` asserts all 50 claims above. It has caught
   seventeen, three of which a bare `:NN` had hidden from it.

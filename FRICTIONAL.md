@@ -528,3 +528,266 @@ wrote `captures/a5warn_0_0.png` in the parent directory rather than
 After the fix, from a real run on the RTX 5080 with Forward+: **all eight
 predicted values exact, worst channel difference 0.** The author's own run is
 what gets recorded in `TEST-REPORT.md`; this one existed to find the bug.
+
+---
+
+## 2026-10-26 — the film, and a builder that kept throwing away finished work
+
+**Claude's work.** The film is built by two scripts that regenerate
+`beat_sheet.json` and `gamedev-evidence.json` from the repository, so a code
+panel can never quote source that has moved. That part worked on the first
+try, and the official checker passed: 44 source files, 7 components, 5 exact
+excerpts, 5 code-then-result pairs.
+
+The same regeneration then cost about forty minutes of compute, twice, for
+the same reason.
+
+**First the narration.** Kokoro writes `actual_duration_s` and `audio_file`
+back into the beat sheet. Rebuilding the sheet to widen a camera window by
+half a second dropped all fourteen, so the fix was a full re-synthesis. The
+builder now carries those fields for any beat whose spoken words are
+byte-identical: 15 of 15 on the next run.
+
+**Then the render stamps**, which is the same bug I had just fixed, one field
+along. `remotion_scenes.py` stamps `shot.remotion.rendered` into each beat.
+The next rebuild dropped those too, and the compiler then refused the reel
+because it could not find the media it had just produced. Carrying them needs
+one more condition than the audio did — the stamp is only still true if the
+pattern, the props **and** the measured duration are unchanged, because any
+of those three moving means the mp4 on disk is stale. Carrying it
+unconditionally would have been worse than dropping it: the reel would have
+claimed a render that no longer matched its own beat.
+
+**What I keep relearning, now in a fourth place.** A tool that regenerates a
+file has to decide what to do with everything downstream of it, and "start
+clean" is only correct for inputs. The renderer check, the reference checker,
+the frame-rate tolerance, the capture sample point — and now this — all
+failed the same way: something looked finished and was not, and nothing threw.
+
+**One thing I did not have to debug**, and it is worth saying why. The reel
+refused to compile for a missing `mp3/beat-B14.mp3` on a card that is
+required to be silent. Walker-ninja's beat sheet had the answer in its own
+`role_note`: *"`audio_policy: silence` is what keeps the card mute; without
+it the compiler refuses the reel for a missing mp3/beat-B14.mp3, which is how
+this was found."* Someone wrote down a dead end at the moment they escaped
+it, and it cost me one grep instead of an afternoon. That is the whole
+argument for this file.
+
+**Two mistakes the film work found in the film itself**, both in the
+measuring rather than the measured, and both recorded in `TEST-REPORT.md`: a
+result beat with twenty seconds of narration over one second of footage, and
+a set of component props that the scene listing advertises but the component
+does not have.
+
+---
+
+## 2026-10-26, later — four times I wrote props without reading the component
+
+**Claude's.** The skill's instruction about reusing a scene component is one
+sentence: *"Reuse `GodotDevWorkbench` when its props fit; extend the shared
+component only for a real missing teaching need. **Read its source/props
+first.**"* I did that for the component I used ten times. For the four I used
+once each, I wrote the prop names I expected and rendered.
+
+| What I passed | What the component took | What the audience would have seen |
+|---|---|---|
+| `lines` on an asset beat | there is no `lines`; `asset` lays out `{code}{image}` | an empty left half and a squeezed table |
+| `title`, `correction`, `lines` | `text`, `triggerWords`, `replacementWords` | **the component's demo text — "The quick brown wolf jumps over the lazy bear"** |
+| `title`, `columns` | `artifactTitle`, `artifactHeading`, `artifactLines` | the demo verdict about chat, Cowork and Code |
+| `label: "RECONSTRUCTION"` | the notice belongs in `runningText` | **no reconstruction label at all**, on the one beat the assignment requires it on |
+| `triggerWords` alone | it pairs positionally with `replacementWords` | "a spike trap that **wolf** red before it fires" |
+
+A Zod schema with defaults does not fail on an unknown prop. It drops it and
+renders the default, and the default is a plausible-looking card. Nothing
+warned. The evidence checker passed throughout - it verifies hashes, line
+numbers and adjacency, not what a frame says. Gate V flagged these beats, but
+for *underfill*: the demo text is short, so the card measured empty. The
+number was right and the diagnosis it suggested was wrong.
+
+**Every one of those was found by extracting a frame and looking at it.** Not
+by a checker, and not by reading the beat sheet back - the beat sheet said
+exactly what I had written, which was the problem.
+
+The fifth prop discovery was the fix rather than a fault: `contextTitle` and
+`contextItems` exist on the hesitant writer and are its own way to carry a
+heading and a row of cards. Four lines of serif on an empty page measures 4 %
+to 18 % of the safe area; with the context props it measures clean. I would
+have found that in the first minute by reading the schema.
+
+**Other things Gate V and the compiler caught that I had not:**
+
+- the result beats showed a card nested inside a card, because the framing
+  script read its own output. Gate V **passed** that - a nested card still
+  fills the frame and still has contrast. Only looking caught it.
+- the clip cutter refused a window 0.07 s longer than its beat rather than
+  silently dropping recorded footage.
+- the compiler refused the reel for a missing `mp3/beat-B14.mp3` on a card
+  that must be silent; walker-ninja's own beat sheet had the answer written
+  in its `role_note` by whoever hit it first.
+
+**And one finding that is about the game, not the film.** Gate V called the
+gameplay beats 47 % filled and 0.11 contrast. Cropping tighter moved neither
+number, and the reason is in the palette: the floor is `#16242B` against a
+`#17141B` sky, a largest-channel difference of 16, and the checker counts a
+pixel as content at 28. **The floor is not content as far as the checker is
+concerned.** The low contrast is not a defect to fix - `CHANGE-BRIEF.md` §6
+puts the armed trap at 1.12:1 deliberately, so that a trap is not visible
+from across the room. Brightening the capture would have misreported what the
+engine drew. The beats are framed on the brand ground instead, with the
+take's own numbers beside them, and not one pixel of the capture is altered.
+
+
+---
+
+## 2026-10-28 — the day a green check was wrong four times
+
+Deadline is tomorrow. The plan was to fill four gaps the spec audit had found
+— the controlled-value captures, Godot's own generated shader beside mine, an
+answer to "what is the Godot shading language" with a line reference, and the
+sweep showing all four uniforms rather than two — and then recompile. The
+filling took an hour. Everything below is what turned up on the way, and
+every single one of it passed `./art godot-gamedev --check`.
+
+### 1. The master that already existed was rendered from a failing beat sheet
+
+The previous session had put the measured tables into the `code` prop of a
+`GodotDevWorkbench` beat so the frame would not measure empty.
+`verify_gamedev.py:68` forbids exactly that: a workbench beat with a non-empty
+`code` must carry a source-excerpt record **and** be the code half of a
+code-then-result pair, and a table of measurements is neither. Diffing HEAD
+against the working tree showed HEAD passing with `code: ""` and the tree
+failing with `Displayed code lacks an excerpt record`.
+
+And `code: ""` renders **half a blank frame** — an empty dark panel with a
+stray gutter "1" in it. Gate V was happy with the version that failed the
+checker and the checker was happy with the version that looked broken.
+
+The way out was to stop using the workbench for result beats. The five
+evidence cards are now full-frame 3840 × 2160 composites — an engine capture
+above the recorded report that goes with it, every figure read out of the
+report at build time. That also removed a label that had been quietly wrong:
+the workbench chrome reads "Godot editor reconstruction", and these are frames
+a real GPU drew. `SHOTLIST.md` had said so all along.
+
+### 2. A script in this repository rewrites a *different* repository
+
+`BUILD-PROMPT.md` step 6 said to run `scripts/finalise_beat_timing.py`. I ran
+it. It begins:
+
+```python
+ROOT = r"D:\Graduate\2026Fall\7270\walker-ninja-TiantongZhang"
+os.chdir(ROOT)
+```
+
+and it rewrote **walker-ninja's** beat sheet — the repository that holds the
+submitted `a2-submitted` and `a3` tags and is under a standing instruction not
+to be touched. `git checkout --` undid it. Then, while testing a guard meant
+to stop it happening again, the guard failed to insert and I ran both that
+script and `fit_beat_panels.py` a second time, with the same result and the
+same undo. `git status --porcelain` is empty over there and `a3` still points
+at `830dd0b`.
+
+`TOOLCHAIN.md` had both marked **Reshape**, which I had read as "reusable" and
+which actually means "not yet reshaped". Both now `raise SystemExit` before
+the `chdir`, BUILD-PROMPT.md no longer names either, and TOOLCHAIN.md says
+what happened. Neither was needed in the first place: Kokoro writes
+`actual_duration_s` back itself.
+
+**The rule this earns:** read the first twenty-five lines of a carried-over
+script before running it, and when you install a guard, watch it fire before
+you trust it.
+
+### 3. Half of a code panel was off the bottom of the screen
+
+B11A asks you to compare two lines of Godot's generated shader. I wrote the
+excerpt as lines 3–20 at font 20 — below the component's own `min(23)`, which
+Remotion accepted without complaint — and extracted a frame. The panel had
+clipped at line 17. The second half of the comparison was not on screen, two
+of three notes were cut off mid-sentence, and the cue pointing at line 19 was
+highlighting a line nobody could see.
+
+Narrowed to 3–15 at font 23. Extracted another frame: still clipping, because
+the panel counts **visual rows** and this file's long uniform declarations
+wrap to two rows each, so thirteen source lines came out as sixteen.
+
+Narrowed to 3–12. Third frame: clean, and a better beat than either earlier
+one — line 12's `texture_metallic : hint_default_white` is the *same hint
+family* as the `hint_default_black` on line 4 of my own shader, so the pair is
+now an exact parallel instead of a loose one.
+
+`scripts/fit_beat_panels.py` — the script from §2 — already recorded "the code
+panel holds about 14 lines at the schema's minimum 23 px font, and the notes
+column holds 2 cards". The knowledge was sitting in this repository, in a file
+I had not read, and I rediscovered it three renders later.
+
+### 4. Every graphic beat in the film froze after fifteen seconds
+
+This is the one that mattered most, and it had been true of every version of
+this film.
+
+Each Remotion composition computes `durationInFrames = ceil(durationSeconds *
+30)`. Nothing in this repository was setting `durationSeconds`, so every beat
+rendered at its composition's **default** — 15 s for `GodotDevWorkbench`, 34
+for `ClaudeVerdictArtifact` — and `remotion_scenes.py` then freeze-held the
+last frame for the rest of the narration. B02 is 36.60 s of audio over a 15 s
+composition. B11A was 56.56 s over 15. B12 was 69.81 s over 34.
+
+So a frame pulled from B02 at t = 30 s shows the beat frozen on the *line 3*
+highlight, and its third cue — line 6, `COLOR.rgb = mix(...)`, the one line
+that changes a colour and the entire point of the beat — never fires at all.
+
+Worse, `build_lost_beat_sheet.py` listed `durationSeconds` under
+`RENDERER_INJECTED`, on the belief that the renderer wrote it. It does not; it
+reads it. That exclusion also meant a change to it would not have invalidated
+a render stamp, so the fix would have been skipped silently.
+
+While fixing it I found the smaller version of the same bug. Cue times were
+written by hand against *estimates* and never reconciled with the measured
+narration: **B04's third cue sat at 28.0 s in a 27.19 s beat and B08's at 22.0
+s in a 21.33 s beat.** Both highlights were unreachable even before the freeze.
+`bind_timing_to_audio` now sets `durationSeconds` from the measured narration
+and places every cue at the fraction of it the beat's own `show` entry claims,
+and it refuses to write a cue at or past the end of its beat.
+
+Eleven beats re-rendered. This is the first cut of this film in which the
+second half of a code beat is on screen.
+
+### 5. The film contradicted itself about a number
+
+B09 says the dry slime held across "twelve sweep captures". B11B said
+"sixteen frames … sixteen times". Twelve is right — 4 uniforms × 3 values, and
+twelve `sweep-*.png`. Sixteen was a count of every PNG in the folder,
+including the baseline, the two material-edit frames and the composed grid.
+Corrected, re-synthesised, and written down in `FACTCHECK.md` rather than
+quietly changed.
+
+### 6. Two honesty repairs that nothing would have flagged
+
+`SOURCES.md` said "no generative model has produced any asset in this
+repository" two rows above a row reading "Narration: local Kokoro, voice
+`am_onyx`". Kokoro is a generative model. The claim that holds without
+qualification is the narrower one — no generative model produced any asset in
+**the game** — and that is now what the documents say, with the narration
+recorded as what it is. `ATTRIBUTION.md` was written to keep the game and the
+film apart, because the answer genuinely differs between them.
+
+And `FACTCHECK.md`'s list of claims that are reasoning rather than
+measurement went from four to six, because B03A and B11A each added one. The
+easy move was to leave the list at four so B12's on-screen panel stayed
+accurate. The list is the authority; the panel was corrected to match it.
+
+### What I take from the day
+
+The evidence checker, Gate V and the automated suites were green through all
+six of these. They verify hashes, line numbers, adjacency, fill and contrast.
+**None of them measures whether a frame says the right thing, and none of
+them measures motion at all** — a beat frozen for 70 % of its length passes
+every check in the chain, because a frozen frame is still a full, contrasty,
+correctly-hashed frame.
+
+Every one of the six was found the same way: pull a frame out and look at it.
+That was already the lesson of 2026-10-26, written at the bottom of the
+previous entry. I had read it and still spent the morning trusting a green
+check. The practice that actually works is cheap — `ffmpeg -ss <t> -i
+media/<bid>.mp4 -frames:v 1` — and the only thing that makes it work is doing
+it at a time *inside* the part you have not looked at yet.

@@ -34,11 +34,19 @@ youtube/*/clips/
 # A FILE glob, not a directory one: git does not descend into an excluded
 # directory, so `!` on paths inside `youtube/*/media/` never took effect.
 youtube/*/media/*
-# ...except the small stills the evidence ledger HASHES. A reviewer has to be
-# able to recompute those hashes from the repository, and a rendered beat video
-# is not the same thing as the evidence it shows. Add one `!` line per hashed
-# still as each film is built; walker-ninja's two entries are deliberately not
-# carried over, because this repository has no such stills yet.
+# ...except the stills the evidence ledger HASHES. A reviewer has to be able to
+# recompute those hashes from the repository, and a rendered beat video is not
+# the same thing as the evidence it shows. One `!` line per hashed still.
+#
+# A5's five evidence cards, 1.6 MB in all. Each is a 3840 x 2160 composite of
+# an engine capture and the recorded report that goes with it, written by
+# scripts/compose_lost_evidence.py; re-run that script (after
+# scripts/compose_a5_extras.py) and the same bytes come back.
+!youtube/*/media/B03A.png
+!youtube/*/media/B07.png
+!youtube/*/media/B09.png
+!youtube/*/media/B11.png
+!youtube/*/media/B11B.png
 youtube/*/mp3/*.mp3
 # Lossless frame sequences from Movie Maker: 165 MB for two short takes, and
 # reproducible by `scripts/render_takes.py`. The encoded capture MP4s they
@@ -65,3 +73,7 @@ logs/
 # A5's film. The 4K PNG sequence and the encoded capture stay out by the rules
 # above; this one still is tracked because TEST-REPORT.md cites it.
 !captures/a5/warning-ramp-contact-sheet.png
+
+# Python bytecode caches.
+__pycache__/
+*.pyc
