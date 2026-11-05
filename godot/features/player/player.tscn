@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://features/player/player.gd" id="1_player"]
+[ext_resource type="Script" path="res://features/player/pose_driver.gd" id="3_pose"]
 [ext_resource type="Texture2D" path="res://assets/sprites/player.png" id="2_sprite"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
@@ -16,3 +17,6 @@ texture = ExtResource("2_sprite")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_body")
+
+[node name="PoseDriver" type="Node" parent="."]
+script = ExtResource("3_pose")

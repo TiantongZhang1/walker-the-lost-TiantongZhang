@@ -1,7 +1,8 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://game/main.gd" id="0_main"]
 [ext_resource type="Script" path="res://game/room_backdrop.gd" id="0_backdrop"]
+[ext_resource type="Script" path="res://game/room_audio.gd" id="0_audio"]
 [ext_resource type="Texture2D" path="res://assets/sprites/floor_tile.png" id="1_floor"]
 [ext_resource type="PackedScene" path="res://features/player/player.tscn" id="2_player"]
 [ext_resource type="PackedScene" path="res://features/traps/spike_trap.tscn" id="3_trap"]
@@ -62,6 +63,9 @@ position = Vector2(432, 200)
 
 [node name="Player" parent="." instance=ExtResource("2_player")]
 position = Vector2(96, 150)
+
+[node name="RoomAudio" type="Node" parent="."]
+script = ExtResource("0_audio")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(320, 180)
