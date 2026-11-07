@@ -969,3 +969,75 @@ the author's verdict: the puff is far quieter than "kicked up" implies — a 2�
 pixel smudge against Effect A's burst at four times the brightness — and
 11–29 % of the dust ends up under the floor, because C2's spawn point is the
 floor line itself and `Kick` carries `gravity` 900.
+
+## Step 7 — the headless price, and the instrument's own resolution
+
+```bash
+./scripts/run-test.sh cost_effects.gd 60 300
+```
+
+`CHANGE-BRIEF.md` §5 and revision 6.0.4 §C.6 predict that all three effects
+read **≈ 0 ms over the control** here, and predict it *by construction*: a
+`GPUParticles2D`'s process step is a shader on the graphics card, a headless
+run uses a dummy renderer, and a measurement that never reaches the card has
+nothing of the card to measure. §5 also says that a clear difference would
+mean the script is wrong or the prediction is.
+
+| condition | median µs | mean µs | p90 µs | peak emitters | instances created |
+|---|---|---|---|---|---|
+| empty scene (control) | 3.0 | 2.6 | 3.0 | 0 | 0 |
+| room, effects REMOVED (run 1) | 129.5 | 146.8 | 204.0 | 0 | 0 |
+| room, all three live (run 1) | 135.0 | 156.7 | 209.0 | **8** | **25** |
+| room, effects REMOVED (run 2) | 122.0 | 139.0 | 199.0 | 0 | 0 |
+| room, all three live (run 2) | 128.0 | 147.2 | 209.0 | **8** | **25** |
+
+**Effects on minus effects off: +5.8 µs per frame (+0.0057 ms). Prediction
+holds.**
+
+### Two things this script had to be fixed to earn
+
+**1. The load has to be shown, not asserted.** The first version printed a
+single snapshot of the emitter count and reported **1** — the ambience node,
+and nothing else, at the instant it happened to look. A row labelled "all
+three effects live" that never shows more than one emitter has measured a
+label. It now reports the **peak** emitter count and the number of distinct
+effect instances created across the run: **8** and **25**, which is Effect B's
+one node plus a burst's three plus two step-dust puffs' two each, and
+twenty-five scenes spawned and freed during a ten-second walk. That is the
+heavy state §5 asks to be measured at, and now the table says so.
+
+**2. The difference was smaller than the noise, and the first version did not
+know it.** Four runs of the original gave +18.0, +10.0, +1.0 and +8.5 µs —
+while the median of the *unchanged* "effects removed" condition wandered from
+116 to 131 µs between runs. Reporting "+0.010 ms" off that is reporting the
+weather.
+
+The script now runs **each room condition twice, interleaved**, and computes
+the spread between two runs of a condition that did not change. That spread is
+this instrument's resolution. In the run above it is **7.5 µs against a 5.8 µs
+difference**, so the script says what is true:
+
+> The difference is SMALLER THAN THE NOISE. The honest reading is not
+> "+0.0057 ms" but "below this instrument's resolution".
+
+A measurement that cannot state its own resolution cannot distinguish a real
+effect from a quiet machine, and this project has already shipped three checks
+that passed while measuring nothing.
+
+### What Step 7 does not establish
+
+**Every budget in §5 and §C.6 is a GPU budget and none of them is settled
+here.** 0.30 ms for Effect A, 0.20 ms for B, 0.10 ms for C — all GPU time, all
+to be read from the **Visual Profiler on hardware, by the author**, at the
+heaviest state the game reaches. §4's evidence split puts that row under HUMAN
+and nothing headless can move it.
+
+**FPS is not used as an instrument either**, and §7 says why: with vsync on,
+the frame rate reads the display's refresh rate with the effects off and the
+same with them on, because vsync holds it there until a frame actually misses.
+96 particles will not make a 5080 miss.
+
+**No vsync toggle was added to demonstrate that in play.** It would need a new
+action in the input map, and §3 keeps the input map out of scope for this
+assignment. The claim stays an argument in §7 rather than becoming a
+boundary violation.
