@@ -6,9 +6,15 @@
 
 Every strip in captures/ is built by this script so that two revisions of the
 same effect are laid out identically and can be compared by eye. The crop is
-fixed in the game's LOGICAL coordinates and is centred on the trap at
-x 320, y 200 -- see CROP below -- so the panel shows the same stretch of room
-whatever the capture resolution is.
+fixed in the game's LOGICAL coordinates -- see VIEWS below -- so the panel
+shows the same stretch of room whatever the capture resolution is.
+
+Two views, because the two effects are different sizes. `--view trap` (the
+default) crops to the trap at x 320, y 200, which is where Effect A happens
+and where a 24 px burst would be invisible in a whole-room panel. `--view
+room` is the whole 640 x 360 viewport, which is the only honest frame for
+Effect B: the motes ARE the room, and a crop would hide whether the field is
+even.
 
 These are FIXTURE captures, from godot/previews/, not from play. TUNING.md and
 TEST-REPORT.md label them as such wherever they appear.
@@ -19,13 +25,14 @@ import sys
 
 from PIL import Image, ImageDraw, ImageFont
 
-# Logical half-extents of the crop, centred on the trap at (320, 200).
-# godot/project.godot:19 -- the logical viewport is 640 x 360.
-CROP_CX, CROP_CY = 320.0, 200.0
-CROP_HALF_W, CROP_HALF_H = 160.0, 110.0
+# Logical crops: name -> (centre x, centre y, half width, half height,
+# panel width, panel height). godot/project.godot:19 -- the logical viewport
+# is 640 x 360, so "room" is the whole of it.
+VIEWS = {
+    "trap": (320.0, 200.0, 160.0, 110.0, 480, 330),
+    "room": (320.0, 180.0, 320.0, 180.0, 480, 270),
+}
 LOGICAL_W = 640.0
-
-PANEL_W, PANEL_H = 480, 330
 LABEL_H = 30
 GAP = 8
 COLS = 3
@@ -34,17 +41,25 @@ INK = (26, 24, 22)
 
 # CHANGE-BRIEF.md section 1.5. Frame -> what the brief calls that moment.
 CAPTIONS = {
+    1: "first drawn frame",
     10: "trigger",
     12: "+0.07 s",
     15: "+0.17 s",
     20: "+0.33 s",
     30: "+0.67 s",
     50: "+1.33 s",
-    11: "+0.03 s",
-    40: "+1.00 s",
-    100: "+3.00 s",
-    130: "+4.00 s",
-    340: "+11.00 s",
+}
+
+## Effect B reads a different clock: section 2.5's frames are about the
+## condition, not about a trigger.
+CAPTIONS_ROOM = {
+    1: "first drawn frame",
+    10: "condition running",
+    11: "one frame later",
+    40: "steady state",
+    100: "last frame alive",
+    130: "1 s after death",
+    340: "8 s after death",
 }
 
 
@@ -57,23 +72,29 @@ def _font(size: int) -> ImageFont.FreeTypeFont:
     return ImageFont.load_default()
 
 
-def _panel(path: pathlib.Path) -> Image.Image:
+def _panel(path: pathlib.Path, view: tuple) -> Image.Image:
+    cx, cy, hw, hh, pw, ph = view
     im = Image.open(path).convert("RGB")
     scale = im.width / LOGICAL_W          # 1280-wide capture of a 640-wide game
     box = (
-        round((CROP_CX - CROP_HALF_W) * scale),
-        round((CROP_CY - CROP_HALF_H) * scale),
-        round((CROP_CX + CROP_HALF_W) * scale),
-        round((CROP_CY + CROP_HALF_H) * scale),
+        round((cx - hw) * scale),
+        round((cy - hh) * scale),
+        round((cx + hw) * scale),
+        round((cy + hh) * scale),
     )
-    return im.crop(box).resize((PANEL_W, PANEL_H), Image.NEAREST)
+    return im.crop(box).resize((pw, ph), Image.NEAREST)
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("revision_dir")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--view", choices=sorted(VIEWS), default="trap")
     args = ap.parse_args()
+
+    view = VIEWS[args.view]
+    panel_w, panel_h = view[4], view[5]
+    captions = CAPTIONS_ROOM if args.view == "room" else CAPTIONS
 
     src = pathlib.Path(args.revision_dir)
     frames = sorted(
@@ -84,10 +105,10 @@ def main() -> int:
         return 1
 
     rows = (len(frames) + COLS - 1) // COLS
-    cell_h = LABEL_H + PANEL_H
+    cell_h = LABEL_H + panel_h
     sheet = Image.new(
         "RGB",
-        (GAP + COLS * (PANEL_W + GAP), GAP + rows * (cell_h + GAP)),
+        (GAP + COLS * (panel_w + GAP), GAP + rows * (cell_h + GAP)),
         BG,
     )
     draw = ImageDraw.Draw(sheet)
@@ -95,13 +116,13 @@ def main() -> int:
 
     for i, (number, path) in enumerate(frames):
         col, row = i % COLS, i // COLS
-        x = GAP + col * (PANEL_W + GAP)
+        x = GAP + col * (panel_w + GAP)
         y = GAP + row * (cell_h + GAP)
         draw.text((x + 2, y + 4), "frame %d" % number, font=bold, fill=INK)
-        caption = CAPTIONS.get(number, "")
+        caption = captions.get(number, "")
         if caption:
             draw.text((x + 108, y + 4), caption, font=bold, fill=INK)
-        sheet.paste(_panel(path), (x, y + LABEL_H))
+        sheet.paste(_panel(path, view), (x, y + LABEL_H))
 
     out = pathlib.Path(args.out)
     sheet.save(out)

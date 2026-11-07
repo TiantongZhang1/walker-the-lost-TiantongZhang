@@ -64,10 +64,10 @@ repository and `GODOT=` overrides it — `scripts/run-test.sh:42`.
   (`emitting`, `one_shot`, `amount_ratio`, visibility, instance counts) is
   observable, the look is not, and **a GPU effect's headless CPU price is
   near zero by construction.**
-- **Frame strips come from a windowed Movie Maker run the author starts** —
-  not from a headless run and not from an agent.
-- It does **not** report uniform defaults; assert them with
-  `get_shader_uniform_list()`. Never add `--rendering-driver` to a test.
+- **Frame strips come from a windowed Movie Maker run, never a headless
+  one.** An agent may take one when the author asks (they did, 2026-11-07);
+  the verdict on a strip is the author's and is never delegated.
+- It does **not** report uniform defaults; assert them with `get_shader_uniform_list()`. Never add `--rendering-driver` to a test.
 
 ## Current change
 
@@ -114,6 +114,6 @@ into gameplay in the same step that builds it.
   shader receives.~~ **Both settled 2026-10-24** — Vulkan 1.4.357, RTX 5080
   Laptop; it does not, and `hint_range` does not clamp. `TEST-REPORT.md`.
 - **Every A6 budget in `CHANGE-BRIEF.md` §5 is a prediction** — no GPU time read yet.
-- **Effect A has strips r0/r1 and one kept tuning revision** —
-  `captures/hit_burst/`, `TUNING.md`. **Effect B has no strip**: nothing
-  about how it reads is checked, `preprocess` (F4) included.
+- **Both effects have an r0 strip** (`captures/`, `TUNING.md`). A has a kept
+  revision; B has **no author verdict yet**, and 14–22 % of its motes drift
+  inside the floor slab.

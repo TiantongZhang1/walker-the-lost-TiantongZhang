@@ -1,0 +1,56 @@
+[gd_scene load_steps=7 format=3 uid="uid://cb6motesprev"]
+
+; Effect B's fixture. The background is a real stretch of this level: the same
+; room_backdrop.gd the game draws, the same floor tile, the same three traps
+; at x 208 / 320 / 432 so the lit lip breaks where it does in play, and the
+; real player. Camera and geometry match game/main.tscn, so what the strip
+; shows is what the game shows. CHANGE-BRIEF.md section 2.5.
+
+[ext_resource type="Script" path="res://previews/dungeon_motes_preview.gd" id="0_preview"]
+[ext_resource type="Script" path="res://game/room_backdrop.gd" id="1_backdrop"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floor_tile.png" id="2_floor"]
+[ext_resource type="PackedScene" path="res://features/traps/spike_trap.tscn" id="3_trap"]
+[ext_resource type="PackedScene" path="res://features/player/player.tscn" id="4_player"]
+[ext_resource type="PackedScene" path="res://effects/dungeon_motes.tscn" id="5_motes"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
+size = Vector2(640, 160)
+
+[node name="DungeonMotesPreview" type="Node2D"]
+script = ExtResource("0_preview")
+
+[node name="Backdrop" type="Node2D" parent="."]
+script = ExtResource("1_backdrop")
+
+[node name="Floor" type="StaticBody2D" parent="."]
+position = Vector2(320, 280)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Floor"]
+texture_repeat = 2
+texture = ExtResource("2_floor")
+region_enabled = true
+region_rect = Rect2(0, 0, 640, 160)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
+shape = SubResource("RectangleShape2D_floor")
+
+[node name="Traps" type="Node2D" parent="."]
+
+[node name="SpikeTrap1" parent="Traps" instance=ExtResource("3_trap")]
+position = Vector2(208, 200)
+
+[node name="SpikeTrap2" parent="Traps" instance=ExtResource("3_trap")]
+position = Vector2(320, 200)
+
+[node name="SpikeTrap3" parent="Traps" instance=ExtResource("3_trap")]
+position = Vector2(432, 200)
+
+[node name="Player" parent="." instance=ExtResource("4_player")]
+position = Vector2(96, 150)
+
+[node name="DungeonMotes" parent="." instance=ExtResource("5_motes")]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(320, 180)

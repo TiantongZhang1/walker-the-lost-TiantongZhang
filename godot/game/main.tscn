@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://game/main.gd" id="0_main"]
 [ext_resource type="Script" path="res://game/room_backdrop.gd" id="0_backdrop"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" path="res://assets/sprites/floor_tile.png" id="1_floor"]
 [ext_resource type="PackedScene" path="res://features/player/player.tscn" id="2_player"]
 [ext_resource type="PackedScene" path="res://features/traps/spike_trap.tscn" id="3_trap"]
+[ext_resource type="PackedScene" path="res://effects/dungeon_motes.tscn" id="3_motes"]
 [ext_resource type="Script" path="res://tools/capture_rig.gd" id="4_capture"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
@@ -64,6 +65,8 @@ position = Vector2(432, 200)
 
 [node name="Player" parent="." instance=ExtResource("2_player")]
 position = Vector2(96, 150)
+
+[node name="DungeonMotes" parent="." instance=ExtResource("3_motes")]
 
 [node name="HitBurstSpawner" type="Node" parent="."]
 script = ExtResource("0_burst")

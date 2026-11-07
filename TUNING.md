@@ -163,3 +163,83 @@ time.
 so the brief, the scene and `test_hit_burst_config.gd` all carry 5.0 / 7.0; the
 test's expected value was updated in the same commit as the scene, which is what
 keeps the read-back test honest in both directions.
+
+---
+
+## 2026-11-07 — Effect B, r0, the first look
+
+**Strip:** `captures/dungeon_motes/r0/`, laid out in `captures/dungeon_motes/r0-strip.png`
+**F4 control:** `captures/dungeon_motes/f4-no-preprocess/`, laid out in `captures/dungeon_motes/f4-no-preprocess-strip.png`
+**Scene at this revision:** `godot/effects/dungeon_motes.tscn`
+**Configuration test:** 39 checks, 0 failures · **State test:** 19 checks, 0 failures
+
+Both strips use the **room** view — the whole 640 × 360 viewport. Effect A's
+strips are cropped to the trap because a 24 px burst would vanish in a
+whole-room panel; Effect B is the room, and cropping it would hide whether the
+field is even.
+
+### The mechanical reading, made before anyone looked at the picture
+
+A third capture was taken with the field switched off entirely
+(`emitting = false`), so "full" and "empty" are absolute counts rather than
+impressions. Mote pixels = pixels differing from that field-off baseline, with
+the player's column band excluded. `room_backdrop.gd:28` records that nothing
+in this backdrop moves, so the only thing that can differ between two runs of
+the same frame is the field.
+
+| frame | shipped, `preprocess = 8.0` | mutated to `preprocess = 0.0` |
+|---|---|---|
+| 1 | **578 px** | **12 px** |
+| 10 | 558 | 44 |
+| 40 | 567 | 108 |
+
+**B1 is settled, and F4 is demonstrated.** The shipped effect is at full
+density on the **first drawn frame** and stays flat. The same effect with one
+number changed starts at 2 % of that and climbs at the rate one lifetime over
+eight seconds predicts: 17 % of the way through the fill at frame 40, measured
+108 / 578 = 19 %. This is the failure `CHANGE-BRIEF.md` F4 names and the reason
+§2.1 chose `preprocess` as the feature Effect A does not use. No headless test
+sees any of it.
+
+**B2's tail, measured.** After the player dies at frame 100, mote pixels fall
+412 → 400 → 409 → 315 → 288 → 191 → 144 → 76 → 49 → 16 → **0** at frames 100,
+110, 130, 160, 190, 220, 250, 280, 310, 330, 340. Empty at exactly 8.0 s after
+the stop, with no cut. §2.5 predicted frame 130 would be "thinner, not empty";
+at 1 s it is **not yet measurably thinner** (409 against 412) and the fall only
+begins around 2 s. See revision 6.0.3.
+
+### Claude's reading of r0
+
+**One clear defect: the field drifts through the floor.** 14 % of the visible
+motes on frame 1, and **22 % by frame 40**, are six or more logical pixels
+*inside* the floor slab, and the lowest mote reaches y = 266 — sixty-six pixels,
+four metres at this game's scale, under solid rock.
+
+The arithmetic was in §2.3 and nobody did it. The emission box is centred at
+(320, 100) with extents (320, 100), so motes are born anywhere from y = 0 down
+to **y = 200, which is the floor line itself**. A mote then falls at 2–6 px/s
+plus `gravity` 2 px/s² for its whole 8 s life: 6 × 8 + ½ × 2 × 64 = **112 px**
+of travel. One born near the floor ends up a hundred pixels below it. Nothing
+stops it, because `visibility_rect` culls the node and does not clip particles,
+and there is no collision on an ambience effect.
+
+Two candidate fixes, one setting each, for whichever the author wants first:
+raise the box so it stops above the lip, or cut the downward drift so a mote
+cannot cross 200 px in its lifetime. **Neither is in this revision.**
+
+**What reads well.** At 1 logical pixel each and α 0.35, the motes are specks
+and not snow — §2.2's size call looks right. 39 % of them fall inside a torch
+pool, which is where they are easiest to see, and the brief predicted the
+opposite ("nearly nothing against a torch pool"). On the evidence the warm
+colour against the lit stone is *more* visible, not less, but the difference is
+small and this is a judgement, not a measurement.
+
+**What I cannot tell you**, and what the capture cannot: whether 60 motes over
+a 640 × 200 room reads as air or as an empty room with a few dots in it. That is
+ten seconds of standing still in the running game, and it is the verdict.
+
+**My verdict (author, in the running game):**
+
+> _TO FILL IN — run the game, stand still for ten seconds. Does the room read
+> as having air in it? Is the dust in the floor something you notice, or
+> something only the pixel count notices? Which of the two fixes, if either?_

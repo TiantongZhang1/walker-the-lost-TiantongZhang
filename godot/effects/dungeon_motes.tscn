@@ -1,0 +1,55 @@
+[gd_scene load_steps=5 format=3 uid="uid://cb6dungeonmotes"]
+
+[ext_resource type="Script" path="res://effects/dungeon_motes.gd" id="0_condition"]
+
+; Effect B, the dungeon motes. CHANGE-BRIEF.md section 2.3 holds every number
+; below and godot/tests/test_dungeon_motes_config.gd reads every one of them
+; back.
+;
+; One emitter, because the effect has one job. The feature Effect A does not
+; use is `preprocess`: at 8.0, one full lifetime, the engine simulates the
+; whole field before the first frame is drawn, so the room is never seen
+; filling up. Section 2.4 rule B1, and F4 says no headless test can see it.
+;
+; The box is placed with `emission_shape_offset`, not by moving this node, so
+; `visibility_rect` below is the brief's own Rect2(0, 0, 640, 200) in room
+; coordinates rather than a translated version of it. The offset is a real
+; stored property on 4.7.2 -- probed, usage 6, and it survives a save.
+;
+; Property names: initial_velocity_min/_max, scale_min/_max, damping_min/_max.
+; NOT initial_velocity, scale or damping -- CHANGE-BRIEF.md section 0.2.
+
+[sub_resource type="Gradient" id="Gradient_motes"]
+offsets = PackedFloat32Array(0, 0.15, 0.85, 1)
+colors = PackedColorArray(0.784314, 0.603922, 0.352941, 0, 0.784314, 0.603922, 0.352941, 0.35, 0.784314, 0.603922, 0.352941, 0.35, 0.784314, 0.603922, 0.352941, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_motes"]
+gradient = SubResource("Gradient_motes")
+
+[sub_resource type="ParticleProcessMaterial" id="PPM_motes"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_shape_offset = Vector3(320, 100, 0)
+emission_box_extents = Vector3(320, 100, 1)
+direction = Vector3(-0.371391, 0.928477, 0)
+spread = 25.0
+initial_velocity_min = 2.0
+initial_velocity_max = 6.0
+gravity = Vector3(0, 2, 0)
+damping_min = 0.0
+damping_max = 0.0
+scale_min = 1.0
+scale_max = 2.0
+color_ramp = SubResource("GradientTexture1D_motes")
+
+[node name="DungeonMotes" type="GPUParticles2D"]
+script = ExtResource("0_condition")
+emitting = true
+amount = 60
+process_material = SubResource("PPM_motes")
+lifetime = 8.0
+one_shot = false
+preprocess = 8.0
+explosiveness = 0.0
+local_coords = false
+visibility_rect = Rect2(0, 0, 640, 200)

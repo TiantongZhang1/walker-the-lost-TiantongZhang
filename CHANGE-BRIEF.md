@@ -341,7 +341,7 @@ Preview: `godot/previews/dungeon_motes_preview.tscn`, same real background.
 The condition **starts at frame 10** (scene already loaded) and **ends at
 frame 100** — the preview kills the player.
 
-Read frames **10, 11, 40, 100, 130, 340**. **[proposal]**
+Read frames **10, 11, 40, 100, 130, 340**, and **frame 1** — revision 6.0.3, because B1 is a claim about the first drawn frame. **[proposal]**
 
 | Frame | Should show |
 |---|---|
@@ -349,7 +349,7 @@ Read frames **10, 11, 40, 100, 130, 340**. **[proposal]**
 | 11 | Indistinguishable from 10 at a glance; motes have moved 0.2 px. |
 | 40 | Steady state, different motes, same density. |
 | 100 | The last frame before the condition ends. Still full. |
-| 130 | One second after. Thinner, not empty — motes finishing their lives. |
+| 130 | One second after. **Revision 6.0.3: still full** — 409 mote px against 412 at the stop. The fall begins around 2 s and the thinning is read at 160 and 220. |
 | 340 | Empty. 8 s is one full lifetime after the stop. |
 
 ---
@@ -583,3 +583,49 @@ own state machine, which is the right source for "can a trap overlap *itself*",
 and then the step to "three traps, so three bursts" was made without ever asking
 how long it takes a player to walk between two of them. The arithmetic that was
 missing is one division.
+
+---
+
+# Revision 6.0.3 — 2026-11-07 — Effect B's strip: frame 1, a control, and one prediction that did not hold
+
+**Amends §2.5. The effect itself is unchanged**; this is about the evidence.
+
+### 1. Frame **1** is added to the frames the strip reads
+
+§2.4 B1 is a claim about the **first drawn frame**. §2.5's list started at
+frame 10, which is a third of a second later and is not it. Frame 1 is now
+kept and is the first panel of `captures/dungeon_motes/r0-strip.png`. The read
+list is **1, 10, 11, 40, 100, 130, 340**.
+
+### 2. A control strip, because one strip cannot show `preprocess` working
+
+A full field and a field that filled quickly look identical in a single
+capture. F4 is a claim about the *difference*, so the difference is captured:
+the same preview, with `preprocess` mutated to **0.0** in the scene file and
+reverted immediately afterwards, is `captures/dungeon_motes/f4-no-preprocess/`.
+A third capture with the field switched off entirely gives an absolute zero to
+count against. Mote pixels, against that baseline:
+
+| frame | `preprocess = 8.0` | `preprocess = 0.0` |
+|---|---|---|
+| 1 | **578** | **12** |
+| 10 | 558 | 44 |
+| 40 | 567 | 108 |
+
+This is the same mutation discipline §0.2 and Step 2 used for Effect A, applied
+to the one rule a headless run cannot reach.
+
+### 3. §2.5's frame-130 expectation was wrong
+
+The table said frame 130 — one second after the condition ends — should be
+"thinner, not empty". Measured, it is **not yet thinner**: 409 mote pixels
+against 412 at the death. The field holds for about two seconds and then falls
+away, reaching 0 at exactly 8.0 s.
+
+The reason is in §2.2's own ramp and was not carried through to §2.5. Alpha is
+`0 → 0.35 → 0.35 → 0` at offsets 0, 0.15, 0.85, 1.0, so a mote is at full alpha
+for 70 % of its life and only fades over its last 1.2 s. One second after the
+births stop, the oldest motes are the only ones dimming and they were already
+dimming. Frame 130's row is corrected to **"still full; the fall begins around
+2 s"**, and the thinning is read at 160 and 220 instead.
+

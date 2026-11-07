@@ -746,3 +746,105 @@ in `TUNING.md`.
 `scripts/build_effect_strip.py`, written for this revision so that two strips
 of the same effect are cropped and scaled identically. r0's strip was
 regenerated with it from the same committed frames; the frames are untouched.
+
+## Effect B — configuration, and a third variant of the section 0.2 trap
+
+```bash
+./scripts/run-test.sh test_dungeon_motes_config.gd 60
+```
+
+**39 checks, 0 failures.** Every value is `CHANGE-BRIEF.md` §2.3's, read back
+off the loaded resource. Three checks are about the pair of effects rather than
+about Effect B alone, because §2.1's claim — that `preprocess` is the feature
+Effect A does not use — is a claim about two scenes: B's `preprocess` is 8.0
+and equals its lifetime, all three of A's emitters are at 0.0, and none of A's
+emitters uses a Box emission shape.
+
+**The new trap variant, found while building the scene.** §0.2 recorded two
+ways a property name can fail silently on 4.7.2. Effect B turned up a third:
+on a **live** `ParticleProcessMaterial` whose `emission_shape` is still Point,
+`get_property_list()` reports `emission_box_extents` with usage **0** — Godot
+hides the shape-specific properties of every inactive shape. So the answer to
+"is this property real?" depends on the value of an unrelated property.
+`ClassDB.class_get_property_list()` reports usage 6 either way, and reading the
+value with `get()` is immune to both. `emission_shape_offset`, which this scene
+uses to place the box without moving the node, was checked the same way: usage
+6, and it survives a save/load round trip into the resource file.
+
+## Effect B — frame strip r0, and the F4 control (FIXTURE CAPTURES)
+
+```bash
+godot --path godot res://previews/dungeon_motes_preview.tscn \
+    --write-movie "$PWD/captures/dungeon_motes/r0/frame.png" \
+    --fixed-fps 30 --quit-after 350
+```
+
+Frames **1, 10, 11, 40, 100, 130, 340** are kept — revision 6.0.3 adds frame 1,
+because B1 is a claim about the first drawn frame and frame 10 is not it. The
+preview uses the real player and ends the condition by dealing it its whole
+health through `take_damage()`, so the `died` signal on the other end is the
+real one.
+
+**Why three captures and not one.** A full field and a field that filled
+quickly look the same in a single strip, so F4 cannot be shown by one. Taken:
+the shipped effect; the same scene with `preprocess` mutated to **0.0** and
+reverted straight afterwards; and a third with the field switched off, which
+gives an absolute zero to count against. `room_backdrop.gd:28` records that
+nothing in this backdrop moves, so the only thing that can differ between two
+runs of the same frame is the field.
+
+Mote pixels, against the field-off baseline, player column excluded:
+
+| frame | shipped, `preprocess = 8.0` | mutated, `preprocess = 0.0` |
+|---|---|---|
+| 1 | **578** | **12** |
+| 10 | 558 | 44 |
+| 40 | 567 | 108 |
+
+**B1 holds and F4 is demonstrated.** Full density on frame one, flat
+afterwards; the mutated scene starts at 2 % and climbs at the rate one lifetime
+over eight seconds predicts — 19 % of the way at frame 40, against 17 %
+expected. The configuration test and the state test are both green for the
+mutated scene too. Nothing but a drawn frame catches it.
+
+**B2's tail, measured.** Mote pixels after the death at frame 100: 412, 400,
+409, 315, 288, 191, 144, 76, 49, 16, **0** at frames 100, 110, 130, 160, 190,
+220, 250, 280, 310, 330, 340. Empty at exactly 8.0 s, no cut. §2.5 predicted
+frame 130 would be thinner; it is not yet — revision 6.0.3 corrects that row
+and explains why from §2.2's own alpha ramp.
+
+**One defect the strip found, and no test could.** 14 % of the visible motes on
+frame 1, and **22 % by frame 40**, are six or more logical pixels *inside* the
+floor slab; the lowest reaches y = 266, sixty-six pixels under the floor line.
+The emission box runs down to y = 200, which is the floor line, and a mote
+falls up to 112 px in its 8 s life. `visibility_rect` culls the node, it does
+not clip particles. Recorded in `TUNING.md` with two candidate one-setting
+fixes; the verdict and the choice are the author's.
+
+## Effect B — wired into the game, and B2–B5 as state
+
+```bash
+./scripts/run-test.sh test_dungeon_motes_state.gd 60
+```
+
+**19 checks, 0 failures**, plus six printed `NOTE` lines that are deliberately
+not checks.
+
+| Rule | Result |
+|---|---|
+| B2 stop | `emitting` false on `died`, node not freed, not hidden, still false half a second later |
+| B3 paused | `can_process()` true, false while the tree is paused, true again after — which is what `process_mode = INHERIT` produces |
+| B4 hidden | `emitting` stayed true across hide and show; `preprocess` still equals `lifetime`, so nothing called `restart()` |
+| B5 no writes | a second of ambience changed no player health, no player position and no trap state or `warn_amount`; the effect is connected to `died` and writes one property |
+
+**What the NOTE lines say, and why they are not checks.** B1 is not checked at
+all — a headless run draws no field — and the note points at the two strips
+instead. B2's "existing motes finish their lives" is a drawn frame; the state
+test can only show that the node was not freed, hidden or restarted, and the
+note carries the strip's 412 → 0 measurement. B4's "it keeps simulating while
+hidden" has no exposed particle clock to read, so it stays a human check.
+
+Counting those as passes would have put six more green lines under claims
+nothing in the run had tested. That is the same failure this assignment has now
+produced three times in different shapes, and the cheapest defence against it
+is a printed line that says *not checked here*.
