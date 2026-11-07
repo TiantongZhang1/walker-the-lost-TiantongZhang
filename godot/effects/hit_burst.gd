@@ -35,6 +35,13 @@ func lifetime() -> float:
 	return _lifetime
 
 
+## Seconds since `fire()`. A3's evidence: when two events arrive 0.20 s apart,
+## the older instance must still be the older instance. A design that reused
+## one node would have nothing to compare.
+func elapsed() -> float:
+	return _elapsed
+
+
 func fire() -> void:
 	for child in get_children():
 		if child is GPUParticles2D:

@@ -178,7 +178,7 @@ about 20 px, so this is roughly double the real extent. **[proposal]**
 | `spread` | 55° | 70° | 35° |
 | `gravity` | (0, 0) | (0, 900) | (0, −30) |
 | `damping_min/max` | 0 / 0 | 40 / 90 | 10 / 20 |
-| `scale_min/max` | 1.6 / 2.4 | 0.8 / 1.4 | 2.0 / 3.5 |
+| `scale_min/max` | 1.6 / 2.4 → **5.0 / 7.0**, Revision 6.0.1 | 0.8 / 1.4 | 2.0 / 3.5 |
 | `scale_curve` | 1.0 → 0.2 | flat 1.0 | 0.6 → 1.8 |
 | `color_ramp` | `#e8ecf4` → `#c8ccd6`, α 1 → 0 | `#c8ccd6` → `#5e6472`, α 1 → 1 → 0 | `#8a90a1` α 0.5 → 0 |
 | draw texture | none (1 px white, point) | none | none |
@@ -197,7 +197,7 @@ matter. Additive dust over a dark floor would glow. **[proposal]**
 | A1 | A burst appears on **every** `fired`, and never otherwise — in particular **not on scene load**, where three traps exist and none has fired. |
 | A2 | The burst is at the emitting trap's x, at the floor line y = 200, within 1 px. |
 | A3 | **Retrigger rule: overlap.** Every `fired` gets its own instance; nothing is cut off and nothing is dropped. |
-| A4 | **At most 3 bursts alive at once**, so at most **96 particles**. Each trap's cycle is 1.40 s and a burst lives 0.60 s, so a trap cannot overlap itself; three traps is the hard ceiling. |
+| A4 | **At most 3 bursts alive at once**, so at most **96 particles**. Each trap's cycle is 1.40 s and a burst lives 0.60 s, so a trap cannot overlap itself; three traps is the hard ceiling. **Revision 6.0.2: correct, and unreachable by playing this room — the traps are 1.17 s apart at walking speed, so in play at most one burst is alive and the peak is 32.** |
 | A5 | A burst does **not** die with the thing that caused it. It is parented to the room, not to the trap. |
 | A6 | Each burst frees itself when its longest emitter has finished. No instance survives past 0.60 s. |
 
@@ -402,7 +402,7 @@ No headless run establishes any HUMAN row. That is the point of the split.
 
 | | Effect A | Effect B |
 |---|---|---|
-| Peak particle count | **96** (3 × 32) | **60** |
+| Peak particle count | **96** (3 × 32) — a design ceiling, not a measured peak; Revision 6.0.2 | **60** |
 | Predicted headless CPU price | **≈ 0 ms over the control**, by construction | **≈ 0 ms over the control** |
 | Predicted GPU time | **≤ 0.30 ms** | **≤ 0.20 ms** |
 | Budget, and the price it is compared on | **0.30 ms GPU** | **0.20 ms GPU** |
@@ -498,3 +498,88 @@ moves, so they are listed under draw.
   *this* game.
 - The mote colour is specified against the wall. It has not been judged
   inside a torch pool, which is the one place it might be too visible.
+
+---
+
+# Revision 6.0.1 — 2026-11-07 — `Flash.scale_min/max` 1.6 / 2.4 → 5.0 / 7.0
+
+**Supersedes the `scale_min/max` cell of §1.3's `Flash` column.** Everything
+else in that table stands.
+
+| | before | after |
+|---|---|---|
+| `Flash.scale_min` | 1.6 | **5.0** |
+| `Flash.scale_max` | 2.4 | **7.0** |
+
+**Why.** §1.2 gives `Flash` the job of owning frame one — "a few large pale
+chunks at the lip, bright on the very first frame". At 1.6 / 2.4 the flash
+particles came out the same size on screen as the `Grit` specks beside them, so
+frame 10 of `captures/hit_burst/r0-strip.png` reads as one undifferentiated
+cluster of small dots and the impact phase exists in the timing but not in the
+picture. This is the first revision of Assignment 6's tuning loop and the full
+record of it — the author's reading of the running game, Claude's prediction
+written before the recapture, where that prediction was wrong, and the author's
+verdict — is in `TUNING.md` under **2026-11-07 — Effect A, r1**.
+
+**Kept** on the author's verdict in the running game after the recapture.
+
+**What changed with it, in the same commit:** `godot/effects/hit_burst.tscn`
+and the expected value in `godot/tests/test_hit_burst_config.gd`. That test
+reads §1.3's numbers back off the loaded resource, so a revision that moved only
+two of the three would have failed it — which is the loop working as designed
+rather than a near miss. 80 checks, 0 failures after the change.
+
+**Still open, and deliberately not in this revision.** With `Flash` now visible,
+`captures/hit_burst/r0-vs-r1-frame10.png` shows it sitting on the trap's **base**
+rather than at the floor line at its lip, which is where §1.1 puts the origin of
+the burst. `Flash` emits from a Point at `spread` 55°, so most of it goes
+straight up from the origin and lands on the trap body. That is a candidate for a
+later revision; this loop moves one setting at a time.
+
+---
+
+# Revision 6.0.2 — 2026-11-07 — A4's ceiling of 3 is correct and unreachable
+
+**Amends §1.4 rule A4 and the "Peak particle count" row of §5. The numbers do
+not change; what they are a claim *about* does.**
+
+A4 says "at most 3 bursts alive at once, so at most 96 particles", and §7
+repeats the reasoning: a trap's cycle is 1.40 s, a burst lives 0.60 s, so no
+trap overlaps itself, and three traps is the ceiling. All of that is true. It is
+also **not reachable by playing this room**, and the brief should have said so:
+
+| | |
+|---|---|
+| Trap spacing | `SpikeTrap1/2/3` at x **208, 320, 432** → **112 px** apart |
+| Player speed | `Player.SPEED = 96.0` — `godot/features/player/player.gd:19` |
+| Time between two traps firing | 112 ÷ 96 = **1.17 s** |
+| Burst lifetime | **0.60 s** |
+
+Each trap's detect zone is offset ahead of it by the same `SPEED × WARN_SECONDS`
+(`godot/features/traps/spike_trap.gd:33`), so the offset cancels and consecutive
+`fired` events are 1.17 s apart at full speed. Crossing 112 px inside a 0.60 s
+burst lifetime would need 187 px/s, and the player cannot move that fast.
+**In real play at most one burst is alive at any moment, and the peak particle
+count in play is 32, not 96.**
+
+**What this changes:**
+
+- **A4 stands as a ceiling**, and §5's 96 stays the number the GPU budget is set
+  against — a ceiling the design permits is the right thing to budget for. It is
+  a **design ceiling, not a measured peak**, and §5's row is relabelled as such.
+- **§4's A4 row was close to vacuous.** "Drive a full walk; assert the live
+  instance count never exceeds 3" passes whether the ceiling works or not,
+  because the count never exceeds 1. The state test must therefore **report the
+  maximum it actually observed** alongside the assertion, so a reader can see
+  that the walk reached 1 and not 3.
+- **§4's A3 row is synthetic, and must be labelled.** Two events 0.20 s apart
+  cannot be produced by walking; the test emits them directly, and the preview's
+  `retrigger` export does the same for the strip. A3 is still a real rule — it is
+  what stops the design from being the single reused `one_shot` node of F3 — but
+  the evidence for it is a constructed case, not play.
+
+**Why it was wrong in the brief.** The 1.40 s figure was taken from the trap's
+own state machine, which is the right source for "can a trap overlap *itself*",
+and then the step to "three traps, so three bursts" was made without ever asking
+how long it takes a player to walk between two of them. The arithmetic that was
+missing is one division.

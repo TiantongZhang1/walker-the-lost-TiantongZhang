@@ -54,7 +54,7 @@ const PROCESS_VALUES := {
 		"initial_velocity_min": 20.0, "initial_velocity_max": 50.0,
 		"gravity": Vector3(0, 0, 0),
 		"damping_min": 0.0, "damping_max": 0.0,
-		"scale_min": 1.6, "scale_max": 2.4,
+		"scale_min": 5.0, "scale_max": 7.0,   # r1, 2026-11-07
 	},
 	"Grit": {
 		"emission_shape": ParticleProcessMaterial.EMISSION_SHAPE_SPHERE,

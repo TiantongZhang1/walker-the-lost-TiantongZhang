@@ -28,7 +28,7 @@ renumbers nodes and drops defaults. `tools/check_claude_refs.py` asserts them.
 | Owns the event | `signal fired` — `godot/features/traps/spike_trap.gd:24`, emitted `:98` entering `State.FIRING` | `signal died` — `godot/features/player/player.gd:16`, emitted `:48` |
 | Appears in | `godot/game/main.tscn` — one instance per event, at the firing trap | `godot/game/main.tscn` — one node for the room |
 | Preview | `godot/previews/hit_burst_preview.tscn` | `godot/previews/dungeon_motes_preview.tscn` |
-| Retrigger | **overlap**, at most 3 alive | n/a |
+| Retrigger | **overlap**, at most 3 alive — a ceiling the room cannot reach, `CHANGE-BRIEF.md` revision 6.0.2 | n/a |
 | Feature the other lacks | — | **`preprocess`**, and a Box emission shape |
 
 ### The state they read and never write
@@ -113,7 +113,7 @@ into gameplay in the same step that builds it.
 - ~~Forward+ on real hardware; whether `source_color` changes the value the
   shader receives.~~ **Both settled 2026-10-24** — Vulkan 1.4.357, RTX 5080
   Laptop; it does not, and `hint_range` does not clamp. `TEST-REPORT.md`.
-- **Every A6 budget in `CHANGE-BRIEF.md` §5 is a prediction.** No GPU time
-  has been read on hardware yet.
-- **No frame strip exists yet**, so nothing about how either effect *reads*
-  has been checked.
+- **Every A6 budget in `CHANGE-BRIEF.md` §5 is a prediction** — no GPU time read yet.
+- **Effect A has strips r0/r1 and one kept tuning revision** —
+  `captures/hit_burst/`, `TUNING.md`. **Effect B has no strip**: nothing
+  about how it reads is checked, `preprocess` (F4) included.

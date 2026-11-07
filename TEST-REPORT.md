@@ -649,3 +649,100 @@ the strip is read from 10 as the brief says.
 This says the effect *fires and clears on time*. It says nothing whatever
 about whether it reads as grit, which is `TUNING.md`'s first entry and the
 author's verdict.
+
+## Effect A — wired into the game, and A1–A6 as state (Step 3)
+
+`godot/effects/hit_burst_spawner.gd` is a node in `main.tscn`. It connects to
+each trap's existing `fired` signal and instances one burst per event, parented
+to the room. **No game script was changed**: `spike_trap.gd` already emitted
+`fired` at `:98` for Assignment 5's warning driver.
+
+```bash
+./scripts/run-test.sh test_hit_burst_state.gd 60
+```
+
+**22 checks, 0 failures.** What each scenario establishes:
+
+| Rule | Result |
+|---|---|
+| A1 nothing on scene load | 0 live bursts on the frame after `_ready()`, and none anywhere in the tree, with all three traps present and ARMED |
+| A1 one per event | one walk left to right with synthesized key input → 3 `fired`, 3 instances |
+| A2 position | worst error 0.000 px in x against the firing trap, 0.000 px in y against the floor line |
+| A5 parent | all three parented to the room |
+| A4 ceiling | never exceeded 3 — **observed maximum 1** |
+| A3 overlap | two instances alive, the older one's clock at 0.250 s against the younger's 0.017 s |
+| A6 frees itself | alive at half life, gone after **0.583 s**, and out of the tree |
+
+### A4's green line was nearly worthless, and the test now says so
+
+`CHANGE-BRIEF.md` revision 6.0.2. The brief's ceiling of 3 bursts is
+arithmetically right and **unreachable by playing this room**: the traps are
+112 px apart, the player walks at 96 px/s, so two `fired` events are 1.17 s
+apart and a burst lives 0.60 s. "Assert the count never exceeds 3" therefore
+passes whether the design works or not. The test now prints the **observed
+maximum** next to that assertion and separately asserts it is 1, so a reader
+sees what the walk actually exercised. A3's overlap is produced by emitting
+`fired` directly and is **labelled SYNTHETIC in the test's own output**.
+
+### Two defects this test found, neither of which any other check could
+
+**1. `live_count()` threw on every call once a burst had died.** It was
+written as
+
+```gdscript
+_live = _live.filter(func(b: Node2D) -> bool: return is_instance_valid(b))
+```
+
+A freed object cannot be passed to a parameter typed `Node2D`, and `filter()`
+returns an untyped `Array` that will not assign back to `Array[Node2D]`. Both
+errors print and Godot carries on. The configuration test never calls it, and
+nothing in the game reads it, so **the only thing in the repository that could
+have found this is a state test that runs past a burst's lifetime.** Replaced
+with an explicit loop.
+
+**2. The state test's own A2 and A5 checks passed having measured nothing.**
+The first version stored the burst node in a list and measured its position
+after the walk finished. By then all three had freed themselves, and in GDScript
+a freed object reference compares equal to `null` — so the loop's
+`if row["burst"] == null: continue` skipped every row and both checks reported
+`worst 0.000 px` and passed. Three green lines, zero evidence, and 0.000 px is
+exactly what a correct result looks like.
+
+What caught it was a check written for a different purpose: "every event
+produced an instance", which counted the same `null`s and went red. The fix
+records position and parent **at the event**, as plain numbers, and the
+scenario now also asserts that three bursts were actually measured rather than
+none. This is the same failure shape as Assignment 5's frozen film and the
+`const SFX_TRAP` parse error: a suite reporting success about work it never
+did.
+
+### What this step does not establish
+
+Nothing about appearance. A headless run draws no particles. The look is
+`captures/hit_burst/` and the verdict on it is the author's, in `TUNING.md`.
+
+## Effect A — frame strip r1 (FIXTURE CAPTURE)
+
+`TUNING.md`'s first tuning revision: `Flash.scale_min/scale_max` 1.6 / 2.4 →
+5.0 / 7.0, approved before the change and kept after it. Recaptured from the
+same preview with the same pinned seed, the same command, the same six frames.
+
+Pixels differing between the r0 and r1 frame of the same number, whole frame,
+no threshold:
+
+| frame | 10 | 12 | 15 | 20 | 30 | 50 |
+|---|---|---|---|---|---|---|
+| differing px | **52** | 0 | 0 | 0 | 0 | 0 |
+
+Claude's prediction, written before the recapture, called frames 10 and 12
+different and the rest identical. **Five of six matched; frame 12 was wrong** —
+the two frames are bit-identical there. Since `Flash` is additive and is the
+only thing that changed, tripling its base scale would have to move at least one
+pixel if it contributed any light, so `Flash` contributes nothing at frame 12 in
+either revision. The full write-up, including what the strip cannot settle, is
+in `TUNING.md`.
+
+`captures/hit_burst/r0-strip.png` and `r1-strip.png` are both laid out by
+`scripts/build_effect_strip.py`, written for this revision so that two strips
+of the same effect are cropped and scaled identically. r0's strip was
+regenerated with it from the same committed frames; the frames are untouched.
