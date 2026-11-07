@@ -29,16 +29,28 @@ EXPECT = {
     "godot/project.godot:19": "viewport_width",
     "godot/project.godot:59": "default_texture_filter",
     "godot/features/player/player.gd:13": "16 px = 1 m",
-    "godot/features/player/player.gd:42": "take_damage",
+    # A6: the state Effect B reads, and the number Effect A's grit falls at.
+    "godot/features/player/player.gd:16": "signal died",
+    "godot/features/player/player.gd:21": "const GRAVITY",
+    "godot/features/player/player.gd:23": "var health",
+    "godot/features/player/player.gd:48": "died.emit()",
     "godot/features/traps/spike_trap.gd:27": "enum State",
+    # A6: the four timings whose sum is the 1.40 s cycle that bounds how many
+    # Effect A bursts can be alive at once. CHANGE-BRIEF.md section 1.4, A4.
+    "godot/features/traps/spike_trap.gd:23": "signal warning_started",
+    "godot/features/traps/spike_trap.gd:24": "signal fired",
+    "godot/features/traps/spike_trap.gd:25": "signal player_hit",
     "godot/features/traps/spike_trap.gd:39": "WARN_SECONDS",
+    "godot/features/traps/spike_trap.gd:40": "FIRE_SECONDS",
+    "godot/features/traps/spike_trap.gd:41": "RETRACT_SECONDS",
+    "godot/features/traps/spike_trap.gd:42": "COOLDOWN_SECONDS",
     "godot/features/traps/spike_trap.gd:50": "warn_amount",
-    "godot/features/traps/spike_trap.gd:110": "func disarm",
-    "godot/features/traps/spike_trap.gd:119": "func warning_remaining",
-    "godot/features/traps/spike_trap.gd:125": "_on_detect_body_entered",
+    "godot/features/traps/spike_trap.gd:51": "var state",
+    "godot/features/traps/spike_trap.gd:98": "fired.emit()",
     "godot/features/traps/trap_warning_driver.gd:1": "class_name TrapWarningDriver",
     "godot/tests/test_trap_warning.gd:33": "process_priority",
-    "scripts/run-test.sh:25": "GODOT:=",
+    # A6 replaced the wrapper, which moved this line from 25 to 42.
+    "scripts/run-test.sh:42": "GODOT:=",
 }
 
 # path -> substrings the file must contain somewhere. For scenes, shaders and

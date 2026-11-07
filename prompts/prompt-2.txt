@@ -1,0 +1,39 @@
+Read CLAUDE.md first. Effect A's intent and settings are in
+CHANGE-BRIEF.md section 1.
+
+Build Effect A as a scene file in godot/effects/hit_burst.tscn, using
+Godot 4 class and property names for the version CLAUDE.md pins. If you
+are unsure a property exists in this version, say so instead of
+guessing. Configure it in the scene file, not in code. The brief layers
+three emitters, so put them under one root node.
+
+CHANGE-BRIEF.md section 0.2 is a measured finding and you should read
+it before you write a single property name: on this build
+ParticleProcessMaterial HAS initial_velocity, scale and damping as
+Vector2 properties that are never written to a scene file, so writing
+one of those names is accepted and silently discarded. Use
+initial_velocity_min / initial_velocity_max, scale_min / scale_max,
+damping_min / damping_max.
+
+Then add:
+- a configuration test, godot/tests/test_hit_burst_config.gd, that
+  loads the scene and reads back every setting the brief names from the
+  loaded resources, using the brief's values as the expected values.
+  Read each of the three emitters by its node path. Follow the house
+  style of the existing tests in godot/tests/ -- a check() helper, a
+  printed count of checks and failures, and a non-zero exit on failure;
+- a preview scene, godot/previews/hit_burst_preview.tscn, that holds
+  the effect at in-game camera scale over the background the brief
+  names -- a real stretch of this level, which means an instance of
+  godot/game/room_backdrop.gd and the floor, with a trap standing in
+  its unlit gap -- and triggers it at frame 10, and again at frame 16
+  when its retrigger export is on. Pin use_fixed_seed on the preview's
+  own instance only, never in the effect scene.
+
+Run the configuration test with ./scripts/run-test.sh at 60 and show
+the real output. If a command you try is refused, say so plainly
+instead of describing what the output would have been. Then give me the
+capture command for the preview, and stop.
+
+Do not wire the effect into gameplay, do not edit any .gdshader file,
+do not edit any existing test, and do not commit.
