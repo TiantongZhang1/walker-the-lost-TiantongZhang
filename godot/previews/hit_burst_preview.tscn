@@ -1,0 +1,43 @@
+[gd_scene load_steps=6 format=3 uid="uid://cb6hitburstprev"]
+
+; Effect A's fixture. The background is a real stretch of this level: the
+; same room_backdrop.gd the game draws, the same floor tile, and a real
+; spike_trap.tscn standing where the backdrop breaks the lit lip. Camera and
+; geometry match game/main.tscn, so what the strip shows is what the game
+; shows. CHANGE-BRIEF.md section 1.5.
+
+[ext_resource type="Script" path="res://previews/hit_burst_preview.gd" id="0_preview"]
+[ext_resource type="Script" path="res://game/room_backdrop.gd" id="1_backdrop"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floor_tile.png" id="2_floor"]
+[ext_resource type="PackedScene" path="res://features/traps/spike_trap.tscn" id="3_trap"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
+size = Vector2(640, 160)
+
+[node name="HitBurstPreview" type="Node2D"]
+script = ExtResource("0_preview")
+
+[node name="Backdrop" type="Node2D" parent="."]
+script = ExtResource("1_backdrop")
+
+[node name="Floor" type="StaticBody2D" parent="."]
+position = Vector2(320, 280)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="Floor"]
+texture_repeat = 2
+texture = ExtResource("2_floor")
+region_enabled = true
+region_rect = Rect2(0, 0, 640, 160)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
+shape = SubResource("RectangleShape2D_floor")
+
+[node name="Traps" type="Node2D" parent="."]
+
+[node name="SpikeTrap" parent="Traps" instance=ExtResource("3_trap")]
+position = Vector2(320, 200)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(320, 180)

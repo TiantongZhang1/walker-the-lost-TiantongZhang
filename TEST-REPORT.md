@@ -556,3 +556,96 @@ Forward+/Mobile assumption their predictions are written under.
    establishes that the state behaves; it establishes nothing about what
    the screen shows, which is why this row was carried as open for four
    days rather than filled in from the means.
+
+---
+
+# Assignment 6
+
+Source revision: this commit. Godot **4.7.2.stable.official** `ed1daf0bf`,
+**Forward+**, Vulkan 1.4.357, NVIDIA GeForce RTX 5080 Laptop GPU, Windows 11.
+
+## A5's evidence check fails on `main`, by construction
+
+`CHANGE-BRIEF.md` §0.3, verified rather than assumed: clone the `a5` tag into
+an empty directory, add **one** file under `godot/`, and the course checker
+answers `Inventory coverage mismatch`. A6 adds `godot/effects/`,
+`godot/previews/`, `particles_generated.gdshader` and four tests, so this is
+certain.
+
+**The `a5` tag is unaffected.** A clone of it still returns
+`{"status": "PASS", … "exact_excerpts": 6, "code_result_pairs": 6}`, which was
+run from GitHub on 2026-10-28 and is recorded in `SUBMISSION.md`. Only `main`
+changes, and that is what a cumulative repository does. Nothing about
+Assignment 5's submission was broken to do this.
+
+## Baseline, through Assignment 6's wrapper
+
+Every suite at its pinned mode, before any effect existed — commit `866bd5a`.
+
+| Test | Mode | Result | `SHADER ERROR` |
+|---|---|---|---|
+| `test_materials.gd` | 60 | 48 checks, 0 failures | 0 |
+| `test_trap_shader_driver.gd` | 30 / 60 / 144 | 24 checks, 0 failures each | 0 |
+| `test_trap_warning.gd` | 30 / 60 / 144 | 22 checks, 0 failures each | 0 |
+| `test_input_map.gd` | 60 | 5 checks, 0 failures | 0 |
+| `check_assets_3d.gd` | 60 | ALL CHECKS PASSED | 0 |
+| `test_input_map.gd` | **realtime** | 5 checks, 0 failures | 0 |
+
+**99 checks, 0 failures**, and the new `realtime` path exercised rather than
+assumed.
+
+## Effect A — configuration
+
+`./scripts/run-test.sh test_hit_burst_config.gd 60` → **80 checks, 0
+failures**. It reads every value in `CHANGE-BRIEF.md` §1.3 back out of the
+loaded resources, so it fails in both directions: scene drifting from the
+brief, and brief revised without the scene.
+
+### The two mutations
+
+Both run against `godot/effects/hit_burst.tscn` and both restored afterwards;
+`diff` against the pre-mutation copy is empty.
+
+| # | Mutation | Config test | What it proves |
+|---|---|---|---|
+| 1 | `initial_velocity_min = 70.0` → **`initial_velocity = 70.0`** on `Grit` | **exit 1** — `FAIL Grit.initial_velocity_min == 70.0 [0.0]` | The Godot 3 name. §0.2 measured that this property **exists** on 4.7.2 as a `Vector2` with usage 12 and is never stored, so the scene loads silently, stores nothing, and the emitter runs at `0.0`. Nothing errors. Only a read-back of the real property can tell. |
+| 2 | `lifetime = 0.6` → **`0.9`** on `Grit`, brief untouched | **exit 1** — `FAIL Grit.lifetime == 0.6 [0.9]` | Drift between the brief and the scene, in the direction the brief did not move. |
+
+Mutation 1 is the one the assignment is pointing at, and it is worse than the
+assignment describes: the chapter warns the Godot 3 names are wrong, and on
+this build one of them is *accepted*. `scale_random` is the other kind — it
+does not exist at all, `set()` is a no-op and `get()` returns `<null>`.
+
+## Effect A — frame strip r0 (FIXTURE CAPTURE)
+
+`godot/previews/hit_burst_preview.tscn`, a real stretch of this level: the
+same `room_backdrop.gd` the game draws, the same floor tile, and a real
+`spike_trap.tscn` standing where the backdrop breaks the lit lip.
+`use_fixed_seed` is pinned on the preview's own instance only — the effect
+scene does not pin it, and the configuration test asserts that.
+
+```bash
+godot --path godot res://previews/hit_burst_preview.tscn \
+    --write-movie "$PWD/captures/hit_burst/r0/frame.png" \
+    --fixed-fps 30 --quit-after 60
+```
+
+Frames 10, 12, 15, 20, 30 and 50 are kept in `captures/hit_burst/r0/`; the
+rest of the sequence is deleted. `captures/hit_burst/r0-strip.png` is the
+same six laid out.
+
+**One mechanical observation, made before anyone looked at the picture.**
+Counting pixels that differ from frame 8 inside a box around the trap:
+
+| frame | 9 | 10 | 11 | 12 | 15 | 20 | 30 | 50 |
+|---|---|---|---|---|---|---|---|---|
+| changed px | 48 | 114 | 130 | 148 | 182 | 278 | **0** | **0** |
+
+So the burst fires, peaks around frame 20 and is **gone by frame 30**, which
+is what §1.5 predicted. It also appears on **frame 9, not 10** — the
+preview's `_process` counter runs one frame ahead of the file numbering, and
+the strip is read from 10 as the brief says.
+
+This says the effect *fires and clears on time*. It says nothing whatever
+about whether it reads as grit, which is `TUNING.md`'s first entry and the
+author's verdict.
