@@ -31,6 +31,9 @@ from PIL import Image, ImageDraw, ImageFont
 VIEWS = {
     "trap": (320.0, 200.0, 160.0, 110.0, 480, 330),
     "room": (320.0, 180.0, 320.0, 180.0, 480, 270),
+    # Effect C happens at the floor line on the left half of the room, and a
+    # puff is a few pixels tall: the room view would hide it entirely.
+    "feet": (120.0, 180.0, 120.0, 90.0, 480, 360),
 }
 LOGICAL_W = 640.0
 LABEL_H = 30
@@ -52,6 +55,15 @@ CAPTIONS = {
 
 ## Effect B reads a different clock: section 2.5's frames are about the
 ## condition, not about a trigger.
+CAPTIONS_FEET = {
+    20: "running right",
+    26: "mid-stride",
+    32: "next stride",
+    50: "just after the turn",
+    70: "running left",
+    95: "after the stop",
+}
+
 CAPTIONS_ROOM = {
     1: "first drawn frame",
     10: "condition running",
@@ -94,7 +106,11 @@ def main() -> int:
 
     view = VIEWS[args.view]
     panel_w, panel_h = view[4], view[5]
-    captions = CAPTIONS_ROOM if args.view == "room" else CAPTIONS
+    captions = CAPTIONS
+    if args.view == "room":
+        captions = CAPTIONS_ROOM
+    elif args.view == "feet":
+        captions = CAPTIONS_FEET
 
     src = pathlib.Path(args.revision_dir)
     frames = sorted(

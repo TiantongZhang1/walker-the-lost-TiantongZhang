@@ -18,18 +18,19 @@ Every fact carries the file it came from. Check them; do not trust them.
 **Scenes are referenced by node name, never by line:** an editor save
 renumbers nodes and drops defaults. `tools/check_claude_refs.py` asserts them.
 
-### The two particle effects
+### The three particle effects
 
-| | **A — grit burst** | **B — dungeon motes** |
-|---|---|---|
-| Job | one-shot, on a repeating event | ambience |
-| Node type | **`GPUParticles2D` × 3** under one `Node2D` | **`GPUParticles2D` × 1** |
-| Scene | `godot/effects/hit_burst.tscn` | `godot/effects/dungeon_motes.tscn` |
-| Owns the event | `signal fired` — `godot/features/traps/spike_trap.gd:24`, emitted `:98` entering `State.FIRING` | `signal died` — `godot/features/player/player.gd:16`, emitted `:48` |
-| Appears in | `godot/game/main.tscn` — one instance per event, at the firing trap | `godot/game/main.tscn` — one node for the room |
-| Preview | `godot/previews/hit_burst_preview.tscn` | `godot/previews/dungeon_motes_preview.tscn` |
-| Retrigger | **overlap**, at most 3 alive — a ceiling the room cannot reach, `CHANGE-BRIEF.md` revision 6.0.2 | n/a |
-| Feature the other lacks | — | **`preprocess`**, and a Box emission shape |
+| | **A — grit burst** | **B — dungeon motes** | **C — step dust** |
+|---|---|---|---|
+| Job | one-shot, on a repeating event | ambience | one-shot, on a derived event |
+| Node type | **`GPUParticles2D` × 3** under one `Node2D` | **× 1** | **× 2** under one `Node2D` |
+| Scene | `godot/effects/hit_burst.tscn` | `godot/effects/dungeon_motes.tscn` | `godot/effects/step_dust.tscn` |
+| Owns the event | `signal fired` — `godot/features/traps/spike_trap.gd:24`, emitted `:98` entering `State.FIRING` | `signal died` — `godot/features/player/player.gd:16`, emitted `:48` | **no signal exists**: `step_dust_driver.gd` derives it from distance travelled, one puff per `stride_px` |
+| Appears in | `godot/game/main.tscn` — one instance per event, at the firing trap | `godot/game/main.tscn` — one node for the room | `godot/game/main.tscn` — `StepDustDriver`, `stride_px = 24` |
+| Preview | `godot/previews/hit_burst_preview.tscn` | `godot/previews/dungeon_motes_preview.tscn` | `godot/previews/step_dust_preview.tscn` |
+| Retrigger | **overlap**, at most 3 alive — a ceiling the room cannot reach, `CHANGE-BRIEF.md` revision 6.0.2 | n/a | overlap; the trail is 2–3 puffs |
+| Feature the others lack | — | **`preprocess`**, Box emission | **`amount_ratio`** — 0.6 a stride, 1.0 a landing |
+| State test rates | 60 | 60 | **30, 60 and 144** — the cadence is a distance |
 
 ### The state they read and never write
 
@@ -47,11 +48,11 @@ godot --headless --path godot --import          # once after cloning
 ./scripts/run-test.sh <test>.gd <fps|realtime> [timeout-seconds]
 ```
 
-`test_input_map.gd`, `check_assets_3d.gd`, `test_materials.gd` and every
-`test_*_config.gd` run at **60**. `test_trap_warning.gd` and
-`test_trap_shader_driver.gd` run at **30, 60 and 144** — a duration measured
-at one rate has not been measured. `test_*_state.gd` runs at 60, or
-`realtime` if it waits on audio. `cost_effects.gd` runs as `60 300`.
+`test_*_config.gd`, `test_input_map.gd`, `check_assets_3d.gd` and
+`test_materials.gd` run at **60**; `cost_effects.gd` as `60 300`.
+`test_trap_warning.gd`, `test_trap_shader_driver.gd` and
+`test_step_dust_state.gd` run at **30, 60 and 144** — a duration or a cadence
+measured at one rate has not been measured. Other `test_*_state.gd` run at 60.
 
 `godot` is not on PATH here; the wrapper resolves it relative to the
 repository and `GODOT=` overrides it — `scripts/run-test.sh:42`.
@@ -61,9 +62,8 @@ repository and `GODOT=` overrides it — `scripts/run-test.sh:42`.
 - A headless run uses a **dummy renderer and draws nothing**: it can show a
   shader parses, what it declares and a float on a given frame, never colour.
   It **draws no particles and runs no GPU particle process** — node state
-  (`emitting`, `one_shot`, `amount_ratio`, visibility, instance counts) is
-  observable, the look is not, and **a GPU effect's headless CPU price is
-  near zero by construction.**
+  (`emitting`, `amount_ratio`, visibility, instance counts) is observable, the
+  look is not, and **a GPU effect's headless CPU price is ~0 by construction.**
 - **Frame strips come from a windowed Movie Maker run, never a headless
   one.** An agent may take one when the author asks (they did, 2026-11-07);
   the verdict on a strip is the author's and is never delegated.
@@ -114,6 +114,6 @@ into gameplay in the same step that builds it.
   shader receives.~~ **Both settled 2026-10-24** — Vulkan 1.4.357, RTX 5080
   Laptop; it does not, and `hint_range` does not clamp. `TEST-REPORT.md`.
 - **Every A6 budget in `CHANGE-BRIEF.md` §5 is a prediction** — no GPU time read yet.
-- **Both effects have an r0 strip** (`captures/`, `TUNING.md`). A has a kept
-  revision; B has **no author verdict yet**, and 14–22 % of its motes drift
-  inside the floor slab.
+- **All three have an r0 strip** (`captures/`, `TUNING.md`). A has a kept
+  revision; **B and C have no author verdict yet**, and both drift dust below
+  the floor line (14-22 % and 11-29 %).

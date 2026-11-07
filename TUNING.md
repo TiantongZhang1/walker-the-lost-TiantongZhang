@@ -238,8 +238,107 @@ small and this is a judgement, not a measurement.
 a 640 × 200 room reads as air or as an empty room with a few dots in it. That is
 ten seconds of standing still in the running game, and it is the verdict.
 
+**My verdict (author, in the running game).** Said in the session on
+2026-11-07; recorded verbatim, with the English in square brackets:
+
+> 看起来像是天上有浮灰往下掉，但没看出地板灰尘
+> [it looks like dust falling from the sky, but I don't see any dust at the
+> floor]
+
+**Kept, and the field is doing its job.** The first clause is §2.1's goal in
+the author's own words: the room has air in it. Effect B is not revised.
+
+**Two things the verdict settles that the pixel count could not.**
+
+1. **The motes inside the floor slab are not visible to a player.** 22 % of the
+   field is under the rock and the author, told to look for it, did not see it.
+   The defect is real and stays recorded here; it is **not** worth a revision,
+   because the only instrument that can see it is a difference image. If a
+   later change makes the field denser or brighter, this is the first thing to
+   re-check.
+2. **The gap the author did see is a different one.** Falling dust, no dust at
+   ground level — nothing in this game is disturbed by the player moving
+   through it. That is not a tuning change to Effect B; §2.1 chose ambience and
+   ambience does not react. It is a third effect, and the author asked for it
+   in the same breath: grit kicked up where the feet land.
+
+**No r1 for Effect B.** The loop's output here is a verdict of *keep*, a
+recorded defect that the verdict demotes, and a new piece of work.
+
+---
+
+## 2026-11-07 — Effect C, r0, the first look
+
+**Strip:** `captures/step_dust/r0/`, laid out in `captures/step_dust/r0-strip.png`
+**Scene at this revision:** `godot/effects/step_dust.tscn`
+**Configuration test:** 63 checks, 0 failures
+**State test:** 26 checks, 0 failures at **30, 60 and 144 fps**
+
+The strip uses a third view, **feet** — 240 × 180 logical pixels around the
+left of the room. The room view would hide a puff that is a few pixels tall,
+and the trap view is looking at the wrong place.
+
+### The mechanical reading, made before anyone looked at the picture
+
+A control was captured with `stride_px` set to 9999 in the preview, so the
+same run produces no strides at all and the difference is the dust and
+nothing else.
+
+| frame | dust pixels | of which **below the floor line** | brightest delta |
+|---|---|---|---|
+| 20 | 82 | 14 (17 %) | 111 |
+| 26 | 130 | 21 (16 %) | 145 |
+| 32 | 74 | 8 (11 %) | 108 |
+| 50 | 98 | 12 (12 %) | 111 |
+| 70 | 87 | 25 (29 %) | 145 |
+| 95 | **0** | 0 | 0 |
+
+Frame 95 at zero is C5 seen rather than asserted: thirteen frames after the
+key is released, nothing is left.
+
+### G3 is answered, and the answer is yes
+
+§C.2 refused to assume that `scale.x = -1` mirrors the emission direction of a
+`local_coords = false` emitter, and no test in this repository can see it.
+Frame 32 (running right) throws the dust to the **left** of the character;
+frame 70 (running left) throws it to the **right**. The mirror works on
+4.7.2, and that is now a measured fact rather than a hope.
+
+### Claude's reading of r0
+
+**It is there, and it is too quiet to be the thing that was asked for.** The
+author's words were 脚踩过的地方溅起来点灰尘 — dust *kicked up* where the feet
+land. What the strip shows is a 2–3 pixel smudge at ankle height, at a
+brightest delta of about 110–145 out of a possible 765. Beside Effect A's
+burst, which peaks near 278 changed pixels in a much smaller box, this is a
+quarter of the event and reads as a scuff rather than a kick.
+
+The single setting with the most leverage is `Puff.scale_min/max`, currently
+**1.6 / 2.8**. That is the same lever and the same diagnosis as Effect A's r1,
+where `Flash` was the right idea at a size nobody could see.
+
+**The second defect is the one Effect B already has: dust sinks into the
+floor.** 11–29 % of the visible dust is under the lip. The cause here is
+sharper than Effect B's and is in `step_dust_driver.gd` rather than in a
+setting: C2 puts the spawn at the underside of the collision box, which is
+**exactly** the floor line at y = 200, and `Kick` carries `gravity` 900. Any
+speck whose initial velocity has a downward component is inside the rock on
+the next frame.
+
+**Two candidate changes, one setting each, for whichever the author wants
+first:**
+
+| | change | what it should do |
+|---|---|---|
+| r1a | `Puff.scale_min/max` 1.6 / 2.8 → **3.2 / 5.0** | the cloud becomes visible as a cloud; the trail reads at a glance |
+| r1b | the spawn raised ~3 px above the floor line | the specks arc instead of sinking |
+
+**Claude recommends r1a first**, because it is the thing the author actually
+asked for and because r1b changes a derived number in a driver rather than a
+setting in a scene, which is a bigger decision than a tuning step.
+
 **My verdict (author, in the running game):**
 
-> _TO FILL IN — run the game, stand still for ten seconds. Does the room read
-> as having air in it? Is the dust in the floor something you notice, or
-> something only the pixel count notices? Which of the two fixes, if either?_
+> _TO FILL IN — run the game, hold D and run across the room, then jump.
+> Is the dust something you notice without looking for it? Is the landing
+> puff bigger than a stride's? r1a, r1b, both, or neither?_

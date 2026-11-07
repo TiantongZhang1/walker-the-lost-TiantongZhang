@@ -629,3 +629,251 @@ births stop, the oldest motes are the only ones dimming and they were already
 dimming. Frame 130's row is corrected to **"still full; the fall begins around
 2 s"**, and the thinning is read at 160 and 220 instead.
 
+
+---
+
+# Revision 6.0.4 — 2026-11-07 — Effect C, the step dust
+
+**Adds a third effect. §1 and §2 are unchanged.**
+
+Written before any of it was built, like §1 and §2 were, and for the same
+reason: a specification written after the fact is a description.
+
+## C.0 Why there is a third effect at all
+
+Effect B's r0 verdict, in `TUNING.md`:
+
+> 看起来像是天上有浮灰往下掉，但没看出地板灰尘
+> [it looks like dust falling from the sky, but I don't see any dust at the
+> floor]
+
+The first clause is Effect B working. The second is a gap Effect B is the
+wrong tool for: §2.1 chose **ambience**, and ambience does not react to the
+player. Nothing in this room is disturbed by a body moving through it. The
+author asked for grit kicked up where the feet land, and that is an event
+effect, so it is a third scene rather than a revision of the second.
+**[decided — the author asked for it]**
+
+**It changes no game script.** `player.gd` and the input map are out of scope
+in §3 and stay out of scope. Effect C reads `velocity`, `is_on_floor()` and
+`global_position`, which `pose_driver.gd` already reads, and writes nothing.
+
+## C.1 The job
+
+**What it tells the player.** That the character has weight, and that this
+floor is dust over stone rather than a painted line. Secondarily it is the
+ground-level answer to Effect B: the room now has air *and* a surface.
+**[proposal]**
+
+**What holds the event — and the problem with it.** There is no footstep
+signal. `player.gd` has `velocity`, `is_on_floor()` and `global_position`, and
+nothing that says "a foot just landed". So **Effect C derives its own event**
+from distance travelled on the ground, and that derivation is the interesting
+part of this effect:
+
+| | |
+|---|---|
+| Stride event | one puff per **24 px** of ground travelled — 1.5 m at 16 px = 1 m, a running stride |
+| Landing event | the frame `is_on_floor()` goes false → true |
+| Never | while airborne, while standing still, or while dead |
+
+**Why distance and not time.** A timer gives a cadence that is wrong at every
+speed but one, and a per-frame spawn gives a cadence that changes with the
+frame rate — which is the mistake Assignment 5's chapter 6 is about. Distance
+travelled is correct at any speed and at any frame rate by construction.
+**[decided]**
+
+## C.2 The intent block
+
+**Timing phases.** Total 0.45 s per puff. **[proposal]**
+
+| Phase | Duration | What happens |
+|---|---|---|
+| Kick | 0.00 – 0.12 s | A few specks thrown up and **backwards**, away from the direction of travel. |
+| Hang | 0.12 – 0.30 s | The soft puff expands at ankle height and stops moving with the player. |
+| Settle | 0.30 – 0.45 s | Both fade. The specks have already fallen back to the floor. |
+
+At 96 px/s a stride is 0.25 s, so a puff is still alive when the next one is
+born: the trail behind a running character is **two or three puffs long**, not
+one. That overlap is the effect, not an accident of it.
+
+**Contrast against the real background.** The puff sits on the floor tile
+`#16242B`, the same surface §1.2 judged the grit burst against, and it is seen
+at ankle height where the floor's lit lip `#d9ab6b` runs. Pale grey-blue
+`#9aa0ad` at α 0.4 is about 4 : 1 against the tile and clearly *under* the
+lip's brightness, which is right: dust is not a light source. **[proposal]**
+
+**Scale against the character.** The character is 29 px tall. A puff should be
+**no taller than the character's shin** — about 8 px at its widest, reaching
+12 px for the landing puff. Anything that reaches the knee reads as an
+explosion under the feet. **[proposal]**
+
+**Change over life.** The specks darken toward the floor's own colour and
+fade; the puff grows and thins. Alpha alone is not enough, same rule as §1.2.
+**[decided]**
+
+**Variation.** Velocity ± 50 %, scale ± 35 %. A running character produces
+four of these a second, so stamped repeats would be more obvious here than
+anywhere else in the game. **[proposal]**
+
+**Layering — two emitters under one `Node2D` root.** **[proposal]**
+
+| Emitter | Job |
+|---|---|
+| `Kick` | 4 specks thrown back and up. Owns the direction. |
+| `Puff` | 3 soft clouds at ankle height. Owns the weight. |
+
+**Facing.** The specks are thrown backwards, so the effect has a direction and
+the scene is drawn facing right. The driver mirrors the instance with
+`scale.x = -1` when the player is running left. That is a **node transform**,
+not a setting, so it does not break §3's rule that settings live in scenes —
+and whether a negative scale actually mirrors the emission direction of a
+`local_coords = false` emitter is **not assumed**: §C.5's strip captures a run
+in both directions and that is what settles it. **[proposal]**
+
+## C.3 The settings
+
+Node type: **`GPUParticles2D`**, two of them under one `Node2D`, same reasoning
+as §1.3. **[proposal]**
+
+`local_coords`: **off** on both. A puff is left behind; it must not follow the
+player who made it. This is the one effect in the project where `local_coords`
+on would be visibly wrong, and §C.4 rule C6 states it as a rule for that
+reason. **[decided]**
+
+`visibility_rect`: **`Rect2(-32, -32, 64, 48)`** on each, set and checked.
+**[proposal]**
+
+`preprocess`: **0.0** on both. A footstep has no history. **[decided]**
+
+| | `Kick` | `Puff` |
+|---|---|---|
+| `amount` | 4 | 3 |
+| `one_shot` | true | true |
+| `explosiveness` | 1.0 | 0.6 |
+| `lifetime` | 0.35 | 0.45 |
+| `emission_shape` | Sphere, radius 3 | Sphere, radius 4 |
+| `direction` | (−0.35, −1, 0) normalised | (0, −1, 0) |
+| `initial_velocity_min/max` | 25 / 60 | 5 / 18 |
+| `spread` | 45° | 40° |
+| `gravity` | (0, 900) | (0, −20) |
+| `damping_min/max` | 20 / 50 | 10 / 20 |
+| `scale_min/max` | 0.8 / 1.2 | 1.6 / 2.8 |
+| `scale_curve` | flat 1.0 | 0.6 → 1.8 |
+| `color_ramp` | `#c8ccd6` → `#5e6472`, α 1 → 1 → 0 | `#9aa0ad` α 0.4 → 0 |
+| draw material | default (Mix) | default (Mix) |
+
+`gravity` on `Kick` is **900**, `Player.GRAVITY`, for the same reason §1.3
+gives: kicked grit falls at the rate this game falls at. **Neither emitter is
+additive** — this is dirt, and §1.3's one additive emitter was light.
+
+**The landing puff is the same scene**, with `amount_ratio` raised to **1.0**
+against the stride puff's **0.6**. `amount_ratio` is the feature §0.1 probed
+and neither of the first two effects used: Effect B is ambience so §2.4 ruled
+it out, and Effect A has nothing to scale. Here it is the natural control — a
+landing displaces more dust than a stride — and it is **one value set by a
+driver**, which `CLAUDE.md`'s Ownership rule allows. **[decided]**
+
+**The stride length lives in a scene file, not in the driver.** `stride_px` is
+an `@export` and `game/main.tscn` sets it, so the one number that is design
+rather than lifecycle is where §3 says design goes. **[decided]**
+
+## C.4 Observable rules
+
+| # | Rule |
+|---|---|
+| C1 | A puff appears **once per 24 px of ground travelled**, and never while airborne, standing still, or dead. |
+| C2 | The puff is at the player's x within 2 px and at the **underside of the collision box**, y = player y + 14, within 1 px. |
+| C3 | The cadence is **the same distance at any frame rate**. Checked at 30, 60 and 144. |
+| C4 | Landing produces a puff on the frame `is_on_floor()` goes false → true, at `amount_ratio` 1.0 against a stride's 0.6. |
+| C5 | Every instance frees itself; none survives past 0.45 s. It is parented to the room, not to the player. |
+| C6 | A puff **does not move with the player who made it.** `local_coords` is off; a puff born at x 200 is still at x 200 a quarter-second later. |
+| C7 | It never writes game state. |
+
+## C.5 The frame strip
+
+Preview: `godot/previews/step_dust_preview.tscn`, the same real background as
+the other two. The preview walks the player **right** with real input, then
+**left**, so one strip shows both facings and §C.2's mirror claim can be read
+rather than assumed.
+
+Read frames **20, 26, 32, 50, 70, 95**. **[proposal]** — 20 is a few strides
+into the run, 26 and 32 are mid-stride and next-stride, 50 is the trail at
+full length, 70 is after the turn, 95 is after the stop.
+
+## C.6 Price
+
+| | Effect C |
+|---|---|
+| Peak particle count | **21** — at 96 px/s a stride is 0.25 s and a puff lives 0.45 s, so 2 stride puffs plus a landing puff, 7 particles each |
+| Predicted headless CPU price | ≈ 0 ms over the control |
+| Predicted GPU time | **≤ 0.10 ms** |
+
+**Unlike §1.4's A4, this ceiling IS reachable by playing** — revision 6.0.2's
+mistake, not repeated. A player who runs and jumps produces it in the first
+two seconds, and the state test drives exactly that.
+
+## C.7 Predicted failures
+
+| # | What could go wrong | The check that catches it |
+|---|---|---|
+| G1 | The cadence written as a timer or a per-frame chance, so it is wrong at a different speed or a different frame rate. | C3, run at 30, 60 and 144. |
+| G2 | `local_coords` left **on**, so the trail slides along with the player and there is no trail at all. | C6's assertion that a puff's world position does not change. |
+| G3 | The mirror done with `rotation` or not at all, so running left throws dust forwards. | The strip, both directions in one capture. No test can see it. |
+| G4 | A puff on the frame the player stops, because the driver ran before the velocity settled. | C1's "never while standing still". |
+| G5 | The landing puff spawned every frame the player is on the floor rather than on the transition. | C4, which counts instances across one jump. |
+
+---
+
+# Revision 6.0.5 — 2026-11-07 — Effect C: C2 restated, and G3 answered
+
+**Amends revision 6.0.4's rule C2. The effect's look is unchanged**; the
+driver now places the puff more precisely than C2 asked for, and C2 was
+measuring the wrong thing.
+
+## 1. The puff is placed at the stride point, not at the player
+
+C2 said "at the player's x within 2 px". Measured at 30 fps, it was out by
+**3.2 px** — and that was not a bug in the tolerance, it was the spawn being
+placed at the player's *current* position when the stride had finished part
+way through the frame. One frame of travel at 96 px/s is 1.6 px at 60 fps and
+3.2 px at 30, so the gap between two puffs depended on the frame rate. That is
+exactly what C3 forbids, in the one dimension C3 did not mention.
+
+`step_dust_driver.gd` now steps the spawn back by the overshoot. After the
+threshold is subtracted, the remainder **is** the distance travelled past the
+crossing, so stepping back by it lands on the crossing exactly. C2 becomes:
+
+| | |
+|---|---|
+| **C2a** | Consecutive puffs are **exactly one stride apart in x**, at any frame rate. Measured deviation: **0.0000 px** over seven gaps at 30, 60 and 144 fps. |
+| **C2b** | A puff is within **two physics steps** of the player, and at the underside of the collision box within 1 px. |
+
+**C2b's bound is in physics steps, not rendered frames**, and the difference
+is not pedantry: the player moves in `_physics_process`, which runs at
+`Engine.physics_ticks_per_second` — 60 here — whatever the render rate is. A
+bound written as two render frames is 1.33 px at 144 fps, which is tighter
+than anything that can physically happen, and the check failed there. Two
+steps are allowed because two are real: one is the back-dating, which is
+deliberate, and one is the test's sampler reading the player after
+`await process_frame`, by which time another physics tick has moved them.
+
+This is revision 5.0.3's mistake in a new place — a number divided by the
+wrong clock — and it was caught the same way, by running at three rates
+instead of one.
+
+## 2. G3 is answered: the mirror works
+
+§C.2 declined to assume that `scale.x = -1` mirrors the emission direction of
+an emitter with `local_coords = false`, and recorded that no headless test can
+see it. `captures/step_dust/r0-strip.png` settles it: frame 32, running right,
+throws the dust to the left of the character; frame 70, running left, throws
+it to the right. G3 is closed.
+
+## 3. Still open
+
+Two things the strip shows and the tests cannot, both recorded in `TUNING.md`
+with candidate one-setting changes and both waiting on the author's verdict:
+the puff is far quieter than the brief's "kicked up" language implies, and
+11–29 % of the dust ends up below the floor line because C2's spawn point is
+the floor line itself and `Kick` carries `gravity` 900.

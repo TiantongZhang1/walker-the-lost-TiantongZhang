@@ -1,0 +1,98 @@
+[gd_scene load_steps=11 format=3 uid="uid://cb6stepdust0a6"]
+
+[ext_resource type="Script" path="res://effects/step_dust.gd" id="0_lifecycle"]
+
+; Effect C, the step dust. CHANGE-BRIEF.md revision 6.0.4 section C.3 holds
+; every number below and godot/tests/test_step_dust_config.gd reads every one
+; of them back.
+;
+; Two emitters under one root: Kick owns the direction, Puff owns the weight.
+; Both one_shot, both local_coords off -- rule C6, a puff is LEFT BEHIND and
+; must not slide along with the player who made it. This is the one effect in
+; the project where local_coords on would be visibly wrong.
+;
+; The scene is drawn facing right. step_dust_driver.gd mirrors the instance
+; with scale.x = -1 when the player runs left; whether a negative scale really
+; mirrors the emission direction of a local_coords = false emitter is settled
+; by the strip, not by this comment.
+;
+; Property names: initial_velocity_min/_max, scale_min/_max, damping_min/_max.
+; NOT initial_velocity, scale or damping -- CHANGE-BRIEF.md section 0.2.
+
+[sub_resource type="Gradient" id="Gradient_kick"]
+offsets = PackedFloat32Array(0, 0.6, 1)
+colors = PackedColorArray(0.784314, 0.8, 0.839216, 1, 0.368627, 0.392157, 0.447059, 1, 0.368627, 0.392157, 0.447059, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_kick"]
+gradient = SubResource("Gradient_kick")
+
+[sub_resource type="ParticleProcessMaterial" id="PPM_kick"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 3.0
+direction = Vector3(-0.33035, -0.943858, 0)
+spread = 45.0
+initial_velocity_min = 25.0
+initial_velocity_max = 60.0
+gravity = Vector3(0, 900, 0)
+damping_min = 20.0
+damping_max = 50.0
+scale_min = 0.8
+scale_max = 1.2
+color_ramp = SubResource("GradientTexture1D_kick")
+
+[sub_resource type="Gradient" id="Gradient_puff"]
+offsets = PackedFloat32Array(0, 1)
+colors = PackedColorArray(0.603922, 0.627451, 0.678431, 0.4, 0.603922, 0.627451, 0.678431, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_puff"]
+gradient = SubResource("Gradient_puff")
+
+[sub_resource type="Curve" id="Curve_puff"]
+max_value = 2.0
+_data = [Vector2(0, 0.6), 0.0, 0.0, 0, 0, Vector2(1, 1.8), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_puff"]
+curve = SubResource("Curve_puff")
+
+[sub_resource type="ParticleProcessMaterial" id="PPM_puff"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 4.0
+direction = Vector3(0, -1, 0)
+spread = 40.0
+initial_velocity_min = 5.0
+initial_velocity_max = 18.0
+gravity = Vector3(0, -20, 0)
+damping_min = 10.0
+damping_max = 20.0
+scale_min = 1.6
+scale_max = 2.8
+scale_curve = SubResource("CurveTexture_puff")
+color_ramp = SubResource("GradientTexture1D_puff")
+
+[node name="StepDust" type="Node2D"]
+script = ExtResource("0_lifecycle")
+
+[node name="Kick" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 4
+process_material = SubResource("PPM_kick")
+lifetime = 0.35
+one_shot = true
+preprocess = 0.0
+explosiveness = 1.0
+local_coords = false
+visibility_rect = Rect2(-32, -32, 64, 48)
+
+[node name="Puff" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 3
+process_material = SubResource("PPM_puff")
+lifetime = 0.45
+one_shot = true
+preprocess = 0.0
+explosiveness = 0.6
+local_coords = false
+visibility_rect = Rect2(-32, -32, 64, 48)

@@ -848,3 +848,124 @@ Counting those as passes would have put six more green lines under claims
 nothing in the run had tested. That is the same failure this assignment has now
 produced three times in different shapes, and the cheapest defence against it
 is a printed line that says *not checked here*.
+
+## Effect C — the step dust, and four defects the tests found in themselves
+
+`CHANGE-BRIEF.md` revision 6.0.4. A third effect, added on the author's verdict
+on Effect B: *dust falling from the sky, but none at the floor*. Ambience does
+not react to the player, so this is an event effect and a separate scene rather
+than a revision of Effect B.
+
+**The event does not exist, so it is derived.** `player.gd` has no footstep
+signal and §3 keeps it out of scope. `step_dust_driver.gd` accumulates measured
+position delta while the player is on the floor and spawns one puff per 24 px —
+a distance, not a timer and not a per-frame chance. `amount_ratio` scales a
+landing's puff to 1.0 against a stride's 0.6; it is the feature §0.1 probed and
+the first two effects did not need.
+
+```bash
+./scripts/run-test.sh test_step_dust_config.gd 60
+./scripts/run-test.sh test_step_dust_state.gd 30
+./scripts/run-test.sh test_step_dust_state.gd 60
+./scripts/run-test.sh test_step_dust_state.gd 144
+```
+
+**63 checks, 0 failures** for the configuration. **26 checks, 0 failures at
+each of 30, 60 and 144 fps** for the state.
+
+| Rule | Result |
+|---|---|
+| C1 cadence | 8 puffs for 192.0 px at 30 fps, 8 for 193.6 px at 60 and 144 |
+| C1 never otherwise | nothing standing still, nothing airborne, nothing once dead |
+| C2a spacing | consecutive puffs **0.0000 px** from one stride apart, at all three rates |
+| C2b position | within two physics steps of the player; **0.000 px** at the collision box's underside |
+| C4 landing | exactly one puff per jump, at `amount_ratio` 1.0 |
+| C5 | parented to the room; all gone within one lifetime of the key release |
+| C6 | a puff's world position does not change while the player walks on |
+| C7 | the same walk with the driver deleted ends at the same x and the same health |
+
+### Four defects, and all four were in the tests
+
+This is the part worth reading. The effect itself needed one real change; the
+tests needed four.
+
+**1. A check that could not fail.** C7 was written as
+`_trap_states(main) == trap_states or true`. The `or true` makes it pass
+whatever happens. It was put there because comparing trap states across half a
+second is meaningless — they run their own machine — and then left in rather
+than replaced. It is now a **differential**: the same walk run with the driver
+present, with it deleted, and with it present again. Trajectory and health are
+identical to the last float across all three.
+
+**2. A second check that could not fail.** "The player left the floor" was
+written as `_seen.size() >= 0`, which is true of every array that has ever
+existed. A jump that never happened would have produced zero puffs and the
+landing check would have failed for the wrong reason. It now records
+`is_on_floor()` across the jump.
+
+**3. A comparison that was not controlled.** The C7 differential first ran with
+a room of its own already open, so three `Main`s were in the tree at once and
+the key presses reached all of them. The traps came out in different states
+between runs that were supposed to be identical, and the difference looked like
+the driver writing game state. **A third run, with the driver present again,
+is what showed it was not**: the two control runs disagreed with each other, so
+the comparator was invalid. The scenario now loads nothing of its own and each
+walk is alone in the tree. Where the controls still disagree the test prints
+what it saw and makes no claim.
+
+**4. Two windows that were not the same window.** The cadence check counted
+puffs over one window and divided the distance measured over a longer one. At
+60 and 144 fps the two happened to agree; at 30 fps it reported 7 puffs for 8
+strides. The sampler now runs through the wind-down, which is the window the
+distance is measured over.
+
+### The one real defect, and the measurement that found it
+
+At 30 fps the puff was **3.2 px** from the player instead of the brief's 2.
+Not a tolerance problem: the spawn was at the player's *current* position when
+the stride had finished part way through the frame, so the spacing between
+puffs depended on the frame rate — which is what C3 exists to forbid, in the
+dimension C3 did not mention. The driver now steps the spawn back by the
+overshoot, and the measured spacing is **0.0000 px** from one stride at every
+rate. Revision 6.0.5.
+
+That revision also records the clock mistake behind it: the first corrected
+bound was written in **rendered frames** and failed at 144 fps, because the
+player moves in `_physics_process` at 60 Hz whatever the render rate is. Two
+render frames at 144 fps is 1.33 px, tighter than anything that can happen.
+Same mistake as revision 5.0.3, new place, caught the same way — by running at
+three rates instead of one.
+
+### Effect C — frame strip r0 (FIXTURE CAPTURE)
+
+```bash
+godot --path godot res://previews/step_dust_preview.tscn \
+    --write-movie "$PWD/captures/step_dust/r0/frame.png" \
+    --fixed-fps 30 --quit-after 110
+```
+
+The preview runs right, turns, runs left and stops, with real key events, and
+is bounded so the player never enters a trap's detection zone — a trap firing
+mid-strip would put Effect A in the frame. Frames **20, 26, 32, 50, 70, 95**.
+A control with `stride_px` set to 9999 gives a dust-free run of the same
+movement, so the dust can be counted rather than estimated.
+
+| frame | dust px | below the floor line | brightest delta |
+|---|---|---|---|
+| 20 | 82 | 14 (17 %) | 111 |
+| 26 | 130 | 21 (16 %) | 145 |
+| 32 | 74 | 8 (11 %) | 108 |
+| 50 | 98 | 12 (12 %) | 111 |
+| 70 | 87 | 25 (29 %) | 145 |
+| 95 | **0** | 0 | 0 |
+
+**G3 is answered and the answer is yes.** §C.2 refused to assume that
+`scale.x = -1` mirrors the emission direction of a `local_coords = false`
+emitter, and no test here can see it. Frame 32, running right, throws the dust
+to the left of the character; frame 70, running left, throws it to the right.
+
+**Two things the strip shows that no test does**, both in `TUNING.md` awaiting
+the author's verdict: the puff is far quieter than "kicked up" implies — a 2–3
+pixel smudge against Effect A's burst at four times the brightness — and
+11–29 % of the dust ends up under the floor, because C2's spawn point is the
+floor line itself and `Kick` carries `gravity` 900.
