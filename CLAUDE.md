@@ -88,8 +88,10 @@ it in one run.
 ## Ownership
 
 **Files in `godot/shaders/` are hand-written by the human and never edited by
-an agent**, including `particles_generated.gdshader`. If one looks wrong or
-cannot meet the specification, say so and stop.
+an agent.** If one looks wrong, say so and stop. **One dated exception:** on
+2026-11-08 the author converted the material in the editor, saved a `.tres`,
+and told Claude to extract `particles_generated.gdshader` from it, so
+`git diff --stat godot/shaders/` is non-empty for that commit by instruction.
 
 **Effect settings live in scene files in `godot/effects/`, not in code.** A
 driver may read state and set one value; it never holds the design.
