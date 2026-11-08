@@ -155,11 +155,12 @@ and recorded in `CLAUDE.md`.
 | `godot/previews/*.tscn`, `*.gd` | the three preview fixtures the frame strips are captured from, and `step6_scratch.tscn` |
 | `godot/game/debug_keys.gd` | the F9 vsync toggle. Adds no input action |
 | `godot/tests/test_{hit_burst,dungeon_motes,step_dust}_{config,state}.gd` | 249 checks |
-| `godot/tests/cost_effects.gd` | the four named conditions, an empty-scene control and a twice-run baseline |
+| `godot/tests/cost_effects.gd` | the four named conditions, an empty-scene control and a twice-run baseline. Headless, CPU wall clock |
+| `godot/tests/gpu_cost_effects.gd`, `scripts/run-gpu-cost.sh` | the GPU price the budgets are actually set against. **Windowed**, and it refuses to run headless. Added 2026-11-08, after the film's code panels were taken, and shown in none of them |
 | `godot/tests/capture_particles.gd` | the film's capture driver: three takes, each asserting its own outcome |
 | `scripts/build_particles_beat_sheet.py`, `build_particles_ledger.py`, `compose_particles_evidence.py`, `frame_particles_footage.py` | the A6 film build chain |
 | `godot/shaders/particles_generated.gdshader` | **Godot's output, not anyone's prose.** Produced by converting Effect A's `Dust` material in the editor — my action — and extracted from the saved resource by Claude under the dated exception in `CLAUDE.md`. Nothing loads it |
-| `CHANGE-BRIEF.md` revisions 6.0.1–6.0.5, `TUNING.md`'s readings, `TEST-REPORT.md`'s A6 sections | drafted by Claude; **every `TUNING.md` verdict and every prediction is mine**, quoted verbatim where it was said in Chinese |
+| `CHANGE-BRIEF.md` revisions 6.0.1–6.0.6, `TUNING.md`'s readings, `TEST-REPORT.md`'s A6 sections | drafted by Claude; **every `TUNING.md` verdict and every prediction is mine**, quoted verbatim where it was said in Chinese |
 
 **No texture, model, sound or music was added by Assignment 6.** None of the
 six emitters has a texture: the look is a `color_ramp`, a `scale_curve` and a

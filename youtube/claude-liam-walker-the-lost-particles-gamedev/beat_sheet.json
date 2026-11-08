@@ -26,7 +26,7 @@
     "teaching_contract": "code-then-result-v1",
     "game": "godot",
     "build": {
-      "at": "2026-11-08T15:59:32",
+      "at": "2026-11-08T18:48:48",
       "cut": "master",
       "filled": 20,
       "of": 20,
@@ -91,7 +91,7 @@
         "status": "VIDEO",
         "src": "media\\B00.mp4",
         "filled_by": "remotion:ClaudeComposerAsk",
-        "at": "2026-11-08T15:59:32"
+        "at": "2026-11-08T18:48:48"
       }
     },
     {
@@ -163,7 +163,7 @@
         "status": "VIDEO",
         "src": "media\\B01.mp4",
         "filled_by": "remotion:BrutalistHesitantWriter",
-        "at": "2026-11-08T15:59:32"
+        "at": "2026-11-08T18:48:48"
       }
     },
     {
@@ -242,7 +242,7 @@
         "status": "VIDEO",
         "src": "media\\B02.mp4",
         "filled_by": "remotion:GodotDevWorkbench",
-        "at": "2026-11-08T15:59:32"
+        "at": "2026-11-08T18:48:48"
       }
     },
     {
@@ -262,7 +262,7 @@
         "evidence_media": "capture/take-p.mp4",
         "window_s": [
           0.4,
-          9.06
+          9.061
         ],
         "show": [
           {
@@ -278,8 +278,8 @@
             "event": "the second trap, same cycle"
           }
         ],
-        "hold_s": 0.006667,
-        "clip_s": 8.66
+        "hold_s": 0.005667,
+        "clip_s": 8.661
       },
       "actual_duration_s": 8.661,
       "audio_file": "mp3/beat-B03.mp3",
@@ -288,7 +288,7 @@
         "status": "VIDEO",
         "src": "media\\B03.mp4",
         "filled_by": "media",
-        "at": "2026-11-08T15:59:32"
+        "at": "2026-11-08T18:48:48"
       }
     },
     {
@@ -338,7 +338,7 @@
         "status": "VIDEO",
         "src": "media\\B03A.mp4",
         "filled_by": "media",
-        "at": "2026-11-08T15:59:32"
+        "at": "2026-11-08T18:48:48"
       }
     },
     {
@@ -422,7 +422,7 @@
         "status": "VIDEO",
         "src": "media\\B04.mp4",
         "filled_by": "remotion:GodotDevWorkbench",
-        "at": "2026-11-08T15:59:32"
+        "at": "2026-11-08T18:48:48"
       }
     },
     {
@@ -464,7 +464,7 @@
         "status": "STILL",
         "src": "media\\B05.png",
         "filled_by": "still",
-        "at": "2026-11-08T15:59:32"
+        "at": "2026-11-08T18:48:48"
       }
     },
     {
@@ -543,7 +543,7 @@
         "status": "VIDEO",
         "src": "media\\B06.mp4",
         "filled_by": "remotion:GodotDevWorkbench",
-        "at": "2026-11-08T15:59:32"
+        "at": "2026-11-08T18:48:48"
       }
     },
     {
@@ -585,7 +585,7 @@
         "status": "STILL",
         "src": "media\\B07.png",
         "filled_by": "still",
-        "at": "2026-11-08T15:59:32"
+        "at": "2026-11-08T18:48:48"
       }
     },
     {
@@ -605,7 +605,7 @@
         "evidence_media": "capture/take-c.mp4",
         "window_s": [
           0.3,
-          9.64
+          9.644
         ],
         "show": [
           {
@@ -625,8 +625,8 @@
             "event": "the first trap"
           }
         ],
-        "hold_s": 0.01,
-        "clip_s": 9.34
+        "hold_s": 0.006,
+        "clip_s": 9.344
       },
       "actual_duration_s": 9.344,
       "audio_file": "mp3/beat-B07A.mp3",
@@ -635,7 +635,7 @@
         "status": "VIDEO",
         "src": "media\\B07A.mp4",
         "filled_by": "media",
-        "at": "2026-11-08T15:59:32"
+        "at": "2026-11-08T18:48:48"
       }
     },
     {
@@ -655,7 +655,7 @@
         "evidence_media": "capture/take-c.mp4",
         "window_s": [
           10.3,
-          20.13
+          20.135
         ],
         "show": [
           {
@@ -675,8 +675,8 @@
             "event": "empty, at one full lifetime"
           }
         ],
-        "hold_s": 0.02,
-        "clip_s": 9.83
+        "hold_s": 0.015,
+        "clip_s": 9.835
       },
       "actual_duration_s": 9.835,
       "audio_file": "mp3/beat-B07B.mp3",
@@ -685,7 +685,7 @@
         "status": "VIDEO",
         "src": "media\\B07B.mp4",
         "filled_by": "media",
-        "at": "2026-11-08T15:59:32"
+        "at": "2026-11-08T18:48:48"
       }
     },
     {
@@ -769,7 +769,7 @@
         "status": "VIDEO",
         "src": "media\\B08.mp4",
         "filled_by": "remotion:GodotDevWorkbench",
-        "at": "2026-11-08T15:59:32"
+        "at": "2026-11-08T18:48:48"
       }
     },
     {
@@ -811,7 +811,7 @@
         "status": "STILL",
         "src": "media\\B09.png",
         "filled_by": "still",
-        "at": "2026-11-08T15:59:32"
+        "at": "2026-11-08T18:48:48"
       }
     },
     {
@@ -890,7 +890,7 @@
         "status": "VIDEO",
         "src": "media\\B10.mp4",
         "filled_by": "remotion:GodotDevWorkbench",
-        "at": "2026-11-08T15:59:32"
+        "at": "2026-11-08T18:48:48"
       }
     },
     {
@@ -910,7 +910,7 @@
         "evidence_media": "capture/take-p.mp4",
         "window_s": [
           1.9,
-          10.58
+          10.583
         ],
         "show": [
           {
@@ -930,8 +930,8 @@
             "event": "the dust throws the other way"
           }
         ],
-        "hold_s": 0.003333,
-        "clip_s": 8.68
+        "hold_s": 0.000333,
+        "clip_s": 8.683
       },
       "actual_duration_s": 8.683,
       "audio_file": "mp3/beat-B11.mp3",
@@ -940,7 +940,7 @@
         "status": "VIDEO",
         "src": "media\\B11.mp4",
         "filled_by": "media",
-        "at": "2026-11-08T15:59:32"
+        "at": "2026-11-08T18:48:48"
       }
     },
     {
@@ -1019,7 +1019,7 @@
         "status": "VIDEO",
         "src": "media\\B11A.mp4",
         "filled_by": "remotion:GodotDevWorkbench",
-        "at": "2026-11-08T15:59:32"
+        "at": "2026-11-08T18:48:48"
       }
     },
     {
@@ -1061,14 +1061,14 @@
         "status": "STILL",
         "src": "media\\B11B.png",
         "filled_by": "still",
-        "at": "2026-11-08T15:59:32"
+        "at": "2026-11-08T18:48:48"
       }
     },
     {
       "beat_id": "B12",
       "act": "VERDICT",
       "role_note": "WALKER BOOKEND 3/4 - verdict. Implemented work, limitations and human judgment kept apart. Human/AI split, texture sources, revision shown, one next step.",
-      "narration_text": "So. Written by hand, by the author: the brief, every verdict in the tuning log, and the material conversion that produced the process shader. Written by Claude: three effect scenes, three preview scenes, the two drivers, two hundred and forty nine checks, the cost script and the capture rigs. Measured, not asserted: the stride cadence is the same distance at thirty, sixty and a hundred and forty four frames a second, deviation zero. Preprocess at eight gives a full field on frame one and at zero gives two per cent of it. Three bursts can be alive at once and playing this room reaches one. Textures: there are none. Not one of the six emitters has a texture assigned - the look is colour ramps, scale curves and a blend mode, so there is nothing to credit and nothing to license. Claude's own work needed catching more than once. Four checks that could not fail shipped green, one of them literally written as x or true. A capture helper threw on every call the moment an instance freed itself. And the first generated shader was converted from an empty material - it loaded, it reported the right mode, it declared thirty eight uniforms, and it had no texture call in it at all. The author found that one by counting lines. Still open, and this is the honest part: the GPU times are not read yet, so every budget in the brief is still a prediction. Effect B's loop produced a verdict of keep with no setting changed, which is not the same as a revision. Both B and C drift dust below the floor line, between eleven and twenty nine per cent of it, and the only instrument that sees it is a difference image. The next step is the Visual Profiler, because it is the only number here that can still fail. Everything you have seen came from one game source revision, named on the card.",
+      "narration_text": "So. Written by hand, by the author: the brief, every verdict in the tuning log, and the material conversion that produced the process shader. Written by Claude: three effect scenes, three preview scenes, the two drivers, two hundred and forty nine checks, the cost script and the capture rigs. Measured, not asserted: the stride cadence is the same distance at thirty, sixty and a hundred and forty four frames a second, deviation zero. Preprocess at eight gives a full field on frame one and at zero gives two per cent of it. Three bursts can be alive at once and playing this room reaches one. Textures: there are none. Not one of the six emitters has a texture assigned - the look is colour ramps, scale curves and a blend mode, so there is nothing to credit and nothing to license. Claude's own work needed catching more than once. Four checks that could not fail shipped green, one of them literally written as x or true. A capture helper threw on every call the moment an instance freed itself. And the first generated shader was converted from an empty material - it loaded, it reported the right mode, it declared thirty eight uniforms, and it had no texture call in it at all. The author found that one by counting lines. The budgets were measured last. In a real windowed run the whole frame, with all three effects at the brief's ceiling, costs twenty-two thousandths of a millisecond against a combined budget of six tenths - met with more than an order of magnitude to spare. And the table does not hold together: all three effects together measured cheaper than Effect B on its own, which cannot be true, because all three contains B. Both runs reproduced to the last digit, and repeatable is not the same as true. What it establishes is the ceiling, not the price. Still open, and this is the honest part: Effect B's loop produced a verdict of keep with no setting changed, which is not the same as a revision. Both B and C drift dust below the floor line, between eleven and twenty nine per cent of it, and the only instrument that sees it is a difference image. The next step is a tuning revision for B and for C, the two loops that never closed. Everything you have seen came from one game source revision, named on the card.",
       "voice": "am_onyx",
       "engine": "kokoro",
       "estimated_duration_s": 120,
@@ -1105,24 +1105,25 @@
               "Measured: 3 bursts can overlap; playing this room reaches 1. Peak in play 32.",
               "Textures: none. No emitter has one - ramps, curves and a blend mode only.",
               "Caught in Claude's work: 4 checks that could not fail; a shader from an empty material.",
-              "Open: no GPU time yet, so every budget is a prediction. Next: the Visual Profiler."
+              "Measured: whole frame 0.022 ms GPU, three effects at the ceiling. Budget 0.60.",
+              "Open: all three read cheaper than B alone - a ceiling, not a price. B and C unrevised."
             ],
-            "durationSeconds": 86.96
+            "durationSeconds": 114.19
           },
           "rendered": {
             "out": "media/B12.mp4",
-            "at": "2026-11-08T20:45:19.648578+00:00"
+            "at": "2026-11-08T23:42:46.889728+00:00"
           }
         }
       },
-      "actual_duration_s": 86.958,
+      "actual_duration_s": 114.189,
       "audio_file": "mp3/beat-B12.mp3",
-      "render_duration_s": 86.96666666666667,
+      "render_duration_s": 114.2,
       "build": {
         "status": "VIDEO",
         "src": "media\\B12.mp4",
         "filled_by": "remotion:ClaudeVerdictArtifact",
-        "at": "2026-11-08T15:59:32"
+        "at": "2026-11-08T18:48:48"
       }
     },
     {
@@ -1177,7 +1178,7 @@
         "status": "VIDEO",
         "src": "media\\B13.mp4",
         "filled_by": "remotion:ClaudeComposerAsk",
-        "at": "2026-11-08T15:59:32"
+        "at": "2026-11-08T18:48:48"
       }
     },
     {
@@ -1213,7 +1214,7 @@
         "status": "VIDEO",
         "src": "media\\B14.mp4",
         "filled_by": "remotion:ClaudeTitleOutro",
-        "at": "2026-11-08T15:59:32"
+        "at": "2026-11-08T18:48:48"
       }
     }
   ]

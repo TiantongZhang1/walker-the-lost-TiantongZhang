@@ -167,7 +167,16 @@ no action — three non-`ui_` actions before and after.
 
 **What they cannot prove.** The cost script measures CPU wall clock in a run
 that draws nothing. It cannot see a GPU particle process, because there isn't
-one; §4 of the brief puts GPU time under HUMAN and the film says so twice.
+one. Its windowed sibling `tests/gpu_cost_effects.gd` can, and is in this
+component for that reason: it reads the same GPU timestamp query the editor's
+Visual Profiler displays, and **refuses to run headless**, because a dummy
+renderer would report `0.000` ms for every condition and look exactly like
+three effects that cost nothing.
+
+**What that one cannot prove either.** A per-effect price. Its own
+containment check fails — "all three" measures cheaper than Effect B alone —
+which puts the differences below the instrument's floor. What it establishes
+is the ceiling: 0.022 ms for the whole frame against a 0.60 ms budget.
 
 ---
 

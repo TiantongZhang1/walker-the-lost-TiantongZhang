@@ -56,6 +56,7 @@ running anything in `scripts/`, and "it is not in the table" is not an answer.
 
 | File | Written for | What it does |
 |---|---|---|
+| `run-gpu-cost.sh` | A6 | The **windowed** runner for `godot/tests/gpu_cost_effects.gd`. A separate wrapper rather than a flag on `run-test.sh`, which passes `--headless`: `CLAUDE.md` requires that wrapper's diff to stay empty after an agent session, and a headless GPU reading is `0.000` ms for every condition |
 | `build_effect_strip.py` | A6 | Lays a revision's kept frames out as one strip, so two revisions are cropped and scaled identically and can be held against each other |
 | `build_particles_beat_sheet.py` | A6 film | Authors the beat sheet. Reads every code panel's text out of its file at build time; run it twice, before and after the narration, because its cue times are fractions of a beat |
 | `build_particles_ledger.py` | A6 film | Builds `gamedev-evidence.json`. Refuses to write if a panel's text is not what is on disk, or if `godot/override.cfg` exists |

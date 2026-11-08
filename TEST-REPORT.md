@@ -1027,10 +1027,10 @@ that passed while measuring nothing.
 ### What Step 7 does not establish
 
 **Every budget in §5 and §C.6 is a GPU budget and none of them is settled
-here.** 0.30 ms for Effect A, 0.20 ms for B, 0.10 ms for C — all GPU time, all
-to be read from the **Visual Profiler on hardware, by the author**, at the
-heaviest state the game reaches. §4's evidence split puts that row under HUMAN
-and nothing headless can move it.
+here.** 0.30 ms for Effect A, 0.20 ms for B, 0.10 ms for C — all GPU time,
+and nothing headless can move any of them. They were settled separately, on
+2026-11-08, by `tests/gpu_cost_effects.gd` in a real windowed run; see
+**finding 6** below and `CHANGE-BRIEF.md` revision 6.0.6.
 
 **FPS is not used as an instrument either**, and §7 says why: with vsync on,
 the frame rate reads the display's refresh rate with the effects off and the
@@ -1247,9 +1247,9 @@ ambience node that allocates once shows nothing at all.
 ### Still not a budget
 
 Every number in §5 and §C.6 is **GPU time** — 0.30 ms for A, 0.20 for B, 0.10
-for C — and none of them is settled by this script. That is the Visual
-Profiler, on hardware, read by the author, with each effect off and then on at
-its heaviest. §4's evidence split puts that row under HUMAN.
+for C — and none of them is settled by **this** script, which measures CPU
+wall clock in a run that draws nothing. Its windowed sibling
+`tests/gpu_cost_effects.gd` settles them: finding 6 below.
 
 **Effect A's row here is synthetic and the script says so in its own output.**
 Revision 6.0.2 measured that three bursts cannot be alive at once by playing
@@ -1416,7 +1416,87 @@ to convert is in that correction.
 
 ### What the film does not claim
 
-No GPU time. Every budget in `CHANGE-BRIEF.md` §5 and §C.6 is still a
-prediction, the film says so three times, and `FACTCHECK.md` marks every
-narrated claim as MEASURED, SOURCE, REASONING or AUTHOR so that the three
-kinds are not mixed silently.
+No price for any single effect. The film states the measured GPU figure as a
+**ceiling** — the whole frame at the design ceiling, 0.022 ms against a
+0.60 ms combined budget — and says in the same breath that the per-effect
+differences are below the instrument's floor, because "all three" measured
+cheaper than Effect B alone. `FACTCHECK.md` marks every narrated claim as
+MEASURED, SOURCE, REASONING or AUTHOR so that the kinds are not mixed
+silently.
+
+---
+
+## Finding 6 — the GPU budgets are met, and the table that proves it does not hold together
+
+**2026-11-08.** `tests/gpu_cost_effects.gd`, run by `scripts/run-gpu-cost.sh`.
+`evidence/a6/gpu-cost-effects-run1.txt` and `-run2.txt`. The full record is
+`CHANGE-BRIEF.md` revision 6.0.6; this entry is about what it taught.
+
+### The instrument, and why it is not the Visual Profiler
+
+§4 of the brief wrote **HUMAN — Visual Profiler** against the GPU price. The
+quantity it wanted is `viewport_get_measured_render_time_gpu()`, which is
+what the profiler's "Render Viewport" row displays; reading it from a script
+gives the same number at full float precision, over 400 frames per condition
+instead of one frame picked off a graph, with the conditions set up
+identically every time. **The brief named an instrument when it should have
+named a quantity**, and the instrument it named quantises to 0.01 ms — a
+tenth of Effect C's entire budget.
+
+The script **refuses to run headless**, and that refusal is the point. A
+dummy renderer draws nothing, so every reading would be `0.000` ms, which is
+indistinguishable from three effects that cost nothing. It would have been
+the fifth green result in this project that measured nothing at all.
+
+### The result
+
+Whole frame, all three effects at the design ceiling: **0.022 ms**, against a
+combined budget of **0.60 ms**. A 60 fps frame is 16.67 ms. Every budget is
+met with more than an order of magnitude to spare, in both runs, to the last
+digit.
+
+### The part that matters
+
+**The per-effect figures are not prices, and two built-in controls say so.**
+
+- Effect B's condition is run a second time near the end of the sequence. It
+  drifts by up to **0.0010 ms** — which is the *entire* measured cost of
+  Effect A and of Effect C.
+- "All three" contains Effect B, so it cannot cost less. **It measures
+  0.0220 against B's 0.0240, in both runs.**
+
+A superset that measures cheaper than its subset is not reporting a price.
+It is reporting the floor of the instrument. And **each run reproduced itself
+to the last digit** — which is the whole lesson: a table can agree with
+itself twice and still be measuring nothing. Reproducibility is a property of
+the procedure, not evidence about the world.
+
+This is the same shape as findings 1 through 5 and it is the fifth time:
+the number was green, the number was stable, and the number was not about
+what its label said.
+
+### Two faults the run found in itself
+
+- A condition labelled **"ONE burst held"** was carrying two: the refire
+  interval was 0.55 s against a 0.60 s burst lifetime. The `peak emitters`
+  column reported 6 where the label implied 3. The interval is now 0.65 s and
+  every row asserts its observed peak against the load its label claims —
+  revision 6.0.2's mistake, caught by the column that revision added.
+- The first explanation offered for the containment anomaly was that the
+  walking player dies on the traps, stopping Effect B and draining the mote
+  field. **It was checked instead of written down.** The script now reports
+  minimum player health and the number of frames Effect B spent not emitting:
+  health 2, never 0, and zero frames with B off. The explanation was false.
+
+### A seventh thing, found while verifying the sixth
+
+**Gate V's contact sheet is not a view of the whole film, and that was
+measured rather than assumed.** It regenerated byte-for-byte identical after
+the master was re-cut 27 seconds longer with a rebuilt B12 card, which should
+be impossible. The reason is in `final_frame_check.py`'s `contact_sheet()`:
+`frames[::max(1, len(frames)//16)][:16]` takes every second frame and then
+truncates to sixteen, so for a twenty-beat film **the last four beats never
+appear in the sheet at all** - B12, B13 and B14 among them. The *analysis*
+does cover all forty frames and would have reported a defect in any of them;
+only the human-eye backstop is truncated. This is why the per-beat sheet in
+`_qc/BEAT-FRAMES.md` exists and why it is one frame per beat for all twenty.

@@ -113,7 +113,7 @@ into gameplay in the same step that builds it.
 - ~~Forward+ on real hardware; whether `source_color` changes the value the
   shader receives.~~ **Both settled 2026-10-24** — Vulkan 1.4.357, RTX 5080
   Laptop; it does not, and `hint_range` does not clamp. `TEST-REPORT.md`.
-- **Every A6 budget in `CHANGE-BRIEF.md` §5 is a prediction** — no GPU time read yet.
+- ~~Every A6 budget in `CHANGE-BRIEF.md` §5 is a prediction — no GPU time read yet.~~ **Measured 2026-11-08, revision 6.0.6**: whole frame 0.022 ms at the design ceiling against a 0.60 ms combined budget, every budget met. The per-effect figures are below the instrument's floor and are not prices. `scripts/run-gpu-cost.sh`; it must not be run headless.
 - **All three have an r0 strip** (`captures/`, `TUNING.md`). A has a kept
   revision; **B and C have no author verdict yet**, and both drift dust below
   the floor line (14-22 % and 11-29 %).

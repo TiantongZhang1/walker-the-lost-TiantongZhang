@@ -61,6 +61,30 @@ against +17.8 on an idle machine. It was discarded and is not in the
 repository. Two runs are kept because the difference between them is the
 finding: the ordering holds and the microseconds do not.
 
+## 2a. The GPU figures — a real window, not headless
+
+```bash
+RUN_TAG=-run1 ./scripts/run-gpu-cost.sh
+RUN_TAG=-run2 ./scripts/run-gpu-cost.sh
+```
+
+**A 1280 x 720 window opens for about ten seconds per run.** This is the one
+measurement in the assignment that cannot be taken headless, and
+`scripts/run-test.sh` is therefore the wrong wrapper for it — it passes
+`--headless`, a dummy renderer draws nothing, and every reading would be
+`0.000` ms, which is indistinguishable from three effects that cost nothing.
+`tests/gpu_cost_effects.gd` checks `DisplayServer.get_name()` and refuses.
+
+It is a separate script rather than a flag on `run-test.sh` because
+`CLAUDE.md` requires `git diff --stat scripts/run-test.sh` to print nothing
+after an agent session.
+
+**Read the containment line at the bottom of the output before reading any
+number above it.** The run measures Effect B twice and checks that "all
+three" is not cheaper than B alone. It is cheaper, in every run so far, which
+places the per-effect differences below the instrument's floor. The figure
+that holds is the whole frame at the ceiling: 0.022 ms against 0.60 ms.
+
 ## 3. The three takes — real motion, 4K
 
 ```bash
@@ -113,10 +137,23 @@ python scripts/build_media_clips.py "$REEL"
 python -X utf8 scripts/frame_particles_footage.py
 ```
 
-**Run the beat sheet builder twice.** Its cue times and `show` markers are
-fractions of a beat, not absolute seconds, and the second pass turns them into
-seconds against the measured narration. It also fits every footage window to
-the measured length, clamped to the take, and prints what it did.
+**Run the beat sheet builder twice, and not a third time.** Its cue times and
+`show` markers are fractions of a beat, not absolute seconds, and the second
+pass turns them into seconds against the measured narration. It also fits
+every footage window to the measured length, clamped to the take, and prints
+what it did.
+
+**A third pass, after `build_media_clips.py`, corrupts a duration by one
+hundredth of a second.** `build_media_clips.py` refines `actual_duration_s`
+to the real file's length — B08's is 38.415 — and the builder then rounds
+that to 38.41, where the second pass had written 38.42 from the audio
+generator's own rounding. Nothing errors. The only symptom is that the beat
+loses its Remotion stamp, because its props no longer match, and the batch
+would silently re-render a beat that did not change. Caught on 2026-11-08 by
+diffing the stamps after a rebuild; B08 was restored from the committed sheet
+rather than re-rendered, because nothing about it had changed.
+
+**To edit one beat after the batch, edit the sheet in place** — see §7.
 
 **There is no timing step, and `scripts/finalise_beat_timing.py` must not be
 run.** It and `scripts/fit_beat_panels.py` are carried-over scripts that
@@ -138,10 +175,17 @@ PYTHONUTF8=1 bash art godot-gamedev --check "$REEL" --game "<abs>/godot"
 Expected:
 
 ```json
-{"status": "PASS", "source_files": 66, "exclusions": 40, "components": 6,
+{"status": "PASS", "source_files": 67, "exclusions": 40, "components": 6,
  "exact_excerpts": 6, "teaching_contract": "code-then-result-v1",
  "code_result_pairs": 6}
 ```
+
+It was 66 until 2026-11-08, when `tests/gpu_cost_effects.gd` was added to the
+`evidence-harness` component. **A file added under `godot/` that is in no
+component and in no exclusion stops the ledger builder** — it prints
+`unassociated files:` and writes nothing, which is the behaviour you want:
+the alternative is a checker failure at handoff with no hint about which file
+caused it.
 
 It checks hashes, inventory, source lines and associations. It does not check
 whether a mechanism was explained clearly or whether an exclusion is honest —

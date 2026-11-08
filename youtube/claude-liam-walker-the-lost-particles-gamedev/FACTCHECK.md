@@ -106,7 +106,7 @@ one, and mixing the two silently is the failure this file exists to prevent.
 | The instances column is identical across runs | MEASURED | 30 / 0 / 22 / 55 in both |
 | What is being weighed is instancing, not the particle process | REASONING | The process never ran; the only effect-specific CPU work left is spawning and freeing a scene. The instances column is consistent with it and does not prove it alone |
 | With vsync on, FPS reads the refresh rate with the effects off and on | REASONING | `CHANGE-BRIEF.md` §7. **Not measured.** The F9 key exists so it can be, and that measurement has not been made |
-| No budget here is settled | SOURCE | Every budget in §5 and §C.6 is GPU time. None has been read |
+| No budget here is settled **by this script** | SOURCE | Every budget in §5 and §C.6 is GPU time, and this is CPU wall clock. The GPU figures are B12's, from `gpu_cost_effects.gd` |
 
 ## B12, the verdict
 
@@ -117,7 +117,9 @@ one, and mixing the two silently is the failure this file exists to prevent.
 | A capture helper threw once an instance freed itself | SOURCE | `hit_burst_spawner.gd`'s `live_count()` docstring, and the commit that fixed it |
 | The first generated shader was converted from an empty material | SOURCE | `TEST-REPORT.md`, and the author found it by counting lines |
 | No emitter has a texture | SOURCE | All six draw Godot's default point; `TEST-REPORT.md` and the config suites |
-| GPU times are not read, so every budget is a prediction | SOURCE | `CHANGE-BRIEF.md` §5, and `SUBMISSION.md`'s known limitations |
+| The whole frame at the brief's ceiling costs 0.022 ms of GPU time against a combined budget of 0.60 ms | MEASURED | `evidence/a6/gpu-cost-effects-run{1,2}.txt`, medians of 400 frames per condition, both runs identical. `CHANGE-BRIEF.md` revision 6.0.6 |
+| All three effects together measured cheaper than Effect B alone, which cannot be true | MEASURED | 0.0220 against 0.0240 in both runs. The containment check in the script's own output |
+| So the figure is a ceiling and not a price | REASONING | A superset measuring cheaper than its subset places the differences below the instrument's floor. The repeat-B control gives that floor as 0.0010 ms, which is the entire measured cost of A and of C |
 | Effect B's loop produced a verdict of keep with no setting changed | SOURCE | `TUNING.md`, 2026-11-07. **This is a gap, not a finding**, and the film says so in the author's voice rather than in Claude's |
 | 11–29 % of the dust drifts below the floor line | MEASURED | `TUNING.md`'s Effect C r0 table; Effect B's figure is 14–22 % |
 
@@ -125,7 +127,7 @@ one, and mixing the two silently is the failure this file exists to prevent.
 
 ## What this film does not claim
 
-- That any effect meets its GPU budget. No GPU time has been read.
+- That any **individual** effect's GPU cost has been measured. The budgets are met — the whole frame at the design ceiling is 0.022 ms against 0.60 ms — but the per-effect differences are below the instrument's own floor and the film says so in the same breath.
 - That Effect B or Effect C has completed its tuning loop. B has a verdict and
   no revision; C has a reading and no verdict.
 - That the headless cost figures are a price. They are a control on a

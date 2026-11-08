@@ -5,8 +5,8 @@
 | | |
 |---|---|
 | Master | `exports/landscape/claude-liam-walker-the-lost-particles-gamedev.mp4` |
-| Measured length | **591.77 s** (9:51.77) |
-| Beat sheet total | 591.77 s |
+| Measured length | **619.00 s** (10:19.00) |
+| Beat sheet total | 619.00 s |
 | Drift | 0.000 s |
 | Beats | 20 |
 
@@ -33,9 +33,9 @@ frozen or blank in its second half still appears here.
 | B11 |  384.6 |   8.7 |  389.0 | `_qc/frame-B11.png` |
 | B11A |  393.3 |  33.8 |  410.2 | `_qc/frame-B11A.png` |
 | B11B |  427.1 |  40.1 |  447.2 | `_qc/frame-B11B.png` |
-| B12 |  467.2 |  87.0 |  510.7 | `_qc/frame-B12.png` |
-| B13 |  554.2 |  32.6 |  570.5 | `_qc/frame-B13.png` |
-| B14 |  586.8 |   5.0 |  589.3 | `_qc/frame-B14.png` |
+| B12 |  467.2 | 114.2 |  524.3 | `_qc/frame-B12.png` |
+| B13 |  581.4 |  32.6 |  597.7 | `_qc/frame-B13.png` |
+| B14 |  614.0 |   5.0 |  616.5 | `_qc/frame-B14.png` |
 
 ## What this sheet is, and is not
 

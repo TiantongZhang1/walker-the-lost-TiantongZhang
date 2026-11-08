@@ -392,7 +392,7 @@ Effect settings live in **scene files** in `godot/effects/`, not in code.
 | **Do the motes read as air and not as snow?** | **HUMAN** | play; stand still for ten seconds |
 | **Does the music mask the trap?** | **HUMAN** | play with sound on, then with `room_audio.gd`'s music muted. walker-ninja's CONCEPT 1.1 predicted a 124 bpm bed would drown a warning window, and this game's whole fairness argument is 0.40 s. |
 | **Edge of screen** | **HUMAN** | fire the trap nearest a wall; the burst must not pop out |
-| GPU price | **HUMAN** | Visual Profiler, effects off then on at the heaviest state |
+| GPU price | **HUMAN**, amended by revision 6.0.6 | Measured by `tests/gpu_cost_effects.gd` in a windowed run, eight conditions, two runs. What stays HUMAN is one by-eye cross-check in the Visual Profiler, of the instrument rather than of the effects |
 
 No headless run establishes any HUMAN row. That is the point of the split.
 
@@ -406,6 +406,13 @@ No headless run establishes any HUMAN row. That is the point of the split.
 | Predicted headless CPU price | **≈ 0 ms over the control**, by construction | **≈ 0 ms over the control** |
 | Predicted GPU time | **≤ 0.30 ms** | **≤ 0.20 ms** |
 | Budget, and the price it is compared on | **0.30 ms GPU** | **0.20 ms GPU** |
+| **Measured GPU time** — revision 6.0.6 | **+0.001 ms** over baseline | **+0.005 ms** over baseline |
+
+**Revision 6.0.6 measured these and they are met**, with more than an order
+of magnitude to spare — but it also found that the per-effect figures are
+**below the instrument's own floor** and must not be read as prices. The
+figure that holds is the whole frame at the design ceiling: **0.022 ms
+against a combined budget of 0.60 ms.**
 
 **Both effects are GPU nodes, so both are compared on GPU time.** The
 headless CPU measurement is still run and still reported, with an
@@ -808,6 +815,7 @@ full length, 70 is after the turn, 95 is after the stop.
 | Peak particle count | **21** — at 96 px/s a stride is 0.25 s and a puff lives 0.45 s, so 2 stride puffs plus a landing puff, 7 particles each |
 | Predicted headless CPU price | ≈ 0 ms over the control |
 | Predicted GPU time | **≤ 0.10 ms** |
+| **Measured GPU time** — revision 6.0.6 | **+0.001 ms** over baseline, which is the instrument's floor |
 
 **Unlike §1.4's A4, this ceiling IS reachable by playing** — revision 6.0.2's
 mistake, not repeated. A player who runs and jumps produces it in the first
@@ -877,3 +885,136 @@ with candidate one-setting changes and both waiting on the author's verdict:
 the puff is far quieter than the brief's "kicked up" language implies, and
 11–29 % of the dust ends up below the floor line because C2's spawn point is
 the floor line itself and `Kick` carries `gravity` 900.
+
+
+---
+
+# Revision 6.0.6 — 2026-11-08 — the GPU budgets are measured, and they are not separable
+
+**Settles §5's and §C.6's "Predicted GPU time" rows and discharges most of
+§4's `GPU price | HUMAN` row.** No effect, no scene file and no test changes.
+
+Every budget in this brief — 0.30 ms for Effect A, 0.20 for B, 0.10 for C —
+was written as a prediction, and §4 put the measurement under **HUMAN**,
+read by eye from the editor's Visual Profiler. It has now been measured, and
+the honest report of it has three parts: the number, the thing the number
+cannot do, and what the brief got wrong about which instrument to use.
+
+## 1. The instrument
+
+`godot/tests/gpu_cost_effects.gd`, run windowed by `scripts/run-gpu-cost.sh`.
+It reads `RenderingServer.viewport_get_measured_render_time_gpu()` on the
+root viewport after enabling `viewport_set_measure_render_time()`.
+
+**That is the same GPU timestamp query the Visual Profiler reads** and
+displays as its "Render Viewport" row — the same quantity, taken
+programmatically instead of by eye, at full float precision instead of the
+editor's two decimal places, and over 400 frames per condition instead of
+one frame picked off a graph.
+
+It **refuses to run headless**. A dummy renderer draws nothing, so every
+reading would be `0.000` ms, which is indistinguishable from three effects
+that cost nothing. `scripts/run-test.sh` passes `--headless` and is
+therefore the wrong wrapper for this one test; a second wrapper exists
+rather than a flag on the first, because `CLAUDE.md` requires
+`git diff --stat scripts/run-test.sh` to print nothing after an agent
+session and a measurement that needed the wrapper edited would be a
+measurement nobody could check that against.
+
+vsync is turned off for the measurement — a window property, the same one
+`game/debug_keys.gd` toggles on F9 — so the card is not idling between
+frames at a dropped clock. The shipped game is untouched.
+
+## 2. The numbers
+
+Median GPU render time for the whole frame, milliseconds, 400 frames per
+condition. Two runs on an idle machine, Godot 4.7.2 Forward+ / Vulkan
+1.4.357, RTX 5080 Laptop, 1280 x 720 window, 640 x 360 logical.
+`evidence/a6/gpu-cost-effects-run1.txt` and `-run2.txt`.
+
+| condition | peak emitters | run 1 | run 2 |
+|---|---|---|---|
+| room, all three effects removed | 0 | 0.0190 | 0.0190 |
+| Effect B only, steady state | 1 | 0.0240 | 0.0240 |
+| Effect C only, player running | 4 | 0.0200 | 0.0200 |
+| Effect A, one burst held — play's peak, 32 particles | 3 | 0.0200 | 0.0210 |
+| Effect A, at the ceiling of 3 — 96 particles | 9 | 0.0200 | 0.0200 |
+| **all three, heaviest** | 17 | **0.0220** | **0.0220** |
+| Effect B only, **repeated last** | 1 | 0.0250 | 0.0240 |
+| room, all three effects removed (again) | 0 | 0.0190 | 0.0190 |
+
+**Every budget is met with more than an order of magnitude to spare.** The
+whole frame, with all three effects at the brief's design ceiling, costs
+**0.022 ms** against a combined budget of **0.60 ms**. A 60 fps frame is
+16.67 ms, so the three effects together are **about 0.13 % of it**.
+
+| | Effect A | Effect B | Effect C |
+|---|---|---|---|
+| Budget, §5 and §C.6 | 0.30 ms | 0.20 ms | 0.10 ms |
+| ~~Predicted~~ **measured, over baseline** | +0.001 ms | +0.005 ms | +0.001 ms |
+| Verdict | under | under | under |
+
+## 3. What the number cannot do, and the control that proves it
+
+**The per-effect figures are not separable, and the table says so itself.**
+
+Two checks are built into the report. The first repeats the Effect B
+condition as the second-to-last condition in the run: it came back 0.0240
+and 0.0250 against 0.0240 and 0.0240, a drift of up to 0.0010 ms — which is
+the **entire** measured cost of Effect A and of Effect C.
+
+The second is containment. "All three" contains Effect B, so it cannot cost
+less than Effect B alone. It does: **0.0220 against 0.0240, in both runs.**
+
+A set of conditions whose superset measures cheaper than its subset is not
+reporting the price of an effect. It is reporting the floor of the
+instrument. **Each run reproduced itself to the last digit**, which is
+exactly what makes this worth writing down: repeatable is not the same as
+true, and a table that agrees with itself twice can still be measuring
+nothing.
+
+So the conclusion this measurement supports is the **ceiling**, not the
+price: the whole frame costs 0.022 ms and every budget is met. Attributing
+0.001 ms to Effect A would be reading the instrument's noise as a result.
+
+## 4. §4's HUMAN row, amended
+
+§4 reads `GPU price | **HUMAN** | Visual Profiler, effects off then on at
+the heaviest state`. Two things about that row were wrong:
+
+- **"Effects off then on" is not enough conditions.** Off-and-on gives one
+  difference and no way to know whether that difference is bigger than the
+  instrument's own spread. The run above is eight conditions, two of which
+  exist only to measure the instrument.
+- **The Visual Profiler is not the only way to read that number**, and for
+  this job it is the worse way: it quantises to 0.01 ms, which is a tenth of
+  Effect C's whole budget and ten times the difference being looked for. The
+  brief named an instrument when it should have named a quantity.
+
+**What remains HUMAN, and is not yet done:** one reading by eye in the
+Visual Profiler, on the all-three condition, as a cross-check that the
+programmatic figure and the editor's row agree. That checks the
+*instrument*, not the effects, and the conclusion in §2 does not depend on
+it.
+
+The other HUMAN rows in §4 are perceptual and are untouched by this.
+
+## 5. Two faults this measurement found in itself
+
+Recorded because `TEST-REPORT.md`'s whole argument is that a green result is
+not a correct one.
+
+- **A row labelled "ONE burst held" was carrying two.** The refire interval
+  was 0.55 s against a 0.60 s burst lifetime, so a second burst was alive
+  before the first died. The `peak emitters` column reported 6 — three
+  emitters per burst — in a row whose name said 32 particles. The interval
+  is now 0.65 s and the script asserts each row's observed peak against the
+  load its label claims. This is revision 6.0.2's mistake in a new place: a
+  condition named for a load it never reached.
+- **A hypothesis about the anomaly in §3 was wrong, and was checked rather
+  than written down.** The first explanation for "all three" measuring
+  cheaper than B alone was that the walking player dies on the traps, which
+  would stop Effect B emitting and drain the field. The script now reports
+  the player's minimum health and the number of frames Effect B spent not
+  emitting: **health 2, never 0, and zero frames with B switched off.** The
+  explanation was false; the anomaly is the instrument's floor.

@@ -23,7 +23,9 @@ documentation only and change no file under `godot/`;
 11.
 
 **GPU used for the GPU price:** NVIDIA GeForce RTX 5080 Laptop GPU.
-_The GPU times themselves are PENDING — see "Known limitations"._
+Whole frame at the design ceiling **0.022 ms** against a combined budget of
+**0.60 ms** — `evidence/a6/gpu-cost-effects-run1.txt` and `-run2.txt`,
+`CHANGE-BRIEF.md` revision 6.0.6.
 
 ---
 
@@ -60,11 +62,27 @@ all three are budgeted on **GPU time**; the headless CPU price is run as a
 control, because the prediction that it reads ≈ 0 is itself a claim worth
 testing.
 
-| | Peak particle count | GPU budget | Headless CPU, measured |
-|---|---|---|---|
-| Effect A | 96 (design ceiling; in play it is 32 — revision 6.0.2) | **0.30 ms** | +13.5 µs over baseline |
-| Effect B | 60 | **0.20 ms** | +0.5 µs, below the instrument's noise |
-| Effect C | 21 | **0.10 ms** | +8.5 µs |
+| | Peak particle count | GPU budget | GPU, measured | Headless CPU, measured |
+|---|---|---|---|---|
+| Effect A | 96 (design ceiling; in play it is 32 — revision 6.0.2) | **0.30 ms** | +0.001 ms | +13.5 µs over baseline |
+| Effect B | 60 | **0.20 ms** | +0.005 ms | +0.5 µs, below the instrument's noise |
+| Effect C | 21 | **0.10 ms** | +0.001 ms | +8.5 µs |
+| **all three at once** | 177 | **0.60 ms** | **whole frame 0.022 ms** | — |
+
+**The GPU budgets are measured** — `CHANGE-BRIEF.md` revision 6.0.6,
+2026-11-08. The whole frame, with all three effects at the brief's design
+ceiling, costs **0.022 ms** of GPU time against a combined budget of
+**0.60 ms**; a 60 fps frame is 16.67 ms, so the three effects are about
+**0.13 %** of one. Every budget is met with more than an order of magnitude
+to spare.
+
+**The per-effect figures are not prices.** Two controls in the same run say
+so: Effect B measured twice drifts by up to 0.0010 ms, which is the entire
+measured cost of A and of C; and "all three" measured *cheaper* than Effect B
+alone, which cannot be true, because all three contains B. Both runs
+reproduced to the last digit — repeatable is not the same as true. What the
+measurement establishes is the ceiling, not the price.
+
 
 **That table is two runs, and the second run is the point.** The *ordering*
 is stable and the instances column is identical between runs; the microsecond
@@ -105,11 +123,11 @@ master was rendered.
 **Final film URL and filename:**
 `claude-liam-walker-the-lost-particles-gamedev.mp4` —
 **TheLostParticles_TiantongZhang**, H.264 **3840 × 2160**, 30 fps, AAC 48 kHz
-stereo, **591.77 s** (9:51.77), 20 beats, 37,165,568 bytes.
+stereo, **619.00 s** (10:19.00), 20 beats, 39,013,712 bytes.
 _URL PENDING — the file is stored in the course media storage and linked from
 `README.md`; it is kept out of GitHub by the assignment's MP4-and-25-MB rule._
 
-**Final film SHA-256:** `6aa9613aad8720fef184e36fa20a911ad4b2b5e8f8a852c794b8f9c988a152ce`
+**Final film SHA-256:** `d9a8e521248352d96ae48d8b8b3c47812c5b7cd72e007c80f6ca8aa8b8efb36a`
 
 ---
 
@@ -168,9 +186,14 @@ instruction and is labelled as Claude's in the file itself.
 
 ## Known limitations
 
-- **The GPU times are not yet read.** Every budget in `CHANGE-BRIEF.md` §5 and
-  §C.6 — 0.30, 0.20 and 0.10 ms — is still a prediction. The Visual Profiler
-  numbers are the primary on-screen price and §4 puts that row under HUMAN.
+- **The GPU figures are a ceiling, not a price.** Every budget is met, with
+  more than an order of magnitude to spare — but the per-effect differences
+  are below the instrument's own floor, and the run demonstrates that rather
+  than asserting it: Effect B measured twice drifts by as much as A and C
+  cost in total, and "all three" measures cheaper than Effect B alone, which
+  cannot be true. `CHANGE-BRIEF.md` revision 6.0.6 §3. One by-eye
+  cross-check in the Visual Profiler — of the instrument, not of the effects
+  — has not been done.
 - **Effect B and Effect C have an author verdict but no tuning revision yet.**
   B's r0 verdict was *keep*, with no setting changed; the assignment asks for
   at least one observation-driven revision per effect.

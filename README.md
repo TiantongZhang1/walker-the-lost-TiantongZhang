@@ -191,7 +191,18 @@ not been measured. Never add `--rendering-driver` to a test command.
 that draws nothing, which is the control on a prediction — `CHANGE-BRIEF.md`
 §5 predicts every effect reads ≈ 0 ms over an empty scene *by construction*,
 because a `GPUParticles2D`'s process step is a shader on the card. The budgets
-are GPU time from the Visual Profiler, and §4 puts that row under HUMAN.
+are GPU time, and they are read by **`gpu_cost_effects.gd`** instead — the
+one test in this repository that must **not** run headless:
+
+```bash
+./scripts/run-gpu-cost.sh          # opens a real window for about ten seconds
+```
+
+It reads `RenderingServer.viewport_get_measured_render_time_gpu()`, which is
+the same timestamp query the editor's Visual Profiler shows as its "Render
+Viewport" row. Run headless it would report `0.000` ms for every condition
+and look exactly like three effects that cost nothing, so it checks
+`DisplayServer.get_name()` and refuses.
 
 A headless run uses a dummy renderer and draws nothing: it can show that a
 shader parses, what it declares, and a float on a given frame — never colour.
@@ -202,7 +213,7 @@ and the captures are in `captures/a5/`.
 
 `youtube/claude-liam-walker-the-lost-particles-gamedev/` —
 **TheLostParticles_TiantongZhang.mp4**, 3840 × 2160, 30 fps, 20 beats,
-**9:51.77**.
+**10:19.00**.
 Six code-then-result pairs: every code panel is followed by the thing those
 lines produce, and no beat shows both at once. Five beats are engine footage
 from three 4K Movie Maker takes, each of which asserted its own outcome before
@@ -279,10 +290,14 @@ youtube/          the explainer film and its documents
 
 ### Assignment 6
 
-1. **No GPU time has been read.** Every budget in `CHANGE-BRIEF.md` §5 and
-   §C.6 — 0.30, 0.20 and 0.10 ms — is still a prediction. The Visual Profiler
-   is the only instrument that can settle them, §4 puts that row under HUMAN,
-   and the film says so three times rather than burying it.
+1. **The GPU figures are a ceiling, not a price.** The budgets are met —
+   the whole frame at the design ceiling is 0.022 ms against a combined
+   0.60 ms, `CHANGE-BRIEF.md` revision 6.0.6 — but the per-effect
+   differences are below the instrument's own floor, and the run proves it
+   twice: Effect B measured twice drifts as much as A and C cost in total,
+   and "all three" measures cheaper than Effect B alone. One by-eye
+   cross-check in the Visual Profiler, of the instrument rather than of the
+   effects, is still outstanding.
 2. **Effect B and Effect C have not completed a tuning revision.** B's r0
    verdict was *keep*, with no setting changed; C has a reading and no author
    verdict. The assignment asks for at least one observation-driven revision

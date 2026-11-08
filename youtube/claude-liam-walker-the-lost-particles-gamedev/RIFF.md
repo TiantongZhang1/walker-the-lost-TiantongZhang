@@ -86,8 +86,18 @@ named a different gap entirely.
 
 ## One thing this film is riffing on that it cannot show
 
-The GPU budgets. Every one of them — 0.30, 0.20 and 0.10 ms — is a prediction
-with no measurement under it, and the Visual Profiler is the only instrument
-that can settle them. The film says so three times, in three different voices,
-because it is the largest open thing in the work and burying it in a footnote
-would be the one dishonest move available.
+The GPU budgets were the largest open thing in the work, and on the day the
+master was cut they stopped being open: 0.022 ms for the whole frame at the
+design ceiling, against a combined budget of 0.60 ms. Every budget met.
+
+What the film cannot show is a **price for any one effect**, and the reason
+is the better story. The same run that met the budgets failed its own
+containment check — all three effects together measured *cheaper* than
+Effect B on its own, which cannot be true, because all three contains B. Both
+runs reproduced to the last digit. A table can agree with itself twice and
+still be measuring nothing, and this one is: the differences are smaller than
+the instrument's floor.
+
+So the film states a ceiling and refuses the price, in the same breath,
+because the alternative is to read noise out loud with two decimal places of
+confidence.

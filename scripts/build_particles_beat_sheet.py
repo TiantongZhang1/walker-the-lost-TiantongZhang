@@ -606,14 +606,22 @@ def beats():
         "the first generated shader was converted from an empty material - it "
         "loaded, it reported the right mode, it declared thirty eight "
         "uniforms, and it had no texture call in it at all. The author found "
-        "that one by counting lines. Still open, and this is the honest part: "
-        "the GPU times are not read yet, so every budget in the brief is still "
-        "a prediction. Effect B's loop produced a verdict of keep with no "
+        "that one by counting lines. The budgets were measured last. In a "
+        "real windowed run the whole frame, with all three effects at the "
+        "brief's ceiling, costs twenty-two thousandths of a millisecond "
+        "against a combined budget of six tenths - met with more than an "
+        "order of magnitude to spare. And the table does not hold together: "
+        "all three effects together measured cheaper than Effect B on its "
+        "own, which cannot be true, because all three contains B. Both runs "
+        "reproduced to the last digit, and repeatable is not the same as "
+        "true. What it establishes is the ceiling, not the price. Still "
+        "open, and this is the honest part: Effect B's loop produced a "
+        "verdict of keep with no "
         "setting changed, which is not the same as a revision. Both B and C "
         "drift dust below the floor line, between eleven and twenty nine per "
         "cent of it, and the only instrument that sees it is a difference "
-        "image. The next step is the Visual Profiler, because it is the only "
-        "number here that can still fail. Everything you have seen came from "
+        "image. The next step is a tuning revision for B and for C, the two "
+        "loops that never closed. Everything you have seen came from "
         "one game source revision, named on the card.",
         120, "ClaudeVerdictArtifact",
         {
@@ -628,7 +636,8 @@ def beats():
                 "Measured: 3 bursts can overlap; playing this room reaches 1. Peak in play 32.",
                 "Textures: none. No emitter has one - ramps, curves and a blend mode only.",
                 "Caught in Claude's work: 4 checks that could not fail; a shader from an empty material.",
-                "Open: no GPU time yet, so every budget is a prediction. Next: the Visual Profiler.",
+                "Measured: whole frame 0.022 ms GPU, three effects at the ceiling. Budget 0.60.",
+                "Open: all three read cheaper than B alone - a ceiling, not a price. B and C unrevised.",
             ],
         },
         "reveal",

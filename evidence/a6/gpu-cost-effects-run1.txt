@@ -1,0 +1,133 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Vulkan 1.4.357 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 5080 Laptop GPU
+
+GPU render time per frame, milliseconds, real windowed run.
+  engine   : 4.7.2-stable (official)
+  renderer : NVIDIA GeForce RTX 5080 Laptop GPU
+  display  : Windows
+  window   : (1280, 720)
+  vsync    : 0  (0 = disabled)
+  when     : 2026-11-08T17:45:28
+  400 frames per condition after 120 warm-up frames.
+
+--- renderer check ---
+  project.godot asks for : forward_plus
+  actually running       : forward_plus
+  driver                 : vulkan
+  adapter                : NVIDIA GeForce RTX 5080 Laptop GPU
+  adapter vendor         : NVIDIA
+  window size            : (1280, 720)
+----------------------
+--- renderer check ---
+  project.godot asks for : forward_plus
+  actually running       : forward_plus
+  driver                 : vulkan
+  adapter                : NVIDIA GeForce RTX 5080 Laptop GPU
+  adapter vendor         : NVIDIA
+  window size            : (1280, 720)
+----------------------
+--- renderer check ---
+  project.godot asks for : forward_plus
+  actually running       : forward_plus
+  driver                 : vulkan
+  adapter                : NVIDIA GeForce RTX 5080 Laptop GPU
+  adapter vendor         : NVIDIA
+  window size            : (1280, 720)
+----------------------
+--- renderer check ---
+  project.godot asks for : forward_plus
+  actually running       : forward_plus
+  driver                 : vulkan
+  adapter                : NVIDIA GeForce RTX 5080 Laptop GPU
+  adapter vendor         : NVIDIA
+  window size            : (1280, 720)
+----------------------
+--- renderer check ---
+  project.godot asks for : forward_plus
+  actually running       : forward_plus
+  driver                 : vulkan
+  adapter                : NVIDIA GeForce RTX 5080 Laptop GPU
+  adapter vendor         : NVIDIA
+  window size            : (1280, 720)
+----------------------
+--- renderer check ---
+  project.godot asks for : forward_plus
+  actually running       : forward_plus
+  driver                 : vulkan
+  adapter                : NVIDIA GeForce RTX 5080 Laptop GPU
+  adapter vendor         : NVIDIA
+  window size            : (1280, 720)
+----------------------
+--- renderer check ---
+  project.godot asks for : forward_plus
+  actually running       : forward_plus
+  driver                 : vulkan
+  adapter                : NVIDIA GeForce RTX 5080 Laptop GPU
+  adapter vendor         : NVIDIA
+  window size            : (1280, 720)
+----------------------
+--- renderer check ---
+  project.godot asks for : forward_plus
+  actually running       : forward_plus
+  driver                 : vulkan
+  adapter                : NVIDIA GeForce RTX 5080 Laptop GPU
+  adapter vendor         : NVIDIA
+  window size            : (1280, 720)
+----------------------
+condition                                     median ms     p10 ms     p90 ms  peak em  health   B off  label
+room, all three effects REMOVED (1)              0.0190     0.0190     0.0210        0       5       0     ok
+B only, steady state                             0.0240     0.0210     0.0290        1       5       0     ok
+C only, player running                           0.0200     0.0190     0.0220        4       2       0     ok
+A only, ONE burst held (play peak, 32)           0.0200     0.0190     0.0230        3       5       0     ok
+A only, at the ceiling of 3 (96)                 0.0200     0.0190     0.0230        9       5       0     ok
+all three, heaviest                              0.0220     0.0200     0.0240       17       2       0     ok
+B only, steady state (REPEAT)                    0.0250     0.0210     0.0290        1       5       0     ok
+room, all three effects REMOVED (2)              0.0190     0.0190     0.0210        0       5       0     ok
+
+Baseline (effects removed, mean of two runs): 0.0190 ms
+Spread between those two runs -- the resolution: 0.0000 ms
+
+effect                                        over baseline      budget   vs noise verdict
+B only, steady state                              +0.0050 ms     0.20 ms      ABOVE UNDER BUDGET
+C only, player running                            +0.0010 ms     0.10 ms      ABOVE UNDER BUDGET
+A only, ONE burst held (play peak, 32)            +0.0010 ms     0.30 ms      ABOVE UNDER BUDGET
+A only, at the ceiling of 3 (96)                  +0.0010 ms     0.30 ms      ABOVE UNDER BUDGET
+all three, heaviest                               +0.0030 ms     0.60 ms      ABOVE UNDER BUDGET
+B only, steady state (REPEAT)                     +0.0060 ms     0.20 ms      ABOVE UNDER BUDGET
+
+Does this table hold together?
+  Effect B, measured twice (second condition, and second to last):
+    0.0240 ms and 0.0250 ms -- drift across the run 0.0010 ms.
+  Containment: "all three" contains B, so it cannot cost less.
+    all three 0.0220 ms, B alone 0.0240 ms -- DOES NOT HOLD.
+
+  So the per-effect figures are NOT separable at this scale.
+  A set of conditions whose larger one measures cheaper than a
+  subset of itself is not reporting the price of an effect; it
+  is reporting the floor of the instrument. Each run reproduces
+  itself to the last digit, which is what makes this worth
+  saying out loud -- repeatable is not the same as true.
+
+  What the table DOES establish, and establishes firmly: the
+  WHOLE FRAME, with all three effects at the brief's ceiling,
+  costs about 0.022 ms of GPU time. Every budget in section 5
+  and section C.6 is met with an order of magnitude to spare,
+  and that conclusion does not depend on separating them.
+
+The last row's budget is the sum of the three, 0.60 ms.
+"below" in the noise column means the difference is smaller than
+the spread between two runs of the SAME condition. Where it says
+below, the honest reading is "under this instrument's resolution",
+not the millisecond figure beside it -- the figure is still
+printed, because a reader is entitled to see what was discarded.
+
+The two Effect A rows are SYNTHETIC (revision 6.0.2): three bursts
+cannot be alive at once by playing this room, and even one burst
+has to be held by emitting `fired` every 0.65 s. The ceiling row is
+what section 5's budget is set against; the one-burst row is what a
+player actually produces.
+
+Same quantity as the editor's Visual Profiler "Render Viewport"
+GPU row, read through the same timestamp query. Section 4 still
+asks the author to read ONE of these by eye in the profiler, as a
+cross-check of the instrument rather than of the effects.

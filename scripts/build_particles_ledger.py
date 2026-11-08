@@ -186,14 +186,18 @@ COMPONENTS = [
             "What the price claims and the footage rest on. The cost script "
             "that runs the assignment's four named conditions with an "
             "empty-scene control and a twice-run baseline, so it states its "
-            "own noise floor before reporting any difference; the capture "
-            "driver that records all three takes and asserts its own outcome "
-            "before a frame of it counts as evidence; and the input-map "
-            "check, which is how the F9 key is shown to have added no "
-            "action."),
+            "own noise floor before reporting any difference; its windowed "
+            "sibling, which reads GPU time off the same timestamp query the "
+            "editor's Visual Profiler displays and refuses to run headless, "
+            "because a dummy renderer would report 0.000 ms for every "
+            "condition and look like three effects that cost nothing; the "
+            "capture driver that records all three takes and asserts its own "
+            "outcome before a frame of it counts as evidence; and the "
+            "input-map check, which is how the F9 key is shown to have added "
+            "no action."),
         "beat_ids": ["B11A", "B11B"],
-        "files": ["tests/cost_effects.gd", "tests/capture_particles.gd",
-                  "tests/test_input_map.gd"],
+        "files": ["tests/cost_effects.gd", "tests/gpu_cost_effects.gd",
+                  "tests/capture_particles.gd", "tests/test_input_map.gd"],
     },
 ]
 
