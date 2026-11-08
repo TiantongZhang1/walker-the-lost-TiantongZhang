@@ -39,8 +39,11 @@ uniform float lifetime_randomness;
 uniform vec3 emission_shape_offset = vec3(0.0);
 uniform vec3 emission_shape_scale = vec3(1.0);
 uniform vec3 velocity_pivot = vec3(0.0);
+uniform float emission_sphere_radius;
 uniform vec4 color_value : source_color;
 uniform vec3 gravity;
+uniform sampler2D color_ramp : repeat_disable;
+uniform sampler2D scale_curve : repeat_disable;
 
 vec3 normalize_or_else(vec3 _in, const vec3 _else) {
 	if (_in == vec3(0.0)) {
@@ -155,6 +158,8 @@ void calculate_initial_display_params(inout DisplayParameters params, inout uint
 
 void process_display_param(inout DisplayParameters parameters, float lifetime) {
 	// Compile-time add textures.
+	parameters.scale *= texture(scale_curve, vec2(lifetime)).rgb;
+	parameters.color *= texture(color_ramp, vec2(lifetime));
 	parameters.color = rotate_hue(parameters.color, parameters.hue_rotation);
 }
 
@@ -162,7 +167,11 @@ vec3 calculate_initial_position(inout DisplayParameters params, inout uint alt_s
 	float pi = 3.14159;
 	vec3 pos = vec3(0.0);
 	{ // Emission shape.
-	 	pos = vec3(0.0);
+		float s = rand_from_seed(alt_seed) * 2.0 - 1.0;
+		float t = rand_from_seed(alt_seed) * 2.0 * pi;
+		float p = rand_from_seed(alt_seed);
+		float radius = emission_sphere_radius * sqrt(1.0 - s * s);
+		pos = mix(vec3(0.0, 0.0, 0.0), vec3(radius * cos(t), radius * sin(t), emission_sphere_radius * s), p);
 	}
 	return pos * emission_shape_scale + emission_shape_offset;
 }
