@@ -1332,6 +1332,30 @@ were fine. Found by extracting one frame per code beat and reading them side
 by side, which is the only method that has ever found this class of fault in
 this project.
 
+### 4. A QC script that destroyed the other QC script's report
+
+`scripts/qc_particles_master.py` pulls one frame per beat out of the master
+so that the film can be read rather than trusted. Its first version wrote
+`_qc/REPORT.md` — which is **Gate V's** filename. Gate V is the toolkit's own
+visual check, `art final` runs it, and it had already written its result
+there: frames sampled, BLOCKER count, MAJOR count. Running my script
+afterwards silently replaced it.
+
+Nothing errored and nothing warned. It was noticed only because `git status`
+listed both `_qc/contact-sheet.png` (mine) and `_qc/contact_sheet.png`
+(Gate V's) and the near-identical names did not look deliberate.
+
+Recovered by re-running `runtime/qc/final_frame_check.py` against the
+committed master, which produced the same kind of report over 40 sampled
+frames: **BLOCKER 0, MAJOR 0**. My script now writes `_qc/BEAT-FRAMES.md`
+and `_qc/beat-contact-sheet.png`, and **asserts at startup that it is not
+about to write either of Gate V's two filenames**, so the collision cannot
+come back.
+
+This is the same shape as `scripts/finalise_beat_timing.py` rewriting
+walker-ninja's beat sheet, recorded in `TOOLCHAIN.md`: a script that is
+correct about its own job and destructive about somebody else's output.
+
 ### And one wrong claim, corrected rather than hidden
 
 B08's note said `Dust` was the only emitter carrying both a `color_ramp` and a

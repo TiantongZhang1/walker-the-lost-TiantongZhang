@@ -3,7 +3,16 @@
 
     python -X utf8 scripts/qc_particles_master.py
 
-Writes `_qc/contact-sheet.png` and `_qc/REPORT.md` into the reel.
+Writes `_qc/BEAT-FRAMES.md` and `_qc/beat-contact-sheet.png` into the reel.
+
+**It must not write `_qc/REPORT.md` or `_qc/contact_sheet.png`.** Those two
+names belong to the toolkit's own Gate V visual check, which `art final`
+runs and which records the defect counts for the master. The first version of
+this script wrote `REPORT.md`, ran after `art final`, and silently destroyed
+Gate V's result for this reel -- a script quietly overwriting another tool's
+output, which is the same shape as half the faults in `TEST-REPORT.md`. It
+was recovered by re-running `runtime/qc/final_frame_check.py`. The assertion
+below is so that it cannot happen again.
 
 **This is not a check, it is a way of looking.** Every automatic gate in this
 chain — the evidence checker, the configuration suites, the compiler's own
@@ -32,6 +41,9 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 REEL = ROOT / "youtube/claude-liam-walker-the-lost-particles-gamedev"
 MASTER = REEL / "exports/landscape/claude-liam-walker-the-lost-particles-gamedev.mp4"
 QC = REEL / "_qc"
+# Deliberately NOT REPORT.md / contact_sheet.png -- see the module docstring.
+BEAT_REPORT = QC / "BEAT-FRAMES.md"
+BEAT_SHEET_IMG = QC / "beat-contact-sheet.png"
 
 CELL_W = 640
 COLS = 4
@@ -56,6 +68,10 @@ def probe_seconds(path: pathlib.Path) -> float:
 
 
 def main() -> int:
+    for reserved in ("REPORT.md", "contact_sheet.png"):
+        if reserved in (BEAT_REPORT.name, BEAT_SHEET_IMG.name):
+            raise SystemExit("%s belongs to Gate V; this script must not "
+                             "write it" % reserved)
     if not MASTER.is_file():
         raise SystemExit("no master at %s - run `art final` first" % MASTER)
     QC.mkdir(parents=True, exist_ok=True)
@@ -96,13 +112,15 @@ def main() -> int:
         board.paste(im, (x, y))
         d.text((x + 8, y + cell_h + 6), "%s   %.1f s" % (mark[0], mark[3]),
                font=f, fill=(32, 30, 28))
-    board.save(QC / "contact-sheet.png")
+    board.save(BEAT_SHEET_IMG)
 
-    io.open(QC / "REPORT.md", "w", encoding="utf-8", newline="\n").write(
+    io.open(BEAT_REPORT, "w", encoding="utf-8", newline="\n").write(
         "\n".join([
-            "# _qc — the master, one frame per beat",
+            "# _qc/BEAT-FRAMES.md — the master, one frame per beat",
             "",
-            "`contact-sheet.png`, written by `scripts/qc_particles_master.py`.",
+            "`beat-contact-sheet.png`, written by "
+            "`scripts/qc_particles_master.py`. **Gate V's own files are "
+            "`REPORT.md` and `contact_sheet.png` and are not written here.**",
             "",
             "| | |",
             "|---|---|",
@@ -134,7 +152,7 @@ def main() -> int:
             "",
         ]))
 
-    print("wrote %s" % (QC / "contact-sheet.png"))
+    print("wrote %s" % BEAT_SHEET_IMG)
     print("  %d beats, master %.2f s, beat sheet %.2f s, drift %.3f s"
           % (len(beats), total, t, drift))
     return 0
