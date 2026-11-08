@@ -1041,3 +1041,122 @@ same with them on, because vsync holds it there until a frame actually misses.
 action in the input map, and §3 keeps the input map out of scope for this
 assignment. The claim stays an argument in §7 rather than becoming a
 boundary violation.
+
+## The process shader
+
+`godot/shaders/particles_generated.gdshader` — 384 lines, 41 uniforms.
+
+**How it was produced.** `godot/previews/step6_scratch.tscn` holds one
+`GPUParticles2D` whose process material is a verbatim copy of
+`hit_burst.tscn`'s `PPM_dust`, lifted by script with its four sub-resources so
+that nothing was retyped. A headless check compared twelve settings against the
+real `Dust` emitter and found zero mismatches. The author converted that
+material to a `ShaderMaterial` in the Godot editor, saved it, and Claude
+extracted the generated code from the saved resource.
+
+**`Dust` is the emitter this step needs**, because it is the only one of the
+three carrying **both** a `color_ramp` and a `scale_curve`. The generated
+shader includes the ramp and curve sampling only when the material actually
+has them, so converting any other emitter would have produced a file with two
+of the required line references missing — which is exactly what the first
+attempt did (see below).
+
+### The line references
+
+Located by the author in the first generated file and carried across to this
+one when it was regenerated; every line below was then read back out of the
+committed file rather than calculated.
+
+| What | Line | The line itself |
+|---|---|---|
+| `shader_type` | **3** | `shader_type particles;` |
+| `start()` | **230** | `void start() {` |
+| `process()` | **282** | `void process() {` |
+| Initial velocity from its min and max | **140** | `params.initial_velocity_multiplier = mix(initial_linear_velocity_min, initial_linear_velocity_max, rand_from_seed(alt_seed));` |
+| …and where that reaches the particle | **269** | `USERDATA1.xyz = get_random_direction_from_spread(alt_seed, spread) * dynamic_params.initial_velocity_multiplier;` |
+| Gravity becomes a force | **316** | `force = gravity;` |
+| …and changes velocity | **329** | `USERDATA1.xyz += force * DELTA;` |
+| **Colour over life is sampled** | **162** | `parameters.color *= texture(color_ramp, vec2(lifetime));` |
+| **Scale over life is applied** | **161** | `parameters.scale *= texture(scale_curve, vec2(lifetime)).rgb;` |
+| Per-particle random scale, from min and max | **150** | `params.scale = vec3(mix(scale_min, scale_max, rand_from_seed(alt_seed)));` |
+| …and where that reaches the transform | **364–377** | `if (first_frame) { … TRANSFORM[0..2].xyz *= … }` |
+| `color_ramp` / `scale_curve` declarations | **45–46** | `uniform sampler2D color_ramp : repeat_disable;` |
+| `gravity` declaration | **44** | `uniform vec3 gravity;` |
+| `scale_min` / `scale_max` declarations | **30–31** | `uniform float scale_min;` |
+
+**One line tied to a setting in the brief, with its value.** Line **316**,
+`force = gravity;`, together with its declaration at **44** and its effect at
+**329**, is `CHANGE-BRIEF.md` §1.3's `Dust` column, **`gravity = (0, −30)`**.
+That one setting is visible at three separate places in the shader — declared,
+read, and applied to the velocity — which is the clearest thing in the file
+about how a process setting actually becomes motion.
+
+Two of the brief's settings are *not* separate lines here and that is worth
+saying: `scale_min` and `scale_max` (§1.3, `Dust`, **2.0 / 3.5**) are one
+`mix()` at line 150, and the curve that reshapes that scale over the
+particle's life is a different line entirely, 161. The brief lists them in
+adjacent rows; the shader treats them as unrelated steps.
+
+### The first attempt, and what it got wrong
+
+The first conversion took a **default, empty `ParticleProcessMaterial`** — the
+one a freshly added `GPUParticles2D` arrives with — rather than one of this
+game's. The resulting file had **no `sampler2D` and no `texture()` call at
+all**, so "where colour over life is sampled" and "where scale over life is
+applied" did not exist in it. Line 157 read:
+
+```glsl
+// Compile-time add textures.
+```
+
+with nothing after it. That comment is Godot's insertion point, filled in only
+when the material carries a ramp or a curve.
+
+**The author found it while counting lines**, reporting that the file had no
+`texture()` sampling for the colour curve. Claude had already checked that
+file — it loaded, reported `MODE_PARTICLES`, declared 38 uniforms and produced
+no `SHADER ERROR` — and all three of those were true while the file was the
+wrong one. It is the same failure this report keeps recording: a set of green
+checks that measured something other than the thing in question.
+
+The thirteen line references the author produced from that file were all
+correct, and all had to be relocated when it was regenerated.
+
+### Which of the brief's settings live in this shader, and which belong to draw
+
+> **Written by Claude at the author's instruction on 2026-11-08.** Assignment 6
+> Step 6 asks for the author's own words here and says the agent does not write
+> the answers. It is recorded as Claude's so that nothing in this file
+> misrepresents who wrote what.
+
+Everything in `CHANGE-BRIEF.md` §7's **process** row is in this file, and
+nothing from its **draw** row is.
+
+`direction`, `spread`, `initial_velocity_min/max`, `gravity`, `damping_min/max`,
+`scale_min/max`, `scale_curve` and `color_ramp` are all uniforms here, and each
+one is read inside `start()` or `process()`. The split §7 drew on paper turns
+out to be a split between two different programs: the process settings are
+inputs to a shader that runs on the graphics card once per particle per frame,
+and that is the whole content of this file.
+
+The draw settings are not here and could not be. The `CanvasItemMaterial` and
+its **Add** blend mode on `Flash`, the particle texture, `visibility_rect` and
+`local_coords` never appear, because they are not decisions about how a
+particle moves — they are decisions about how the result is rasterised, which
+happens in a separate `canvas_item` shader, and in the case of
+`visibility_rect` and `local_coords`, on the node before any shader runs.
+
+The boundary is visible in one place: `COLOR` at line 357 and `TRANSFORM` at
+364–377 are **written** by this shader and **consumed** by the draw step. They
+are where the process step hands its result over. That is also why §1.3's
+`color_ramp` can be correct while the burst still looks wrong — this shader
+would do its job perfectly and an additive blend mode on the wrong emitter
+would still ruin the picture, which is a draw decision no line in this file can
+reach.
+
+### What this step does not establish
+
+Nothing about the running game. This shader is not used by anything: it is a
+copy, converted for reading. `godot/effects/hit_burst.tscn` still carries a
+`ParticleProcessMaterial` on all three emitters and its configuration test is
+80 checks, 0 failures.
