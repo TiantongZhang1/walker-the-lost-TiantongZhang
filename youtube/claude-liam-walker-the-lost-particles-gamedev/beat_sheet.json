@@ -24,7 +24,15 @@
     "greeting_note": "hello lexicon: Sawubona (Zulu), one word. Wagwan is Bear's alone.",
     "mode": "walker",
     "teaching_contract": "code-then-result-v1",
-    "game": "godot"
+    "game": "godot",
+    "build": {
+      "at": "2026-11-08T15:59:32",
+      "cut": "master",
+      "filled": 20,
+      "of": 20,
+      "slates": [],
+      "skin_warnings": []
+    }
   },
   "beats": [
     {
@@ -78,7 +86,13 @@
       },
       "actual_duration_s": 21.056,
       "audio_file": "mp3/beat-B00.mp3",
-      "render_duration_s": 21.066666666666666
+      "render_duration_s": 21.066666666666666,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B00.mp4",
+        "filled_by": "remotion:ClaudeComposerAsk",
+        "at": "2026-11-08T15:59:32"
+      }
     },
     {
       "beat_id": "B01",
@@ -144,7 +158,13 @@
       },
       "actual_duration_s": 27.002,
       "audio_file": "mp3/beat-B01.mp3",
-      "render_duration_s": 27.016666666666666
+      "render_duration_s": 27.033333333333335,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B01.mp4",
+        "filled_by": "remotion:BrutalistHesitantWriter",
+        "at": "2026-11-08T15:59:32"
+      }
     },
     {
       "beat_id": "B02",
@@ -217,7 +237,13 @@
       },
       "actual_duration_s": 34.426,
       "audio_file": "mp3/beat-B02.mp3",
-      "render_duration_s": 34.43333333333333
+      "render_duration_s": 34.43333333333333,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B02.mp4",
+        "filled_by": "remotion:GodotDevWorkbench",
+        "at": "2026-11-08T15:59:32"
+      }
     },
     {
       "beat_id": "B03",
@@ -257,7 +283,13 @@
       },
       "actual_duration_s": 8.661,
       "audio_file": "mp3/beat-B03.mp3",
-      "render_duration_s": 8.666666666666666
+      "render_duration_s": 8.666666666666666,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B03.mp4",
+        "filled_by": "media",
+        "at": "2026-11-08T15:59:32"
+      }
     },
     {
       "beat_id": "B03A",
@@ -301,7 +333,13 @@
       },
       "actual_duration_s": 16.235,
       "audio_file": "mp3/beat-B03A.mp3",
-      "render_duration_s": 16.25
+      "render_duration_s": 16.266666666666666,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B03A.mp4",
+        "filled_by": "media",
+        "at": "2026-11-08T15:59:32"
+      }
     },
     {
       "beat_id": "B04",
@@ -379,7 +417,13 @@
       },
       "actual_duration_s": 36.218,
       "audio_file": "mp3/beat-B04.mp3",
-      "render_duration_s": 36.233333333333334
+      "render_duration_s": 36.233333333333334,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B04.mp4",
+        "filled_by": "remotion:GodotDevWorkbench",
+        "at": "2026-11-08T15:59:32"
+      }
     },
     {
       "beat_id": "B05",
@@ -415,7 +459,13 @@
       },
       "actual_duration_s": 39.183,
       "audio_file": "mp3/beat-B05.mp3",
-      "render_duration_s": 39.18333333333333
+      "render_duration_s": 39.2,
+      "build": {
+        "status": "STILL",
+        "src": "media\\B05.png",
+        "filled_by": "still",
+        "at": "2026-11-08T15:59:32"
+      }
     },
     {
       "beat_id": "B06",
@@ -488,7 +538,13 @@
       },
       "actual_duration_s": 35.663,
       "audio_file": "mp3/beat-B06.mp3",
-      "render_duration_s": 35.666666666666664
+      "render_duration_s": 35.666666666666664,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B06.mp4",
+        "filled_by": "remotion:GodotDevWorkbench",
+        "at": "2026-11-08T15:59:32"
+      }
     },
     {
       "beat_id": "B07",
@@ -524,7 +580,13 @@
       },
       "actual_duration_s": 29.263,
       "audio_file": "mp3/beat-B07.mp3",
-      "render_duration_s": 29.266666666666666
+      "render_duration_s": 29.266666666666666,
+      "build": {
+        "status": "STILL",
+        "src": "media\\B07.png",
+        "filled_by": "still",
+        "at": "2026-11-08T15:59:32"
+      }
     },
     {
       "beat_id": "B07A",
@@ -568,7 +630,13 @@
       },
       "actual_duration_s": 9.344,
       "audio_file": "mp3/beat-B07A.mp3",
-      "render_duration_s": 9.35
+      "render_duration_s": 9.366666666666667,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B07A.mp4",
+        "filled_by": "media",
+        "at": "2026-11-08T15:59:32"
+      }
     },
     {
       "beat_id": "B07B",
@@ -612,7 +680,13 @@
       },
       "actual_duration_s": 9.835,
       "audio_file": "mp3/beat-B07B.mp3",
-      "render_duration_s": 9.85
+      "render_duration_s": 9.866666666666667,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B07B.mp4",
+        "filled_by": "media",
+        "at": "2026-11-08T15:59:32"
+      }
     },
     {
       "beat_id": "B08",
@@ -690,7 +764,13 @@
       },
       "actual_duration_s": 38.415,
       "audio_file": "mp3/beat-B08.mp3",
-      "render_duration_s": 38.416666666666664
+      "render_duration_s": 38.43333333333333,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B08.mp4",
+        "filled_by": "remotion:GodotDevWorkbench",
+        "at": "2026-11-08T15:59:32"
+      }
     },
     {
       "beat_id": "B09",
@@ -726,7 +806,13 @@
       },
       "actual_duration_s": 35.087,
       "audio_file": "mp3/beat-B09.mp3",
-      "render_duration_s": 35.1
+      "render_duration_s": 35.1,
+      "build": {
+        "status": "STILL",
+        "src": "media\\B09.png",
+        "filled_by": "still",
+        "at": "2026-11-08T15:59:32"
+      }
     },
     {
       "beat_id": "B10",
@@ -799,7 +885,13 @@
       },
       "actual_duration_s": 43.983,
       "audio_file": "mp3/beat-B10.mp3",
-      "render_duration_s": 43.983333333333334
+      "render_duration_s": 44.0,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B10.mp4",
+        "filled_by": "remotion:GodotDevWorkbench",
+        "at": "2026-11-08T15:59:32"
+      }
     },
     {
       "beat_id": "B11",
@@ -843,7 +935,13 @@
       },
       "actual_duration_s": 8.683,
       "audio_file": "mp3/beat-B11.mp3",
-      "render_duration_s": 8.683333333333334
+      "render_duration_s": 8.7,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B11.mp4",
+        "filled_by": "media",
+        "at": "2026-11-08T15:59:32"
+      }
     },
     {
       "beat_id": "B11A",
@@ -916,7 +1014,13 @@
       },
       "actual_duration_s": 33.786,
       "audio_file": "mp3/beat-B11A.mp3",
-      "render_duration_s": 33.8
+      "render_duration_s": 33.8,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B11A.mp4",
+        "filled_by": "remotion:GodotDevWorkbench",
+        "at": "2026-11-08T15:59:32"
+      }
     },
     {
       "beat_id": "B11B",
@@ -952,7 +1056,13 @@
       },
       "actual_duration_s": 40.079,
       "audio_file": "mp3/beat-B11B.mp3",
-      "render_duration_s": 40.083333333333336
+      "render_duration_s": 40.1,
+      "build": {
+        "status": "STILL",
+        "src": "media\\B11B.png",
+        "filled_by": "still",
+        "at": "2026-11-08T15:59:32"
+      }
     },
     {
       "beat_id": "B12",
@@ -1007,7 +1117,13 @@
       },
       "actual_duration_s": 86.958,
       "audio_file": "mp3/beat-B12.mp3",
-      "render_duration_s": 86.96666666666667
+      "render_duration_s": 86.96666666666667,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B12.mp4",
+        "filled_by": "remotion:ClaudeVerdictArtifact",
+        "at": "2026-11-08T15:59:32"
+      }
     },
     {
       "beat_id": "B13",
@@ -1056,7 +1172,13 @@
       },
       "actual_duration_s": 32.591,
       "audio_file": "mp3/beat-B13.mp3",
-      "render_duration_s": 32.6
+      "render_duration_s": 32.6,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B13.mp4",
+        "filled_by": "remotion:ClaudeComposerAsk",
+        "at": "2026-11-08T15:59:32"
+      }
     },
     {
       "beat_id": "B14",
@@ -1086,7 +1208,13 @@
       },
       "audio_policy": "silence",
       "actual_duration_s": 5.0,
-      "render_duration_s": 5.0
+      "render_duration_s": 5.0,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B14.mp4",
+        "filled_by": "remotion:ClaudeTitleOutro",
+        "at": "2026-11-08T15:59:32"
+      }
     }
   ]
 }

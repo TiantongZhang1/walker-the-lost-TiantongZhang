@@ -104,11 +104,12 @@ master was rendered.
 
 **Final film URL and filename:**
 `claude-liam-walker-the-lost-particles-gamedev.mp4` —
-**TheLostParticles_TiantongZhang**, 3840 × 2160, 30 fps, 20 beats, about 9:51.
+**TheLostParticles_TiantongZhang**, H.264 **3840 × 2160**, 30 fps, AAC 48 kHz
+stereo, **591.77 s** (9:51.77), 20 beats, 37,165,568 bytes.
 _URL PENDING — the file is stored in the course media storage and linked from
-`README.md`; it is kept out of GitHub by the assignment's MP4 rule._
+`README.md`; it is kept out of GitHub by the assignment's MP4-and-25-MB rule._
 
-**Final film SHA-256:** _PENDING_
+**Final film SHA-256:** `6aa9613aad8720fef184e36fa20a911ad4b2b5e8f8a852c794b8f9c988a152ce`
 
 ---
 

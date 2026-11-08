@@ -154,13 +154,23 @@ the full accounting.
 
 ## 6. The master
 
-_Filled in at handoff, after `./art final`._
-
 | | |
 |---|---|
 | File | `exports/landscape/claude-liam-walker-the-lost-particles-gamedev.mp4` |
-| sha256 | _PENDING_ |
-| Length | _PENDING_ |
+| sha256 | `6aa9613aad8720fef184e36fa20a911ad4b2b5e8f8a852c794b8f9c988a152ce` |
+| Length | **591.77 s** — 9:51.77, 20 beats, drift from the beat sheet 0.000 s |
+| Video | H.264, **3840 × 2160**, 30 fps |
+| Audio | AAC, 48 kHz, stereo — per-beat narration timeline; the locked outro card is the only beat with music and it carries no narration |
+| Size | 37,165,568 bytes (35.4 MB) |
+
+**It is not in GitHub.** The assignment keeps MP4s and anything over 25 MB
+out of the repository, and `.gitignore` excludes `exports/`. It goes to the
+course media storage and `../../README.md` links it.
 
 `build-state.json` is machine-local and is in `.gitignore`; the master's
 SHA-256 is recorded here deliberately so it lives in exactly one place.
+
+**The master was watched, one frame per beat, at each beat's own midpoint.**
+`_qc/contact-sheet.png` and `_qc/REPORT.md`, written by
+`../../scripts/qc_particles_master.py`. That sheet is evidence the master was
+looked at; it is not evidence the master is right.

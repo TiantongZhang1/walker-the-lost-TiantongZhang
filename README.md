@@ -201,7 +201,8 @@ and the captures are in `captures/a5/`.
 ## The film
 
 `youtube/claude-liam-walker-the-lost-particles-gamedev/` —
-**TheLostParticles_TiantongZhang.mp4**, 3840 × 2160, 30 fps, 20 beats, 9:51.
+**TheLostParticles_TiantongZhang.mp4**, 3840 × 2160, 30 fps, 20 beats,
+**9:51.77**.
 Six code-then-result pairs: every code panel is followed by the thing those
 lines produce, and no beat shows both at once. Five beats are engine footage
 from three 4K Movie Maker takes, each of which asserted its own outcome before
