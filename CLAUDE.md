@@ -54,8 +54,7 @@ godot --headless --path godot --import          # once after cloning
 `test_step_dust_state.gd` run at **30, 60 and 144** — a duration or a cadence
 measured at one rate has not been measured. Other `test_*_state.gd` run at 60.
 
-`godot` is not on PATH here; the wrapper resolves it relative to the
-repository and `GODOT=` overrides it — `scripts/run-test.sh:42`.
+`godot` is not on PATH; the wrapper resolves it and `GODOT=` overrides — `scripts/run-test.sh:42`.
 
 ### Headless facts
 
@@ -87,11 +86,10 @@ it in one run.
 
 ## Ownership
 
-**Files in `godot/shaders/` are hand-written by the human and never edited by
-an agent.** If one looks wrong, say so and stop. **One dated exception:** on
-2026-11-08 the author converted the material in the editor, saved a `.tres`,
-and told Claude to extract `particles_generated.gdshader` from it, so
-`git diff --stat godot/shaders/` is non-empty for that commit by instruction.
+**`godot/shaders/` is hand-written by the human, never edited by an agent;**
+if one looks wrong, say so and stop. **Dated exception, 2026-11-08, that
+commit only:** Claude extracted `particles_generated.gdshader` from a `.tres`
+the author converted in the editor.
 
 **Effect settings live in scene files in `godot/effects/`, not in code.** A
 driver may read state and set one value; it never holds the design.
