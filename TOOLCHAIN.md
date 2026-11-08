@@ -48,6 +48,27 @@ verdict.
 | `compose_b05_evidence.py` | 83 | 4 | **Reference** | Composed one A2 beat's evidence image |
 | `compose_b09_evidence.py` | 106 | 4 | **Reference** | Composed one A2 beat's evidence image |
 
+### Written here, for this repository
+
+Nothing below was carried over, so none of it can reach another repository.
+They are listed because `TOOLCHAIN.md` is the file a reader checks before
+running anything in `scripts/`, and "it is not in the table" is not an answer.
+
+| File | Written for | What it does |
+|---|---|---|
+| `build_effect_strip.py` | A6 | Lays a revision's kept frames out as one strip, so two revisions are cropped and scaled identically and can be held against each other |
+| `build_particles_beat_sheet.py` | A6 film | Authors the beat sheet. Reads every code panel's text out of its file at build time; run it twice, before and after the narration, because its cue times are fractions of a beat |
+| `build_particles_ledger.py` | A6 film | Builds `gamedev-evidence.json`. Refuses to write if a panel's text is not what is on disk, or if `godot/override.cfg` exists |
+| `compose_particles_evidence.py` | A6 film | Composes the four evidence cards and **measures every figure on them** from the committed capture frames |
+| `frame_particles_footage.py` | A6 film | Crops three of the five gameplay beats to the action band and frames all five, with numbers read from the take logs |
+| `compose_lost_evidence.py`, `compose_a5_extras.py`, `crop_footage_beats.py`, `frame_footage_beats.py` | A5 film | The previous film's equivalents. Hard-wired to that reel's beat ids |
+
+`encode_captures.py` and `render_takes.py` are in the carried-over table above
+and are still **Generic**, but both were extended for A6: a take letter, and a
+per-driver `--quit-after` table. Takes `p` and `c` are used by two different
+drivers with very different lengths, and the shared bound silently truncated
+one of them.
+
 ### Two of these rewrite the other repository
 
 `finalise_beat_timing.py` and `fit_beat_panels.py` both begin with

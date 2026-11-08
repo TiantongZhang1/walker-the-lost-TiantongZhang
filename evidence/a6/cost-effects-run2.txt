@@ -1,0 +1,36 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Headless CPU cost. 400 frames per condition after 120 warm-up frames.
+Wall clock per frame, microseconds. A headless run draws nothing.
+The baseline is run TWICE so the script can state its own noise
+floor before it reports any difference.
+
+condition                                 median us    mean us     p90 us  peak em  instances
+empty scene (control)                           3.0        2.7        3.0        0          0
+room, all effects REMOVED (1)                 110.5      126.7      184.0        0          0
+A only, held at its ceiling of 3              130.0      147.4      218.0        9         30
+B only, steady state                          115.0      126.2      171.0        1          0
+C only, player running                        119.0      135.0      184.0        4         22
+all three, heaviest                           128.5      149.1      207.0       17         55
+room, all effects REMOVED (2)                 111.0      122.0      176.0        0          0
+
+Baseline (effects removed, mean of two runs): 110.8 us
+Spread between those two runs -- the resolution: 0.5 us
+
+effect                                   over baseline     vs noise
+A only, held at its ceiling of 3              +19.3 us        ABOVE
+B only, steady state                           +4.3 us        ABOVE
+C only, player running                         +8.3 us        ABOVE
+all three, heaviest                           +17.8 us        ABOVE
+
+Prediction (CHANGE-BRIEF.md 5, C.6): approximately 0 ms over the
+control for every effect. HOLDS.
+
+What this does NOT measure: GPU time, which is the price every
+budget in section 5 and C.6 is set against -- 0.30 / 0.20 / 0.10 ms.
+That is the Visual Profiler, read on hardware by the author, and
+section 4 puts it under HUMAN for exactly this reason.
+
+Effect A's row is SYNTHETIC: revision 6.0.2 measured that three
+bursts cannot be alive at once by playing this room. Holding the
+ceiling means emitting `fired` directly, every 0.20 s.

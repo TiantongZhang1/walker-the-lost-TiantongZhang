@@ -141,6 +141,30 @@ language notes. What it wrote:
 | `CLAUDE.md` | **the agent draft.** My review and corrections are committed separately, as the assignment requires. |
 | `TOOLCHAIN.md`, `README.md`, this file | documentation |
 
+## 7a. Assignment 6 — the particle effects
+
+Same split. Every file below is Claude Code's work under my review, except
+where the row says otherwise. The one exception to the shader rule is dated
+and recorded in `CLAUDE.md`.
+
+| File | |
+|---|---|
+| `godot/effects/hit_burst.tscn`, `.gd`, `hit_burst_spawner.gd` | Effect A: three emitters, the lifecycle, and the spawner that connects to the trap's existing `fired` signal |
+| `godot/effects/dungeon_motes.tscn`, `.gd` | Effect B: one emitter, and a script that writes `emitting` and nothing else |
+| `godot/effects/step_dust.tscn`, `.gd`, `step_dust_driver.gd` | Effect C: two emitters, and the driver that derives a footstep event from distance travelled |
+| `godot/previews/*.tscn`, `*.gd` | the three preview fixtures the frame strips are captured from, and `step6_scratch.tscn` |
+| `godot/game/debug_keys.gd` | the F9 vsync toggle. Adds no input action |
+| `godot/tests/test_{hit_burst,dungeon_motes,step_dust}_{config,state}.gd` | 249 checks |
+| `godot/tests/cost_effects.gd` | the four named conditions, an empty-scene control and a twice-run baseline |
+| `godot/tests/capture_particles.gd` | the film's capture driver: three takes, each asserting its own outcome |
+| `scripts/build_particles_beat_sheet.py`, `build_particles_ledger.py`, `compose_particles_evidence.py`, `frame_particles_footage.py` | the A6 film build chain |
+| `godot/shaders/particles_generated.gdshader` | **Godot's output, not anyone's prose.** Produced by converting Effect A's `Dust` material in the editor — my action — and extracted from the saved resource by Claude under the dated exception in `CLAUDE.md`. Nothing loads it |
+| `CHANGE-BRIEF.md` revisions 6.0.1–6.0.5, `TUNING.md`'s readings, `TEST-REPORT.md`'s A6 sections | drafted by Claude; **every `TUNING.md` verdict and every prediction is mine**, quoted verbatim where it was said in Chinese |
+
+**No texture, model, sound or music was added by Assignment 6.** None of the
+six emitters has a texture: the look is a `color_ramp`, a `scale_curve` and a
+blend mode. There is nothing new to credit or license.
+
 ## 8. Tools
 
 | | |
@@ -149,6 +173,8 @@ language notes. What it wrote:
 | Blender | 5.2.2 LTS — used in Assignment 3; the three `.glb` it produced are here, carried across with `asset_showcase.tscn` |
 | Python | with Pillow, for `tools/make_sprites.py` |
 | Claude Code | Claude Opus 5 |
+| Kokoro `am_onyx` | the films' narration, run locally. No API call, no key, $0.00 |
+| Brutalist toolkit | `brutalist.art-main`, the course-provided `godot-gamedev` skill and its Remotion runtime |
 
 ## 9. What a reader should check first
 

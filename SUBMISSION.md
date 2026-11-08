@@ -12,9 +12,11 @@
 SHA, so it is in the Canvas note and is recoverable with
 `git rev-list -n 1 a6`.
 
-**Game-source revision shown in the film:** _PENDING — filled in when the film
-is rendered. Commits after it add film documentation only and must change no
-file under `godot/`, which `git diff <rev>..a6 -- godot/` confirms._
+**Game-source revision shown in the film:** **`31fb5a7`** — *A6 film capture
+driver: three takes, each asserting its own outcome*. Every code panel, every
+hash and every capture in the film was taken at it. Commits after it add film
+documentation only and change no file under `godot/`;
+`git diff 31fb5a7..a6 -- godot/` is the check and it prints nothing.
 
 **Godot version, renderer, and operating system:** Godot
 **4.7.2.stable.official** `ed1daf0bf`, **Forward+** (Vulkan 1.4.357), Windows
@@ -64,8 +66,15 @@ testing.
 | Effect B | 60 | **0.20 ms** | +0.5 µs, below the instrument's noise |
 | Effect C | 21 | **0.10 ms** | +8.5 µs |
 
-The noise floor of that measurement is 8.0 µs, measured by running the
-baseline twice; `TEST-REPORT.md` reports it beside every figure.
+**That table is two runs, and the second run is the point.** The *ordering*
+is stable and the instances column is identical between runs; the microsecond
+figures are not. Effect B reads +1.3 µs in one run and +4.3 µs in the other,
+while each run's own twice-measured baseline claims a resolution of 0.5 µs.
+The reading that survives is the instances column — 30, 0 and 22 — and what it
+says is that a headless run can weigh scene instancing and nothing else.
+`evidence/a6/cost-effects-run1.txt` and `run2.txt` are the recorded output; a
+third, earlier run was discarded because it was taken while a 4K render was
+using the CPU, and it is not in the repository.
 
 **Texture sources and licences (or model, version, and terms):**
 
@@ -80,7 +89,24 @@ committed. `ATTRIBUTION.md` and `SOURCES.md` carry the full accounting,
 including the five generated character poses carried from
 walker-ninja-TiantongZhang and the film's locally run narration model.
 
-**Final film URL and filename:** _PENDING_
+**The film.** `youtube/claude-liam-walker-the-lost-particles-gamedev/`.
+Twenty beats, six code-then-result pairs, built with the course-provided
+Brutalist `godot-gamedev` workflow in `walker` mode. Its evidence ledger
+passes the course checker — 66 source files, 40 exclusions, 6 components, 6
+exact excerpts. Five beats are engine footage from three 4K Movie Maker takes,
+each of which asserted its own outcome before a frame of it counted; take r is
+labelled SCRIPTED everywhere it appears, because the ceiling it shows cannot
+be reached by playing this room. Four beats are evidence cards whose every
+figure is recomputed from committed capture frames at build time. The reel's
+`FACTCHECK.md` marks every narrated claim MEASURED, SOURCE, REASONING or
+AUTHOR, and records the one claim that was wrong and was corrected before the
+master was rendered.
+
+**Final film URL and filename:**
+`claude-liam-walker-the-lost-particles-gamedev.mp4` —
+**TheLostParticles_TiantongZhang**, 3840 × 2160, 30 fps, 20 beats, about 9:51.
+_URL PENDING — the file is stored in the course media storage and linked from
+`README.md`; it is kept out of GitHub by the assignment's MP4 rule._
 
 **Final film SHA-256:** _PENDING_
 
@@ -156,6 +182,17 @@ instruction and is labelled as Claude's in the file itself.
   before any of A6 was built.
 - **Three effects instead of two** is more surface than the assignment asks
   for, and Effect C is the least settled of them.
+- **One claim in the film was wrong and was corrected before the master was
+  rendered.** It said `Dust` was the only emitter carrying both a `color_ramp`
+  and a `scale_curve`; three of the six do. `TEST-REPORT.md`'s process-shader
+  section, which said the same thing, carries a dated correction rather than a
+  silent edit, and the reel's `FACTCHECK.md` records it.
+- **Two note panels in the film clipped mid-sentence** in their first render,
+  because the workbench's notes column holds about 165 characters and nothing
+  enforces it. Found by extracting one frame per code beat and reading them;
+  fixed and re-rendered. It is the same class of fault as everything else in
+  this report: a step that produced output, passed every automatic check, and
+  was wrong.
 
 **Changed games since Assignment 2:** No. Same game, same repository, since
 Assignment 2.

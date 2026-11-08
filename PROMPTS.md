@@ -31,18 +31,26 @@ agent actually read:
 Running `tools/check_claude_refs.py` and reading those two files together is
 the honest answer to "what did you ask it to do?".
 
-## 1. The film's two on-screen prompts
+## 1. The films' on-screen prompts
 
-Both are in `youtube/claude-liam-walker-the-lost-gamedev/PROMPTS.md`, verbatim,
-with the labels they carry on screen. The opening one is a **reconstruction**,
+Each film has two, and each reel's own `PROMPTS.md` carries them verbatim with
+the labels they wear on screen:
+`youtube/claude-liam-walker-the-lost-gamedev/PROMPTS.md` for Assignment 5 and
+`youtube/claude-liam-walker-the-lost-particles-gamedev/PROMPTS.md` for
+Assignment 6. That second file also records the five real instructions that
+shaped the A6 film, in my own words with an English gloss — including the one
+that turned out to be a correctness problem rather than a question about
+screen space. The opening one is a **reconstruction**,
 written to be illustrative and never sent; the film says so out loud in its
 first ten seconds and shows a `RECONSTRUCTION` label for the whole beat. No
 build receipt, transcript or token count appears anywhere in the film.
 
 ## 2. Generative prompts
 
-**None for any asset in the game.** No image model, 3D generator or audio model
-produced a file under `godot/`. Every texture and sprite is written by a
+**None for any asset in the game, and Assignment 6 added no asset at all.**
+No image model, 3D generator or audio model produced a file under `godot/`,
+and none of Assignment 6's six particle emitters has a texture: the look is a
+colour ramp, a scale curve and a blend mode. Every texture and sprite is written by a
 committed script (`tools/make_sprites.py`, `godot/tools/write_textures.gd`) and
 every model is my own Blender work from Assignment 3. Assignment 3's asset
 libraries and 3D generators were not used here at all.

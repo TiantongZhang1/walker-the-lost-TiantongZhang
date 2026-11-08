@@ -1,0 +1,13 @@
+Effect B, F4: the shipped effect against the same effect with
+preprocess mutated to 0.0 in the scene file and reverted after.
+Mote pixels = pixels differing from frame 340 of the SHIPPED
+capture, which is the same field 8.0 s after it stopped - an
+empty room. The player's column band x 160..270 is excluded,
+because the player falls during the first second and his column
+differs from the dead-pose baseline over its whole height.
+
+frame   preprocess 8.0   preprocess 0.0   0.0 as % of 8.0
+    1          518 px           12 px              2 %
+   10          501 px           44 px              9 %
+   40          496 px           99 px             20 %
+  100          438 px          233 px             53 %

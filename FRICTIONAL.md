@@ -791,3 +791,100 @@ previous entry. I had read it and still spent the morning trusting a green
 check. The practice that actually works is cheap — `ffmpeg -ss <t> -i
 media/<bid>.mp4 -frames:v 1` — and the only thing that makes it work is doing
 it at a time *inside* the part you have not looked at yet.
+
+
+## 2026-11-08 — Assignment 6: I was sent to look for something that was not there
+
+**Written on 2026-11-08, retrospectively, from the session record of
+2026-11-06 and 11-07.** It is labelled that way rather than presented as a
+note taken at the time. The quoted lines are what I actually said in the
+session, in Chinese, with an English gloss in brackets; they are also in
+`TUNING.md`, which is where the tuning loop keeps them.
+
+### What I tried, and what happened
+
+Claude finished Step 2 and told me to go and look at the grit burst in the
+running game. I ran it, watched a trap fire, and this is what I said:
+
+> 扎出来的的时候我没看到碎石
+> [when it stabs out I don't see any grit]
+
+**My feeling at that point was confusion** — 很疑惑. I had just been told the
+effect was built, I was looking at the exact moment it was supposed to
+appear, and there was nothing there.
+
+### What I did in response
+
+I did not try to debug it and I did not accept the explanation I had been
+given. **My method was to hand it back and make Claude re-check it.**
+
+The re-check is what found the answer: at commit `fb04465` — *Step 2: Effect A
+built in a scene file, read back by 80 checks, strip r0 taken* — the effect
+existed in `godot/effects/hit_burst.tscn` and in a preview scene, and
+**nothing connected it to `main.tscn` at all**. The spawner that listens for
+the trap's `fired` signal, `godot/effects/hit_burst_spawner.gd`, does not
+appear in this repository until the next commit, `b2d1aed` — *Step 3: Effect A
+wired to `fired`*. `git log --diff-filter=A -- godot/effects/hit_burst_spawner.gd`
+returns that one commit.
+
+So the burst could not have been in the game when I was told to look for it.
+Eighty configuration checks were green at `fb04465` and every one of them was
+true: they read the settings back out of a scene file that nothing loaded.
+
+With the spawner in place I looked again:
+
+> 效果没问题
+> [the effect is fine]
+
+### What I learned
+
+**AI makes mistakes too, and it has to go through human review.** That is
+what I took from it, in my own words, and it is the whole of what I took
+from it.
+
+> **The paragraph below was written by Claude on 2026-11-08 and is labelled
+> as Claude's.** It is an observation about the shape of the mistake, not
+> about what I thought or felt at the time; the assignment allows an agent to
+> organise these notes and forbids it to manufacture experience or
+> understanding, so it is marked rather than folded into my voice. Delete it
+> if it is not useful.
+>
+> The mistake was not a wrong *fact*. Everything in the Step 2 report was
+> true — the effect was built, the scene was correct, the 80 checks passed.
+> What was wrong was an instruction about **where to look**, and no test in
+> this repository could have caught it, because the suite was reading the
+> scene file and the author was watching the screen. That is the same split
+> `CHANGE-BRIEF.md` §4 draws between the headless rows and the HUMAN rows,
+> arriving a day early and from the wrong direction.
+
+### Human and AI contributions, for this entry
+
+I want to be exact rather than generous to myself. **On this item the only
+thing I did was order the re-check.** I did not find the cause, I did not
+write the spawner, and I did not write the state test that now asserts a
+burst appears on every `fired` and never on scene load. Claude did all of
+that. What I contributed was refusing to accept a result I could not see,
+and sending it back.
+
+That is a small action and it is the one that mattered, so it is recorded as
+what it is. The full file-by-file split for Assignment 6 is in `SOURCES.md`
+§7a; `CLAUDE.md`'s Ownership section records the one dated exception to the
+rule that no agent touches a `.gdshader`.
+
+### Traceability
+
+| What | Where |
+|---|---|
+| Both quoted lines, in context | `TUNING.md`, 2026-11-06 — Effect A, r0 |
+| The effect built but not wired | commit `fb04465` |
+| The spawner's first appearance | commit `b2d1aed`, `git log --diff-filter=A -- godot/effects/hit_burst_spawner.gd` |
+| The 80 checks that were green and irrelevant | `godot/tests/test_hit_burst_config.gd` |
+| The rule that now covers this | `CHANGE-BRIEF.md` §1.4, A1: a burst appears on every `fired` **and not on scene load** |
+
+### Still open, as of writing
+
+Three things, none of them resolved by this entry and none of them hidden:
+no GPU time has been read, so every budget in `CHANGE-BRIEF.md` §5 is still a
+prediction; Effect B and Effect C have each had an author verdict but no
+tuning revision; and both of them drift dust below the floor line, 14–22 %
+and 11–29 %, which is in `TUNING.md` and which I could not see in play.

@@ -1055,12 +1055,39 @@ real `Dust` emitter and found zero mismatches. The author converted that
 material to a `ShaderMaterial` in the Godot editor, saved it, and Claude
 extracted the generated code from the saved resource.
 
-**`Dust` is the emitter this step needs**, because it is the only one of the
-three carrying **both** a `color_ramp` and a `scale_curve`. The generated
-shader includes the ramp and curve sampling only when the material actually
-has them, so converting any other emitter would have produced a file with two
-of the required line references missing — which is exactly what the first
-attempt did (see below).
+**`Dust` is the emitter this step needs.** The generated shader includes the
+ramp and curve sampling only when the material actually has them, so
+converting an emitter without both would have produced a file with two of the
+required line references missing — which is exactly what the first attempt
+did (see below).
+
+> **Correction, 2026-11-08.** This paragraph originally said `Dust` was *the
+> only one of the three* carrying both a `color_ramp` and a `scale_curve`.
+> **That is wrong.** Reading the scene files back:
+>
+> | emitter | `color_ramp` | `scale_curve` |
+> |---|---|---|
+> | `Flash` | yes, `hit_burst.tscn:45` | yes, `:44` |
+> | `Grit` | yes, `:70` | **no** |
+> | `Dust` | yes, `:101` | yes, `:100` |
+> | `Kick` | yes, `step_dust.tscn:42` | **no** |
+> | `Puff` | yes, `:73` | yes, `:72` |
+> | `DungeonMotes` | yes, `dungeon_motes.tscn:43` | **no** |
+>
+> Three of the six emitters carry both, not one. The real reason `Dust` is
+> the right emitter to convert is that its curves are the ones a strip can
+> read: `scale_curve` rises 0.6 → 1.8 across a 0.45 s life, so the puff
+> visibly grows while its alpha falls to zero. `Flash` carries both too and
+> lives **0.12 s** — 3.6 frames at 30 fps — with an additive blend and a
+> `scale_curve` that falls 1.0 → 0.2, which is why revision 6.0.1's strip
+> could not see it on five of its six frames. `Puff` is Effect C's and was
+> not built when Step 6 was done.
+>
+> Found on 2026-11-08 while fact-checking the film's narration, which
+> repeated the same claim. `FACTCHECK.md` in the reel records it too. The
+> original sentence is replaced rather than struck through because it was a
+> statement of fact with no reasoning attached to it; what the correction
+> replaces it with is the reasoning that was actually doing the work.
 
 ### The line references
 
@@ -1249,3 +1276,74 @@ was wrong.** The assignment's own example reads `event.keycode` straight off
 the event and adds no action, and so does this. A headless check confirms the
 input map still holds exactly three non-`ui_` actions — `move_left`,
 `move_right`, `jump` — with `DebugKeys` in the tree.
+
+
+## The film's own evidence, and the three things it caught
+
+`youtube/claude-liam-walker-the-lost-particles-gamedev/`. Twenty beats, six
+code-then-result pairs, game-source revision `31fb5a7`. The course checker
+passes:
+
+```json
+{"status": "PASS", "source_files": 66, "exclusions": 40, "components": 6,
+ "exact_excerpts": 6, "teaching_contract": "code-then-result-v1",
+ "code_result_pairs": 6}
+```
+
+That check verifies hashes, inventory, source lines and associations. It does
+not verify that a claim is true or that a frame shows what the narration says
+it shows. Three things got through it and were caught by looking.
+
+### 1. A take that came back wrong, and said so
+
+`godot/tests/capture_particles.gd` take **p** asserts three traps fired, ≥ 3
+distinct bursts, ≥ 12 distinct step-dust instances and both facings. During
+one 4K render the author switched to another application. Godot releases every
+pressed key when its window loses focus, so the held `D` was released, the
+player stopped, and the take recorded **1 burst and 9 puffs** instead of 4 and
+25. Every frame written looked perfectly normal. The take failed its own
+assertion, which is the only reason it was noticed.
+
+Fixed by re-pressing the held key every frame — safe for `move_left` and
+`move_right`, which `player.gd` reads through `Input.get_axis()`, and
+deliberately **not** done for `jump`, which is read with
+`is_action_just_pressed`.
+
+### 2. A card that captioned an empty room "three bursts alive"
+
+`scripts/compose_particles_evidence.py` extracts a frame of take r for the
+cost card. The first version hardcoded **3.0 s**. When take r was re-recorded
+longer so the narration would have footage to play over, 3.0 s no longer had a
+burst in it, and the card drew a picture of an empty room under the caption
+*three bursts alive*. Nothing in the pipeline noticed; the hash matched, the
+checker passed.
+
+The timestamp is now read out of `capture/logs/take-r-inputs.jsonl` — the
+first frame whose recorded live-burst count is ≥ 3 — and the count is read
+back onto the card. A card that cannot find three bursts stops the build.
+
+### 3. Two note panels that clipped mid-sentence
+
+The `GodotDevWorkbench` notes column holds about **165 characters** of value
+text across its two cards. Nothing enforces it and overflowing it clips
+silently. B04's two notes totalled 207 characters and B10's 174; both second
+cards were cut off mid-word in the rendered frame. B06 at 152 and B11A at 167
+were fine. Found by extracting one frame per code beat and reading them side
+by side, which is the only method that has ever found this class of fault in
+this project.
+
+### And one wrong claim, corrected rather than hidden
+
+B08's note said `Dust` was the only emitter carrying both a `color_ramp` and a
+`scale_curve`. **Three of the six do** — `Flash`, `Dust` and `Puff`. The
+narration and the note were corrected before the master was rendered, the
+process-shader section above carries a dated correction, and the reel's
+`FACTCHECK.md` records it as well. The real reason `Dust` is the right emitter
+to convert is in that correction.
+
+### What the film does not claim
+
+No GPU time. Every budget in `CHANGE-BRIEF.md` §5 and §C.6 is still a
+prediction, the film says so three times, and `FACTCHECK.md` marks every
+narrated claim as MEASURED, SOURCE, REASONING or AUTHOR so that the three
+kinds are not mixed silently.

@@ -1,0 +1,932 @@
+{
+  "schema_version": 1,
+  "game": "godot",
+  "teaching_contract": "code-then-result-v1",
+  "files": [
+    {
+      "path": "assets/music-loop.ogg",
+      "sha256": "ea52713afeef1cacdae6ee9b5fe9789ff266c57f7e2b9c6d6380b1e1a85db865",
+      "role": "asset",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/music-loop.ogg.import",
+      "sha256": "9bc6dfe420e65e85f72332615b1251cf8ee130af0f0756766ba211674dbea107",
+      "role": "config",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/poses/p1-idle.png",
+      "sha256": "4af196250e54c399125fedffdd22c8991cfffb1d5d47f46c123458db9913fd54",
+      "role": "asset",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/poses/p1-idle.png.import",
+      "sha256": "785519a52e61718b2ba06e93379e107fd94e072624334b7cca980a47b8cf0649",
+      "role": "config",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/poses/p2-run.png",
+      "sha256": "63d60f3a39af9143f2958d027ca90fb07b1fea8a0fb9de8f058c5309e7b94133",
+      "role": "asset",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/poses/p2-run.png.import",
+      "sha256": "7b72f1f002d1ab3fe5c014e54d712ff80f22104b2e08f4d2ccc5f8e1bd677347",
+      "role": "config",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/poses/p3-rising.png",
+      "sha256": "39c976f63aea71e0d32eb1805bc9c35c249bb34ca8fd054f3789d0dc6a0de4be",
+      "role": "asset",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/poses/p3-rising.png.import",
+      "sha256": "599039e71f50154e0e54bf34bcb4ea50ec8192a08bd323b520ad79dde6dda9fe",
+      "role": "config",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/poses/p4-falling.png",
+      "sha256": "d2b34db225bd06b8f31afac408c741c1f0718ec2af2e01c37528ad98a4919494",
+      "role": "asset",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/poses/p4-falling.png.import",
+      "sha256": "81e529fc9796bb840595641f3330474edcf1cc012aebd74de84e5d324ed29779",
+      "role": "config",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/poses/p8-death.png",
+      "sha256": "28aeb26fd901c936f75831e446a1c50758c952f5d72e325b2d27d85a4a44e712",
+      "role": "asset",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/poses/p8-death.png.import",
+      "sha256": "99e6b2525ef8d3274f6b240f86aebdf0508c9ef3c2d37a2abe6a1c74614dcd07",
+      "role": "config",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/sfx-death.ogg",
+      "sha256": "42e349a4be45c89e3a2c50d4ce74fc88d2a62e73b7300a1c3edad9f0fc21eafd",
+      "role": "asset",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/sfx-death.ogg.import",
+      "sha256": "2c7cf8a96e9f2b20ba94492e7e8c0e10d84fde3f4161085a01fefdf0b1a09ec3",
+      "role": "config",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/sfx-jump.ogg",
+      "sha256": "914373f9f976c888cb8193a5ae6430274f6a268539aff4d47ee35ce5651c2fe0",
+      "role": "asset",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/sfx-jump.ogg.import",
+      "sha256": "ad8e64a326ea2d814ad8e03c43a56aec85e1fe20f67a1e8dc7d6ac4f3e317843",
+      "role": "config",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/sfx-slash.ogg",
+      "sha256": "8678282bfff102dd53d5d82dc5d1a5eb7d30ca10b78146b4e42f10f94dc96a93",
+      "role": "asset",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/sfx-slash.ogg.import",
+      "sha256": "f1ebbc32dcbe108aac34b978c072691799f09219a2579eeb9357d7de515014cb",
+      "role": "config",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/sfx-trap.ogg",
+      "sha256": "9681c62c13f83a01cd290334b36597763ec3ee0b8c78beaf9089c346f81843aa",
+      "role": "asset",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/sfx-trap.ogg.import",
+      "sha256": "5c5a59e89762bdda5257f35401e0fd0e3f09bfa2a602462a21c6ab5e682f4d56",
+      "role": "config",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/sprites/floor_tile.png",
+      "sha256": "b776420e7c80440fdc5df43408aa4de7fccd2c933dce9696d0ea09e0d9ea47e2",
+      "role": "asset",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/sprites/floor_tile.png.import",
+      "sha256": "9a1e225a839fab3b55427c8c246e609fcee47d4f92ee1b41f3217c38abe72651",
+      "role": "config",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/sprites/player.png",
+      "sha256": "77f2ea5387cc7ae9c3aa32f347ce2c291f33862bb9e4711cbf113bc5b2d5415f",
+      "role": "asset",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/sprites/player.png.import",
+      "sha256": "7cdff40a8f823860b78b80661c3098c5f69d7c315322d2894277eca3efb603e1",
+      "role": "config",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/sprites/spike_trap.png",
+      "sha256": "4d62674bd9a99fc7d913f7900ae3bfb882c3fed6e79fdeb160270825626d0b56",
+      "role": "asset",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/sprites/spike_trap.png.import",
+      "sha256": "a6383079033be57f9694951595f994df155fe121d59a8e2a91d7b8e1ea9938af",
+      "role": "config",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/sprites/spike_trap_fired.png",
+      "sha256": "ceceb1e50dcadb6c4f082414c6ddb595a082bc1448af60829261b21779d27b9a",
+      "role": "asset",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "assets/sprites/spike_trap_fired.png.import",
+      "sha256": "9ca9aec7c7567267f9e34d9fed6d37c73850279614a3e92a85e5f78d74055e9d",
+      "role": "config",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "effects/dungeon_motes.gd",
+      "sha256": "c7dc9bf54b8ed5818ba63fdb94ec68c5ad124b6faa22eb46ba6a98c7d36b676c",
+      "role": "runtime",
+      "component_ids": [
+        "effect-b-dungeon-motes"
+      ]
+    },
+    {
+      "path": "effects/dungeon_motes.tscn",
+      "sha256": "ae84545a8723d7ff342a3896fb4c0bb32c68e132fd506d002770c5743b264651",
+      "role": "level",
+      "component_ids": [
+        "effect-b-dungeon-motes"
+      ]
+    },
+    {
+      "path": "effects/hit_burst.gd",
+      "sha256": "9e60f93aa7852296b3abf5999c1cc08c0abb0e6bbe5aa560fdcbd5ed21a5f11a",
+      "role": "runtime",
+      "component_ids": [
+        "effect-a-grit-burst"
+      ]
+    },
+    {
+      "path": "effects/hit_burst.tscn",
+      "sha256": "33f97a2387fe4f296d3d9e01fcc47e00552befb4ec1e8780d06fd3cc9cd47871",
+      "role": "level",
+      "component_ids": [
+        "effect-a-grit-burst"
+      ]
+    },
+    {
+      "path": "effects/hit_burst_spawner.gd",
+      "sha256": "e8dd09848a90cc3a52c4b84a80095cf60da86fab14929e6cf92e7c0a45a25358",
+      "role": "runtime",
+      "component_ids": [
+        "effect-a-grit-burst"
+      ]
+    },
+    {
+      "path": "effects/step_dust.gd",
+      "sha256": "5d7765c1129bac1da2b169fd1f1e004013521bd22cf1006003f1485f516e5ef7",
+      "role": "runtime",
+      "component_ids": [
+        "effect-c-step-dust"
+      ]
+    },
+    {
+      "path": "effects/step_dust.tscn",
+      "sha256": "e725414dae6950ae9da3ed7b5c0613cda2b5b3d2c034781f93122444be09c423",
+      "role": "level",
+      "component_ids": [
+        "effect-c-step-dust"
+      ]
+    },
+    {
+      "path": "effects/step_dust_driver.gd",
+      "sha256": "6f3ecca8ab77a018652eb3aa0a43d94b0bc01eaffe09dacbf3dae4f04b5ea1e2",
+      "role": "runtime",
+      "component_ids": [
+        "effect-c-step-dust"
+      ]
+    },
+    {
+      "path": "features/player/player.gd",
+      "sha256": "e9b7f6158f673e8e7d9e2ad654e9b62d742da703e8eebad1444c6bba4ae0c526",
+      "role": "runtime",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "features/player/player.tscn",
+      "sha256": "2b9c8d5965fa37f9b2a3f3799980814fa1c5eb7bb8f66e19778782a91ef99b83",
+      "role": "level",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "features/player/pose_driver.gd",
+      "sha256": "55e2a260e78e139105fc393d25ecf9aef7c4e04f897b17c831a9e04a336825ab",
+      "role": "runtime",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "features/traps/spike_trap.gd",
+      "sha256": "879c7837572469d97af7f8f5baf7e4a7a0607cd2f32855ce825cdc2ace84237b",
+      "role": "runtime",
+      "component_ids": [
+        "effect-a-grit-burst"
+      ]
+    },
+    {
+      "path": "features/traps/spike_trap.tscn",
+      "sha256": "77fcf7eef59b0eca2d1d2d1dfca397c172fea57e8adb982e76fdf73cb37fdf84",
+      "role": "level",
+      "component_ids": [
+        "effect-a-grit-burst"
+      ]
+    },
+    {
+      "path": "features/traps/trap_warning_driver.gd",
+      "sha256": "70141535bc9ef681017306038a63684b15dbc4bfd5b1db45e47b0e3060de84d9",
+      "role": "runtime",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "game/debug_keys.gd",
+      "sha256": "948082b446e8de1cb0404a0544799f50534beba7ac5298e52404ba9d8ba0f064",
+      "role": "runtime",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "game/main.gd",
+      "sha256": "7847f868d92d055ff35aea9704118d493e458a2eeb670f8f22ff175a80610973",
+      "role": "runtime",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "game/main.tscn",
+      "sha256": "079513b28665d1ea8b0e9299b5d5c4209723b5ae781f81bd8b7e5d35a047c85a",
+      "role": "level",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "game/room_audio.gd",
+      "sha256": "d38cb71910f02c80c9f78d395abcc68a6e412f2d2b7eb982b14bdb5fab1b39fd",
+      "role": "runtime",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "game/room_backdrop.gd",
+      "sha256": "54ca902774062a9df7073e4c6cb8ce279d9fe696a0402569ead58198245d3c30",
+      "role": "runtime",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "previews/dungeon_motes_preview.gd",
+      "sha256": "b0921479846b93817f8141da6864846bcc6e4f21b4ed4a3f3cf3dbdae6d98213",
+      "role": "runtime",
+      "component_ids": [
+        "effect-b-dungeon-motes"
+      ]
+    },
+    {
+      "path": "previews/dungeon_motes_preview.tscn",
+      "sha256": "f40a109e80d8cea0eecba4310cd907e6df7b73cafec73e6eeb9e752f17666de2",
+      "role": "level",
+      "component_ids": [
+        "effect-b-dungeon-motes"
+      ]
+    },
+    {
+      "path": "previews/hit_burst_preview.gd",
+      "sha256": "eadecc565a0fc7d525201d79283613efb43049211baabbad239f8f7b1a1e907d",
+      "role": "runtime",
+      "component_ids": [
+        "effect-a-grit-burst"
+      ]
+    },
+    {
+      "path": "previews/hit_burst_preview.tscn",
+      "sha256": "653a8d40f63d88a75367fc8731fa3236000b479d4cd77367414a4991cba99ae7",
+      "role": "level",
+      "component_ids": [
+        "effect-a-grit-burst"
+      ]
+    },
+    {
+      "path": "previews/step6_scratch.tscn",
+      "sha256": "226a94e980db8f6f6c0970c4f0f6f83fb34c1c546bc087a3bdefbffce65bf120",
+      "role": "level",
+      "component_ids": [
+        "process-shader"
+      ]
+    },
+    {
+      "path": "previews/step_dust_preview.gd",
+      "sha256": "155c6ba1af334a74d939478568ed7be4da899db2530c7ac02ace88d5addd08cc",
+      "role": "runtime",
+      "component_ids": [
+        "effect-c-step-dust"
+      ]
+    },
+    {
+      "path": "previews/step_dust_preview.tscn",
+      "sha256": "fc9e00a67bc999f1f1aa4af23db603e617776cc459d0b76a370e5d12d3a68fc9",
+      "role": "level",
+      "component_ids": [
+        "effect-c-step-dust"
+      ]
+    },
+    {
+      "path": "project.godot",
+      "sha256": "80c64914a6d29f476994120eaf015dd630585b71af6b9bacccdab1862a07d2d9",
+      "role": "config",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "shaders/particles_generated.gdshader",
+      "sha256": "4e391cf95723069cbb9697b284ce37944d8e16c2407dc6f30dbaf5314fda42dd",
+      "role": "runtime",
+      "component_ids": [
+        "process-shader"
+      ]
+    },
+    {
+      "path": "shaders/trap_warning.gdshader",
+      "sha256": "a7f8a03652590fe86a8b0c7fe630053937cd3ec31360d89380c9ae61f84fe442",
+      "role": "runtime",
+      "component_ids": [
+        "the-room"
+      ]
+    },
+    {
+      "path": "tests/capture_particles.gd",
+      "sha256": "d42e07af63d42846b7c3480e10416d675dff35219d83f37b519068a567c8b40b",
+      "role": "test",
+      "component_ids": [
+        "evidence-harness"
+      ]
+    },
+    {
+      "path": "tests/cost_effects.gd",
+      "sha256": "e4109a3f0121d5b43d0055d52e10ffd4c6772963a9ad796172f1e42c7f74b017",
+      "role": "test",
+      "component_ids": [
+        "evidence-harness"
+      ]
+    },
+    {
+      "path": "tests/test_dungeon_motes_config.gd",
+      "sha256": "b00b02a427163b4a2b082a33bc2d212b7db026f27fcb10cd5f57077ee9714b99",
+      "role": "test",
+      "component_ids": [
+        "effect-b-dungeon-motes"
+      ]
+    },
+    {
+      "path": "tests/test_dungeon_motes_state.gd",
+      "sha256": "7e231fec00ca4e45463901eddabc7a978d17aba8a66dbea36ac209ae536b1fb5",
+      "role": "test",
+      "component_ids": [
+        "effect-b-dungeon-motes"
+      ]
+    },
+    {
+      "path": "tests/test_hit_burst_config.gd",
+      "sha256": "761e4ece77701ed1eea5432db4223e43031571baf4e0a88c5f3cd89f87c25e27",
+      "role": "test",
+      "component_ids": [
+        "effect-a-grit-burst"
+      ]
+    },
+    {
+      "path": "tests/test_hit_burst_state.gd",
+      "sha256": "f047c764432bab804087c485003ce22e87a7bb3dad7c32a95ccc751f85b73273",
+      "role": "test",
+      "component_ids": [
+        "effect-a-grit-burst"
+      ]
+    },
+    {
+      "path": "tests/test_input_map.gd",
+      "sha256": "62496aa9cc9086d36e973d665ea759137b99cc9ba69967787f722c9ef32ccd96",
+      "role": "test",
+      "component_ids": [
+        "evidence-harness"
+      ]
+    },
+    {
+      "path": "tests/test_step_dust_config.gd",
+      "sha256": "5d1cb53319d377a1d0baf9eadaa5f627b1c60da22b931daa5cea91c90a54e21d",
+      "role": "test",
+      "component_ids": [
+        "effect-c-step-dust"
+      ]
+    },
+    {
+      "path": "tests/test_step_dust_state.gd",
+      "sha256": "b7786ce24f9cf84ef2c0f79a0e80943cabecc72dcb10d38d37c97f01abf666a9",
+      "role": "test",
+      "component_ids": [
+        "effect-c-step-dust"
+      ]
+    }
+  ],
+  "components": [
+    {
+      "id": "effect-a-grit-burst",
+      "explanation": "Effect A and the event it rides on. Three GPUParticles2D under one Node2D - Flash owns frame one, Grit owns the shape, Dust owns the tail - plus the spike trap whose `fired` signal already existed and was not changed, and the spawner that instances one burst per event rather than reusing a node. The retrigger rule is overlap, which is what stops the second of two close events being silently dropped on a one_shot emitter.",
+      "beat_ids": [
+        "B02",
+        "B03",
+        "B03A",
+        "B04",
+        "B05"
+      ],
+      "files": [
+        "effects/hit_burst.tscn",
+        "effects/hit_burst.gd",
+        "effects/hit_burst_spawner.gd",
+        "features/traps/spike_trap.gd",
+        "features/traps/spike_trap.tscn",
+        "previews/hit_burst_preview.tscn",
+        "previews/hit_burst_preview.gd",
+        "tests/test_hit_burst_config.gd",
+        "tests/test_hit_burst_state.gd"
+      ]
+    },
+    {
+      "id": "effect-b-dungeon-motes",
+      "explanation": "Effect B: ambience, one emitter, sixty motes, no event. Its condition is the scene being loaded with the player alive and it stops on `died`. The feature Effect A does not use is `preprocess = 8.0`, one full lifetime simulated before the first frame is drawn - the one rule in this assignment that no headless run in this repository can see.",
+      "beat_ids": [
+        "B06",
+        "B07",
+        "B07A",
+        "B07B"
+      ],
+      "files": [
+        "effects/dungeon_motes.tscn",
+        "effects/dungeon_motes.gd",
+        "previews/dungeon_motes_preview.tscn",
+        "previews/dungeon_motes_preview.gd",
+        "tests/test_dungeon_motes_config.gd",
+        "tests/test_dungeon_motes_state.gd"
+      ]
+    },
+    {
+      "id": "effect-c-step-dust",
+      "explanation": "Effect C: dust under the feet, on an event this game does not have. `player.gd` has a position, a velocity and a floor check and no footstep signal, so the driver derives the event from distance travelled on the ground - one puff per 24 px, back-dated by the overshoot so the spacing is the same at any frame rate. It is also the only effect that uses `amount_ratio`, 0.6 for a stride against 1.0 for a landing.",
+      "beat_ids": [
+        "B10",
+        "B11"
+      ],
+      "files": [
+        "effects/step_dust.tscn",
+        "effects/step_dust.gd",
+        "effects/step_dust_driver.gd",
+        "previews/step_dust_preview.tscn",
+        "previews/step_dust_preview.gd",
+        "tests/test_step_dust_config.gd",
+        "tests/test_step_dust_state.gd"
+      ]
+    },
+    {
+      "id": "process-shader",
+      "explanation": "Godot's own particle process shader, produced by converting Effect A's Dust material in the editor. Nothing in the game loads it; it is in the project to be read. Dust is the emitter that was converted because it is the only one carrying both a colour ramp and a scale curve, and the two lines that sample them only exist in a generated shader when the material actually has them. The scratch scene holds the verbatim copy of the material that was converted.",
+      "beat_ids": [
+        "B08",
+        "B09"
+      ],
+      "files": [
+        "shaders/particles_generated.gdshader",
+        "previews/step6_scratch.tscn"
+      ]
+    },
+    {
+      "id": "the-room",
+      "explanation": "What the effects are attached to and what drives them in play: the three-trap room, the player who can only walk and jump, the backdrop and audio the contrast decisions were judged against, the pose driver and warning driver that already kept the read-never-write boundary, the F9 vsync key this assignment added, and the project settings that pin the renderer and the logical resolution.",
+      "beat_ids": [
+        "B03",
+        "B07A",
+        "B07B",
+        "B11"
+      ],
+      "files": [
+        "game/main.tscn",
+        "game/main.gd",
+        "game/room_backdrop.gd",
+        "game/room_audio.gd",
+        "game/debug_keys.gd",
+        "features/player/player.gd",
+        "features/player/player.tscn",
+        "features/player/pose_driver.gd",
+        "features/traps/trap_warning_driver.gd",
+        "shaders/trap_warning.gdshader",
+        "project.godot",
+        "assets/sprites/floor_tile.png",
+        "assets/sprites/floor_tile.png.import",
+        "assets/sprites/player.png",
+        "assets/sprites/player.png.import",
+        "assets/sprites/spike_trap.png",
+        "assets/sprites/spike_trap.png.import",
+        "assets/sprites/spike_trap_fired.png",
+        "assets/sprites/spike_trap_fired.png.import",
+        "assets/poses/p1-idle.png",
+        "assets/poses/p1-idle.png.import",
+        "assets/poses/p2-run.png",
+        "assets/poses/p2-run.png.import",
+        "assets/poses/p3-rising.png",
+        "assets/poses/p3-rising.png.import",
+        "assets/poses/p4-falling.png",
+        "assets/poses/p4-falling.png.import",
+        "assets/poses/p8-death.png",
+        "assets/poses/p8-death.png.import",
+        "assets/music-loop.ogg",
+        "assets/music-loop.ogg.import",
+        "assets/sfx-death.ogg",
+        "assets/sfx-death.ogg.import",
+        "assets/sfx-jump.ogg",
+        "assets/sfx-jump.ogg.import",
+        "assets/sfx-slash.ogg",
+        "assets/sfx-slash.ogg.import",
+        "assets/sfx-trap.ogg",
+        "assets/sfx-trap.ogg.import"
+      ]
+    },
+    {
+      "id": "evidence-harness",
+      "explanation": "What the price claims and the footage rest on. The cost script that runs the assignment's four named conditions with an empty-scene control and a twice-run baseline, so it states its own noise floor before reporting any difference; the capture driver that records all three takes and asserts its own outcome before a frame of it counts as evidence; and the input-map check, which is how the F9 key is shown to have added no action.",
+      "beat_ids": [
+        "B11A",
+        "B11B"
+      ],
+      "files": [
+        "tests/cost_effects.gd",
+        "tests/capture_particles.gd",
+        "tests/test_input_map.gd"
+      ]
+    }
+  ],
+  "excerpts": [
+    {
+      "beat_id": "B02",
+      "path": "features/traps/spike_trap.gd",
+      "start_line": 95,
+      "end_line": 102,
+      "text": "\t\tState.FIRING:\n\t\t\twarn_amount = 1.0\n\t\t\t_sprite.texture = TEX_FIRED\n\t\t\tfired.emit()\n\t\t\tfor body in _hurt_area.get_overlapping_bodies():\n\t\t\t\tif body.has_method(\"take_damage\"):\n\t\t\t\t\tbody.take_damage(1)\n\t\t\t\t\tplayer_hit.emit()"
+    },
+    {
+      "beat_id": "B04",
+      "path": "effects/hit_burst.tscn",
+      "start_line": 106,
+      "end_line": 116,
+      "text": "[node name=\"Flash\" type=\"GPUParticles2D\" parent=\".\"]\nmaterial = SubResource(\"CIM_add\")\nemitting = false\namount = 4\nprocess_material = SubResource(\"PPM_flash\")\nlifetime = 0.12\none_shot = true\npreprocess = 0.0\nexplosiveness = 1.0\nlocal_coords = false\nvisibility_rect = Rect2(-48, -64, 96, 96)"
+    },
+    {
+      "beat_id": "B06",
+      "path": "effects/dungeon_motes.tscn",
+      "start_line": 45,
+      "end_line": 55,
+      "text": "[node name=\"DungeonMotes\" type=\"GPUParticles2D\"]\nscript = ExtResource(\"0_condition\")\nemitting = true\namount = 60\nprocess_material = SubResource(\"PPM_motes\")\nlifetime = 8.0\none_shot = false\npreprocess = 8.0\nexplosiveness = 0.0\nlocal_coords = false\nvisibility_rect = Rect2(0, 0, 640, 200)"
+    },
+    {
+      "beat_id": "B08",
+      "path": "shaders/particles_generated.gdshader",
+      "start_line": 159,
+      "end_line": 164,
+      "text": "void process_display_param(inout DisplayParameters parameters, float lifetime) {\n\t// Compile-time add textures.\n\tparameters.scale *= texture(scale_curve, vec2(lifetime)).rgb;\n\tparameters.color *= texture(color_ramp, vec2(lifetime));\n\tparameters.color = rotate_hue(parameters.color, parameters.hue_rotation);\n}"
+    },
+    {
+      "beat_id": "B10",
+      "path": "effects/step_dust_driver.gd",
+      "start_line": 112,
+      "end_line": 115,
+      "text": "\tvar direction: float = signf(x - previous_x)\n\twhile _since_step >= stride_px:\n\t\t_since_step -= stride_px\n\t\t_spawn(RATIO_STRIDE, -direction * _since_step)"
+    },
+    {
+      "beat_id": "B11A",
+      "path": "tests/cost_effects.gd",
+      "start_line": 97,
+      "end_line": 104,
+      "text": "## Distinct effect instances that have existed during this condition. The\n## drivers spawn and free a scene per event, and THAT -- not the particle\n## process, which never runs headless -- is what a non-zero difference here\n## would be made of.\nfunc _count_instances(node: Node) -> void:\n\tfor child in node.get_children():\n\t\tif child.has_method(\"fire\") and child.has_method(\"lifetime\"):\n\t\t\t_instances_seen[child.get_instance_id()] = true"
+    }
+  ],
+  "exclusions": [
+    {
+      "path": "MATERIALS.md",
+      "reason": "Assignment 5's material audit. It sits inside the Godot project because that assignment named the path, but it is a document about the game rather than a file the game loads."
+    },
+    {
+      "path": "shaders/dungeon_surface.gdshader",
+      "reason": "Assignment 5's subject, carried forward unchanged. Its suites still run and still pass, and `git diff` shows godot/shaders/ untouched by this assignment - but shaders and materials are not what this film explains, and claiming them as components would make the ledger say otherwise."
+    },
+    {
+      "path": "shaders/hint_bands.gdshader",
+      "reason": "Assignment 5's subject, carried forward unchanged. Its suites still run and still pass, and `git diff` shows godot/shaders/ untouched by this assignment - but shaders and materials are not what this film explains, and claiming them as components would make the ledger say otherwise."
+    },
+    {
+      "path": "shaders/standard_generated.gdshader",
+      "reason": "Assignment 5's generated reference shader, from a StandardMaterial3D. This film reads the PARTICLE process shader instead; keeping both in scope would invite a reviewer to think the wrong one was converted."
+    },
+    {
+      "path": "scenes/hint_experiment.tscn",
+      "reason": "Assignment 5's subject, carried forward unchanged. Its suites still run and still pass, and `git diff` shows godot/shaders/ untouched by this assignment - but shaders and materials are not what this film explains, and claiming them as components would make the ledger say otherwise."
+    },
+    {
+      "path": "scenes/asset_showcase.tscn",
+      "reason": "Assignment 5's subject, carried forward unchanged. Its suites still run and still pass, and `git diff` shows godot/shaders/ untouched by this assignment - but shaders and materials are not what this film explains, and claiming them as components would make the ledger say otherwise."
+    },
+    {
+      "path": "assets/materials/hint_with_source_color.tres",
+      "reason": "Assignment 5's subject, carried forward unchanged. Its suites still run and still pass, and `git diff` shows godot/shaders/ untouched by this assignment - but shaders and materials are not what this film explains, and claiming them as components would make the ledger say otherwise."
+    },
+    {
+      "path": "assets/materials/hint_without_source_color.tres",
+      "reason": "Assignment 5's subject, carried forward unchanged. Its suites still run and still pass, and `git diff` shows godot/shaders/ untouched by this assignment - but shaders and materials are not what this film explains, and claiming them as components would make the ledger say otherwise."
+    },
+    {
+      "path": "assets/materials/stone_dry.tres",
+      "reason": "Assignment 5's subject, carried forward unchanged. Its suites still run and still pass, and `git diff` shows godot/shaders/ untouched by this assignment - but shaders and materials are not what this film explains, and claiming them as components would make the ledger say otherwise."
+    },
+    {
+      "path": "assets/materials/stone_flooded.tres",
+      "reason": "Assignment 5's subject, carried forward unchanged. Its suites still run and still pass, and `git diff` shows godot/shaders/ untouched by this assignment - but shaders and materials are not what this film explains, and claiming them as components would make the ledger say otherwise."
+    },
+    {
+      "path": "tests/capture_shader.gd",
+      "reason": "Assignment 5's capture driver. This film's driver is tests/capture_particles.gd, which is in evidence-harness."
+    },
+    {
+      "path": "tests/test_materials.gd",
+      "reason": "Assignment 5's subject, carried forward unchanged. Its suites still run and still pass, and `git diff` shows godot/shaders/ untouched by this assignment - but shaders and materials are not what this film explains, and claiming them as components would make the ledger say otherwise."
+    },
+    {
+      "path": "tests/test_trap_shader_driver.gd",
+      "reason": "Assignment 5's subject, carried forward unchanged. Its suites still run and still pass, and `git diff` shows godot/shaders/ untouched by this assignment - but shaders and materials are not what this film explains, and claiming them as components would make the ledger say otherwise."
+    },
+    {
+      "path": "tests/test_trap_warning.gd",
+      "reason": "Assignment 5's warning-window suite. The trap's timings are out of scope here and CHANGE-BRIEF.md section 3 keeps them there; the suite runs unchanged and is cited in TEST-REPORT.md rather than explained."
+    },
+    {
+      "path": "tests/check_assets_3d.gd",
+      "reason": "Assignment 3's 3D asset work, carried across with the showcase scene. No particle effect in this assignment touches it."
+    },
+    {
+      "path": "tests/route_driver.gd",
+      "reason": "walker-ninja's fixed input route, carried across with Assignment 3's files. Its marks are for that level and nothing here uses it."
+    },
+    {
+      "path": "tests/test_keyboard.gd",
+      "reason": "walker-ninja's keyboard smoke test, carried across and superseded by tests/test_input_map.gd, which is in evidence-harness."
+    },
+    {
+      "path": "tools/capture_hint.gd",
+      "reason": "Assignment 5's subject, carried forward unchanged. Its suites still run and still pass, and `git diff` shows godot/shaders/ untouched by this assignment - but shaders and materials are not what this film explains, and claiming them as components would make the ledger say otherwise."
+    },
+    {
+      "path": "tools/capture_materials.gd",
+      "reason": "Assignment 5's subject, carried forward unchanged. Its suites still run and still pass, and `git diff` shows godot/shaders/ untouched by this assignment - but shaders and materials are not what this film explains, and claiming them as components would make the ledger say otherwise."
+    },
+    {
+      "path": "tools/capture_rig.gd",
+      "reason": "Assignment 5's subject, carried forward unchanged. Its suites still run and still pass, and `git diff` shows godot/shaders/ untouched by this assignment - but shaders and materials are not what this film explains, and claiming them as components would make the ledger say otherwise."
+    },
+    {
+      "path": "tools/write_textures.gd",
+      "reason": "The code-written texture generator. It is why this project has no downloaded or generated art to license, and ATTRIBUTION.md says so - but none of the six emitters in this film has a texture at all, so it is not a component of the particle work."
+    },
+    {
+      "path": "tools/setup_input_map.gd",
+      "reason": "One-off that wrote the input map through the engine on 2026-10-23. Not runtime code, and nothing in the film depends on re-running it."
+    },
+    {
+      "path": "assets/models/slime.glb",
+      "reason": "Assignment 3's 3D asset work, carried across with the showcase scene. No particle effect in this assignment touches it."
+    },
+    {
+      "path": "assets/models/slime.glb.import",
+      "reason": "Assignment 3's 3D asset work, carried across with the showcase scene. No particle effect in this assignment touches it."
+    },
+    {
+      "path": "assets/models/spike_trap.glb",
+      "reason": "Assignment 3's 3D asset work, carried across with the showcase scene. No particle effect in this assignment touches it."
+    },
+    {
+      "path": "assets/models/spike_trap.glb.import",
+      "reason": "Assignment 3's 3D asset work, carried across with the showcase scene. No particle effect in this assignment touches it."
+    },
+    {
+      "path": "assets/models/torch.glb",
+      "reason": "Assignment 3's 3D asset work, carried across with the showcase scene. No particle effect in this assignment touches it."
+    },
+    {
+      "path": "assets/models/torch.glb.import",
+      "reason": "Assignment 3's 3D asset work, carried across with the showcase scene. No particle effect in this assignment touches it."
+    },
+    {
+      "path": "assets/textures/hint_bands.png",
+      "reason": "Assignment 5's subject, carried forward unchanged. Its suites still run and still pass, and `git diff` shows godot/shaders/ untouched by this assignment - but shaders and materials are not what this film explains, and claiming them as components would make the ledger say otherwise."
+    },
+    {
+      "path": "assets/textures/hint_bands.png.import",
+      "reason": "Assignment 5's subject, carried forward unchanged. Its suites still run and still pass, and `git diff` shows godot/shaders/ untouched by this assignment - but shaders and materials are not what this film explains, and claiming them as components would make the ledger say otherwise."
+    },
+    {
+      "path": "assets/textures/stone_albedo.png",
+      "reason": "Assignment 5's subject, carried forward unchanged. Its suites still run and still pass, and `git diff` shows godot/shaders/ untouched by this assignment - but shaders and materials are not what this film explains, and claiming them as components would make the ledger say otherwise."
+    },
+    {
+      "path": "assets/textures/stone_albedo.png.import",
+      "reason": "Assignment 5's subject, carried forward unchanged. Its suites still run and still pass, and `git diff` shows godot/shaders/ untouched by this assignment - but shaders and materials are not what this film explains, and claiming them as components would make the ledger say otherwise."
+    },
+    {
+      "path": "assets/textures/wetness_mask.png",
+      "reason": "Assignment 5's subject, carried forward unchanged. Its suites still run and still pass, and `git diff` shows godot/shaders/ untouched by this assignment - but shaders and materials are not what this film explains, and claiming them as components would make the ledger say otherwise."
+    },
+    {
+      "path": "assets/textures/wetness_mask.png.import",
+      "reason": "Assignment 5's subject, carried forward unchanged. Its suites still run and still pass, and `git diff` shows godot/shaders/ untouched by this assignment - but shaders and materials are not what this film explains, and claiming them as components would make the ledger say otherwise."
+    },
+    {
+      "path": "assets/.gitkeep",
+      "reason": "Empty .gitkeep placeholder. It holds a directory in git and contains nothing authored."
+    },
+    {
+      "path": "features/.gitkeep",
+      "reason": "Empty .gitkeep placeholder. It holds a directory in git and contains nothing authored."
+    },
+    {
+      "path": "game/.gitkeep",
+      "reason": "Empty .gitkeep placeholder. It holds a directory in git and contains nothing authored."
+    },
+    {
+      "path": "levels/.gitkeep",
+      "reason": "Empty .gitkeep placeholder. It holds a directory in git and contains nothing authored."
+    },
+    {
+      "path": "scenes/.gitkeep",
+      "reason": "Empty .gitkeep placeholder. It holds a directory in git and contains nothing authored."
+    },
+    {
+      "path": "ui/.gitkeep",
+      "reason": "Empty .gitkeep placeholder. It holds a directory in git and contains nothing authored."
+    }
+  ],
+  "code_result_pairs": [
+    {
+      "code_beat": "B02",
+      "result_beat": "B03",
+      "observation": "C1 RESULT. take-p, PLAYED: held keys through the real input map, nothing teleported. The take asserts three traps fired, four bursts and twenty five step-dust puffs before a frame of it counts.",
+      "media": {
+        "path": "capture/take-p.mp4",
+        "sha256": "1b5a586c73d6dffd41b24237314bb1f812c05646969e1abaecfd5c95e6e12efd"
+      }
+    },
+    {
+      "code_beat": "B04",
+      "result_beat": "B05",
+      "observation": "Effect A's tuning revision 6.0.1, with the author's verdict. Fixture capture from godot/previews/hit_burst_preview.tscn, labelled. The per-frame difference counts are recomputed from the committed frames at build time by scripts/compose_particles_evidence.py.",
+      "media": {
+        "path": "media/B05.png",
+        "sha256": "fcdc632b3bdfc044cc083cc199a17420be1c06ed0aefd7cdc963663b1440ef45"
+      }
+    },
+    {
+      "code_beat": "B06",
+      "result_beat": "B07",
+      "observation": "F4 demonstrated by mutation: the same preview with preprocess set to 0.0 in the scene file and reverted immediately after. Both are FIXTURE captures. Mote pixels are recomputed at build time from the committed frames against frame 340 of the shipped run, which is the same field eight seconds after it stopped - an empty room.",
+      "media": {
+        "path": "media/B07.png",
+        "sha256": "b7cadf51d7dadb8d79b9001498ac10202263ea8a3e8e880e416c59f873e85878"
+      }
+    },
+    {
+      "code_beat": "B08",
+      "result_beat": "B09",
+      "observation": "The two shader lines beside the brief settings they implement, with the engine output those settings produce. Frames 15 and 20 of the kept r1 capture - FIXTURE - where Dust is the only emitter still alive. The deltas are recomputed at build time.",
+      "media": {
+        "path": "media/B09.png",
+        "sha256": "9e7abf4c9936bdf9a1aee39869951030702a67f6c72d044e15a7b1b96d9b5abf"
+      }
+    },
+    {
+      "code_beat": "B10",
+      "result_beat": "B11",
+      "observation": "C5 RESULT. take-p again, the feet. Played: held keys only. The run east and the run west are in one unbroken take, so the mirror is visible rather than claimed.",
+      "media": {
+        "path": "capture/take-p.mp4",
+        "sha256": "1b5a586c73d6dffd41b24237314bb1f812c05646969e1abaecfd5c95e6e12efd"
+      }
+    },
+    {
+      "code_beat": "B11A",
+      "result_beat": "B11B",
+      "observation": "The recorded output of scripts/run-test.sh cost_effects.gd 60 300, drawn verbatim at build time from evidence/a6/cost-effects.txt, above a frame of take-r with three bursts alive. The GPU budgets are NOT settled by this script and the card says so.",
+      "media": {
+        "path": "media/B11B.png",
+        "sha256": "477da9e300ab011d1ca98ecd352f48fa06b9f32857e54741aa07c44bce573905"
+      }
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+Microseconds per frame over the effects-removed baseline, from
+two full runs of scripts/run-test.sh cost_effects.gd 60 300.
+The ORDER is stable across runs and the instances column is
+identical. The microsecond figures are not stable: B moves by
+more between the two runs than the within-run baseline spread
+either run reports. The instances column is the reading that
+survives. None of this is a GPU time, and no budget here is
+settled by it.
+
+condition                       run 1      run 2    instances
+A at its ceiling of 3           +17.8      +19.3           30
+B at steady state                +1.3       +4.3            0
+C while the player runs          +4.8       +8.3           22
+all three                       +27.3      +17.8           55
+
+baseline, two runs each         112.3      110.8
+spread WITHIN a run               0.5        0.5

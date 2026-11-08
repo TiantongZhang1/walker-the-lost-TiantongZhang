@@ -18,7 +18,49 @@ people standing in the room you come home to.
 | Resolution | 640 × 360 logical, 1280 × 720 windowed, `canvas_items` stretch, nearest filtering |
 | Scale convention | 16 px = 1 m |
 | Design document | `../the-lost-gdd/GDD.md` — moves into `design/` when A4 lands |
-| Current tag | `a5` |
+| Current tag | `a6` |
+
+---
+
+## What this repository is at the `a6` tag
+
+**Assignment 6 — Creating Particle Effects with Godot and Claude.** Three
+particle effects in the three-trap room, each with an intent block written
+before it was built, a frame strip read at the project's own window size, and
+a headless suite that proves what a headless suite can prove and says so about
+the rest.
+
+| | **A — the grit burst** | **B — the dungeon motes** | **C — the step dust** |
+|---|---|---|---|
+| Job | one-shot, on the game's own event | ambience | one-shot, on a **derived** event |
+| Event or condition | `signal fired`, `spike_trap.gd:98` | starts with the scene, stops on `signal died` | **none exists** — one puff per 24 px travelled |
+| Node type | **`GPUParticles2D` × 3** under one `Node2D` | **× 1** | **× 2** under one `Node2D` |
+| Scene | `godot/effects/hit_burst.tscn` | `godot/effects/dungeon_motes.tscn` | `godot/effects/step_dust.tscn` |
+| Retrigger | **overlap** — one instance per event | n/a | overlap; the trail is 2–3 puffs |
+| Feature the others lack | — | **`preprocess = 8.0`**, Box emission | **`amount_ratio`** — 0.6 stride, 1.0 landing |
+
+**What this assignment added**, file by file: three effect scenes and three
+preview scenes under `godot/effects/` and `godot/previews/`; two drivers
+(`hit_burst_spawner.gd` and `step_dust_driver.gd`) that read game state and
+write none; `godot/game/debug_keys.gd`, the F9 vsync toggle; six test suites;
+`godot/tests/cost_effects.gd`, which runs the assignment's four named
+conditions with an empty-scene control and a twice-run baseline;
+`godot/tests/capture_particles.gd`, the film's capture driver; and
+`godot/shaders/particles_generated.gdshader`, extracted from a material the
+author converted in the editor and loaded by nothing.
+
+**No game script was changed.** `player.gd`, the input map and the trap's
+state machine and timings are out of scope in `CHANGE-BRIEF.md` §3 and stayed
+out; the effects hang off signals that already existed, or off a position
+delta they measure themselves.
+
+**No texture is used by any of the six emitters.** The look is colour ramps,
+scale curves and a blend mode, so there is nothing to credit and nothing to
+license for this assignment's own work.
+
+**249 checks, 301 results, 0 failures** — the step-dust state suite's 26 run
+at 30, 60 and 144 fps, because a cadence measured at one rate has not been
+measured.
 
 ---
 
@@ -92,6 +134,15 @@ The main scene is `res://game/main.tscn`: the three-trap room.
 |---|---|
 | Walk | **A** / **D**, or **←** / **→** |
 | Jump | **Space**, **W**, or **↑** |
+| **Toggle vsync** | **F9** — prints the mode and the current FPS to the console |
+
+**F9 is a debug key, not a project setting.** Assignment 6 asks for the frame
+rate to be compared with the effects off and on, and for that comparison to be
+made without shipping the game under different settings than the one that was
+measured. It reads the raw keycode off the event and adds no input action:
+`test_input_map.gd` asserts that the map still holds exactly three non-`ui_`
+actions with `DebugKeys` in the tree.
+
 
 Walk into a trap's detection zone and keep walking. The trap turns red for
 0.40 s and then fires; a player who does not react is hit, which is the point —
@@ -117,15 +168,30 @@ resolves it relative to the repository and `GODOT=` overrides it.
 
 | Suite | fps | Checks |
 |---|---|---|
+| `test_hit_burst_config.gd` | 60 | 80 |
+| `test_hit_burst_state.gd` | 60 | 22 |
+| `test_dungeon_motes_config.gd` | 60 | 39 |
+| `test_dungeon_motes_state.gd` | 60 | 19 |
+| `test_step_dust_config.gd` | 60 | 63 |
+| `test_step_dust_state.gd` | 30 · 60 · 144 | 26 each |
+| `cost_effects.gd` | `60 300` | a table, not a pass/fail |
 | `test_materials.gd` | 60 | 48 |
 | `test_trap_shader_driver.gd` | 30 · 60 · 144 | 24 each |
 | `test_trap_warning.gd` | 30 · 60 · 144 | 22 each |
 | `test_input_map.gd` | 60 | 5 |
 | `check_assets_3d.gd` | 60 | ALL PASSED, 12 measurements |
 
-**99 checks, 0 failures**, from a fresh cache with zero import errors. The two
-trap suites run at three pinned frame rates because a duration measured at one
-rate has not been measured. Never add `--rendering-driver` to a test command.
+**Assignment 6's own suites are 249 checks and 301 results, 0 failures**;
+Assignment 5's are 99 more and still pass unchanged. All of it from a fresh
+cache with zero import errors. The step-dust and trap suites run at three
+pinned frame rates because a duration or a cadence measured at one rate has
+not been measured. Never add `--rendering-driver` to a test command.
+
+**`cost_effects.gd` is not a budget.** It measures CPU wall clock in a run
+that draws nothing, which is the control on a prediction — `CHANGE-BRIEF.md`
+§5 predicts every effect reads ≈ 0 ms over an empty scene *by construction*,
+because a `GPUParticles2D`'s process step is a shader on the card. The budgets
+are GPU time from the Visual Profiler, and §4 puts that row under HUMAN.
 
 A headless run uses a dummy renderer and draws nothing: it can show that a
 shader parses, what it declares, and a float on a given frame — never colour.
@@ -134,6 +200,20 @@ and the captures are in `captures/a5/`.
 
 ## The film
 
+`youtube/claude-liam-walker-the-lost-particles-gamedev/` —
+**TheLostParticles_TiantongZhang.mp4**, 3840 × 2160, 30 fps, 20 beats, 9:51.
+Six code-then-result pairs: every code panel is followed by the thing those
+lines produce, and no beat shows both at once. Five beats are engine footage
+from three 4K Movie Maker takes, each of which asserted its own outcome before
+a frame of it counted; four are evidence cards whose every figure is
+recomputed from committed capture frames at build time. Its evidence ledger
+passes the course checker — 66 source files, 40 exclusions, 6 components.
+
+The link, the exact length and the SHA-256 are in `SUBMISSION.md`, which is
+the one place they are recorded so they cannot disagree. Rebuild it with that
+reel's `BUILD-PROMPT.md`.
+
+**Assignment 5's film is still here and still builds:**
 `youtube/claude-liam-walker-the-lost-gamedev/` —
 **TheLostShaders_TiantongZhang.mp4**, 3840 × 2160, 30 fps, 18 beats. Six
 code-then-result pairs: every code panel is followed by the thing those lines
@@ -195,6 +275,33 @@ youtube/          the explainer film and its documents
 | `PROMPTS.md` | The build prompts used, archived |
 
 ## Known limitations
+
+### Assignment 6
+
+1. **No GPU time has been read.** Every budget in `CHANGE-BRIEF.md` §5 and
+   §C.6 — 0.30, 0.20 and 0.10 ms — is still a prediction. The Visual Profiler
+   is the only instrument that can settle them, §4 puts that row under HUMAN,
+   and the film says so three times rather than burying it.
+2. **Effect B and Effect C have not completed a tuning revision.** B's r0
+   verdict was *keep*, with no setting changed; C has a reading and no author
+   verdict. The assignment asks for at least one observation-driven revision
+   per effect, and only Effect A has one.
+3. **Both B and C drift dust below the floor line** — 14–22 % of the motes
+   and 11–29 % of the step dust, measured against a field-off control.
+   Neither is visible in play; both are in `TUNING.md` with candidate
+   one-setting fixes.
+4. **Three effects instead of the two the assignment asks for**, and Effect C
+   is the least settled of them.
+5. **A5's evidence checker fails on `main` by construction**, from the first
+   file this assignment added under `godot/`. The `a5` tag is unaffected and a
+   clone of it still passes; `CHANGE-BRIEF.md` §0.3 verified this by
+   experiment before any of A6 was built.
+6. **One claim in the A6 film overstates its reason.** `FACTCHECK.md` in the
+   reel records it: three of the six emitters carry both a colour ramp and a
+   scale curve, not one. The narration was corrected; `TEST-REPORT.md`, which
+   said the same thing, carries a dated correction rather than a silent edit.
+
+### Assignment 5, carried forward
 
 1. **The slice has no audio and no art beyond code-drawn blocks.** Assignment
    5's boundaries put the player, the HUD and the audio outside this change,
