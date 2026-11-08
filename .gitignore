@@ -97,3 +97,39 @@ __pycache__/
 # before git will look inside it.
 !youtube/*/capture/logs/
 !youtube/*/capture/logs/take-w-inputs.jsonl
+
+# --- Assignment 6's film, claude-liam-walker-the-lost-particles-gamedev ---
+#
+# Same two rules as A5's reel, re-stated for this one's filenames because the
+# `!` exceptions above name individual files: git cannot un-exclude a whole
+# directory's contents once the directory itself is excluded, and a reviewer
+# who clones the tag has to be able to recompute every hash the ledger
+# carries. With these missing, `./art godot-gamedev --check` fails on a clone
+# with `Missing or escaping source: media/B05.png`.
+#
+# The four evidence cards, composed by scripts/compose_particles_evidence.py
+# from committed capture frames and the recorded cost output. Re-run that
+# script and the same bytes come back.
+!youtube/*/media/B05.png
+!youtube/*/media/B07.png
+!youtube/*/media/B09.png
+!youtube/*/media/B11B.png
+# The three encoded takes. The *.mp4 rule above was written for 4K masters;
+# these are 1.6, 3.1 and 2.3 MB, and the ledger hashes two of them as the
+# result half of two code-then-result pairs. The lossless PNG sequences they
+# were encoded from stay out, by the take-*/ rule above.
+!youtube/*/capture/take-p.mp4
+!youtube/*/capture/take-r.mp4
+!youtube/*/capture/take-c.mp4
+# Their input logs. scripts/frame_particles_footage.py computes every number
+# on the five gameplay cards from these at build time.
+!youtube/*/capture/logs/take-p-inputs.jsonl
+!youtube/*/capture/logs/take-r-inputs.jsonl
+!youtube/*/capture/logs/take-c-inputs.jsonl
+
+# scripts/render_takes.py's temporary 4K window override. It is written at the
+# start of a render and removed at the end, so it only ever exists on disk
+# while a capture is running - but a `git add -A` during one would commit it,
+# and scripts/build_particles_ledger.py would inventory it into the film's
+# evidence as a file no clone has.
+godot/override.cfg

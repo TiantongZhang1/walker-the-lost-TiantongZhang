@@ -47,6 +47,16 @@ window/size/window_height_override={h}
 # measured tick counts (a 484, b 1389, c 705, d 1618).
 QUIT_AFTER = {"a": 600, "b": 1500, "c": 900, "d": 1800, "p": 600, "t": 900}
 
+# Assignment 6's driver names its takes p, r and c, and two of those letters
+# already sit in the table above with bounds set for Assignment 1 and 2's
+# takes. A bound that is too low does NOT fail loudly: the engine quits
+# mid-take, the frames already written look perfectly normal, and the only
+# symptom is a missing CAPTURE OK line. That is how it was found -- take p
+# stopped at frame 600 and take c at 900, exactly their entries above.
+# Measured tick counts for this driver: p 639, r 238, c 911.
+PARTICLES_DRIVER = "res://tests/capture_particles.gd"
+QUIT_AFTER_PARTICLES = {"p": 1200, "r": 1500, "c": 2000}
+
 # Assignment 2's film uses a second driver. The default stays Assignment 1's,
 # so that film remains reproducible from this script unchanged.
 DEFAULT_DRIVER = "res://tests/capture_walkthrough.gd"
@@ -56,6 +66,11 @@ def png_size(path: Path) -> tuple[int, int]:
     with path.open("rb") as handle:
         header = handle.read(24)
     return struct.unpack(">II", header[16:24])
+
+
+def quit_after(take: str, driver: str) -> int:
+    table = QUIT_AFTER_PARTICLES if driver == PARTICLES_DRIVER else QUIT_AFTER
+    return table.get(take, 1800)
 
 
 def render(godot: str, take: str, out_root: Path, driver: str = DEFAULT_DRIVER) -> bool:
@@ -71,7 +86,7 @@ def render(godot: str, take: str, out_root: Path, driver: str = DEFAULT_DRIVER) 
         "--script", driver,
         "--write-movie", str(out / "frame.png"),
         "--fixed-fps", "60", "--disable-vsync",
-        "--quit-after", str(QUIT_AFTER.get(take, 1800)),
+        "--quit-after", str(quit_after(take, driver)),
     ]
     print("--- take %s ---" % take, flush=True)
     result = subprocess.run(command, env=env, capture_output=True, text=True)

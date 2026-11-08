@@ -25,7 +25,11 @@ import sys
 # then Assignment 5's single shader take.
 # Both films' captures encode with the same settings, so a frame from either is
 # the same kind of evidence.
-TAKES = ("a", "b", "c", "d", "p", "t", "w")
+# Assignment 6's three takes are p, r and c; two of those letters are shared
+# with earlier films' takes and that is fine here -- this tuple only says
+# which letters to LOOK for under --frames, and each film renders into its own
+# reel directory.
+TAKES = ("a", "b", "c", "d", "p", "r", "t", "w")
 FPS = 60
 WIDTH, HEIGHT = 3840, 2160
 
