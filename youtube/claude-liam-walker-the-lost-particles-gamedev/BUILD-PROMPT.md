@@ -198,6 +198,19 @@ smaller value without complaint and the panel clips anyway.
   over it.
 - `FACTCHECK.md` still matches what the narration says, including the claims
   marked REASONING rather than MEASURED and the one correction it records.
+- **The checker passes in a FRESH CLONE of the tag, not only here.** That is
+  a different check and it has failed twice in this repository's history, both
+  times on line endings that `git status` and `git diff` cannot show you:
+
+  ```bash
+  git clone --branch a6 --single-branch <repo> /tmp/verify-a6
+  cd /tmp/verify-a6 && "$GODOT" --headless --path godot --import
+  cd "$ART" && PYTHONUTF8=1 bash art godot-gamedev --check       /tmp/verify-a6/youtube/claude-liam-walker-the-lost-particles-gamedev       --game /tmp/verify-a6/godot
+  ```
+
+  Before any tag, re-measure every file in `.gitattributes`'s per-file
+  `eol=crlf` list against its bytes on disk. An attribute that was right when
+  it was written goes stale the moment a script rewrites that file.
 
 ## Not done, and not implied
 

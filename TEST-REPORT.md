@@ -1356,6 +1356,55 @@ This is the same shape as `scripts/finalise_beat_timing.py` rewriting
 walker-ninja's beat sheet, recorded in `TOOLCHAIN.md`: a script that is
 correct about its own job and destructive about somebody else's output.
 
+### 5. The clean clone, and the file that moved out from under its attribute
+
+The assignment says to clone the tag into a fresh folder, import once, and
+run everything there, *because a working local folder is not proof that
+everything was posted*. Doing that is what found this, and nothing else
+could have.
+
+The first clean clone of `a6` failed the course checker on its first file:
+
+```
+Godot gamedev evidence FAIL: Source hash mismatch: game/main.tscn
+```
+
+`git status` in the clone was clean. `git diff` printed nothing. Every test
+passed there. The repository was not wrong and the clone was not corrupt —
+**git had converted the line endings on checkout and knew it had**, so
+nothing git reports could see it. Only a tool that reads bytes off disk can,
+and in this repository that tool is the evidence checker.
+
+`.gitattributes` has carried a per-file `text eol=crlf` list since A5, for
+seven files that were CRLF in the author's working tree while the repository
+stored LF. `godot/game/main.tscn` was one of them. Assignment 6 added four
+nodes to it — `DungeonMotes`, `HitBurstSpawner`, `StepDustDriver`,
+`DebugKeys` — through scripts that write LF, so the working copy became
+**3174 bytes, 90 LF, no CR**, while the attribute still asked every checkout
+for **3264**. The ledger hashed 3174. Every clone got 3264.
+
+| | bytes | line endings |
+|---|---|---|
+| working copy, and what the ledger hashed | 3174 | 90 LF |
+| what a clone received | 3264 | 90 CRLF |
+
+Fixed by removing that one line, so `* -text` applies and a checkout writes
+the committed bytes verbatim. The other six were re-measured the same day and
+are all still CRLF on disk, so their lines stand. A5's own comment in that
+file anticipated this from the other direction — *if the author ever
+renormalises these to LF, rebuild the ledger in the same commit* — and the
+case that actually happened needed the attribute dropped instead.
+
+**Verified from a fresh clone of the moved tag**, which is the only place
+this is verifiable: `main.tscn` 3174 bytes, zero import errors, every suite
+green, and
+
+```json
+{"status": "PASS", "source_files": 66, "exclusions": 40, "components": 6,
+ "exact_excerpts": 6, "teaching_contract": "code-then-result-v1",
+ "code_result_pairs": 6}
+```
+
 ### And one wrong claim, corrected rather than hidden
 
 B08's note said `Dust` was the only emitter carrying both a `color_ramp` and a
