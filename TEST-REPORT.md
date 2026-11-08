@@ -1285,10 +1285,17 @@ code-then-result pairs, game-source revision `31fb5a7`. The course checker
 passes:
 
 ```json
-{"status": "PASS", "source_files": 66, "exclusions": 40, "components": 6,
+{"status": "PASS", "source_files": 67, "exclusions": 40, "components": 6,
  "exact_excerpts": 6, "teaching_contract": "code-then-result-v1",
  "code_result_pairs": 6}
 ```
+
+`source_files` was **66** at tag `a6` and is 67 at `a6.1`: the file added is
+`tests/gpu_cost_effects.gd`, placed in the `evidence-harness` component.
+**A file added under `godot/` that belongs to no component and to no
+exclusion stops the ledger builder outright** — it prints `unassociated
+files:` and writes nothing. That is the right failure: the alternative is a
+checker failure at handoff with no hint about which file caused it.
 
 That check verifies hashes, inventory, source lines and associations. It does
 not verify that a claim is true or that a frame shows what the narration says
@@ -1500,3 +1507,29 @@ appear in the sheet at all** - B12, B13 and B14 among them. The *analysis*
 does cover all forty frames and would have reported a defect in any of them;
 only the human-eye backstop is truncated. This is why the per-beat sheet in
 `_qc/BEAT-FRAMES.md` exists and why it is one frame per beat for all twenty.
+
+### Verified again, from a fresh clone of `a6.1`
+
+The line-ending defect in finding 5 is only visible from a clone, so the
+re-cut was verified the same way: `git clone --branch a6.1` into an empty
+directory, `--import`, the checker, and every suite.
+
+```
+clone HEAD = the a6.1 tag   git status in the clone: clean
+import errors: 0
+checker: PASS  67 source files, 40 exclusions, 6 components, 6 pairs
+80 / 22 / 39 / 19 / 63 / 26 at each of 30, 60, 144 / 5
+A5 and A3 unchanged: 48, 22 at each of three rates, 24 at each, ALL PASSED
+no SHADER ERROR or SCRIPT ERROR in any log
+```
+
+**The first attempt reported every suite as FAILED and the repository was
+fine.** `scripts/run-test.sh` resolves the engine relative to the repository
+root — `$here/../Godot_v4.7.2-stable_win64.exe/` — and a clone in a temporary
+directory has no sibling Godot, so the wrapper exited 127 before running
+anything. That is the wrapper's documented behaviour and the reason it checks
+at all: *a wrapper that cannot find the engine runs nothing while looking
+like it ran.* It looked instead like thirteen broken suites. `GODOT=` is the
+documented override and with it every suite is green. Worth recording because
+the failure mode was read backwards for a minute, and the thing that settled
+it was the wrapper's own comment.

@@ -219,7 +219,7 @@ lines produce, and no beat shows both at once. Five beats are engine footage
 from three 4K Movie Maker takes, each of which asserted its own outcome before
 a frame of it counted; four are evidence cards whose every figure is
 recomputed from committed capture frames at build time. Its evidence ledger
-passes the course checker — 66 source files, 40 exclusions, 6 components.
+passes the course checker — 67 source files, 40 exclusions, 6 components. (66 at tag `a6`; the 67th is `tests/gpu_cost_effects.gd`.)
 
 The link, the exact length and the SHA-256 are in `SUBMISSION.md`, which is
 the one place they are recorded so they cannot disagree. Rebuild it with that

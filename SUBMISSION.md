@@ -8,9 +8,15 @@
 
 **GitHub repository URL:** <https://github.com/TiantongZhang1/walker-the-lost-TiantongZhang>
 
-**Git tag and submitted commit SHA:** tag `a6`. A commit cannot carry its own
-SHA, so it is in the Canvas note and is recoverable with
-`git rev-list -n 1 a6`.
+**Git tag and submitted commit SHA:** tag **`a6.1`**. A commit cannot carry
+its own SHA, so it is in the Canvas note and is recoverable with
+`git rev-list -n 1 a6.1`.
+
+There is also a tag `a6`. It is the first cut of the film, whose narration
+said the GPU budgets had not been measured. `a6.1` measures them and re-cuts
+the beat that said so. `a6` is left where it is rather than moved, because
+`TEST-REPORT.md` finding 5 cites what was verified at it — a tag that moves
+takes its own evidence with it.
 
 **Game-source revision shown in the film:** **`31fb5a7`** — *A6 film capture
 driver: three takes, each asserting its own outcome*. Every code panel, every
@@ -110,7 +116,7 @@ walker-ninja-TiantongZhang and the film's locally run narration model.
 **The film.** `youtube/claude-liam-walker-the-lost-particles-gamedev/`.
 Twenty beats, six code-then-result pairs, built with the course-provided
 Brutalist `godot-gamedev` workflow in `walker` mode. Its evidence ledger
-passes the course checker — 66 source files, 40 exclusions, 6 components, 6
+passes the course checker — 67 source files, 40 exclusions, 6 components, 6
 exact excerpts. Five beats are engine footage from three 4K Movie Maker takes,
 each of which asserted its own outcome before a frame of it counted; take r is
 labelled SCRIPTED everywhere it appears, because the ceiling it shows cannot
