@@ -35,7 +35,6 @@
 # commit - scripts/build_lost_ledger.py re-reads every one of them.
 godot/features/traps/spike_trap.gd text eol=crlf
 godot/game/main.gd                 text eol=crlf
-godot/game/main.tscn               text eol=crlf
 godot/shaders/dungeon_surface.gdshader text eol=crlf
 godot/shaders/hint_bands.gdshader      text eol=crlf
 godot/shaders/trap_warning.gdshader    text eol=crlf
@@ -45,3 +44,32 @@ godot/shaders/trap_warning.gdshader    text eol=crlf
 # per file because the split is per file, not per extension - two .gd
 # files here are CRLF and the rest are LF.
 godot/tests/test_trap_warning.gd   text eol=crlf
+
+# 2026-11-08. `godot/game/main.tscn` WAS in the list above and has been
+# removed, because it is no longer CRLF on disk. Assignment 6 added four
+# nodes to it -- DungeonMotes, HitBurstSpawner, StepDustDriver, DebugKeys --
+# through scripts that write LF, so the working copy is now 3174 bytes with
+# 90 LF and no CR. The attribute still said `eol=crlf`, so a clone got 3264
+# bytes, and the A6 ledger -- which hashes the bytes on disk -- failed on it:
+#
+#     Godot gamedev evidence FAIL: Source hash mismatch: game/main.tscn
+#
+# This is the case the note above anticipated from the other direction. The
+# attribute was right when it was written and the file moved out from under
+# it. Removing the line lets `* -text` apply, so a checkout writes the
+# committed bytes verbatim and the hash holds.
+#
+# The remaining six were re-measured on the same day and are all still CRLF
+# on disk, so their lines stand. The check is one command:
+#
+#     python -c "import sys; d=open(sys.argv[1],chr(114)+chr(98)).read();
+#                print(len(d.splitlines()), len(d))" <path>
+#
+#  a file whose byte count exceeds its line count by exactly its line
+#  count is CRLF; one where they differ by less is LF.
+#
+# and it is worth running on every file in this list before any tag, because
+# nothing else in the chain can see the difference: `git status` is clean in
+# the clone and `git diff` prints nothing, since git knows about the
+# conversion it just performed. Only a tool that reads bytes off disk sees
+# it, and in this repository that tool is the course checker.
