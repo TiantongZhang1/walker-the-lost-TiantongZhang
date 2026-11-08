@@ -1037,10 +1037,11 @@ the frame rate reads the display's refresh rate with the effects off and the
 same with them on, because vsync holds it there until a frame actually misses.
 96 particles will not make a 5080 miss.
 
-**No vsync toggle was added to demonstrate that in play.** It would need a new
-action in the input map, and §3 keeps the input map out of scope for this
-assignment. The claim stays an argument in §7 rather than becoming a
-boundary violation.
+**~~No vsync toggle was added to demonstrate that in play.~~** ~~It would need
+a new action in the input map, and §3 keeps the input map out of scope.~~
+**Corrected 2026-11-08: that reasoning was wrong and the key has been added**
+— see "The vsync debug key" below. Reading a raw keycode off the event needs
+no action in the input map, which is what the assignment's own example does.
 
 ## The process shader
 
@@ -1160,3 +1161,91 @@ Nothing about the running game. This shader is not used by anything: it is a
 copy, converted for reading. `godot/effects/hit_burst.tscn` still carries a
 `ParticleProcessMaterial` on all three emitters and its configuration test is
 80 checks, 0 failures.
+
+### Step 7, revised to the assignment's four cases
+
+The first version of `cost_effects.gd` measured three conditions: empty, the
+room with the effects off, and the room with all three on. The assignment
+names four, and the two it named that were missing are the ones that carry the
+information — **Effect A at the most bursts the brief says can be alive at
+once**, and **Effect B in its heaviest state**. Measuring the three effects as
+one lump hid what separates them.
+
+| condition | median µs | mean µs | p90 µs | peak emitters | instances created |
+|---|---|---|---|---|---|
+| empty scene (control) | 3.0 | 2.8 | 3.0 | 0 | 0 |
+| room, all effects REMOVED (1) | 127.0 | 136.8 | 183.0 | 0 | 0 |
+| **A only, held at its ceiling of 3** | 136.5 | 155.5 | 240.0 | **9** | **30** |
+| **B only, steady state** | 123.5 | 137.8 | 188.0 | **1** | **0** |
+| **C only, player running** | 131.5 | 160.6 | 271.0 | **4** | **22** |
+| all three, heaviest | 142.5 | 164.5 | 239.0 | 17 | 55 |
+| room, all effects REMOVED (2) | 119.0 | 136.5 | 205.0 | 0 | 0 |
+
+Baseline, the mean of the two runs with the effects removed: **123.0 µs**.
+Spread between those two runs, which is this instrument's resolution:
+**8.0 µs**.
+
+| effect | over baseline | against the noise |
+|---|---|---|
+| A at its ceiling | **+13.5 µs** | above |
+| B at steady state | **+0.5 µs** | below |
+| C while running | **+8.5 µs** | above |
+| all three | **+19.5 µs** | above |
+
+**Effect A's peak emitter count is 9**, which is three bursts of three
+emitters: the ceiling the brief sets the budget against was actually reached,
+not assumed. The earlier three-case version reported a peak of 1 at one point
+and 8 at another, and neither number told a reader which effect was doing
+what.
+
+### What the split between B and the other two is, and is not
+
+**It is not the particle process.** That never runs here; a headless run uses
+a dummy renderer. §5 predicted ≈ 0 ms over the control for all three by
+construction, and at 13.5 µs — 0.0135 ms against Effect A's 0.30 ms GPU budget
+— the prediction holds for every one of them.
+
+**It is node bookkeeping, and the instances column is the evidence.** Effect B
+is one persistent node that creates nothing: **0 instances, +0.5 µs, below the
+noise floor.** Effects A and C spawn and free a scene per event — **30 and 22
+instances** across 400 frames — and that instantiation is ordinary CPU work
+that a headless run executes in full. It is the only part of these effects a
+headless run can price, and it is what shows above the noise.
+
+That is the sharper form of §7's answer. A GPU effect's headless price is near
+zero *because the process step is on the card*; what remains is whatever the
+effect does on the CPU, and for a one-shot effect that is the instancing. An
+ambience node that allocates once shows nothing at all.
+
+### Still not a budget
+
+Every number in §5 and §C.6 is **GPU time** — 0.30 ms for A, 0.20 for B, 0.10
+for C — and none of them is settled by this script. That is the Visual
+Profiler, on hardware, read by the author, with each effect off and then on at
+its heaviest. §4's evidence split puts that row under HUMAN.
+
+**Effect A's row here is synthetic and the script says so in its own output.**
+Revision 6.0.2 measured that three bursts cannot be alive at once by playing
+this room: the traps are 1.17 s apart at walking speed and a burst lives
+0.60 s, so play reaches one. Holding three alive means emitting `fired`
+directly on a 0.20 s rotation. That is the brief's ceiling, which is the right
+thing to budget against, and it is not a load a player produces.
+
+### The vsync debug key
+
+`godot/game/debug_keys.gd`, on the `DebugKeys` node in `main.tscn`. **F9**
+toggles the window's vsync mode and prints the mode and the current FPS.
+
+The assignment asks for the FPS comparison to be made with a debug key rather
+than a project-setting change, so the shipped game is never running under
+different settings than the one that was measured. §7 argues that with vsync
+on the frame rate reads the display's refresh rate with the effects off and
+the same with them on; the key is what lets that be shown rather than
+asserted.
+
+An earlier section of this report said no vsync key had been added because it
+would need a new action in the input map, which §3 keeps out of scope. **That
+was wrong.** The assignment's own example reads `event.keycode` straight off
+the event and adds no action, and so does this. A headless check confirms the
+input map still holds exactly three non-`ui_` actions — `move_left`,
+`move_right`, `jump` — with `DebugKeys` in the tree.
