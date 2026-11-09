@@ -888,3 +888,12 @@ no GPU time has been read, so every budget in `CHANGE-BRIEF.md` §5 is still a
 prediction; Effect B and Effect C have each had an author verdict but no
 tuning revision; and both of them drift dust below the floor line, 14–22 %
 and 11–29 %, which is in `TUNING.md` and which I could not see in play.
+
+**Update, later on 2026-11-08, after this entry was written.** The first of
+those three is closed: the GPU time has been measured, and every budget is
+met — the whole frame at the design ceiling is 0.022 ms against a combined
+0.60 ms. It is not a clean win, and the way it is not is in
+`CHANGE-BRIEF.md` revision 6.0.6: the same run measures "all three" as
+cheaper than Effect B alone, which cannot be true, so the per-effect figures
+are below the instrument's floor and only the ceiling can be claimed. The
+other two are still open and are still mine to close.
