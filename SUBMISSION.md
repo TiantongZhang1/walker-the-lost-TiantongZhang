@@ -130,8 +130,15 @@ master was rendered.
 `claude-liam-walker-the-lost-particles-gamedev.mp4` —
 **TheLostParticles_TiantongZhang**, H.264 **3840 × 2160**, 30 fps, AAC 48 kHz
 stereo, **619.00 s** (10:19.00), 20 beats, 39,013,712 bytes.
-_URL PENDING — the file is stored in the course media storage and linked from
-`README.md`; it is kept out of GitHub by the assignment's MP4-and-25-MB rule._
+<https://northeastern-my.sharepoint.com/:f:/g/personal/zhang_tiant_northeastern_edu/IgCL96MewzyaRIXNk10qcGW_AVyrjNNiRm9X3um-M1vPqX8?e=FDgBk9>
+
+The link is to the **folder**, which holds the film and `CHECKSUM.txt`
+beside it. It is my Northeastern OneDrive and it requires a Microsoft
+sign-in. **Please download the file rather than using the web preview**
+— a preview re-encodes it and the SHA-256 below will not match.
+
+The film is not in GitHub: the assignment keeps MP4s and anything over
+25 MB out of the repository, and `.gitignore` excludes `exports/`.
 
 **Final film SHA-256:** `d9a8e521248352d96ae48d8b8b3c47812c5b7cd72e007c80f6ca8aa8b8efb36a`
 
