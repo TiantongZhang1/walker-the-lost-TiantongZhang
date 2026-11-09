@@ -11,10 +11,17 @@ extends SceneTree
 ##
 ## **The instrument.** `RenderingServer.viewport_get_measured_render_time_gpu()`
 ## on the root viewport, enabled by `viewport_set_measure_render_time()`.
-## That is the same GPU timestamp query the editor's Visual Profiler reads
-## and displays as its "Render Viewport" row -- the same quantity, taken
+## That is the same quantity the editor's Visual Profiler shows as its
+## "Render Viewport" row -- GPU time for the root viewport -- taken
 ## programmatically instead of by eye, and at full float precision rather
 ## than the editor's two decimal places.
+##
+## **Whether it is literally the same timestamp query has not been checked
+## against engine source, and this script does not claim it.** Both are the
+## renderer's own GPU instrumentation for the same viewport, which is why
+## they are expected to agree. The thing that would settle it is one by-eye
+## reading in the profiler, and `CHANGE-BRIEF.md` revision 6.0.6 section 4
+## keeps that as the outstanding HUMAN item.
 ##
 ## **It refuses to run headless.** A dummy renderer draws nothing, so every
 ## reading would be 0.000 ms and would look exactly like an effect that is
@@ -354,7 +361,9 @@ func _init() -> void:
 	print("player actually produces.")
 	print("")
 	print("Same quantity as the editor's Visual Profiler \"Render Viewport\"")
-	print("GPU row, read through the same timestamp query. Section 4 still")
-	print("asks the author to read ONE of these by eye in the profiler, as a")
-	print("cross-check of the instrument rather than of the effects.")
+	print("GPU row. Whether it is literally the same timestamp query has NOT")
+	print("been checked against engine source and is not claimed here, which")
+	print("is why section 4 still asks the author to read ONE of these by eye")
+	print("in the profiler -- a cross-check of the instrument, not of the")
+	print("effects.")
 	quit(0 if (all_under and labels_true) else 1)

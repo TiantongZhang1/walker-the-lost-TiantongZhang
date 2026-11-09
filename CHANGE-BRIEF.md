@@ -906,11 +906,18 @@ cannot do, and what the brief got wrong about which instrument to use.
 It reads `RenderingServer.viewport_get_measured_render_time_gpu()` on the
 root viewport after enabling `viewport_set_measure_render_time()`.
 
-**That is the same GPU timestamp query the Visual Profiler reads** and
-displays as its "Render Viewport" row — the same quantity, taken
-programmatically instead of by eye, at full float precision instead of the
-editor's two decimal places, and over 400 frames per condition instead of
-one frame picked off a graph.
+**It is the same quantity the Visual Profiler shows as its "Render
+Viewport" row** — GPU time for the root viewport — taken programmatically
+instead of by eye, at full float precision instead of the editor's two
+decimal places, and over 400 frames per condition instead of one frame
+picked off a graph.
+
+**That the two are literally the same timestamp query has not been verified
+against engine source**, and this brief is not going to assert it. Both are
+the renderer's own GPU instrumentation for the same viewport, which is why
+the numbers are expected to agree; the thing that would settle it is one
+by-eye reading in the profiler on the all-three condition, and §4 below
+keeps that as the outstanding HUMAN item for exactly this reason.
 
 It **refuses to run headless**. A dummy renderer draws nothing, so every
 reading would be `0.000` ms, which is indistinguishable from three effects

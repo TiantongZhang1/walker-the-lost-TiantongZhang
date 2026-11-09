@@ -224,5 +224,18 @@ instruction and is labelled as Claude's in the file itself.
   this report: a step that produced output, passed every automatic check, and
   was wrong.
 
-**Changed games since Assignment 2:** No. Same game, same repository, since
-Assignment 2.
+**Changed games since Assignment 2:** **Yes.** On 2026-10-17, using the
+course's one permitted change of game, with the written justification in
+`FRICTIONAL.md`. Assignments 1-3 were submitted from
+`walker-ninja-TiantongZhang` under the tags `a2-submitted` and `a3`, and that
+repository has not been modified since. Per the rule the tags continue here;
+`a5` is this repository's first tag and `a6.1` is this submission's.
+
+Assignment 6 itself changed nothing: same game and same repository as
+Assignment 4 and 5. **This field answered "No" until 2026-11-08**, which was
+wrong — it answered "did Assignment 6 change games", which is not the
+question asked. `FRICTIONAL.md` records the requirement in those words:
+*the submission note for Assignment 4 must answer "Changed games since
+Assignment 2" with yes.* Assignment 5's note did. This one is corrected
+rather than quietly fixed, because a submission field that drifted back to a
+wrong answer between two assignments is worth a reader knowing about.

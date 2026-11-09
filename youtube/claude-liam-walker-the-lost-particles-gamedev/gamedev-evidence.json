@@ -477,7 +477,7 @@
     },
     {
       "path": "tests/gpu_cost_effects.gd",
-      "sha256": "1beccea430da118621674ba3986415b649f92516b88f360f63a9c45bd765bd14",
+      "sha256": "e5a6e22bbbff4257525410863f7c8e396cb99008684ad1613be2f05a1c086394",
       "role": "test",
       "component_ids": [
         "evidence-harness"
