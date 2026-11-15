@@ -47,10 +47,20 @@ EXPECT = {
     "godot/features/traps/spike_trap.gd:50": "warn_amount",
     "godot/features/traps/spike_trap.gd:51": "var state",
     "godot/features/traps/spike_trap.gd:98": "fired.emit()",
+    # A7. The cycle's frame rate is derived from these two numbers, so if
+    # either moves the brief's arithmetic in section 4 is wrong before any
+    # key is.
+    "godot/features/player/player.gd:19": "SPEED := 96.0",
+    "godot/features/player/player.gd:20": "JUMP_VELOCITY",
+    "godot/game/main.tscn:78": "stride_px = 24.0",
     "godot/features/traps/trap_warning_driver.gd:1": "class_name TrapWarningDriver",
     "godot/tests/test_trap_warning.gd:33": "process_priority",
-    # A6 replaced the wrapper, which moved this line from 25 to 42.
-    "scripts/run-test.sh:42": "GODOT:=",
+    # A6 replaced the wrapper, which moved this line from 25 to 42. A7 added
+    # the `Failed loading resource` rule and its ten lines of comment, which
+    # moved it again, to 51. This entry has now drifted twice for the same
+    # reason -- the wrapper's header grows -- and both times the checker
+    # caught it rather than CLAUDE.md going quietly stale.
+    "scripts/run-test.sh:51": "GODOT:=",
 }
 
 # path -> substrings the file must contain somewhere. For scenes, shaders and
