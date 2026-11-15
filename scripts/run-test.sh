@@ -14,6 +14,15 @@
 #      GDScript type-inference error killed the whole audio node on
 #      2026-11-05 while the suite went on reporting 22 checks, 0 failures.
 #
+# and the one thing Assignment 7 adds:
+#
+#   4b. fails on "Failed loading resource" as well. A clip whose scene or
+#       sheet will not load prints that line and otherwise lets the test carry
+#       on against a half-built scene -- every assertion that does not touch
+#       the missing resource still passes, and the summary is green. This is
+#       the same failure shape as 4, one layer further out: the engine keeps
+#       going after telling you it could not do the thing you asked.
+#
 # and adds the two Assignment 6 asks for:
 #
 #   5. a `realtime` mode that runs WITHOUT --fixed-fps, for tests that wait
@@ -68,5 +77,5 @@ timeout "${3:-120}" "$GODOT" --headless "${fps_args[@]}" --path godot \
   --script "res://tests/$1" 2>&1 | tee "$log"
 status=$?
 
-if grep -qE "SHADER ERROR|SCRIPT ERROR" "$log"; then status=1; fi
+if grep -qE "SHADER ERROR|SCRIPT ERROR|Failed loading resource" "$log"; then status=1; fi
 exit $status
