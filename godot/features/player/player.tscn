@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://features/player/player.gd" id="1_player"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player_sheet.png" id="2_sheet"]
 [ext_resource type="Script" path="res://features/player/pose_driver.gd" id="3_pose"]
-[ext_resource type="Texture2D" path="res://assets/sprites/player.png" id="2_sprite"]
+[ext_resource type="AnimationLibrary" path="res://animations/player.tres" id="4_anim"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
 size = Vector2(10, 28)
@@ -13,10 +14,21 @@ collision_mask = 1
 script = ExtResource("1_player")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("2_sprite")
+texture = ExtResource("2_sheet")
+hframes = 6
+vframes = 2
+frame = 6
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_body")
 
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+root_node = NodePath("..")
+callback_mode_process = 0
+libraries = {
+&"": ExtResource("4_anim")
+}
+
 [node name="PoseDriver" type="Node" parent="."]
+process_mode = 4
 script = ExtResource("3_pose")

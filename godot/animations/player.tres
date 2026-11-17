@@ -1,0 +1,152 @@
+; Assignment 7 — the player's animation library.
+;
+; Written as resource TEXT, so every key is a number in a reviewable diff.
+; CHANGE-BRIEF.md §4 fixes the cycle, §6 the phase table; the keys below come
+; from those tables and never the other way round.
+;
+; Sheet: assets/sprites/player_sheet.png, 32 x 32 cells, hframes 6 x
+; vframes 2. Cells 0-5 are the run, 6 idle, 7 rising, 8 falling, 9 dead,
+; 10 braced, 11 deliberately blank.
+;
+; `update = 1` is Animation.UPDATE_DISCRETE. A frame track left at the
+; default 0 (UPDATE_CONTINUOUS) interpolates between cell numbers and sweeps
+; the sprite through every cell between keys, including the blank one, with
+; no error. That is predicted failure H1 in the brief.
+;
+; `loop_mode = 1` is Animation.LOOP_LINEAR, `0` is LOOP_NONE. Godot 3's
+; boolean `loop` would load here without complaint and leave this at 0.
+
+[gd_resource type="AnimationLibrary" load_steps=7 format=3 uid="uid://cq7a7lostanim"]
+
+; --- run -------------------------------------------------------------------
+; 6 frames at 12 fps = 0.500 s, which is two 24 px strides at SPEED 96. The
+; last key is 5, NOT 0: a duplicate at the wrap would hold cell 0 for two
+; frame periods and the character would limp once per cycle. The gap from the
+; last key to length is 0.500 - 0.416667 = 0.083333 = one key interval.
+[sub_resource type="Animation" id="Animation_run"]
+resource_name = "run"
+length = 0.5
+loop_mode = 1
+step = 0.0833333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.0833333, 0.1666667, 0.25, 0.3333333, 0.4166667),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5]
+}
+
+; --- idle ------------------------------------------------------------------
+; One key, held. It loops so that nothing has to special-case a clip that
+; ends; a one-key LOOP_LINEAR clip shows the same cell forever.
+[sub_resource type="Animation" id="Animation_idle"]
+resource_name = "idle"
+length = 0.5
+loop_mode = 1
+step = 0.0833333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [6]
+}
+
+; --- rising / falling ------------------------------------------------------
+[sub_resource type="Animation" id="Animation_rising"]
+resource_name = "rising"
+length = 0.5
+loop_mode = 1
+step = 0.0833333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [7]
+}
+
+[sub_resource type="Animation" id="Animation_falling"]
+resource_name = "falling"
+length = 0.5
+loop_mode = 1
+step = 0.0833333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [8]
+}
+
+; --- dead ------------------------------------------------------------------
+; LOOP_NONE: death is not a cycle.
+[sub_resource type="Animation" id="Animation_dead"]
+resource_name = "dead"
+length = 0.5
+loop_mode = 0
+step = 0.0833333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [9]
+}
+
+; --- RESET -----------------------------------------------------------------
+; The default pose. Godot gives this name a meaning: with Reset On Save the
+; scene is saved as if seeked to it. Without it, a scene saved mid-swing
+; keeps the swing. The sword tracks join it in Step 4.
+[sub_resource type="Animation" id="Animation_RESET"]
+resource_name = "RESET"
+length = 0.0333333
+loop_mode = 0
+step = 0.0333333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [6]
+}
+
+[resource]
+_data = {
+&"RESET": SubResource("Animation_RESET"),
+&"dead": SubResource("Animation_dead"),
+&"falling": SubResource("Animation_falling"),
+&"idle": SubResource("Animation_idle"),
+&"rising": SubResource("Animation_rising"),
+&"run": SubResource("Animation_run")
+}
