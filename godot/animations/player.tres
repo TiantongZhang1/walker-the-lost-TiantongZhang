@@ -16,7 +16,7 @@
 ; `loop_mode = 1` is Animation.LOOP_LINEAR, `0` is LOOP_NONE. Godot 3's
 ; boolean `loop` would load here without complaint and leave this at 0.
 
-[gd_resource type="AnimationLibrary" load_steps=7 format=3 uid="uid://cq7a7lostanim"]
+[gd_resource type="AnimationLibrary" load_steps=8 format=3 uid="uid://cq7a7lostanim"]
 
 ; --- run -------------------------------------------------------------------
 ; 6 frames at 12 fps = 0.500 s, which is two 24 px strides at SPEED 96. The
@@ -119,6 +119,75 @@ tracks/0/keys = {
 "values": [9]
 }
 
+; --- swing -----------------------------------------------------------------
+; CHANGE-BRIEF.md section 6's phase table, in frames at 30 fps, turned into
+; key times. The table is the design; these are derived from it. If the feel
+; is wrong, the TABLE changes and these follow -- never the other way round.
+;
+;   startup   frames 0-5    0.000 - 0.200   locked, nothing may interrupt
+;   active    frames 6-9    0.200 - 0.333   Hitbox.monitoring is true
+;   recovery  frames 10-17  0.333 - 0.600   locked, next attack buffers
+;   end       frame 18      0.600           movement returns
+;
+; rotation_degrees: 0 is the blade pointing straight UP out of the hand,
+; positive is clockwise, which for a figure facing right is forward.
+;
+; Every transition is 1.0, linear, in r0 on purpose. Easing the startup is
+; the obvious first tuning change and r0 leaves it somewhere to go.
+[sub_resource type="Animation" id="Animation_swing"]
+resource_name = "swing"
+length = 0.6
+loop_mode = 0
+step = 0.0333333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SwordArm:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.3333333, 0.4, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [20.0, -80.0, 85.0, 75.0, 20.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("SwordArm/Hitbox:monitoring")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.3333333),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, true, false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("SwordArm/Blade:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Sprite2D:frame")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [10, 6]
+}
+
 ; --- RESET -----------------------------------------------------------------
 ; The default pose. Godot gives this name a meaning: with Reset On Save the
 ; scene is saved as if seeked to it. Without it, a scene saved mid-swing
@@ -140,6 +209,42 @@ tracks/0/keys = {
 "update": 1,
 "values": [6]
 }
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("SwordArm:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [20.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("SwordArm/Blade:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("SwordArm/Hitbox:monitoring")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
 
 [resource]
 _data = {
@@ -148,5 +253,6 @@ _data = {
 &"falling": SubResource("Animation_falling"),
 &"idle": SubResource("Animation_idle"),
 &"rising": SubResource("Animation_rising"),
-&"run": SubResource("Animation_run")
+&"run": SubResource("Animation_run"),
+&"swing": SubResource("Animation_swing")
 }
