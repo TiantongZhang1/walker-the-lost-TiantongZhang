@@ -254,15 +254,24 @@ goes in §6 and flows down to the keys, never the other way round.]**
 - **Startup 0.200 s** is half the trap's 0.40 s warning window — long enough to
   be read, short enough not to feel broken.
 
-**Rotation keys** (`SwordArm:rotation_degrees`, linear interpolation):
+**Rotation keys** (`SwordArm:rotation_degrees`, linear interpolation).
+**The convention: 0° is the blade pointing straight up out of the hand**, and
+positive is clockwise, which for a figure facing right is forward. It is
+stated because the numbers are meaningless without it — and because an
+earlier draft of this table described 20° as "blade down and forward", which
+is 160°, not 20°. Corrected 2026-11-16 before any key was written.
 
 | Frame | Time | Degrees | Why |
 |---|---|---|---|
-| 0 | 0.000 | **20** | rest, blade down and forward |
-| 6 | 0.200 | **−80** | fully wound back; end of startup |
-| 10 | 0.333 | **85** | swept through; end of active |
-| 12 | 0.400 | **75** | overshoot settles |
+| 0 | 0.000 | **20** | rest: blade up, shouldered, tipped slightly forward |
+| 6 | 0.200 | **−80** | fully wound back, almost horizontal behind; end of startup |
+| 10 | 0.333 | **85** | swept through to horizontal in front; end of active |
+| 12 | 0.400 | **75** | the overshoot settles back |
 | 18 | 0.600 | **20** | back to rest |
+
+**Every transition is linear (1.0) in r0.** Easing the startup is the obvious
+first tuning change and §9 leaves it somewhere to go; shipping r0 already
+eased would mean the tuning loop had nothing to measure.
 
 **Discrete tracks:**
 
