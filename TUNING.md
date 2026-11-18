@@ -342,3 +342,102 @@ setting in a scene, which is a bigger decision than a tuning step.
 > _TO FILL IN — run the game, hold D and run across the room, then jump.
 > Is the dust something you notice without looking for it? Is the landing
 > puff bigger than a stride's? r1a, r1b, both, or neither?_
+
+
+---
+
+# Assignment 7 — the clips, one change at a time
+
+Same five parts as above, same rule: **my verdict in the running game
+decides.** Assignment 7 adds one more, because this assignment's strips can
+be measured as well as read — a pixel difference between consecutive captured
+frames is a fact, and it goes beside the reading rather than instead of it.
+
+---
+
+## 2026-11-18 — the swing, r0 → r1. There is no sword in the art.
+
+### 1. What I saw, in the running game, before Claude read anything
+
+> 跑步还行，但挥刀的时候根本看不见刀
+>
+> [the run is okay, but when swinging you can't see the sword at all]
+
+Played at the project's window size with the game launched from the editor
+binary: A/D to walk, space to jump, J to swing.
+
+### 2. What the capture measures
+
+`captures/swing/r0-strip.png`, and the per-frame difference
+`tools/build_anim_strips.py` prints:
+
+| capture frame | table frame | pixels changed |
+|---|---|---|
+| 10 | 0 | 1524 |
+| 16 | 6 | 1376 |
+| 22 | 12 | 1376 |
+| 28 | 18 | 1524 |
+| every other frame | — | **0** |
+
+Two things that are facts rather than opinions. `UPDATE_DISCRETE` holds in a
+real render: nothing changes between keys. And **the active window closing
+changes no pixel at all** — table frame 10 is identical to table frame 6,
+because a hitbox is invisible. The strip cannot show that boundary, which is
+why `test_swing_edges.gd` asserts it instead.
+
+### 3. Claude's reading, and where it was wrong
+
+`CHANGE-BRIEF.md` revision 7.0.1 §6 said, in Claude's words:
+
+> the character's own art already carries a weapon in `p6-windup` and
+> `p7-live`, and adding a second one on a pivot would have drawn two.
+
+**That is false, and the author's playtest is what caught it.** Looking at
+the two cells enlarged, with the light-grey pixels counted:
+
+| cell | light-grey px | what it actually is |
+|---|---|---|
+| 1 idle | 78 | boots, forearm |
+| 5 windup | 113 | a **raised arm** behind the head — no blade |
+| 6 live | 98 | an extended arm, legs apart — **no blade** |
+
+These are `walker-ninja`'s poses. That game's character fought **unarmed**;
+windup and live are martial-arts poses. Nothing in them is a sword, and a
+difference of 381 and 369 pixels against idle is a difference in *stance*,
+not in weapon.
+
+The `SwordArm` / `Blade` rig existed in the original §2.2 and revision 7.0.1
+**deleted it on this false premise.** It comes back.
+
+### 4. The change
+
+One thing: **restore the blade as a cutout rig part under `Rig`.**
+
+- `Rig/SwordArm`, a `Node2D` pivot at the shoulder, so `Rig.scale.x` flips it
+  with the character.
+- `Rig/SwordArm/Blade`, a `Sprite2D` whose hilt sits on the pivot.
+- The blade is drawn by `tools/make_sprites.py` **in the character's own
+  palette** — `#9AA7BD` and `#5E6472`, the two greys already in every pose —
+  so it reads as the same character's steel and not as a pasted-on object.
+- `swing` gains two tracks: `SwordArm:rotation_degrees`, continuous, sweeping
+  the arc the original §6 table specified; and `SwordArm/Blade:visible`,
+  discrete. Every other clip and `RESET` hide it.
+
+**No pose is edited.** The art stays exactly what GPT-6 produced; the blade is
+a separate sprite on a separate node, which is what a cutout rig is for.
+
+### 5. Claude's prediction for r1, written before the recapture
+
+- The per-frame difference at table frames 0, 6, 12 and 18 will **grow**,
+  because the blade's rotation now changes the picture on those frames too.
+- Frames that changed by **0** will stop being 0: the rotation track is
+  continuous, so the blade moves on *every* frame between keys even though
+  the body cell does not. That is the clearest single piece of evidence that
+  a rig clip and a frame clip are different mechanisms.
+- The active window closing will **still** change nothing attributable to the
+  hitbox, because a hitbox is still invisible. If the strip starts showing
+  that boundary, something other than the hitbox moved.
+
+### 6. My verdict in the running game
+
+_To be written by the author after playing r1._
