@@ -9,9 +9,9 @@ Every fact carries the file it came from. Check them; do not trust them.
 | Fact | Value | Reference |
 |---|---|---|
 | Engine, renderer | Godot **4.7.2.stable.official** `ed1daf0bf`, **Forward+** | the banner every `scripts/run-test.sh` run prints; `godot/project.godot:15` |
-| Main scene, resolution | `res://game/main.tscn`; 640 × 360, nearest-neighbour | `godot/project.godot:14` `:19` `:59` |
+| Main scene, resolution | `res://game/main.tscn`; 640 × 360, nearest-neighbour | `godot/project.godot:14` `:19` `:65` |
 | **Physics tick** | **60** — `physics_ticks_per_second` is unset, so the engine default | `godot/project.godot`, no `[physics]` section |
-| Player | 16 px = 1 m; `SPEED = 96.0`, `JUMP_VELOCITY = -260.0`, `GRAVITY`, `health`, `signal died` | `godot/features/player/player.gd:13` `:19` `:20` `:21` `:23` `:16` |
+| Player | 16 px = 1 m; `SPEED = 96.0`, `JUMP_VELOCITY = -260.0`, `GRAVITY`, `health`, `signal died` | `godot/features/player/player.gd:26` `:36` `:37` `:38` `:45` `:29` |
 | Step-dust stride | `stride_px = 24.0` — the cycle's frame rate is derived from it | `godot/game/main.tscn:78` |
 | Trap timings | 0.40 + 0.18 + 0.22 + 0.60 = **1.40 s** | `godot/features/traps/spike_trap.gd:39` `:40` `:41` `:42` |
 
@@ -20,8 +20,7 @@ renumbers nodes. `tools/check_claude_refs.py` asserts these both ways.
 
 ### The two clips, and the state machine that plays them
 
-Both live in `godot/animations/player.tres`, on `player.tscn`;
-`CHANGE-BRIEF.md` §3–§7 holds the cells, cycle spec, phase table, transitions.
+Both live in `godot/animations/player.tres`, on `player.tscn`; `CHANGE-BRIEF.md` §3–§7 and revision 7.0.1 hold the cells, cycle spec, phase table and transitions.
 
 | | **`run` — the cycle** | **`swing` — the committing action** |
 |---|---|---|
@@ -88,8 +87,9 @@ runtime**; effect settings live in `godot/effects/`. Every prediction and
 `Player/AnimationPlayer` is that node for all of them: `Rig:position:y`,
 `Rig/Body:frame`, both legs' `rotation_degrees` and `visible`, and
 `Hitbox:monitoring`. `Rig/Body.texture` is set once in the scene, never at
-runtime. `player_anim.gd` calls `play()` and writes `flip_h`, which **no clip
-keys** — `CHANGE-BRIEF.md` §5 states that wrinkle, not hides it.
+runtime. `player_anim.gd` calls `play()` and writes `Rig.scale.x` (facing),
+which **no clip keys**; it runs on the **physics** tick, like the mixer and
+like `player.gd`. `CHANGE-BRIEF.md` §5 states that wrinkle, not hides it.
 
 ## Godot 4 names
 

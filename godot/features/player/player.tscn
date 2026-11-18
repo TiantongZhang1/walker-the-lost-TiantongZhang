@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://features/player/player.gd" id="1_player"]
 [ext_resource type="Texture2D" path="res://assets/sprites/player_sheet.png" id="2_sheet"]
-[ext_resource type="Script" path="res://features/player/pose_driver.gd" id="3_pose"]
+[ext_resource type="Script" path="res://features/player/player_anim.gd" id="3_anim"]
 [ext_resource type="AnimationLibrary" path="res://animations/player.tres" id="4_anim"]
 [ext_resource type="Texture2D" path="res://assets/sprites/leg_front.png" id="5_legf"]
 [ext_resource type="Texture2D" path="res://assets/sprites/leg_back.png" id="6_legb"]
@@ -59,6 +59,5 @@ libraries = {
 &"": ExtResource("4_anim")
 }
 
-[node name="PoseDriver" type="Node" parent="."]
-process_mode = 4
-script = ExtResource("3_pose")
+[node name="PlayerAnim" type="Node" parent="."]
+script = ExtResource("3_anim")

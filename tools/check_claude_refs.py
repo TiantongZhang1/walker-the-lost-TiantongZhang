@@ -27,13 +27,13 @@ EXPECT = {
     "godot/project.godot:14": "main_scene",
     "godot/project.godot:15": "Forward Plus",
     "godot/project.godot:19": "viewport_width",
-    "godot/project.godot:59": "default_texture_filter",
-    "godot/features/player/player.gd:13": "16 px = 1 m",
+    "godot/project.godot:65": "default_texture_filter",
+    "godot/features/player/player.gd:26": "16 px = 1 m",
     # A6: the state Effect B reads, and the number Effect A's grit falls at.
-    "godot/features/player/player.gd:16": "signal died",
-    "godot/features/player/player.gd:21": "const GRAVITY",
-    "godot/features/player/player.gd:23": "var health",
-    "godot/features/player/player.gd:48": "died.emit()",
+    "godot/features/player/player.gd:29": "signal died",
+    "godot/features/player/player.gd:38": "const GRAVITY",
+    "godot/features/player/player.gd:45": "var health",
+    "godot/features/player/player.gd:127": "died.emit()",
     "godot/features/traps/spike_trap.gd:27": "enum State",
     # A6: the four timings whose sum is the 1.40 s cycle that bounds how many
     # Effect A bursts can be alive at once. CHANGE-BRIEF.md section 1.4, A4.
@@ -47,11 +47,16 @@ EXPECT = {
     "godot/features/traps/spike_trap.gd:50": "warn_amount",
     "godot/features/traps/spike_trap.gd:51": "var state",
     "godot/features/traps/spike_trap.gd:98": "fired.emit()",
+    # A7. Every player.gd line below moved when the state machine was added
+    # (Step 5) and project.godot's shifted when the `attack` action was. Eight
+    # DRIFT reports in one run, every one of them a line that moved under a
+    # reference that still pointed at the old number.
+    #
     # A7. The cycle's frame rate is derived from these two numbers, so if
     # either moves the brief's arithmetic in section 4 is wrong before any
     # key is.
-    "godot/features/player/player.gd:19": "SPEED := 96.0",
-    "godot/features/player/player.gd:20": "JUMP_VELOCITY",
+    "godot/features/player/player.gd:36": "SPEED := 96.0",
+    "godot/features/player/player.gd:37": "JUMP_VELOCITY",
     "godot/game/main.tscn:78": "stride_px = 24.0",
     "godot/features/traps/trap_warning_driver.gd:1": "class_name TrapWarningDriver",
     "godot/tests/test_trap_warning.gd:33": "process_priority",

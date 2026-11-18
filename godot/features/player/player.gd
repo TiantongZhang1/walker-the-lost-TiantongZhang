@@ -1,34 +1,92 @@
 class_name Player
 extends CharacterBody2D
 
-## The Lost's player, cut to the minimum Assignment 5 needs.
+## The Lost's player.
 ##
-## Move and jump, and enough health for a spike trap to mean something. The
-## GDD's hold-attack combo, MP magic and dodge roll are NOT here: Assignment 5
-## grades shaders, and CHANGE-BRIEF.md's boundaries say movement and input are
-## not to be changed by this assignment. Building unneeded systems now would
-## only give that boundary more to not touch. Recorded as a limitation in
-## FRICTIONAL.md rather than left to look like an oversight.
+## Move and jump, enough health for a spike trap to mean something, and, from
+## Assignment 7, **one committing attack**. The GDD's three-hit combo, MP
+## magic and dodge roll are still not here; `GDD.md:393` lists the full state
+## machine and this builds five of its states.
+##
+## **Assignment 7 changes movement, and `CHANGE-BRIEF.md` §11 names the
+## change before it happens.** Speed, jump velocity, gravity and the existing
+## bindings are untouched. What is new is that a swing LOCKS movement until
+## the clip ends, which is `GDD.md:198` in code: *"The combo is committed:
+## once a swing starts it finishes, so holding attack is a real risk and
+## letting go is a real choice."*
+##
+## **This script owns the state machine, because locking movement is
+## gameplay.** `player_anim.gd` reads it and plays clips; it writes nothing
+## here. The one thing that crosses the other way is the clip's own clock:
+## this script listens to `AnimationPlayer.animation_finished` to learn that
+## the swing is over, and reads `current_animation_position` to tell startup
+## and active from recovery. That is the game reading a node in its own
+## scene, and it is the measurement `CHANGE-BRIEF.md` §8 is about.
 ##
 ## Scale: 16 px = 1 m, so this 28 px sprite is a 1.75 m adventurer.
 
 signal health_changed(current: int, maximum: int)
 signal died
 
+## What the player is committed to. Presentation reads it; nothing outside
+## this script writes it.
+enum Action { NONE, SWING }
+
 const MAX_HEALTH := 5
 const SPEED := 96.0           # 6 m/s
 const JUMP_VELOCITY := -260.0
 const GRAVITY := 900.0
 
+const SWING_CLIP := "swing"
+## CHANGE-BRIEF.md §6: recovery begins on frame 10 at 30 fps. A second
+## attack is ignored before this and buffered after it.
+const RECOVERY_START := 0.3333333
+
 var health := MAX_HEALTH
+var action := Action.NONE
+## Increments on every swing that actually starts. `player_anim.gd` watches
+## it to know a NEW swing began, because `AnimationPlayer.play()` called with
+## the name already playing resumes instead of restarting.
+var swing_count := 0
+
+var _buffered_attack := false
+
+@onready var _anim: AnimationPlayer = $AnimationPlayer
+
+
+func _ready() -> void:
+	_anim.animation_finished.connect(_on_animation_finished)
+
+
+## True while the swing owns the player. Read by `_physics_process` every
+## physics tick, which is the tick the active window is read on.
+func is_locked() -> bool:
+	return action == Action.SWING
 
 
 func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity.y += GRAVITY * delta
 
+	if is_locked():
+		# Committed. No move, no turn, no jump. A second attack is ignored
+		# in startup and active and buffered in recovery -- the phase comes
+		# from the clip's own playhead, not from a timer kept here.
+		velocity.x = 0.0
+		if Input.is_action_just_pressed("attack") \
+				and _anim.current_animation == SWING_CLIP \
+				and _anim.current_animation_position >= RECOVERY_START:
+			_buffered_attack = true
+		move_and_slide()
+		return
+
 	if Input.is_action_just_pressed("jump") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
+
+	if Input.is_action_just_pressed("attack") and is_on_floor() and health > 0:
+		_start_swing()
+		move_and_slide()
+		return
 
 	var direction := Input.get_axis("move_left", "move_right")
 	if is_zero_approx(direction):
@@ -39,10 +97,31 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 
+func _start_swing() -> void:
+	action = Action.SWING
+	swing_count += 1
+	velocity.x = 0.0
+
+
+func _on_animation_finished(name: StringName) -> void:
+	if name != SWING_CLIP:
+		return
+	action = Action.NONE
+	if _buffered_attack and health > 0 and is_on_floor():
+		_buffered_attack = false
+		_start_swing()
+	else:
+		_buffered_attack = false
+
+
 func take_damage(amount: int) -> void:
 	if health <= 0:
 		return
 	health = maxi(health - amount, 0)
 	health_changed.emit(health, MAX_HEALTH)
 	if health == 0:
+		# Death aborts the swing. Committed means committed to the swing, not
+		# to finishing it after dying -- CHANGE-BRIEF.md §7's interrupt table.
+		action = Action.NONE
+		_buffered_attack = false
 		died.emit()

@@ -685,8 +685,11 @@ superseded.
 | `Rig/LegFront`, `Rig/LegBack` | `AnimationPlayer` | `rotation_degrees`, `visible` |
 | `Hitbox` | `AnimationPlayer` | `monitoring` |
 
-`Rig/Body.texture` is set once in the scene and never written at runtime. The
-`flip_h` wrinkle of §5 stands, on `Rig/Body`.
+`Rig/Body.texture` is set once in the scene and never written at runtime.
+**§5's `flip_h` wrinkle becomes `Rig.scale.x`.** Flipping only the body
+would leave the cut-out legs swinging the wrong way, so facing is written
+on the rig root instead. No clip keys it, so there is still one writer per
+property; `player_anim.gd` is still the only node that touches it.
 
 ## 6. The swing's keys, revised
 

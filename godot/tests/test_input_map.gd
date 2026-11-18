@@ -4,15 +4,20 @@ extends SceneTree
 ## state "through the real game loop and real input", so this proves the
 ## mechanism those tests will rely on, before relying on it.
 
+var _checks := 0
 var _failures := 0
 
 func _check(label: String, ok: bool) -> void:
+	_checks += 1
 	print(("PASS  " if ok else "FAIL  "), label)
 	if not ok:
 		_failures += 1
 
 func _init() -> void:
-	for action in ["move_left", "move_right", "jump"]:
+	# Assignment 7 adds `attack`, which CHANGE-BRIEF.md section 11 names as a
+	# predicted change to this test rather than letting it arrive as a
+	# surprise. Three actions became four.
+	for action in ["move_left", "move_right", "jump", "attack"]:
 		_check("InputMap has '%s'" % action, InputMap.has_action(action))
 
 	# Synthesize a real key press and read it back as an action.
@@ -30,5 +35,8 @@ func _init() -> void:
 	Input.flush_buffered_events()
 	_check("releasing D clears move_right", not Input.is_action_pressed("move_right"))
 
-	print("\n%d checks, %d failures" % [5, _failures])
+	# The count was hard-coded as 5. It stayed 5 when a fourth action
+	# was added and the run grew to seven checks -- a summary that lied
+	# about its own test. It is counted now.
+	print("\n%d checks, %d failures" % [_checks, _failures])
 	quit(1 if _failures > 0 else 0)
