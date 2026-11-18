@@ -770,4 +770,28 @@ rather than as a formality.
 
 ### 7. My verdict in the running game
 
-_To be written by the author after playing r3._
+Played 2026-11-18. Recorded verbatim, English in square brackets:
+
+> 挥出去了，现在可以了
+>
+> [it swings out now — this is fine]
+
+**Kept.** The swing closes here: r0 → r1 → r2 → r3, every step of it
+started by the author playing the game and none of it by a test going red.
+
+### What the three revisions cost, and what they bought
+
+| | what the author said | what was actually wrong | what no test was asking |
+|---|---|---|---|
+| r0 → r1 | can't see the sword | there was no sword — the poses are unarmed | whether the art contained what the brief claimed |
+| r1 → r2 | it spins above the body | the arc reversed twice about an overhead pivot | which **way** the arc travelled, and how **low** it got |
+| r2 → r3 | the centre of rotation is at the back | the pivot sat on the torso's back edge, x = +3 | **where the pivot was at all** |
+
+Three revisions, three defects, **zero of them found by a read-back** — and
+all three were fully visible to one, headlessly, in the key table and the
+sheet, before the game was ever launched. They are all asserted now, and
+every assertion was written **after** a person said what they saw.
+
+That is the finding this assignment actually produced, and it is not "write
+more tests". A read-back sees only the questions it was written to ask. The
+questions came from playing.

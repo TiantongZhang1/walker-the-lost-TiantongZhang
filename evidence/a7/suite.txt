@@ -1,0 +1,35 @@
+Full suite at deec1de, 2026-11-18, after TUNING r3.
+Every test CLAUDE.md names, at the tick CLAUDE.md names.
+
+test_hit_burst_config        60    80 checks, 0 failures   exit 0
+test_hit_burst_state         60    22 checks, 0 failures   exit 0
+test_dungeon_motes_config    60    39 checks, 0 failures   exit 0
+test_dungeon_motes_state     60    19 checks, 0 failures   exit 0
+test_step_dust_config        60    63 checks, 0 failures   exit 0
+test_player_clips            60    76 checks, 0 failures   exit 0
+test_swing_clip              60    82 checks, 0 failures   exit 0
+test_player_states           60    25 checks, 0 failures   exit 0
+test_swing_edges             60    23 checks, 0 failures   exit 0
+pin_player_states            60    15 checks, 0 failures   exit 0
+test_input_map               60    7 checks, 0 failures   exit 0
+test_materials               60    48 checks, 0 failures   exit 0
+check_assets_3d              60    ALL CHECKS PASSED   exit 0
+test_trap_warning            30    22 checks, 0 failures   exit 0
+test_trap_warning            60    22 checks, 0 failures   exit 0
+test_trap_warning            144   22 checks, 0 failures   exit 0
+test_trap_shader_driver      30    24 checks, 0 failures   exit 0
+test_trap_shader_driver      60    24 checks, 0 failures   exit 0
+test_trap_shader_driver      144   24 checks, 0 failures   exit 0
+test_step_dust_state         30    26 checks, 0 failures at 30 fps   exit 0
+test_step_dust_state         60    26 checks, 0 failures at 60 fps   exit 0
+test_step_dust_state         144   26 checks, 0 failures at 144 fps   exit 0
+
+any failure: 0
+
+NOT RUN, and not part of the suite CLAUDE.md names: godot/tests/test_keyboard.gd.
+It preloads res://game/session.gd, which has NEVER existed in this repository
+-- it is a file from walker-ninja. The test has been unloadable since e7b4d1d
+(2026-10-17), the commit that changed the game, and it is unloadable at tag
+a6.1 and at 1d32214 as well. Nothing in A7 touched it. Recorded here rather
+than deleted: it is a previous assignment's file and removing it is not this
+assignment's call.
