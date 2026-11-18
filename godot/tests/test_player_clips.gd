@@ -208,6 +208,15 @@ func _init() -> void:
 	_note("whether the wrap READS as smooth is the human check; "
 		+ "a headless run draws nothing")
 
+	# --- the blade is shown by `swing` and by nothing else ----------------
+	for clip_name in ap.get_animation_list():
+		var clip := ap.get_animation(clip_name)
+		var bt := find_track(clip, "Rig/SwordArm/Blade:visible")
+		var want_blade := clip_name == "swing"
+		_check("%s keys the blade visible to %s" % [clip_name, str(want_blade)],
+			bt >= 0 and clip.track_get_key_value(bt, 0) == want_blade,
+			"no track" if bt < 0 else str(clip.track_get_key_value(bt, 0)))
+
 	# --- the legs are shown by `run` and by nothing else -------------------
 	for clip_name in ap.get_animation_list():
 		if clip_name == "RESET":

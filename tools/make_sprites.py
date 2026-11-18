@@ -27,6 +27,13 @@ FLOOR = (0x16, 0x24, 0x2B, 255)
 FLOOR_GROUT = (0x11, 0x1C, 0x22, 255)
 CLEAR = (0, 0, 0, 0)
 
+# The blade's two greys are the character's own, already in every pose,
+# so its steel reads as this character's rather than as something pasted
+# on. TUNING.md, 2026-11-18.
+STEEL = (0x9A, 0xA7, 0xBD, 255)
+STEEL_DK = (0x5E, 0x64, 0x72, 255)
+GRIP = (0x16, 0x23, 0x3D, 255)
+
 # The prediction pixels. Asserted at the end; a failure here means the brief
 # and the art have drifted apart, which would quietly invalidate §6.
 PREDICTION_PIXELS = {(8, 12): PLATE, (8, 3): SPIKE}
@@ -227,6 +234,34 @@ def player_sheet(torso: Image.Image) -> Image.Image:
     return sheet
 
 
+
+def sword() -> Image.Image:
+    """The blade, 3 x 16, hilt at the BOTTOM so the pivot sits in the hand.
+
+    Added back on 2026-11-18. The original brief had it; revision 7.0.1
+    deleted it believing the poses already carried a weapon. They do not --
+    `walker-ninja`'s character fought unarmed, and `p6-windup` and `p7-live`
+    are a raised arm and an extended arm. TUNING.md's 2026-11-18 entry has
+    the author's words and the pixel counts.
+
+    **Drawn in the character's own palette**, the two greys that are already
+    in every pose, so the steel reads as this character's rather than as
+    something pasted on. No pose file is touched: the blade is a separate
+    sprite on a separate node, which is what a cutout rig is for.
+    """
+    img = Image.new("RGBA", (3, 16), CLEAR)
+    px = img.load()
+    for y in range(0, 11):            # blade, lit on its left edge
+        px[0, y] = STEEL
+        px[1, y] = STEEL
+        px[2, y] = STEEL_DK
+    px[1, 0] = STEEL_DK               # a blunted tip reads better than a point
+    for x in range(3):                # crossguard
+        px[x, 11] = STEEL_DK
+    for y in range(12, 16):           # grip
+        px[1, y] = GRIP
+    return img
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     images = {
@@ -240,6 +275,7 @@ def main() -> None:
     images["player_sheet.png"] = player_sheet(torso)
     images["leg_front.png"] = front
     images["leg_back.png"] = back
+    images["sword.png"] = sword()
     for name, img in images.items():
         img.save(OUT / name)
         print(f"  wrote {name:<16} {img.size[0]}x{img.size[1]}")

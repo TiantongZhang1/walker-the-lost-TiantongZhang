@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://features/player/player.gd" id="1_player"]
 [ext_resource type="Texture2D" path="res://assets/sprites/player_sheet.png" id="2_sheet"]
@@ -6,6 +6,7 @@
 [ext_resource type="AnimationLibrary" path="res://animations/player.tres" id="4_anim"]
 [ext_resource type="Texture2D" path="res://assets/sprites/leg_front.png" id="5_legf"]
 [ext_resource type="Texture2D" path="res://assets/sprites/leg_back.png" id="6_legb"]
+[ext_resource type="Texture2D" path="res://assets/sprites/sword.png" id="7_sword"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
 size = Vector2(10, 28)
@@ -38,6 +39,15 @@ visible = false
 position = Vector2(4, 4)
 texture = ExtResource("5_legf")
 offset = Vector2(-4, -4)
+
+[node name="SwordArm" type="Node2D" parent="Rig"]
+position = Vector2(3, -2)
+rotation = 0.3490659
+
+[node name="Blade" type="Sprite2D" parent="Rig/SwordArm"]
+visible = false
+texture = ExtResource("7_sword")
+offset = Vector2(0, -8)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_body")

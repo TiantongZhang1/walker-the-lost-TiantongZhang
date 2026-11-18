@@ -438,6 +438,37 @@ a separate sprite on a separate node, which is what a cutout rig is for.
   hitbox, because a hitbox is still invisible. If the strip starts showing
   that boundary, something other than the hitbox moved.
 
-### 6. My verdict in the running game
+### 6. What r1 measured, against the prediction
+
+`captures/swing/r1-strip.png`, same frames, same band, same tool.
+
+| | r0 | r1 |
+|---|---|---|
+| frames identical to the one before | **19 of 24** | **4 of 24** |
+| range of the non-zero changes | 1376 – 1524 px | **126 – 1568 px** |
+| change at table 0 / 6 / 12 / 18 | 1524 / 1376 / 1376 / 1524 | **1562 / 1394 / 1451 / 1568** |
+
+All three predictions held:
+
+- the four named frames grew, because the blade now changes on them too;
+- **the frames that changed by 0 stopped being 0.** The rotation track is
+  continuous, so the blade moves on every frame between keys even though the
+  body cell does not. That is the single clearest piece of evidence in this
+  assignment that a rig clip and a frame clip are different mechanisms, and
+  it came out of a measurement rather than a description;
+- the active window closing still shows nothing attributable to the hitbox.
+  Frame 20 does change in r1 — by 280 px — but that is the blade passing
+  through, not the window shutting. A hitbox contributes zero pixels whether
+  it is open or shut.
+
+**Two pieces of stale text were caught by this revision**, both of the same
+kind as the hard-coded check count in `test_input_map.gd`:
+
+- the strip tool printed "every other frame is identical to the one before
+  it", which was true of r0 and false of r1. It counts the frames now.
+- the strip's own caption on table 10 said "SAME PIXELS as table 6", true of
+  r0 and false of r1. The captions describe the **table**, not one capture.
+
+### 7. My verdict in the running game
 
 _To be written by the author after playing r1._

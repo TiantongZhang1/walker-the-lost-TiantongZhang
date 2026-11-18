@@ -125,7 +125,7 @@ func _init() -> void:
 		absf(sw.length - LENGTH) < _tol, "%.6f" % sw.length)
 	_check("swing step is one frame period at %d fps" % FPS,
 		is_equal_approx(sw.step, 1.0 / FPS), "%.7f" % sw.step)
-	_check("swing has five tracks", sw.get_track_count() == 5,
+	_check("swing has seven tracks", sw.get_track_count() == 7,
 		str(sw.get_track_count()))
 
 	# --- the body cells, key by key, against the phase table --------------
@@ -167,6 +167,38 @@ func _init() -> void:
 			sw.track_get_key_count(mon) == 3, str(sw.track_get_key_count(mon)))
 		_note("0.1333 s against the trap's FIRE_SECONDS of 0.18 — narrower "
 			+ "on purpose, so the player cannot trade with a trap")
+
+	# --- the blade, restored 2026-11-18 ----------------------------------
+	# TUNING.md: the poses carry no sword. They are walker-ninja's unarmed
+	# martial poses, and the author saw that in play before any test did.
+	# The blade is a separate sprite on a pivot under Rig, so Rig.scale.x
+	# mirrors it and no pose file was touched.
+	for path in ["Rig/SwordArm", "Rig/SwordArm/Blade"]:
+		_check("the rig has %s" % path,
+			scene.get_node_or_null(NodePath(path)) != null)
+	var arm := _track(sw, "Rig/SwordArm:rotation_degrees")
+	_check("there is a SwordArm:rotation_degrees track", arm >= 0)
+	if arm >= 0:
+		_check("the arm track INTERPOLATES (a discrete arc would teleport)",
+			sw.value_track_get_update_mode(arm) == Animation.UPDATE_CONTINUOUS,
+			str(sw.value_track_get_update_mode(arm)))
+		_key_at(sw, arm, 0, 20.0)
+		_key_at(sw, arm, F_ACTIVE_OPENS, -80.0)
+		_key_at(sw, arm, F_ACTIVE_CLOSES, 85.0)
+		_key_at(sw, arm, F_SETTLE, 75.0)
+		_key_at(sw, arm, F_END, 20.0)
+		_check("the arc ends where it began, so a second swing starts from "
+			+ "rest",
+			is_equal_approx(sw.track_get_key_value(arm, 0),
+				sw.track_get_key_value(arm,
+					sw.track_get_key_count(arm) - 1)))
+	var blade := _track(sw, "Rig/SwordArm/Blade:visible")
+	_check("there is a Blade:visible track", blade >= 0)
+	if blade >= 0:
+		_check("Blade:visible is discrete",
+			sw.value_track_get_update_mode(blade) == Animation.UPDATE_DISCRETE)
+		_key_at(sw, blade, 0, true)
+		_key_at(sw, blade, F_END, false)
 
 	# --- the cut-out legs stay hidden: the pose cells have their own ------
 	for leg in ["Rig/LegFront:visible", "Rig/LegBack:visible"]:
