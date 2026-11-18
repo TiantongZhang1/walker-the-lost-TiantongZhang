@@ -4,136 +4,128 @@
 ; CHANGE-BRIEF.md §4 fixes the cycle, §6 the phase table; the keys below come
 ; from those tables and never the other way round.
 ;
-; Sheet: assets/sprites/player_sheet.png, 32 x 32 cells, hframes 6 x
-; vframes 2. Cells 0-5 are the run, 6 idle, 7 rising, 8 falling, 9 dead,
-; 10 braced, 11 deliberately blank.
+; TWO CLIPS, TWO MECHANISMS:
 ;
-; `update = 1` is Animation.UPDATE_DISCRETE. A frame track left at the
-; default 0 (UPDATE_CONTINUOUS) interpolates between cell numbers and sweeps
-; the sprite through every cell between keys, including the blank one, with
-; no error. That is predicted failure H1 in the brief.
+;   run    the CYCLE, and a RIG clip. Two legs cut off p2-run rotate about
+;          the hip and the body bobs. It swaps no frames.
+;   swing  the COMMITTING ACTION, and a SPRITE-SHEET frame clip. The body
+;          cell steps windup -> live -> back, and the attack hitbox's live
+;          window is a discrete track on the same timeline.
 ;
-; `loop_mode = 1` is Animation.LOOP_LINEAR, `0` is LOOP_NONE. Godot 3's
-; boolean `loop` would load here without complaint and leave this at 0.
+; `update = 1` is Animation.UPDATE_DISCRETE, `0` is UPDATE_CONTINUOUS.
+; `loop_mode = 1` is LOOP_LINEAR, `0` is LOOP_NONE. Godot 3's boolean `loop`
+; would load here without complaint and leave loop_mode at 0.
 
 [gd_resource type="AnimationLibrary" load_steps=8 format=3 uid="uid://cq7a7lostanim"]
 
-; --- run -------------------------------------------------------------------
-; 6 frames at 12 fps = 0.500 s, which is two 24 px strides at SPEED 96. The
-; last key is 5, NOT 0: a duplicate at the wrap would hold cell 0 for two
-; frame periods and the character would limp once per cycle. The gap from the
-; last key to length is 0.500 - 0.416667 = 0.083333 = one key interval.
+; --- run : the cycle, as a cutout rig ---------------------------------------
+; length 0.250 s = ONE stride: stride_px 24 / SPEED 96. Effect C spawns one
+; dust puff per stride, so the cycle and the dust share a clock and the
+; planted foot and the puff under it are the same event.
+;
+; **One stride, not two, and the reason is the art.** p2-run has one planted
+; foot and one trailing leg held off the ground; there is no second planted
+; foot to cut out. A two-stride cycle would need art this project does not
+; have. CHANGE-BRIEF.md §4 says so rather than implying a full run cycle.
+;
+; **The seam rule here is the CONTINUOUS one**, not the frame-track one: the
+; value at t = 0 and at t = length must match on every interpolated track, or
+; the wrap jumps. LegFront 0 -> 0, LegBack 22 -> 22, Rig y 0 -> 0.
+;
+; **The rotation range is measured, not chosen.** tools/make_sprites.py
+; renders each leg at every degree from -34 to +34 and reports the band in
+; which the foot never falls below row 29, the floor row every pose ends on:
+; the planted leg may go -2 .. +34, the trailing leg -34 .. +34. Positive
+; LIFTS the planted foot. The paper version of this had the sign backwards.
 [sub_resource type="Animation" id="Animation_run"]
 resource_name = "run"
-length = 0.5
+length = 0.25
 loop_mode = 1
 step = 0.0833333
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/path = NodePath("Rig/LegFront:rotation_degrees")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.0833333, 0.1666667, 0.25, 0.3333333, 0.4166667),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [0, 1, 2, 3, 4, 5]
+"times": PackedFloat32Array(0, 0.0833333, 0.1666667, 0.25),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 24.0, 12.0, 0.0]
 }
-
-; --- idle ------------------------------------------------------------------
-; One key, held. It loops so that nothing has to special-case a clip that
-; ends; a one-key LOOP_LINEAR clip shows the same cell forever.
-[sub_resource type="Animation" id="Animation_idle"]
-resource_name = "idle"
-length = 0.5
-loop_mode = 1
-step = 0.0833333
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Rig/LegBack:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.0833333, 0.1666667, 0.25),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [22.0, -2.0, 10.0, 22.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Rig:position:y")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.0833333, 0.1666667, 0.25),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [0.0, -1.0, -1.0, 0.0]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Rig/Body:frame")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [6]
+"values": [0]
 }
-
-; --- rising / falling ------------------------------------------------------
-[sub_resource type="Animation" id="Animation_rising"]
-resource_name = "rising"
-length = 0.5
-loop_mode = 1
-step = 0.0833333
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Rig/LegFront:visible")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [7]
+"values": [true]
 }
-
-[sub_resource type="Animation" id="Animation_falling"]
-resource_name = "falling"
-length = 0.5
-loop_mode = 1
-step = 0.0833333
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Rig/LegBack:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [8]
+"values": [true]
 }
 
-; --- dead ------------------------------------------------------------------
-; LOOP_NONE: death is not a cycle.
-[sub_resource type="Animation" id="Animation_dead"]
-resource_name = "dead"
-length = 0.5
-loop_mode = 0
-step = 0.0833333
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [9]
-}
-
-; --- swing -----------------------------------------------------------------
-; CHANGE-BRIEF.md section 6's phase table, in frames at 30 fps, turned into
-; key times. The table is the design; these are derived from it. If the feel
-; is wrong, the TABLE changes and these follow -- never the other way round.
+; --- swing : the committing action, as a sprite-sheet frame clip ------------
+; CHANGE-BRIEF.md §6's phase table, in frames at 30 fps:
 ;
-;   startup   frames 0-5    0.000 - 0.200   locked, nothing may interrupt
-;   active    frames 6-9    0.200 - 0.333   Hitbox.monitoring is true
-;   recovery  frames 10-17  0.333 - 0.600   locked, next attack buffers
-;   end       frame 18      0.600           movement returns
+;   startup   frames 0-5    0.000 - 0.200   cell 5, windup. Locked.
+;   active    frames 6-9    0.200 - 0.333   cell 6, live. Hitbox is LIVE.
+;   recovery  frames 10-17  0.333 - 0.600   settles back. Still locked.
+;   end       frame 18      0.600           cell 1, idle. Movement returns.
 ;
-; rotation_degrees: 0 is the blade pointing straight UP out of the hand,
-; positive is clockwise, which for a figure facing right is forward.
-;
-; Every transition is 1.0, linear, in r0 on purpose. Easing the startup is
-; the obvious first tuning change and r0 leaves it somewhere to go.
+; The body cells are p6-windup and p7-live, generated for walker-ninja in
+; 2026-10 and never used until now. The startup and active poses are real
+; art, not frames invented for this assignment.
 [sub_resource type="Animation" id="Animation_swing"]
 resource_name = "swing"
 length = 0.6
@@ -142,19 +134,19 @@ step = 0.0333333
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("SwordArm:rotation_degrees")
+tracks/0/path = NodePath("Rig/Body:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.2, 0.3333333, 0.4, 0.6),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"update": 0,
-"values": [20.0, -80.0, 85.0, 75.0, 20.0]
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [5, 6, 5, 1]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("SwordArm/Hitbox:monitoring")
+tracks/1/path = NodePath("Hitbox:monitoring")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -166,65 +158,7 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("SwordArm/Blade:visible")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.6),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [true, false]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("Sprite2D:frame")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0, 0.6),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [10, 6]
-}
-
-; --- RESET -----------------------------------------------------------------
-; The default pose. Godot gives this name a meaning: with Reset On Save the
-; scene is saved as if seeked to it. Without it, a scene saved mid-swing
-; keeps the swing. The sword tracks join it in Step 4.
-[sub_resource type="Animation" id="Animation_RESET"]
-resource_name = "RESET"
-length = 0.0333333
-loop_mode = 0
-step = 0.0333333
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [6]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("SwordArm:rotation_degrees")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [20.0]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("SwordArm/Blade:visible")
+tracks/2/path = NodePath("Rig/LegFront:visible")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -236,10 +170,300 @@ tracks/2/keys = {
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("SwordArm/Hitbox:monitoring")
+tracks/3/path = NodePath("Rig/LegBack:visible")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Rig:position:y")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0.0]
+}
+
+; --- the held clips the state machine plays ---------------------------------
+; Each one hides the rig's legs, because every pose cell already contains the
+; character's own legs. Only `run` shows the cut-out pair.
+[sub_resource type="Animation" id="Animation_idle"]
+resource_name = "idle"
+length = 0.25
+loop_mode = 1
+step = 0.0833333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig/Body:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [1]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Rig/LegFront:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Rig/LegBack:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Rig:position:y")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0.0]
+}
+
+[sub_resource type="Animation" id="Animation_rising"]
+resource_name = "rising"
+length = 0.25
+loop_mode = 1
+step = 0.0833333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig/Body:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [2]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Rig/LegFront:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Rig/LegBack:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_falling"]
+resource_name = "falling"
+length = 0.25
+loop_mode = 1
+step = 0.0833333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig/Body:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [3]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Rig/LegFront:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Rig/LegBack:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+; Death is not a cycle.
+[sub_resource type="Animation" id="Animation_dead"]
+resource_name = "dead"
+length = 0.25
+loop_mode = 0
+step = 0.0833333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig/Body:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [4]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Rig/LegFront:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Rig/LegBack:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+; --- RESET : the default pose ----------------------------------------------
+; Godot gives this name a meaning: with Reset On Save the scene is saved as
+; if seeked to it. Without it, a scene saved mid-swing keeps the swing and a
+; scene saved mid-stride keeps the stride.
+[sub_resource type="Animation" id="Animation_RESET"]
+resource_name = "RESET"
+length = 0.0333333
+loop_mode = 0
+step = 0.0333333
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rig/Body:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [1]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Rig/LegFront:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Rig/LegBack:rotation_degrees")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [22.0]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Rig/LegFront:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Rig/LegBack:visible")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Rig:position:y")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Hitbox:monitoring")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,

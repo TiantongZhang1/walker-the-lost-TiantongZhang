@@ -33,6 +33,7 @@ hashes exactly what it hashed at submission.
 | `scripts/`, `tools/` | the film and evidence build chain | copied 2026-10-17 |
 | `run-game.bat`, `.gitignore` | infrastructure | copied 2026-10-17 |
 | `godot/assets/poses/p{1,2,3,4,8}-*.png` | the five usable character poses — **generated art**, `ATTRIBUTION.md` §1.6 | copied 2026-11-05 |
+| `godot/assets/poses/p{5,6,7}-*.png` | dash, windup and live — the three A6 left behind. A7 needed windup and live: they are a real startup pose and a real active pose for the committing action, so the swing's art already existed | copied 2026-11-18 |
 | `godot/assets/music-loop.ogg` | the music bed — **generated, and Suno's not mine**, `ATTRIBUTION.md` §1.7 | copied 2026-11-05 |
 | `godot/game/room_backdrop.gd` | the dungeon drawing, re-derived from `session.gd::_draw*()` for this room | written 2026-11-05 |
 
@@ -86,7 +87,7 @@ Assignment 6 port and both recorded in full in `ATTRIBUTION.md`:
 
 | | Model | Licence |
 |---|---|---|
-| `godot/assets/poses/p{1,2,3,4,8}-*.png` | **GPT-6** | OpenAI Terms of Use — *"all its right, title, and interest, **if any**"*. §1.6 |
+| `godot/assets/poses/p{1..8}-*.png` | **GPT-6** | OpenAI Terms of Use — *"all its right, title, and interest, **if any**"*. §1.6 |
 | `godot/assets/music-loop.ogg` | **Suno `v6-mini`**, free Basic tier | **Suno retains ownership.** Personal and non-commercial use only. §1.7 |
 
 Every prompt for both is logged verbatim in `ATTRIBUTION.md` §1.6 and §1.7,

@@ -542,3 +542,176 @@ subject to the same loss.
   That is a look the author chose on 2026-11-15 to get one sheet, one
   authority and provable registration, and `FRICTIONAL.md` records the
   trade rather than presenting it as a free win.
+
+
+---
+
+# Revision 7.0.1 — 2026-11-18 — the two clips swap routes, and the art stays the author's
+
+**Supersedes §2's route rows, §3 entirely, §4 entirely, §5's node names, and
+§6's rotation-key table. §1, the phase timings in §6, §7, §8, §9, §10, §11
+and §12 stand.** No timing changes: the swing is still 18 frames at 30 fps
+with the same phase boundaries, and the cycle is still locked to the stride.
+
+## 1. Why
+
+§3 said the sheet would be written by code, in the style of
+`tools/make_sprites.py`'s existing 16 × 28 silhouette. It was, and the author
+rejected it on sight:
+
+> 这个人物模型也太简陋了，不能做到保持之间咱们用gpt做好的人物形象码
+> [this character model is far too crude — can't we keep the character we
+> already made with GPT?]
+
+They are right, and the first version is in history at commit `d303899` so the
+comparison is checkable rather than asserted. The game already had generated
+pixel art for this character — hooded, cyan visor, purple scarf — carried from
+`walker-ninja-TiantongZhang` and credited in `ATTRIBUTION.md`. Replacing it
+with a silhouette to make this assignment's sheet easier was the wrong trade.
+
+**Three poses had never been carried across.** `walker-ninja` holds eight;
+this repository had five. The missing three are `p5-dash`, `p6-windup` and
+`p7-live` — and **windup and live are a startup pose and an active pose for an
+attack.** The committing action's art already existed. They are copied in;
+`walker-ninja` itself is untouched, as `CLAUDE.md` requires.
+
+## 2. The two clips swap routes
+
+Assignment 7: *"The natural split is a looping sprite cycle and a rig action,
+but either way round works."* This is the other way round.
+
+| | **`run` — the cycle** | **`swing` — the committing action** |
+|---|---|---|
+| Route | **2D cutout rig**, plain `Node2D` pivots keyed on rotation and position | **`Sprite2D` + `hframes`/`vframes`, `AnimationPlayer` frame track** |
+| Plays on | `Rig/LegFront`, `Rig/LegBack`, `Rig` | `Rig/Body`, `Hitbox` |
+| Loops | yes, `LOOP_LINEAR` | no, `LOOP_NONE` |
+
+**Why this way round is the one that keeps the art.** A frame cycle needs
+several drawings of a run and the project has one. A cutout rig needs no new
+drawing at all: it cuts the legs off the pose that exists and rotates them.
+Cutting is not redrawing, and `tools/make_sprites.py` proves it rather than
+claiming it — `assert_lossless_cut()` recomposites the three layers and fails
+unless they equal `p2-run` **pixel for pixel**.
+
+## 3. The sheet, revised
+
+| | |
+|---|---|
+| Output | `godot/assets/sprites/player_sheet.png`, **128 × 64** |
+| Cell size | 32 × 32 |
+| Grid | **`hframes = 4`, `vframes = 2`** |
+| Built by | `tools/make_sprites.py`, which **cuts and composes** the committed poses |
+| Source art | `godot/assets/poses/p1,p2,p3,p4,p6,p7,p8`, generated with GPT-6 for `walker-ninja-TiantongZhang` in 2026-10 and credited in `ATTRIBUTION.md` |
+| Editable source | the poses as committed, plus the generator. Neither is modified by the other. |
+
+| Cell | Clip that shows it | What it is |
+|---|---|---|
+| 0 | `run` | `p2-run` **with the legs removed** — the only cell the rig uses |
+| 1 | `idle`, end of `swing` | `p1-idle` |
+| 2 | `rising` | `p3-rising` |
+| 3 | `falling` | `p4-falling` |
+| 4 | `dead` | `p8-death` |
+| 5 | `swing` startup, and its settle | `p6-windup` |
+| 6 | `swing` active | `p7-live` |
+| 7 | — | **deliberately blank** |
+
+Plus two textures that are not cells: `leg_front.png` and `leg_back.png`, the
+planted and trailing legs cut off `p2-run` at row 20 and column 25, each kept
+at 32 × 32 so that a `Sprite2D` at the hip lines up with the body with no
+arithmetic.
+
+**Registration** is no longer "by construction" — the poses are drawn art, so
+it is **measured**: every pose cell's lowest inked row is **29**, asserted in
+the generator. The run-torso cell is excluded by name, because its legs were
+removed and it therefore ends higher on purpose.
+
+## 4. The cycle spec, revised
+
+| | |
+|---|---|
+| Length | **0.250 s** |
+| `Animation.step` | **1/12 s** |
+| `loop_mode` | **`Animation.LOOP_LINEAR`** |
+| Tracks | `Rig/LegFront:rotation_degrees`, `Rig/LegBack:rotation_degrees` (both **continuous**), `Rig:position:y`, plus discrete holds for the body cell and the legs' visibility |
+
+**One stride, not two, and the reason is the art.** §4 originally derived six
+frames at 12 fps from *two* strides. `p2-run` has one planted foot and one
+trailing leg held off the ground; there is no second planted foot to cut out,
+so the honest cycle is **one stride**:
+
+```
+stride_px / SPEED = 24 / 96 = 0.250 s     <- the cycle's length
+```
+
+Effect C spawns one dust puff per stride, so the cycle and the dust still
+share a clock and the planted foot and the puff under it are still the same
+event. A two-stride cycle would need art this project does not have, and the
+film says so rather than implying a full run cycle.
+
+**Keys** (times 0, 1/12, 2/12, 3/12):
+
+| Track | Values |
+|---|---|
+| `Rig/LegFront:rotation_degrees` | 0, +24, +12, 0 |
+| `Rig/LegBack:rotation_degrees` | +22, −2, +10, +22 |
+| `Rig:position:y` | 0, −1, −1, 0 |
+
+**The rotation range is measured by rendering, not derived on paper.**
+`tools/make_sprites.py` rotates each leg texture at every degree from −34 to
++34 and reports the band in which the foot never falls below row 29:
+
+| Leg | Safe band | Why it is asymmetric |
+|---|---|---|
+| `leg_front` (planted) | **−2 .. +34** | its foot is already ON the floor at 0°, so one direction drives it through the floor and the other lifts it |
+| `leg_back` (trailing) | **−34 .. +34** | it never touches the floor at all |
+
+**The paper version of this had the sign backwards**, and a rendered
+measurement caught it: the first preview put the foot two pixels under the
+floor while the arithmetic said it was fine. The read-back asserts every key
+against the measured band.
+
+**The seam rule is the CONTINUOUS one**, which is the rule Chapter 10 actually
+states: on every interpolated track the value at `t = 0` and at `t = length`
+must match, or the wrap jumps. Front 0 → 0, back +22 → +22, bob 0 → 0. The
+frame-track rule in the original §4 does not apply to this clip and is
+superseded.
+
+## 5. One authority, revised node names
+
+| Animated node | The one authority | What it writes |
+|---|---|---|
+| `Rig` | `AnimationPlayer` | `position:y` |
+| `Rig/Body` | `AnimationPlayer` | `frame` |
+| `Rig/LegFront`, `Rig/LegBack` | `AnimationPlayer` | `rotation_degrees`, `visible` |
+| `Hitbox` | `AnimationPlayer` | `monitoring` |
+
+`Rig/Body.texture` is set once in the scene and never written at runtime. The
+`flip_h` wrinkle of §5 stands, on `Rig/Body`.
+
+## 6. The swing's keys, revised
+
+§6's phase table **stands unchanged** — startup frames 0–5, active 6–9,
+recovery 10–17, end at 18, 30 fps, step 1/30, `LOOP_NONE`. What changes is
+what the keys drive. There is no sword node and no rotation table:
+
+| Track | Keys |
+|---|---|
+| `Rig/Body:frame` | 0.000 → **5** (windup), 0.200 → **6** (live), 0.400 → **5**, 0.600 → **1** (idle) |
+| `Hitbox:monitoring` | 0.000 → `false`, **0.200 → `true`**, 0.333 → `false` |
+| `Rig/LegFront:visible`, `Rig/LegBack:visible` | `false` |
+| `Rig:position:y` | 0.0 |
+
+**The `SwordArm` / `Blade` rig of §2.2 is dropped.** It was invented to give
+the swing something to move; the character's own art already carries a weapon
+in `p6-windup` and `p7-live`, and adding a second one on a pivot would have
+drawn two. The `Hitbox` survives as a direct child of the player — still on
+layer 6 `PlayerAttack`, still masking layer 3 `Enemy`, still switched by a
+discrete track on the clip's own timeline, which is the only part of it that
+the assignment cares about.
+
+## 7. What this revision does not change
+
+The deadline arithmetic, the phase timings, the one-authority rule, the two
+clocks, the evidence split, the boundaries and the predicted failures. H1
+(a frame track left continuous) and H2 (Godot 3's boolean `loop`) now apply
+to `swing` rather than to `run`; H3 (an inert track path) applies to the rig.

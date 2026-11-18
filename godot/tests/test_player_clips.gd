@@ -1,32 +1,45 @@
 extends SceneTree
-## Assignment 7 — the read-back for every clip in `animations/player.tres`.
+## Assignment 7 — the read-back for the RIG clip, `run`, and the held clips.
 ##
 ##   ./scripts/run-test.sh test_player_clips.gd 60
 ##
-## It reads the clips back off the loaded resource and holds them against
-## `CHANGE-BRIEF.md` §4 and §6. It proves the clips are **structured** as the
-## brief says. It cannot prove the motion reads: a headless run advances a
-## clip and draws nothing.
+## `run` moves a rig: two legs cut off `p2-run` rotate about the hip and the
+## body bobs. It swaps no frames. `CHANGE-BRIEF.md` §4 is the cycle spec.
 ##
-## **Key times are 32-bit floats.** A `.tres` round trip loses the last
-## digits, so every time is compared with a tolerance of half a frame period
-## and never with `==`. That is predicted failure H4.
+## It proves the clip is **structured** as the brief says. It cannot prove the
+## cycle reads as a run, and it cannot see the legs at all: a headless run
+## advances a clip and draws nothing.
+##
+## **Key times are 32-bit floats**, so every time is compared with a tolerance
+## of half a frame period and never with `==`.
 ##
 ## **`value_track_get_update_mode` is asked only of value tracks.** On a 3D
 ## transform track it errors and answers `UPDATE_CONTINUOUS`, failing a clip
-## that is correct — one of the mistakes Assignment 7 names.
+## that is correct.
 
 const PLAYER := "res://features/player/player.tscn"
-const SHEET_H := 6
+const SHEET_H := 4
 const SHEET_V := 2
 
-## CHANGE-BRIEF.md §4: six frames at 12 fps, two 24 px strides at SPEED 96.
+## CHANGE-BRIEF.md §4. One stride: stride_px 24 / SPEED 96 = 0.250 s.
 const RUN_FPS := 12.0
-const RUN_FRAMES := 6
-const RUN_LENGTH := 0.5
+const RUN_LENGTH := 0.25
+
+## tools/make_sprites.py measures these by rendering each leg at every degree
+## and reporting where the foot stops falling below row 29. They are pasted
+## here from its output, and the generator prints them on every run.
+const FRONT_MIN := -2.0
+const FRONT_MAX := 34.0
+const BACK_MIN := -34.0
+const BACK_MAX := 34.0
+
+## Which clips show the cut-out legs. Every pose cell already contains the
+## character's own legs, so only `run` may.
+const LEGS_VISIBLE_IN := ["run"]
 
 var _checks := 0
 var _failures := 0
+var _tol := 0.5 / RUN_FPS
 
 
 func _check(label: String, ok: bool, detail := "") -> void:
@@ -47,8 +60,8 @@ func _note(label: String) -> void:
 ## **The branch on track type is the point.** A 3D position/rotation/scale
 ## track's subname is a BONE and a blend-shape track's is a BLEND SHAPE, not
 ## a property, so a naive `sub in node` reports every bone track as broken.
-## This project has no 3D tracks today; the branch is here because the check
-## is wrong without it and a reviewer should be able to see that it is right.
+## This project has no 3D tracks; the branch is here because the check is
+## wrong without it and a reviewer should be able to see that it is right.
 static func track_problems(player: AnimationPlayer) -> Array[String]:
 	var problems: Array[String] = []
 	var root := player.get_node_or_null(player.root_node)
@@ -86,11 +99,20 @@ static func track_problems(player: AnimationPlayer) -> Array[String]:
 	return problems
 
 
-func _frame_track(clip: Animation) -> int:
+static func find_track(clip: Animation, path: String) -> int:
 	for t in clip.get_track_count():
-		if clip.track_get_path(t) == NodePath("Sprite2D:frame"):
+		if clip.track_get_path(t) == NodePath(path):
 			return t
 	return -1
+
+
+func _range_ok(clip: Animation, t: int, lo: float, hi: float) -> String:
+	var out := ""
+	for k in clip.track_get_key_count(t):
+		var v: float = clip.track_get_key_value(t, k)
+		if v < lo or v > hi:
+			out += " %0.1f" % v
+	return out
 
 
 func _init() -> void:
@@ -100,107 +122,127 @@ func _init() -> void:
 	await process_frame
 
 	var ap: AnimationPlayer = scene.get_node(^"AnimationPlayer")
-	var sprite: Sprite2D = scene.get_node(^"Sprite2D")
+	var body: Sprite2D = scene.get_node(^"Rig/Body")
 
-	# --- the sheet the frame numbers mean something against ---------------
-	_check("sprite is sliced %d x %d" % [SHEET_H, SHEET_V],
-		sprite.hframes == SHEET_H and sprite.vframes == SHEET_V,
-		"%d x %d" % [sprite.hframes, sprite.vframes])
-	var cells := sprite.hframes * sprite.vframes
-	_check("the sheet's texture is loaded", sprite.texture != null,
-		"" if sprite.texture == null else str(sprite.texture.get_size()))
+	# --- the rig the clip assumes ----------------------------------------
+	for path in ["Rig", "Rig/Body", "Rig/LegFront", "Rig/LegBack", "Hitbox"]:
+		_check("the scene has %s" % path,
+			scene.get_node_or_null(NodePath(path)) != null)
+	_check("the body is sliced %d x %d" % [SHEET_H, SHEET_V],
+		body.hframes == SHEET_H and body.vframes == SHEET_V,
+		"%d x %d" % [body.hframes, body.vframes])
+	var cells := body.hframes * body.vframes
+	_check("the sheet is loaded", body.texture != null,
+		"" if body.texture == null else str(body.texture.get_size()))
+	for leg in ["Rig/LegFront", "Rig/LegBack"]:
+		var s: Sprite2D = scene.get_node(NodePath(leg))
+		_check("%s hangs from the hip at (4, 4)" % leg,
+			s.position == Vector2(4, 4) and s.offset == Vector2(-4, -4),
+			"pos %s offset %s" % [s.position, s.offset])
+		_check("%s starts hidden" % leg, not s.visible)
 
 	# --- every track resolves --------------------------------------------
 	var problems := track_problems(ap)
-	_check("every track resolves to a real node and property",
-		problems.is_empty(), "; ".join(problems))
+	_check("every track in every clip resolves", problems.is_empty(),
+		"; ".join(problems))
 	_note("clips: " + ", ".join(ap.get_animation_list()))
 
-	# --- the two clocks: this is written, not defaulted -------------------
-	_check("AnimationPlayer advances on the PHYSICS tick",
+	# --- the two clocks: written, not defaulted ---------------------------
+	_check("the AnimationPlayer advances on the PHYSICS tick",
 		ap.callback_mode_process
 			== AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_PHYSICS,
-		"callback_mode_process = %d (engine default is 1, idle)"
+		"callback_mode_process = %d (the engine default is 1, idle)"
 			% ap.callback_mode_process)
 
 	# --- the cycle, CHANGE-BRIEF.md §4 ------------------------------------
 	var run := ap.get_animation("run")
-	var tol := 0.5 / RUN_FPS
-	_check("run length is %.3f s" % RUN_LENGTH,
-		absf(run.length - RUN_LENGTH) < tol, "%.6f" % run.length)
+	_check("run length is %.3f s, one stride" % RUN_LENGTH,
+		absf(run.length - RUN_LENGTH) < _tol, "%.6f" % run.length)
 	_check("run step is one frame period at %d fps" % RUN_FPS,
 		is_equal_approx(run.step, 1.0 / RUN_FPS), "%.7f" % run.step)
 	_check("run loops (LOOP_LINEAR)", run.loop_mode == Animation.LOOP_LINEAR,
 		str(run.loop_mode))
 
-	var t := _frame_track(run)
-	_check("run has a Sprite2D:frame track", t >= 0, str(t))
-	_check("that track is a value track",
-		run.track_get_type(t) == Animation.TYPE_VALUE, str(run.track_get_type(t)))
-	# Only now, and only because it IS a value track.
-	if run.track_get_type(t) == Animation.TYPE_VALUE:
-		_check("run's frame track is UPDATE_DISCRETE",
-			run.value_track_get_update_mode(t) == Animation.UPDATE_DISCRETE,
+	var rot_tracks := {
+		"Rig/LegFront:rotation_degrees": [FRONT_MIN, FRONT_MAX],
+		"Rig/LegBack:rotation_degrees": [BACK_MIN, BACK_MAX],
+	}
+	for path in rot_tracks:
+		var t := find_track(run, path)
+		_check("run has a %s track" % path, t >= 0)
+		if t < 0:
+			continue
+		_check("%s INTERPOLATES (a discrete rotation would teleport)" % path,
+			run.value_track_get_update_mode(t) == Animation.UPDATE_CONTINUOUS,
 			str(run.value_track_get_update_mode(t)))
+		var lo: float = rot_tracks[path][0]
+		var hi: float = rot_tracks[path][1]
+		var bad := _range_ok(run, t, lo, hi)
+		_check("every %s key is inside the measured safe band %+.0f..%+.0f"
+				% [path, lo, hi], bad == "", "outside:" + bad)
 
-	_check("run has %d keys" % RUN_FRAMES,
-		run.track_get_key_count(t) == RUN_FRAMES,
-		str(run.track_get_key_count(t)))
-
-	var ok_times := true
-	var ok_cells := true
-	var ok_range := true
-	var seen: Array = []
-	for k in run.track_get_key_count(t):
-		var want := float(k) / RUN_FPS
-		if absf(run.track_get_key_time(t, k) - want) >= tol:
-			ok_times = false
-		var v: int = run.track_get_key_value(t, k)
-		seen.append(v)
-		if v != k:
-			ok_cells = false
-		if v >= cells:
-			ok_range = false
-	_check("every key lands on its frame at %d fps" % RUN_FPS, ok_times,
-		"tolerance %.5f s" % tol)
-	_check("the keys are cells 0-5, in order", ok_cells, str(seen))
-	_check("every frame key is inside the sheet (< %d)" % cells, ok_range,
-		str(seen))
-
-	# --- the seam, CHANGE-BRIEF.md §4's three rules -----------------------
-	var first: int = run.track_get_key_value(t, 0)
-	var last: int = run.track_get_key_value(t, run.track_get_key_count(t) - 1)
-	_check("seam 1: no duplicate across the wrap (last != first)",
-		last != first, "first %d, last %d" % [first, last])
-	var last_time := run.track_get_key_time(t, run.track_get_key_count(t) - 1)
-	var interval := 1.0 / RUN_FPS
-	_check("seam 2: the gap from the last key to length is one interval",
-		absf((run.length - last_time) - interval) < tol * 0.5,
-		"gap %.6f, interval %.6f" % [run.length - last_time, interval])
-	_note("seam 3 is the loop_mode check above")
+	# --- the seam. For a CONTINUOUS track the rule is that the value at
+	#     t = 0 and at t = length match, or the wrap jumps.
+	var seam_ok := true
+	var seam_detail := ""
+	for t in run.get_track_count():
+		if run.track_get_type(t) != Animation.TYPE_VALUE:
+			continue
+		if run.value_track_get_update_mode(t) != Animation.UPDATE_CONTINUOUS:
+			continue
+		var n := run.track_get_key_count(t)
+		if n < 2:
+			continue
+		var first = run.track_get_key_value(t, 0)
+		var last = run.track_get_key_value(t, n - 1)
+		var last_t := run.track_get_key_time(t, n - 1)
+		if absf(last_t - run.length) >= _tol:
+			seam_ok = false
+			seam_detail += " %s has no key at length;" % run.track_get_path(t)
+		elif absf(float(first) - float(last)) > 0.001:
+			seam_ok = false
+			seam_detail += " %s goes %s -> %s;" % [run.track_get_path(t),
+				str(first), str(last)]
+	_check("seam: every interpolated track ends where it started", seam_ok,
+		seam_detail)
 	_note("whether the wrap READS as smooth is the human check; "
 		+ "a headless run draws nothing")
 
-	# --- the held clips the state machine needs ---------------------------
-	for pair in [["idle", 6], ["rising", 7], ["falling", 8], ["dead", 9]]:
+	# --- the legs are shown by `run` and by nothing else -------------------
+	for clip_name in ap.get_animation_list():
+		if clip_name == "RESET":
+			continue
+		var clip := ap.get_animation(clip_name)
+		var want := LEGS_VISIBLE_IN.has(clip_name)
+		for leg in ["Rig/LegFront:visible", "Rig/LegBack:visible"]:
+			var t := find_track(clip, leg)
+			_check("%s keys %s to %s" % [clip_name, leg, str(want)],
+				t >= 0 and clip.track_get_key_value(t, 0) == want,
+				"no track" if t < 0 else str(clip.track_get_key_value(t, 0)))
+
+	# --- the held clips ----------------------------------------------------
+	for pair in [["run", 0], ["idle", 1], ["rising", 2], ["falling", 3],
+			["dead", 4]]:
 		var name: String = pair[0]
 		var cell: int = pair[1]
 		_check("%s exists" % name, ap.has_animation(name))
 		if not ap.has_animation(name):
 			continue
 		var clip := ap.get_animation(name)
-		var ct := _frame_track(clip)
-		_check("%s holds cell %d" % [name, cell],
-			ct >= 0 and clip.track_get_key_count(ct) == 1
-				and int(clip.track_get_key_value(ct, 0)) == cell,
+		var ct := find_track(clip, "Rig/Body:frame")
+		_check("%s shows cell %d" % [name, cell],
+			ct >= 0 and int(clip.track_get_key_value(ct, 0)) == cell,
 			"" if ct < 0 else str(clip.track_get_key_value(ct, 0)))
-		if ct >= 0 and clip.track_get_type(ct) == Animation.TYPE_VALUE:
-			_check("%s is discrete" % name,
+		if ct >= 0:
+			_check("%s's frame track is discrete" % name,
 				clip.value_track_get_update_mode(ct) == Animation.UPDATE_DISCRETE)
-		_check("%s loop_mode is %s" % [name, "LOOP_NONE" if name == "dead"
-				else "LOOP_LINEAR"],
-			clip.loop_mode == (Animation.LOOP_NONE if name == "dead"
-				else Animation.LOOP_LINEAR), str(clip.loop_mode))
+			_check("%s's cell is inside the sheet (< %d)" % [name, cells],
+				int(clip.track_get_key_value(ct, 0)) < cells)
+		var loops: bool = name != "dead"
+		_check("%s loop_mode is %s" % [name,
+				"LOOP_LINEAR" if loops else "LOOP_NONE"],
+			clip.loop_mode == (Animation.LOOP_LINEAR if loops
+				else Animation.LOOP_NONE), str(clip.loop_mode))
 
 	_check("a RESET clip exists", ap.has_animation("RESET"))
 

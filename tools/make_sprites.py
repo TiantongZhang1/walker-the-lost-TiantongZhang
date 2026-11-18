@@ -132,164 +132,99 @@ def player() -> Image.Image:
 
 
 # ---------------------------------------------------------------------------
-# Assignment 7: the player sheet.
+# Assignment 7: the player sheet and the cutout legs.
 #
-# One sheet, 32 x 32 cells, hframes 6 x vframes 2. CHANGE-BRIEF.md section 3
-# fixes the grid and the cell order; this file is the editable source, because
-# the sheet is written rather than downloaded.
+# **Nothing here draws a character.** The five poses this project carried from
+# walker-ninja-TiantongZhang, plus the three it had left behind, are
+# generated pixel art with their provenance already in ATTRIBUTION.md. This
+# code CUTS them -- crops and composes -- and writes the result. Cutting is
+# not redrawing: assert_lossless_cut() below proves the three leg layers
+# recombine into the original run pose pixel for pixel.
 #
-# **Why 32 x 32 and not the 16 x 28 `player()` draws.** pose_driver.gd recorded
-# the arithmetic that has to survive: the feet sit on ROW 30 of a 32 x 32 cell,
-# the body box is 10 x 28 centred on the origin so its underside is y = +14,
-# and a centred 32 px sprite spans y -16..+16 -- which puts row 30 at exactly
-# y = +14, with no offset to maintain. Every cell below is drawn to that rule
-# and FEET_ROW asserts it.
+# An earlier revision of this file drew its own silhouette instead. It was
+# rejected on sight, in the author's words: too crude beside the art the game
+# already had. FRICTIONAL.md records that.
 #
-# **Registration is by construction.** Every cell comes from one figure
-# function at one origin, so the character cannot drift inside its cell. That
-# is an argument; the frame strip in CHANGE-BRIEF.md section 10 is the check.
+# The sheet: 32 x 32 cells, hframes 4 x vframes 2.
+#
+#   0 run torso   p2-run with the legs removed; only `run` shows it
+#   1 idle        p1-idle          4 dead     p8-death
+#   2 rising      p3-rising        5 windup   p6-windup   swing startup
+#   3 falling     p4-falling       6 live     p7-live     swing active
+#                                  7 BLANK, on purpose
+#
+# Cell 7 is blank so that a mis-slice shows NOTHING rather than wrong art.
+# Nothing is easier to see than wrong.
 
 CELL = 32
-FEET_ROW = 30          # the row the soles touch, in cell coordinates
-HIP_Y = 21
-SHOULDER_Y = 12
-HEAD_TOP = 4
-CLOAK_MAX = 6          # keeps the cloak clear of the cell edge
+SHEET_H = 4
+SHEET_V = 2
+FEET_ROW = 29          # the lowest inked row of every standing pose, measured
+LEG_TOP = 20           # rows at or below this are legs, from the row scan
+SPLIT_X = 25           # left of this is the trailing leg, right is the planted
+HIP = (20, 20)         # the pivot both legs hang from, in cell coordinates
 
-SKIN = (0x9A, 0xA7, 0xBD, 255)
-BODY = (0x1F, 0x3A, 0x6E, 255)
-BODY_DK = (0x15, 0x28, 0x4D, 255)
-CLOAK = (0x7B, 0x4F, 0xD6, 255)
-STEEL = (0xC8, 0xCC, 0xD6, 255)
-STEEL_DK = (0x5E, 0x64, 0x72, 255)
+POSES = pathlib.Path(__file__).resolve().parent.parent / "godot" / "assets" / "poses"
+SHEET_ORDER = ["<run torso>", "p1-idle", "p3-rising", "p4-falling",
+               "p8-death", "p6-windup", "p7-live", "<blank>"]
 
 
-def _line(px, x0, y0, x1, y1, colour, width=2):
-    """Integer line, `width` px thick horizontally. Pixel art, not geometry."""
-    steps = max(abs(x1 - x0), abs(y1 - y0), 1)
-    for i in range(steps + 1):
-        t = i / steps
-        x = round(x0 + (x1 - x0) * t)
-        y = round(y0 + (y1 - y0) * t)
-        for w in range(width):
-            xx = x + w - width // 2
-            if 0 <= xx < CELL and 0 <= y < CELL:
-                px[xx, y] = colour
+def _load(name: str) -> Image.Image:
+    return Image.open(POSES / (name + ".png")).convert("RGBA")
 
 
-def _box(px, x0, y0, x1, y1, colour):
-    for y in range(max(0, y0), min(CELL, y1 + 1)):
-        for x in range(max(0, x0), min(CELL, x1 + 1)):
-            px[x, y] = colour
+def cut_run_pose():
+    """p2-run -> (torso with no legs, trailing leg, planted leg).
 
-
-def figure(front_foot_dx, back_foot_dx, bob, front_arm_dx, back_arm_dx,
-           *, lean=0, cloak_dx=0, dead=False, blade_arm=None):
-    """One 32 x 32 cell. All offsets are in pixels from a standing pose.
-
-    Revision r1, 2026-11-16. The first version drew a 9 px torso with the
-    arms inside it and a cloak that never moved, and the six run cells came
-    out nearly identical -- a silhouette that stood still while its feet
-    twitched. What makes a run read at this size is not the legs: it is the
-    SILHOUETTE changing, so the torso is narrow enough for the arms to swing
-    outside it, the cloak trails by `cloak_dx`, and `bob` is two pixels.
+    The split is by row and then by column, which is all the art needs: below
+    LEG_TOP the trailing leg is left of SPLIT_X and the planted leg is right
+    of it. Measured from the pose's own row scan, not guessed.
     """
-    img = Image.new("RGBA", (CELL, CELL), CLEAR)
-    px = img.load()
-    cx = CELL // 2
-
-    if dead:
-        _box(px, cx - 9, FEET_ROW - 4, cx + 7, FEET_ROW, BODY)
-        _box(px, cx - 13, FEET_ROW - 6, cx - 9, FEET_ROW - 1, CLOAK)
-        _box(px, cx - 7, FEET_ROW - 7, cx - 2, FEET_ROW - 4, SKIN)
-        _box(px, cx - 9, FEET_ROW, cx + 7, FEET_ROW, BODY_DK)
-        return img
-
-    hip = HIP_Y + bob
-    shoulder = SHOULDER_Y + bob
-    head_top = HEAD_TOP + bob
-
-    # 1. the cloak, behind everything, trailing BACKWARD by an amount the
-    #    caller varies per frame. A cloak that does not move is a wall --
-    #    and one that reaches the cell edge is a registration failure, so
-    #    the reach is capped at CLOAK_MAX and asserted in main().
-    for i, y in enumerate(range(shoulder + 1, hip + 3)):
-        reach = 2 + (i * (2 + cloak_dx)) // 9
-        reach = min(reach, CLOAK_MAX)
-        _box(px, cx - 4 - reach, y, cx - 4, y, CLOAK)
-
-    # 2. back leg, then back arm -- both darker, both behind the torso
-    _line(px, cx, hip, cx + back_foot_dx, FEET_ROW, BODY_DK, 3)
-    _line(px, cx - 1, shoulder + 1, cx - 1 + back_arm_dx, shoulder + 7,
-          BODY_DK, 2)
-
-    # 3. torso: six pixels wide, so an arm at +-5 clears it
-    _box(px, cx - 3 + lean, shoulder, cx + 2 + lean, hip, BODY)
-
-    # 4. head, with a one-pixel hood brim so it is not a plain box
-    _box(px, cx - 3 + lean, head_top, cx + 2 + lean, shoulder - 1, SKIN)
-    _box(px, cx - 4 + lean, head_top + 1, cx - 4 + lean, head_top + 2, CLOAK)
-
-    # 5. front leg and front arm, over the torso, in the lighter body colour
-    _line(px, cx, hip, cx + front_foot_dx, FEET_ROW, BODY, 3)
-    _line(px, cx + 1 + lean, shoulder + 1, cx + 1 + front_arm_dx + lean,
-          shoulder + 7, SKIN, 2)
-
-    if blade_arm is not None:
-        hx, hy = blade_arm
-        _line(px, cx + 1 + lean, shoulder + 1, cx + hx, shoulder + hy, SKIN, 2)
-    return img
+    run = _load("p2-run")
+    px = run.load()
+    torso = Image.new("RGBA", (CELL, CELL), CLEAR)
+    back = Image.new("RGBA", (CELL, CELL), CLEAR)
+    front = Image.new("RGBA", (CELL, CELL), CLEAR)
+    tp, bp, fp = torso.load(), back.load(), front.load()
+    for y in range(CELL):
+        for x in range(CELL):
+            c = px[x, y]
+            if not c[3]:
+                continue
+            if y < LEG_TOP:
+                tp[x, y] = c
+            elif x < SPLIT_X:
+                bp[x, y] = c
+            else:
+                fp[x, y] = c
+    return run, torso, back, front
 
 
-# CHANGE-BRIEF.md section 3's frame order. Six run cells, then the four poses
-# the state machine holds, then the braced cell the swing's body shows, then
-# one deliberately blank cell so a mis-slice shows NOTHING rather than wrong
-# art -- nothing is easier to see than wrong.
-#
-# The run is read as contact / down / pass, twice, with the legs swapped the
-# second time. `bob` is 0 at contact and 1 at down, so the body drops on the
-# plant -- which is the frame a step-dust puff spawns on.
-RUN_CELLS = [
-    #  front  back  bob  fArm  bArm  cloak
-    (    8,    -7,   0,   -5,    5,     4),   # 0 contact, right foot forward
-    (    4,    -4,   2,   -3,    3,     2),   # 1 down, weight low
-    (   -4,     5,   1,    4,   -4,     0),   # 2 pass, legs crossing
-    (   -7,     8,   0,    5,   -5,     4),   # 3 contact, left foot forward
-    (   -4,     4,   2,    3,   -3,     2),   # 4 down
-    (    5,    -4,   1,   -4,    4,     0),   # 5 pass
-]
+def assert_lossless_cut(run, torso, back, front) -> None:
+    """The three layers must recombine into the original, pixel for pixel.
+
+    This is what lets the brief say the GPT-6 art is UNCHANGED. A cut that
+    dropped or duplicated a pixel would be a redraw with extra steps.
+    """
+    rebuilt = Image.new("RGBA", (CELL, CELL), CLEAR)
+    rebuilt.alpha_composite(back)
+    rebuilt.alpha_composite(torso)
+    rebuilt.alpha_composite(front)
+    if list(rebuilt.getdata()) != list(run.getdata()):
+        raise SystemExit("  FAIL the leg cut is not lossless: torso + back + "
+                         "front != p2-run")
+    print("  the cut is lossless: torso + trailing + planted == p2-run exactly")
 
 
-def player_sheet() -> Image.Image:
-    sheet = Image.new("RGBA", (CELL * 6, CELL * 2), CLEAR)
-    cells = []
-    for f, b, bob, fa, ba, ck in RUN_CELLS:
-        cells.append(figure(f, b, bob, fa, ba, lean=1, cloak_dx=ck))
-    cells.append(figure(1, -2, 0, -1, 1, cloak_dx=0))          # 6  idle
-    cells.append(figure(-4, 6, 0, -6, 4, lean=1, cloak_dx=6))  # 7  rising
-    cells.append(figure(6, -4, 2, 6, -4, lean=0, cloak_dx=5))  # 8  falling
-    cells.append(figure(0, 0, 0, 0, 0, dead=True))             # 9  dead
-    cells.append(figure(8, -7, 2, -3, 6, lean=2, cloak_dx=5,
-                        blade_arm=(9, 1)))                     # 10 braced
-    cells.append(Image.new("RGBA", (CELL, CELL), CLEAR))       # 11 BLANK
+def player_sheet(torso: Image.Image) -> Image.Image:
+    sheet = Image.new("RGBA", (CELL * SHEET_H, CELL * SHEET_V), CLEAR)
+    cells = [torso]
+    for name in SHEET_ORDER[1:-1]:
+        cells.append(_load(name))
+    cells.append(Image.new("RGBA", (CELL, CELL), CLEAR))     # 7, blank
     for i, cell in enumerate(cells):
-        sheet.paste(cell, ((i % 6) * CELL, (i // 6) * CELL))
+        sheet.paste(cell, ((i % SHEET_H) * CELL, (i // SHEET_H) * CELL))
     return sheet
-
-
-def sword() -> Image.Image:
-    """3 x 14 blade, hilt at the BOTTOM so the pivot sits in the hand."""
-    img = Image.new("RGBA", (3, 14), CLEAR)
-    px = img.load()
-    for y in range(0, 10):          # blade
-        px[1, y] = STEEL
-        px[0, y] = STEEL_DK
-        px[2, y] = STEEL_DK
-    for x in range(3):              # crossguard
-        px[x, 10] = STEEL_DK
-    for y in range(11, 14):         # grip
-        px[1, y] = (0x4A, 0x32, 0x1E, 255)
-    return img
 
 
 def main() -> None:
@@ -299,9 +234,12 @@ def main() -> None:
         "spike_trap_fired.png": spike_trap_fired(),
         "floor_tile.png": floor_tile(),
         "player.png": player(),
-        "player_sheet.png": player_sheet(),
-        "sword.png": sword(),
     }
+    run, torso, back, front = cut_run_pose()
+    assert_lossless_cut(run, torso, back, front)
+    images["player_sheet.png"] = player_sheet(torso)
+    images["leg_front.png"] = front
+    images["leg_back.png"] = back
     for name, img in images.items():
         img.save(OUT / name)
         print(f"  wrote {name:<16} {img.size[0]}x{img.size[1]}")
@@ -318,46 +256,63 @@ def main() -> None:
         print(f"    OK  ({x:>2},{y:>2}) = {hexs}")
     print("\n  all prediction pixels match the brief")
 
-    # Assignment 7. The sheet's claims, asserted here so the read-back test
-    # and the brief cannot disagree with the file.
+    # Assignment 7. The sheet's claims, asserted here so that the read-back
+    # test, the brief and the file on disk cannot disagree.
     sheet = images["player_sheet.png"]
-    if sheet.size != (CELL * 6, CELL * 2):
-        raise SystemExit(f"  FAIL sheet is {sheet.size}, brief says 192x64")
-    print("\n  sheet: %dx%d, 6 x 2 cells of %d px" % (*sheet.size, CELL))
+    want = (CELL * SHEET_H, CELL * SHEET_V)
+    if sheet.size != want:
+        raise SystemExit("  FAIL sheet is %s, brief says %s" % (sheet.size, want))
+    print("\n  sheet: %dx%d, %d x %d cells of %d px"
+          % (*sheet.size, SHEET_H, SHEET_V, CELL))
 
     sp = sheet.load()
     problems = []
-    for i in range(12):
-        ox, oy = (i % 6) * CELL, (i // 6) * CELL
+    n_cells = SHEET_H * SHEET_V
+    for i in range(n_cells):
+        ox, oy = (i % SHEET_H) * CELL, (i // SHEET_H) * CELL
         rows = [y for y in range(CELL)
                 if any(sp[ox + x, oy + y][3] for x in range(CELL))]
-        if i == 11:
+        if SHEET_ORDER[i] == "<blank>":
             if rows:
-                problems.append("cell 11 must be blank, has ink on %s" % rows)
+                problems.append("cell %d must be blank, has ink on %s" % (i, rows))
             continue
         if not rows:
-            problems.append("cell %d is empty" % i)
+            problems.append("cell %d (%s) is empty" % (i, SHEET_ORDER[i]))
             continue
-        # Registration: every cell's lowest ink is the feet row. The dead
-        # cell lies down and still ends there, which is the point.
-        if max(rows) != FEET_ROW:
-            problems.append("cell %d: lowest ink row %d, FEET_ROW is %d"
-                            % (i, max(rows), FEET_ROW))
-        # Containment. Ink in column 0 or 31 means the figure was CLIPPED by
-        # the cell, which is a registration failure the eye reads as the
-        # character changing shape. r1's cloak did exactly this in cells 0
-        # and 3 before CLOAK_MAX existed.
-        edge = [x for x in (0, CELL - 1)
-                if any(sp[ox + x, oy + y][3] for y in range(CELL))]
-        if edge:
-            problems.append("cell %d: ink touches cell column(s) %s"
-                            % (i, edge))
+        # Registration. Every standing pose ends on FEET_ROW; the death pose
+        # lies down and still ends there, which is the point of checking it.
+        # The run torso has had its legs removed, so it ends higher by
+        # construction and is excluded by name rather than by a loose rule.
+        if SHEET_ORDER[i] != "<run torso>" and max(rows) != FEET_ROW:
+            problems.append("cell %d (%s): lowest ink row %d, FEET_ROW is %d"
+                            % (i, SHEET_ORDER[i], max(rows), FEET_ROW))
     if problems:
         raise SystemExit("  FAIL  " + "\n  FAIL  ".join(problems))
-    print("  every cell 0-10 has ink, ends on row %d, and cell 11 is blank"
-          % FEET_ROW)
-    print("  registration is by construction: one figure function, one origin")
+    print("  cells: " + ", ".join("%d %s" % (i, n)
+                                  for i, n in enumerate(SHEET_ORDER)))
+    print("  every pose cell ends on row %d; the blank cell is blank" % FEET_ROW)
 
+    # The legs, and the rotation range the clip is allowed to key. The planted
+    # leg's foot is ON the floor at 0 degrees, so one direction pushes it
+    # through the floor and the other lifts it. This is measured by rendering,
+    # not derived on paper -- the paper version had the sign backwards.
+    for leg_name in ("leg_front.png", "leg_back.png"):
+        leg = images[leg_name]
+        safe = []
+        for deg in range(-34, 35):
+            big = Image.new("RGBA", (CELL * 3, CELL * 3), CLEAR)
+            big.paste(leg, (CELL + CELL - HIP[0], CELL + CELL - HIP[1]))
+            big = big.rotate(deg, resample=Image.NEAREST,
+                             center=(CELL * 2 - HIP[0] + HIP[0],
+                                     CELL * 2 - HIP[1] + HIP[1]))
+            lp = big.load()
+            rows = [y for y in range(big.height)
+                    if any(lp[x, y][3] for x in range(big.width))]
+            low = max(rows) - (CELL + CELL - HIP[1]) if rows else -99
+            if low <= FEET_ROW:
+                safe.append(deg)
+        print("  %-14s may rotate %+d .. %+d degrees without the foot "
+              "going below row %d" % (leg_name, min(safe), max(safe), FEET_ROW))
 
 if __name__ == "__main__":
     main()

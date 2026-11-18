@@ -1,16 +1,20 @@
 extends SceneTree
-## Assignment 7 — the read-back for the rig clip, `swing`.
+## Assignment 7 — the read-back for the SPRITE-SHEET clip, `swing`.
 ##
 ##   ./scripts/run-test.sh test_swing_clip.gd 60
+##
+## The committing action, played as frames off the sheet: cell 5 (windup) for
+## startup, cell 6 (live) for the active window, back through 5 and out to 1.
+## Those two cells are p6-windup and p7-live, generated for walker-ninja in
+## 2026-10 and never used until this assignment.
 ##
 ## `CHANGE-BRIEF.md` §6 is the phase table; these are the assertions that the
 ## keys came from it. One assertion per phase boundary, by name, so a failure
 ## says which phase moved.
 ##
 ## It proves the clip is **structured** as the table says. It cannot prove the
-## swing feels committed, and it cannot see the blade at all: a headless run
-## advances the clip and draws nothing. The strip and the author's verdict in
-## play are §9's HUMAN rows.
+## swing feels committed: a headless run advances the clip and draws nothing.
+## The strip and the author's verdict in play are §9's HUMAN rows.
 
 const PLAYER := "res://features/player/player.tscn"
 const Clips := preload("res://tests/test_player_clips.gd")
@@ -21,8 +25,10 @@ const LENGTH := 0.6
 const F_ACTIVE_OPENS := 6      # 0.200 s
 const F_ACTIVE_CLOSES := 10    # 0.333 s
 const F_END := 18              # 0.600 s
-const CELL_BRACED := 10
-const CELL_IDLE := 6
+const CELL_WINDUP := 5
+const CELL_LIVE := 6
+const CELL_IDLE := 1
+const F_SETTLE := 12          # 0.400 s, back through the windup shape
 
 var _checks := 0
 var _failures := 0
@@ -88,15 +94,14 @@ func _init() -> void:
 	await process_frame
 
 	var ap: AnimationPlayer = scene.get_node(^"AnimationPlayer")
-	var sprite: Sprite2D = scene.get_node(^"Sprite2D")
+	var sprite: Sprite2D = scene.get_node(^"Rig/Body")
 	var cells := sprite.hframes * sprite.vframes
 
-	# --- the rig exists and is shaped the way the clip assumes ------------
-	for path in ["SwordArm", "SwordArm/Blade", "SwordArm/Hitbox",
-			"SwordArm/Hitbox/CollisionShape2D"]:
-		_check("the rig has %s" % path,
+	# --- the hitbox the active window switches on -------------------------
+	for path in ["Hitbox", "Hitbox/CollisionShape2D"]:
+		_check("the scene has %s" % path,
 			scene.get_node_or_null(NodePath(path)) != null)
-	var hitbox: Area2D = scene.get_node(^"SwordArm/Hitbox")
+	var hitbox: Area2D = scene.get_node(^"Hitbox")
 	_check("the hitbox is on layer 6, PlayerAttack",
 		hitbox.collision_layer == 32, "layer bits %d" % hitbox.collision_layer)
 	_check("it masks layer 3, Enemy", hitbox.collision_mask == 4,
@@ -120,28 +125,33 @@ func _init() -> void:
 		absf(sw.length - LENGTH) < _tol, "%.6f" % sw.length)
 	_check("swing step is one frame period at %d fps" % FPS,
 		is_equal_approx(sw.step, 1.0 / FPS), "%.7f" % sw.step)
-	_check("swing has four tracks", sw.get_track_count() == 4,
+	_check("swing has five tracks", sw.get_track_count() == 5,
 		str(sw.get_track_count()))
 
-	# --- the rotation track, key by key, against the table ----------------
-	var rot := _track(sw, "SwordArm:rotation_degrees")
-	_check("there is a SwordArm:rotation_degrees track", rot >= 0)
-	if rot >= 0:
-		_key_at(sw, rot, 0, 20.0)
-		_key_at(sw, rot, F_ACTIVE_OPENS, -80.0)
-		_key_at(sw, rot, F_ACTIVE_CLOSES, 85.0)
-		_key_at(sw, rot, 12, 75.0)
-		_key_at(sw, rot, F_END, 20.0)
-		_check("the rotation track interpolates (it is not discrete)",
-			sw.value_track_get_update_mode(rot) == Animation.UPDATE_CONTINUOUS,
-			str(sw.value_track_get_update_mode(rot)))
-		_check("rest and end agree, so a second swing starts where the first "
-			+ "left off",
-			is_equal_approx(sw.track_get_key_value(rot, 0),
-				sw.track_get_key_value(rot, sw.track_get_key_count(rot) - 1)))
+	# --- the body cells, key by key, against the phase table --------------
+	var fr := _track(sw, "Rig/Body:frame")
+	_check("there is a Rig/Body:frame track", fr >= 0)
+	if fr >= 0:
+		_check("the frame track is UPDATE_DISCRETE — a sheet holds a cell, "
+			+ "it does not interpolate toward the next one",
+			sw.value_track_get_update_mode(fr) == Animation.UPDATE_DISCRETE,
+			str(sw.value_track_get_update_mode(fr)))
+		_key_at(sw, fr, 0, CELL_WINDUP)
+		_key_at(sw, fr, F_ACTIVE_OPENS, CELL_LIVE)
+		_key_at(sw, fr, F_SETTLE, CELL_WINDUP)
+		_key_at(sw, fr, F_END, CELL_IDLE)
+		var in_sheet := true
+		var seen: Array = []
+		for k in sw.track_get_key_count(fr):
+			var v := int(sw.track_get_key_value(fr, k))
+			seen.append(v)
+			if v >= cells:
+				in_sheet = false
+		_check("every frame key is inside the sheet (< %d)" % cells, in_sheet,
+			str(seen))
 
 	# --- THE gameplay fact: the active window -----------------------------
-	var mon := _track(sw, "SwordArm/Hitbox:monitoring")
+	var mon := _track(sw, "Hitbox:monitoring")
 	_check("there is a Hitbox:monitoring track", mon >= 0)
 	if mon >= 0:
 		_check("monitoring is UPDATE_DISCRETE — there is nothing between "
@@ -158,38 +168,28 @@ func _init() -> void:
 		_note("0.1333 s against the trap's FIRE_SECONDS of 0.18 — narrower "
 			+ "on purpose, so the player cannot trade with a trap")
 
-	# --- the blade, and the body cell under it ----------------------------
-	var vis := _track(sw, "SwordArm/Blade:visible")
-	_check("there is a Blade:visible track", vis >= 0)
-	if vis >= 0:
-		_check("visible is discrete",
-			sw.value_track_get_update_mode(vis) == Animation.UPDATE_DISCRETE)
-		_key_at(sw, vis, 0, true)
-		_key_at(sw, vis, F_END, false)
+	# --- the cut-out legs stay hidden: the pose cells have their own ------
+	for leg in ["Rig/LegFront:visible", "Rig/LegBack:visible"]:
+		var lt := _track(sw, leg)
+		_check("swing hides %s" % leg,
+			lt >= 0 and sw.track_get_key_value(lt, 0) == false,
+			"no track" if lt < 0 else str(sw.track_get_key_value(lt, 0)))
 
-	var fr := _track(sw, "Sprite2D:frame")
-	_check("there is a Sprite2D:frame track", fr >= 0)
-	if fr >= 0:
-		_check("the body's frame track is discrete",
-			sw.value_track_get_update_mode(fr) == Animation.UPDATE_DISCRETE)
-		_key_at(sw, fr, 0, CELL_BRACED)
-		_key_at(sw, fr, F_END, CELL_IDLE)
-		var in_sheet := true
-		for k in sw.track_get_key_count(fr):
-			if int(sw.track_get_key_value(fr, k)) >= cells:
-				in_sheet = false
-		_check("every frame key is inside the sheet (< %d)" % cells, in_sheet)
-
-	# --- RESET holds the sword's default pose -----------------------------
+	# --- RESET holds the default pose -------------------------------------
 	var reset := ap.get_animation("RESET")
-	for path in ["SwordArm:rotation_degrees", "SwordArm/Blade:visible",
-			"SwordArm/Hitbox:monitoring"]:
+	for path in ["Rig/Body:frame", "Rig/LegFront:rotation_degrees",
+			"Rig/LegBack:rotation_degrees", "Hitbox:monitoring"]:
 		_check("RESET holds %s" % path, _track(reset, path) >= 0)
-	var rr := _track(reset, "SwordArm/Hitbox:monitoring")
+	var rr := _track(reset, "Hitbox:monitoring")
 	if rr >= 0:
+		# `rr` indexes RESET, so it must be read from RESET. An earlier
+		# version of this line asked `sw` -- the swing clip -- for the key
+		# count at RESET's track index. It passed while the two clips
+		# happened to have compatible indices and started failing the moment
+		# the scene was restructured, which is the only reason it was found.
 		_check("RESET leaves the hitbox off",
-			sw.track_get_key_count(rr) >= 0
-				and reset.track_get_key_value(rr, 0) == false)
+			reset.track_get_key_value(rr, 0) == false,
+			str(reset.track_get_key_value(rr, 0)))
 
 	scene.queue_free()
 	await process_frame

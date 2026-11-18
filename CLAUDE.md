@@ -25,14 +25,14 @@ Both live in `godot/animations/player.tres`, on `player.tscn`;
 
 | | **`run` — the cycle** | **`swing` — the committing action** |
 |---|---|---|
-| Route | `Sprite2D` + `hframes`/`vframes`, **`AnimationPlayer` frame track** | **2D cutout rig**, keyed as resource text |
-| Plays on | `Player/Sprite2D` | `Player/SwordArm` (+ `Blade`, `Hitbox`) |
-| Rate, length | **12 fps**, 6 frames, 0.500 s, `LOOP_LINEAR`, step **1/12** | **30 fps**, 18 frames, 0.600 s, `LOOP_NONE`, step **1/30** |
-| Shape | seam: no duplicate at the wrap, last gap = key interval | startup 0–5, active 6–9, recovery 10–17 |
+| Route | **2D cutout rig** — `Node2D` pivots, rotation and position | **`Sprite2D` + `hframes`/`vframes`, frame track** |
+| Plays on | `Rig`, `Rig/LegFront`, `Rig/LegBack` | `Rig/Body`, `Hitbox` |
+| Rate, length | **12 fps**, 0.250 s = one stride, `LOOP_LINEAR`, step **1/12** | **30 fps**, 18 frames, 0.600 s, `LOOP_NONE`, step **1/30** |
+| Shape | seam: every interpolated track ends where it started | startup 0–5, active 6–9, recovery 10–17 |
 
-Sheet `godot/assets/sprites/player_sheet.png`: **32 × 32 cells, `hframes = 6`,
-`vframes = 2`**, from `tools/make_sprites.py`; cell 11 is blank on purpose, so
-a mis-slice shows nothing rather than wrong art. `player.gd` owns the state
+Sheet `godot/assets/sprites/player_sheet.png`: **32 × 32 cells, 4 × 2**, CUT
+from the committed GPT-6 poses by `tools/make_sprites.py`, which asserts the
+cut is lossless; cell 7 is blank on purpose. `player.gd` owns the state
 machine — locking movement is gameplay, not presentation — with states `IDLE`,
 `RUN`, `AIRBORNE`, `SWING`, `DEAD`. `features/player/player_anim.gd` reads it,
 plays the clips, writes no game state, and **replaces `pose_driver.gd`**,
@@ -85,11 +85,11 @@ runtime**; effect settings live in `godot/effects/`. Every prediction and
 ## One authority
 
 **Exactly one node writes to each animated node. Never add a second writer.**
-`Player/AnimationPlayer` is that node for all four: `Sprite2D:frame`,
-`SwordArm:rotation_degrees`, `SwordArm/Blade:visible`,
-`SwordArm/Hitbox:monitoring`. `Sprite2D.texture` is set once in the scene,
-never at runtime. `player_anim.gd` calls `play()` and writes `flip_h`, which
-**no clip keys** — `CHANGE-BRIEF.md` §5 states that wrinkle, not hides it.
+`Player/AnimationPlayer` is that node for all of them: `Rig:position:y`,
+`Rig/Body:frame`, both legs' `rotation_degrees` and `visible`, and
+`Hitbox:monitoring`. `Rig/Body.texture` is set once in the scene, never at
+runtime. `player_anim.gd` calls `play()` and writes `flip_h`, which **no clip
+keys** — `CHANGE-BRIEF.md` §5 states that wrinkle, not hides it.
 
 ## Godot 4 names
 
