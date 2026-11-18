@@ -30,6 +30,13 @@ const CELL_LIVE := 6
 const CELL_IDLE := 1
 const F_SETTLE := 12          # 0.400 s, back through the windup shape
 
+## r2. The blade is drawn at frame 2 and sheathed at frame 13, so the long
+## return to rest is travelled unwatched. CHANGE-BRIEF.md revision 7.0.2.
+const F_DRAWN := 2            # 0.0667 s
+const F_COCK := 4             # 0.1333 s
+const F_SHEATHED := 13        # 0.4333 s
+const REST_DEG := -150.0
+
 var _checks := 0
 var _failures := 0
 var _tol := 0.5 / FPS
@@ -168,37 +175,80 @@ func _init() -> void:
 		_note("0.1333 s against the trap's FIRE_SECONDS of 0.18 — narrower "
 			+ "on purpose, so the player cannot trade with a trap")
 
-	# --- the blade, restored 2026-11-18 ----------------------------------
-	# TUNING.md: the poses carry no sword. They are walker-ninja's unarmed
-	# martial poses, and the author saw that in play before any test did.
-	# The blade is a separate sprite on a pivot under Rig, so Rig.scale.x
-	# mirrors it and no pose file was touched.
+	# --- the blade: put back in r1, re-aimed in r2 ------------------------
+	# r1 restored it (the poses carry no sword). r2 changed WHERE IT GOES,
+	# because the author played r1 and reported a sword spinning above the
+	# body rather than swinging out. The numbers said the same thing:
+	# 20 -> -80 -> +85 -> +20 reverses direction TWICE about a pivot 2 px
+	# above the waist, 330 degrees of travel in 0.6 s, tip never below
+	# y = -3. "Spinning" was the correct word for those keys.
+	#
+	# The two rules r2 ships are asserted below, and either one of them
+	# would have failed r1 HEADLESSLY -- which is the point. The defect was
+	# visible in the key table all along; no test was asking.
 	for path in ["Rig/SwordArm", "Rig/SwordArm/Blade"]:
 		_check("the rig has %s" % path,
 			scene.get_node_or_null(NodePath(path)) != null)
 	var arm := _track(sw, "Rig/SwordArm:rotation_degrees")
 	_check("there is a SwordArm:rotation_degrees track", arm >= 0)
+	var blade := _track(sw, "Rig/SwordArm/Blade:visible")
+	_check("there is a Blade:visible track", blade >= 0)
 	if arm >= 0:
 		_check("the arm track INTERPOLATES (a discrete arc would teleport)",
 			sw.value_track_get_update_mode(arm) == Animation.UPDATE_CONTINUOUS,
 			str(sw.value_track_get_update_mode(arm)))
-		_key_at(sw, arm, 0, 20.0)
-		_key_at(sw, arm, F_ACTIVE_OPENS, -80.0)
-		_key_at(sw, arm, F_ACTIVE_CLOSES, 85.0)
-		_key_at(sw, arm, F_SETTLE, 75.0)
-		_key_at(sw, arm, F_END, 20.0)
+		_key_at(sw, arm, 0, REST_DEG)
+		_key_at(sw, arm, F_COCK, -60.0)
+		_key_at(sw, arm, F_ACTIVE_OPENS, -50.0)
+		_key_at(sw, arm, F_ACTIVE_CLOSES, 100.0)
+		_key_at(sw, arm, F_SETTLE, 115.0)
+		_key_at(sw, arm, F_SHEATHED, 118.0)
+		_key_at(sw, arm, F_END, REST_DEG)
 		_check("the arc ends where it began, so a second swing starts from "
 			+ "rest",
 			is_equal_approx(sw.track_get_key_value(arm, 0),
 				sw.track_get_key_value(arm,
 					sw.track_get_key_count(arm) - 1)))
-	var blade := _track(sw, "Rig/SwordArm/Blade:visible")
-	_check("there is a Blade:visible track", blade >= 0)
+
+		# RULE 1 -- while the blade is VISIBLE the arc travels one way.
+		var vis_a := _at(F_DRAWN)
+		var vis_b := _at(F_SHEATHED)
+		var legs := ""
+		var reversals := 0
+		var prev := 0
+		for k in sw.track_get_key_count(arm) - 1:
+			var t0 := sw.track_get_key_time(arm, k)
+			var t1 := sw.track_get_key_time(arm, k + 1)
+			if t1 <= vis_a + _tol or t0 >= vis_b - _tol:
+				continue        # this leg is travelled sheathed
+			var d: float = (float(sw.track_get_key_value(arm, k + 1))
+				- float(sw.track_get_key_value(arm, k)))
+			if is_zero_approx(d):
+				continue
+			legs += "%+.0f " % d
+			var s := 1 if d > 0.0 else -1
+			if prev != 0 and s != prev:
+				reversals += 1
+			prev = s
+		_check("the VISIBLE arc never reverses direction (r1 reversed twice "
+			+ "and read as a sword spinning overhead)", reversals == 0,
+			"legs: " + legs)
+
+		# RULE 2 -- it finishes BELOW the hand. 0 deg is straight up, so
+		# anything inside +/-90 leaves the blade in the top half of the
+		# frame, which is where r1 lived for all 18 frames.
+		var last_vis: float = sw.value_track_interpolate(arm, vis_b)
+		_check("the last visible angle is past horizontal, so the blade "
+			+ "finishes BELOW the hand", absf(last_vis) > 90.0,
+			"%.1f deg" % last_vis)
 	if blade >= 0:
 		_check("Blade:visible is discrete",
 			sw.value_track_get_update_mode(blade) == Animation.UPDATE_DISCRETE)
-		_key_at(sw, blade, 0, true)
-		_key_at(sw, blade, F_END, false)
+		_key_at(sw, blade, 0, false)
+		_key_at(sw, blade, F_DRAWN, true)
+		_key_at(sw, blade, F_SHEATHED, false)
+		_note("the blade is visible for frames 2..13 of 18; the 268-degree "
+			+ "return to rest is travelled sheathed")
 
 	# --- the cut-out legs stay hidden: the pose cells have their own ------
 	for leg in ["Rig/LegFront:visible", "Rig/LegBack:visible"]:

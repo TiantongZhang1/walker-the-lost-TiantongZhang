@@ -471,4 +471,182 @@ kind as the hard-coded check count in `test_input_map.gd`:
 
 ### 7. My verdict in the running game
 
-_To be written by the author after playing r1._
+Played at the project's window size, 2026-11-18, J to swing. Recorded
+verbatim, English in square brackets:
+
+> 刀不太对，他不是挥出去的，而是在身子上面转圈
+>
+> [the sword isn't right — it isn't swinging out, it's spinning in circles
+> above the body]
+
+**Half kept.** The blade is there and it is visible, which is what r1 was for,
+so the restoration stands. Where it goes is wrong, and that is r2 below.
+
+---
+
+## 2026-11-18 — the swing, r1 → r2. A swing goes one way. A windmill goes round.
+
+### 1. What I saw, in the running game, before Claude read anything
+
+> 刀不太对，他不是挥出去的，而是在身子上面转圈
+>
+> [the sword isn't right — it isn't swinging out, it's spinning in circles
+> above the body]
+
+### 2. Claude's reading — and this time the author was right before the capture was taken
+
+**No strip was needed to confirm this one**, and that is the finding. The
+original `CHANGE-BRIEF.md` §6 rotation table, written on 2026-11-16 and
+restored verbatim by r1, says it outright once the arithmetic is done. The
+pivot is at (3, −2) in rig coordinates; the blade is 16 px long; the figure is
+32 px tall with its waist at y = 0 and its feet at y = +13.
+
+| r1 frame | deg | blade tip | |
+|---|---|---|---|
+| 0 | +20 | (+8.5, **−17.0**) | above the top of the sprite |
+| 6 | −80 | (−12.8, −4.8) | horizontal, behind |
+| 10 | +85 | (+18.9, −3.4) | horizontal, in front |
+| 12 | +75 | (+18.5, −6.1) | |
+| 18 | +20 | (+8.5, **−17.0**) | back above the head |
+
+1. **The tip never goes below y = −3.** All 18 frames are in the top half.
+   "Above the body" is the *range of the function*, not an impression.
+2. **The arc reverses direction twice**: +20 → −80 anticlockwise, −80 → +85
+   clockwise, +85 → +20 anticlockwise. Total path **330° in 0.600 s = 550°/s**,
+   every degree of it watched. Two reversals about an overhead pivot is a
+   windmill. 转圈 is the correct word, not an exaggeration.
+
+The r1 entry above congratulated itself on a measurement — *"the clearest
+evidence in this assignment that a rig clip and a frame clip are different
+mechanisms"* — and it was a true measurement of the wrong thing. It proved
+the blade moved every frame. It never asked **where**.
+
+### 3. The change
+
+Two rules, and the keys that follow from them. `CHANGE-BRIEF.md` revision
+7.0.2 §3–§4 is the table; this is the reasoning.
+
+> **R1. While the blade is visible the arc travels one way.**
+> **R2. It finishes below the hand** (past ±90°, out of the top half).
+
+A swing is a commitment in one direction. Something that goes out and comes
+back along its own path is a wave; if the pivot is overhead, it is a propeller.
+The return to rest still has to happen — so it happens **sheathed**, which is
+also what a person with a sword does.
+
+| | r1 | r2 |
+|---|---|---|
+| rest | **+20** (blade above the head) | **−150** (point down, behind the heel) |
+| cocked, frame 6 | −80 | **−50** |
+| struck, frame 10 | +85 (horizontal) | **+100** (forward and **low**) |
+| settle, frame 12 | +75 (rising again) | **+115** (lower still) |
+| blade visible | frames **0–18**, all of it | frames **2–13** |
+| visible travel | 330°, **2 reversals** | **223°, 0 reversals** |
+| return to rest | watched | **sheathed**, 268° |
+| tip's lowest y | **−3.4** | **+5.5**, below the waist |
+
+The strike itself — frame 6 to frame 10 — is **150° in 0.133 s = 1127°/s**,
+five times the wind-up's speed. The active window is now the fastest thing on
+the timeline, which is what makes it read as a strike rather than a gesture.
+No timing moved: the phase table, the hitbox keys and the clock argument are
+untouched.
+
+### 4. The part that is uncomfortable, and is recorded rather than smoothed over
+
+Both rules are now **headless read-back assertions** in
+`test_swing_clip.gd` — and both of them fail r1's angles. Pasting r1's values
+back onto r2's key times:
+
+```
+FAIL  the VISIBLE arc never reverses direction   [legs: -60 -40 +165 -10 -15 ]
+FAIL  the last visible angle is past horizontal  [60.0 deg]
+```
+
+**9 failures, 67 checks.** So the defect the author found by playing was
+sitting in the key table the whole time, fully visible to a headless run, and
+**no test was asking.** The lesson is not "write more tests". It is that a
+read-back only ever sees the questions it was written to ask, and in this
+project the questions keep coming from someone playing the game. That is the
+same shape as A6's containment check and the same shape as r1 itself.
+
+`test_player_clips.gd`'s blade check changed **shape**, not value: "swing's
+first key is `true`" would now fail a correct clip, because r2's blade starts
+sheathed. It asserts the invariant instead — no other clip ever shows the
+blade, `swing` shows it at some point, `swing` ends hidden. A check written
+against one revision's values is the same stale-summary failure as
+`test_input_map.gd`'s hard-coded count.
+
+### 5. Claude's prediction for r2, written before the recapture
+
+- **Table frame 0 will change by LESS than r1's 1562 px.** At rest the blade
+  is hidden, so capture frame 10 shows the body cell alone — closer to r0's
+  1524 than to r1's 1562.
+- **Frames 12 and 13 will differ from each other by a large amount** — the
+  blade is sheathed between them, so a 16 px sprite disappears in one frame.
+  Predicted: the largest single-frame change in the visible span.
+- **Frames 14–18 will be identical to one another and to r0's** — the body
+  cell holds and the blade is gone, so nothing is left to move. Predicted
+  **0 px** on every one of them, where r1 had motion on all of them.
+- The active window closing still shows nothing attributable to the hitbox.
+
+### 6. What r2 measured, against the prediction
+
+`captures/swing/r2-strip.png`, same frames, same band, same tool.
+
+| | r0 | r1 | **r2** |
+|---|---|---|---|
+| frames identical to the one before | 19 of 24 | 4 of 24 | **9 of 24** |
+| range of the non-zero changes | 1376–1524 | 126–1568 | **117–1524** |
+| table 0 / 6 / 12 / 18 | 1524 / 1376 / 1376 / 1524 | 1562 / 1394 / 1451 / 1568 | **1524 / 1496 / 1424 / 1524** |
+
+The middle row of the first column is derivable and holds: in r1 the blade
+was visible for all 18 frames, so the continuous track moved the picture on
+every one of them and only 4 frames held. In r2 it is visible for 11, so the
+7 sheathed frames hold as well as the frame track's own. 19 → 4 → 9.
+
+**Prediction 1 — table 0 changes by less than r1's 1562: ✅ 1524**, which is
+r0's number exactly. At rest the blade is hidden, so capture frame 10 is the
+body cell alone, which is the state r0 was in for the whole clip.
+
+**Prediction 3 — table 14–17 are identical: ✅ 0 px on all four.** r1 had
+motion on every one of them. **But the prediction said "14–18" and table 18
+changed by 1524**, which it was always going to: `Rig/Body:frame` steps to
+cell 1 at 0.600. Half right, and the wrong half was carelessness rather than
+a wrong model — the body cell's own key was in the table being predicted
+from. ❌
+
+**Prediction 4 — the active window closing still shows nothing attributable
+to the hitbox: ✅.** Table 10 changes by 280 px and all of it is the blade
+mid-arc.
+
+### Prediction 2 was wrong, and it is the useful one
+
+> frames 12 and 13 will differ by a large amount — the blade is sheathed
+> between them, so a 16 px sprite disappears in one frame. Predicted: the
+> largest single-frame change in the visible span.
+
+**Measured: 154 px, one of the smallest in the span.** And its mirror image,
+the blade *appearing* at table 2, is **146 px**. Those two numbers are a
+direct measurement of how much of the screen this blade occupies:
+
+| Event | Captured pixels changed |
+|---|---|
+| the blade appears (table 2) | **146** |
+| the blade vanishes (table 13) | **154** |
+| the body cell steps (tables 0, 6, 12, 18) | **1424–1524** |
+| the blade moving mid-arc (tables 7–11) | 165–295 |
+
+**A 3 × 16 blade is about one tenth of the event that a 32 × 32 body cell
+change is.** It is the right shape now and it is small, and those are
+separate questions — exactly the split that A6's Effect A r1 ran into, where
+`Flash` was the right idea at a size nobody could see. Whether 150 px is
+enough to read at this window size is **not** something this table can
+answer; §7 is where that is decided.
+
+The prediction was wrong because it compared the blade to itself instead of
+to what else is on screen. That is the same error as r1's: a measurement of
+the right quantity, asked without reference to the rest of the picture.
+
+### 7. My verdict in the running game
+
+_To be written by the author after playing r2._

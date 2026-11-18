@@ -718,3 +718,126 @@ The deadline arithmetic, the phase timings, the one-authority rule, the two
 clocks, the evidence split, the boundaries and the predicted failures. H1
 (a frame track left continuous) and H2 (Godot 3's boolean `loop`) now apply
 to `swing` rather than to `run`; H3 (an inert track path) applies to the rig.
+
+---
+
+# Revision 7.0.2 — 2026-11-18 — the blade comes back, and then it stops spinning
+
+**Supersedes revision 7.0.1 §6's deletion of the `SwordArm` rig, and the
+original §6's rotation-key table and §10's capture-frame rotations.** It
+carries two tuning revisions, r1 and r2, both driven by the author playing the
+game. Everything else stands: the phase boundaries, the clocks, the authority
+table, the evidence split, the boundaries.
+
+## 1. r1 — the premise of 7.0.1 §6 was false
+
+7.0.1 §6 dropped `SwordArm` on this sentence:
+
+> the character's own art already carries a weapon in `p6-windup` and
+> `p7-live`, and adding a second one on a pivot would have drawn two.
+
+It does not. `walker-ninja`'s character fights **unarmed**; those two cells
+are a raised arm and an extended arm. The author found it in play —
+*跑步还行，但挥刀的时候根本看不见刀* — and counting the light-grey pixels
+confirmed it afterwards (113 and 98 against idle's 78: a difference of
+**stance**, not of weapon). `TUNING.md` holds the measurement.
+
+The rig is restored exactly as the original §2.2 specified: `Rig/SwordArm`, a
+`Node2D` pivot at (3, −2) under `Rig` so `Rig.scale.x` mirrors it, carrying
+`Blade`, a 3 × 16 `Sprite2D` drawn by `tools/make_sprites.py` in the
+character's own two greys. **No pose file is edited.**
+
+## 2. r2 — the restored arc was a windmill, and the numbers said so first
+
+The author played r1:
+
+> 刀不太对，他不是挥出去的，而是在身子上面转圈
+>
+> [the sword isn't right — it isn't swinging out, it's spinning in circles
+> above the body]
+
+**That is literally what the original §6 key table describes**, and nobody had
+done the arithmetic. 0° is the blade straight up out of a hand at (3, −2);
+the blade is 16 px long on a 32 px figure whose waist is y = 0 and whose feet
+are y = +13.
+
+| r1 frame | deg | blade tip | |
+|---|---|---|---|
+| 0 | +20 | (+8.5, **−17.0**) | **above the top of the sprite** |
+| 6 | −80 | (−12.8, −4.8) | horizontal, behind |
+| 10 | +85 | (+18.9, −3.4) | horizontal, in front |
+| 12 | +75 | (+18.5, −6.1) | |
+| 18 | +20 | (+8.5, **−17.0**) | back above the head |
+
+**Two facts, both derivable from that table without opening the game.**
+
+1. **The tip is never below y = −3.** Every one of the 18 frames puts the
+   blade in the top half of the frame. "Above the body" is not an impression;
+   it is the range of the function.
+2. **The arc reverses direction twice** — `+20 → −80` anticlockwise,
+   `−80 → +85` clockwise, `+85 → +20` anticlockwise — for a total path of
+   **330° in 0.600 s, 550°/s**, all of it watched. Two reversals about an
+   overhead pivot is the definition of a windmill, and 转圈 is the right word.
+
+## 3. The two rules r2 ships
+
+> **R1. While the blade is visible the arc travels one way.**
+> **R2. It finishes below the hand** — past ±90°, out of the top half.
+
+A swing is a *commitment in one direction*; a thing that goes out and comes
+straight back along its own path is a wave, and if the pivot is overhead it is
+a propeller. The return to rest still has to happen, so it happens **with the
+blade sheathed** — which is also what a character with a sword actually does.
+
+## 4. The revised rotation table
+
+`Rig/SwordArm:rotation_degrees`, continuous, linear. **0° is the blade
+straight up out of the hand; positive is clockwise, which for a figure facing
+right is forward.** `Rig.scale.x` mirrors the whole arm, so one set of keys is
+correct in both facings.
+
+| Frame | Time | Deg | Blade tip, rig coords | What it is |
+|---|---|---|---|---|
+| 0 | 0.0000 | **−150** | (−5.0, +11.9) | rest: point down, behind the heel. **Hidden.** |
+| 2 | 0.0667 | *(−105)* | (−12.5, +2.1) | **drawn** — the blade appears, pointing back |
+| 4 | 0.1333 | **−60** | (−10.9, −10.0) | lifting into the cock |
+| 6 | 0.2000 | **−50** | (−9.3, −12.3) | fully cocked. Last frame before the hitbox opens |
+| 10 | 0.3333 | **+100** | (+18.8, +0.8) | **struck** — forward and low. Last active frame |
+| 12 | 0.4000 | **+115** | (+17.5, +4.8) | the overshoot settles lower |
+| 13 | 0.4333 | **+118** | (+17.1, +5.5) | last visible frame. **Sheathed** from here |
+| 18 | 0.6000 | **−150** | (−5.0, +11.9) | back to rest, travelled unseen |
+
+*(−105 at frame 2 is interpolated, not keyed — it is the angle the blade is at
+when it becomes visible.)*
+
+**Visible travel 223°, all clockwise, no reversal. The 268° return is
+sheathed.** The strike itself — frame 6 to frame 10, −50° to +100° — is
+**150° in 0.133 s, 1127°/s**, five times the speed of the wind-up. The active
+window is the fastest thing on the timeline, which is what makes it read as a
+strike rather than as a gesture.
+
+`Rig/SwordArm/Blade:visible`, discrete: `0.0000 → false`, **`0.0667 → true`**,
+**`0.4333 → false`**. `RESET` and every held clip key it `false`.
+The scene's own `SwordArm.rotation` is **−2.6179939 rad = −150°**, so a scene
+opened cold shows the resting pose and not a mid-swing one.
+
+**No timing moved.** Startup 0–5, active 6–9, recovery 10–17, end 18, 30 fps,
+step 1/30, `LOOP_NONE`. `Hitbox:monitoring` is untouched: `false` / **`true`
+at 0.200** / `false` at 0.3333. §6's phase table and §8's clock argument stand
+exactly as written — this revision changed where the blade goes, not when
+anything happens.
+
+## 5. What this revision adds to §9's evidence split
+
+Both rules in §3 are now **read-back assertions**, and both of them fail r1's
+angles when they are pasted back in (9 failures, `TUNING.md` records the run).
+That is the uncomfortable part and it is recorded rather than smoothed over:
+**the defect the author found by playing was visible in the key table the
+whole time, and no test was asking.** The lesson is not "test more"; it is
+that a read-back only sees the questions it was written to ask, and the
+questions came from someone playing the game.
+
+`test_player_clips.gd`'s blade check also changed **shape**, not just value:
+"swing's first key is `true`" would now fail a correct clip, because the blade
+starts sheathed. It asserts the invariant instead — every other clip keys it
+false throughout, `swing` shows it at some point, `swing` ends hidden.

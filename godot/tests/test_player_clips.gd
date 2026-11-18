@@ -209,13 +209,29 @@ func _init() -> void:
 		+ "a headless run draws nothing")
 
 	# --- the blade is shown by `swing` and by nothing else ----------------
+	# r2 changed the SHAPE of this check, not just a value. The blade is no
+	# longer visible for the whole of `swing`: it is drawn at frame 2 and
+	# sheathed at frame 13 so the long return to rest is not watched. So the
+	# rule is not "swing's first key is true" -- a check written that way
+	# would now fail a correct clip. It is: every other clip keys it false
+	# throughout, swing shows it at some point, and swing ends hidden.
 	for clip_name in ap.get_animation_list():
 		var clip := ap.get_animation(clip_name)
 		var bt := find_track(clip, "Rig/SwordArm/Blade:visible")
-		var want_blade := clip_name == "swing"
-		_check("%s keys the blade visible to %s" % [clip_name, str(want_blade)],
-			bt >= 0 and clip.track_get_key_value(bt, 0) == want_blade,
-			"no track" if bt < 0 else str(clip.track_get_key_value(bt, 0)))
+		_check("%s has a Blade:visible track" % clip_name, bt >= 0)
+		if bt < 0:
+			continue
+		var n := clip.track_get_key_count(bt)
+		var shown := false
+		for k in n:
+			if clip.track_get_key_value(bt, k):
+				shown = true
+		if clip_name == "swing":
+			_check("swing shows the blade at some point", shown)
+			_check("swing ends with the blade sheathed",
+				not clip.track_get_key_value(bt, n - 1))
+		else:
+			_check("%s never shows the blade" % clip_name, not shown)
 
 	# --- the legs are shown by `run` and by nothing else -------------------
 	for clip_name in ap.get_animation_list():
