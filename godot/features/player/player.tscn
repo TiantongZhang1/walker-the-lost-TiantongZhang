@@ -41,7 +41,7 @@ texture = ExtResource("5_legf")
 offset = Vector2(-4, -4)
 
 [node name="SwordArm" type="Node2D" parent="Rig"]
-position = Vector2(3, -2)
+position = Vector2(0, 2)
 rotation = -2.6179939
 
 [node name="Blade" type="Sprite2D" parent="Rig/SwordArm"]

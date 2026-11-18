@@ -37,6 +37,22 @@ const F_COCK := 4             # 0.1333 s
 const F_SHEATHED := 13        # 0.4333 s
 const REST_DEG := -150.0
 
+## r3. The hilt travels. These come from a COLUMN PROFILE of sheet cell 6,
+## printed by `tools/check_sword_reach.py`, which asserts these two values
+## against the committed sheet on every run. The dense mass runs +3..+13,
+## so **x = +3 is the torso's BACK EDGE** -- and x = +3 is where the pivot
+## sat for r1 and r2. The ink BOUNDING BOX starts at x = -11, but that is
+## the scarf streaming out behind; trusting it is what made +3 look
+## central on paper while it sat on the character's back in the game.
+## The Blade sprite is 3 x 16 with offset (0, -8), so the hilt sits ON the
+## pivot and the tip is BLADE_PX away along the arm's local -Y.
+const BLADE_PX := 16.0
+const TORSO_BACK := 3.0
+const TORSO_FRONT := 13.0
+const REST_POS := Vector2(0, 2)
+const COCK_POS := Vector2(3, -5)
+const STRIKE_POS := Vector2(13, 1)
+
 var _checks := 0
 var _failures := 0
 var _tol := 0.5 / FPS
@@ -59,6 +75,15 @@ func _track(clip: Animation, path: String) -> int:
 		if clip.track_get_path(t) == NodePath(path):
 			return t
 	return -1
+
+
+## Where the blade's TIP is at time t, in rig coordinates. The hilt sits on
+## the pivot (the sprite's offset puts it there), so the tip is BLADE_PX away
+## along the arm's local -Y, with 0 degrees pointing up.
+func _tip(clip: Animation, arm: int, pos: int, t: float) -> Vector2:
+	var d := deg_to_rad(float(clip.value_track_interpolate(arm, t)))
+	var o: Vector2 = clip.value_track_interpolate(pos, t)
+	return o + Vector2(sin(d), -cos(d)) * BLADE_PX
 
 
 ## Frame -> seconds, through the table's own frame rate.
@@ -132,7 +157,7 @@ func _init() -> void:
 		absf(sw.length - LENGTH) < _tol, "%.6f" % sw.length)
 	_check("swing step is one frame period at %d fps" % FPS,
 		is_equal_approx(sw.step, 1.0 / FPS), "%.7f" % sw.step)
-	_check("swing has seven tracks", sw.get_track_count() == 7,
+	_check("swing has eight tracks", sw.get_track_count() == 8,
 		str(sw.get_track_count()))
 
 	# --- the body cells, key by key, against the phase table --------------
@@ -241,6 +266,44 @@ func _init() -> void:
 		_check("the last visible angle is past horizontal, so the blade "
 			+ "finishes BELOW the hand", absf(last_vis) > 90.0,
 			"%.1f deg" % last_vis)
+	# RULE 3 (r3) -- the hilt is not nailed to the character's back.
+	# r2 got the direction of the arc right and left the pivot at x = +3,
+	# which a column profile of sheet cell 6 says is the torso's BACK EDGE.
+	# A blade rotating about a fixed point inside the silhouette is a clock
+	# hand whichever way it turns. The author saw that before any test did,
+	# twice running, and named the fix: the centre belongs in front.
+	var pos := _track(sw, "Rig/SwordArm:position")
+	_check("there is a SwordArm:position track — the hand TRAVELS", pos >= 0)
+	if pos >= 0:
+		_check("the position track INTERPOLATES",
+			sw.value_track_get_update_mode(pos) == Animation.UPDATE_CONTINUOUS,
+			str(sw.value_track_get_update_mode(pos)))
+		_key_at(sw, pos, 0, REST_POS)
+		_key_at(sw, pos, F_ACTIVE_OPENS, COCK_POS)
+		_key_at(sw, pos, F_ACTIVE_CLOSES, STRIKE_POS)
+		_key_at(sw, pos, F_END, REST_POS)
+		var cock: Vector2 = sw.value_track_interpolate(pos, _at(F_ACTIVE_OPENS))
+		var hit: Vector2 = sw.value_track_interpolate(pos, _at(F_ACTIVE_CLOSES))
+		_check("the hilt is BEHIND the torso's back edge at full cock",
+			cock.x <= TORSO_BACK, "x %.0f, back edge %.0f" % [cock.x, TORSO_BACK])
+		_check("the hilt is OUT IN FRONT on the last active frame",
+			hit.x > TORSO_BACK + 4.0,
+			"x %.0f, torso %.0f..%.0f" % [hit.x, TORSO_BACK, TORSO_FRONT])
+		_check("the hilt travels forward through the active window, so the "
+			+ "blade is SWUNG and not SPUN", hit.x - cock.x >= 8.0,
+			"%.0f px" % (hit.x - cock.x))
+		if arm >= 0:
+			var t0 := _tip(sw, arm, pos, _at(F_ACTIVE_OPENS))
+			var t1 := _tip(sw, arm, pos, _at(F_ACTIVE_CLOSES))
+			_check("the tip sweeps further than the figure is wide during the "
+				+ "active window",
+				absf(t1.x - t0.x) > TORSO_FRONT - TORSO_BACK,
+				"%.0f px across a %.0f px figure"
+					% [absf(t1.x - t0.x), TORSO_FRONT - TORSO_BACK])
+			_check("the tip finishes CLEAR of the torso, not inside it",
+				t1.x > TORSO_FRONT, "tip x %.1f, front edge %.0f"
+					% [t1.x, TORSO_FRONT])
+
 	if blade >= 0:
 		_check("Blade:visible is discrete",
 			sw.value_track_get_update_mode(blade) == Animation.UPDATE_DISCRETE)

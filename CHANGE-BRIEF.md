@@ -841,3 +841,99 @@ questions came from someone playing the game.
 "swing's first key is `true`" would now fail a correct clip, because the blade
 starts sheathed. It asserts the invariant instead — every other clip keys it
 false throughout, `swing` shows it at some point, `swing` ends hidden.
+
+---
+
+# Revision 7.0.3 — 2026-11-18 — the hand travels, because the pivot was on the character's back
+
+**Supersedes revision 7.0.2 §4's single fixed pivot.** The rotation keys,
+the phase boundaries, the clocks, the hitbox keys and the authority rule are
+unchanged. What changes is that **`Rig/SwordArm:position` is now keyed**, so
+the pivot is part of the animation instead of a constant in the scene.
+
+## 1. Why — the author, twice, before any test
+
+> 刀没挥出去，以刀把为中心在旋转，而且旋转的中心点在人物背部，我觉得应该在前面
+>
+> [the sword isn't swinging out, it's rotating about the hilt, and the centre
+> of rotation is at the character's **back** — I think it should be in front]
+
+**They are right, and `tools/check_sword_reach.py` was written to prove it
+from the committed art rather than from an opinion.** It takes a *column
+profile* of sheet cell 6 (`p7-live`) — solid pixels per column, with the
+scarf's purple ramp excluded — and reports the dense run:
+
+```
+  columns with >= 20 solid px run +3 .. +13
+  so the torso's BACK edge is x = +3 and its FRONT edge x = +13
+```
+
+**The pivot was at x = +3. That is the back edge, to the pixel.**
+
+## 2. The mistake underneath it, which is worth more than the fix
+
+r2's own working note put the pivot "in the middle of the torso", and it was
+derived from the cells' **ink bounding box**, which starts at x = −11. But
+x = −11 is the **scarf**, streaming out behind a figure that faces right. A
+bounding box that includes a trailing scarf has its centre dragged backwards,
+so +3 looked central on paper while sitting on the character's spine in play.
+
+That is the same failure as revision 7.0.2 §2 and as r1's: **a true
+measurement of the wrong quantity.** The bounding box was computed correctly.
+It was not the number the question needed. `check_sword_reach.py` exists so
+the next person gets the right quantity by default, and it asserts
+`test_swing_clip.gd`'s `TORSO_BACK` and `TORSO_FRONT` against the sheet on
+every run — it caught `TORSO_FRONT` wrong (15, the sparse ink edge) the first
+time it was run.
+
+## 3. A rotating pivot inside the silhouette cannot read as a swing
+
+This is geometry, not taste. The blade is 16 px; the torso is 10 px wide.
+With the hilt fixed anywhere inside the body, **the blade's near end never
+moves** and the far end traces a circle centred on the character. That is a
+clock hand. Correcting the *direction* of travel (r2) does not change it,
+which is exactly why the author's second report sounded like the first.
+
+A real strike moves the hand: back behind the shoulder on the wind-up,
+forward past the chest on the blow. So the pivot is **keyed**.
+
+## 4. The position table
+
+`Rig/SwordArm:position`, continuous, linear. Under the same `Rig.scale.x`
+that mirrors everything else, so one set of keys is correct in both facings.
+Times are the rotation track's own, so the two never disagree.
+
+| Frame | Time | Position | Rotation | Hilt vs the torso (+3 .. +13) |
+|---|---|---|---|---|
+| 0 | 0.0000 | **(0, +2)** | −150 | sheathed at the hip. Hidden |
+| 4 | 0.1333 | **(2, −4)** | −60 | drawing back and up |
+| 6 | 0.2000 | **(3, −5)** | −50 | **behind the shoulder** — full cock |
+| 10 | 0.3333 | **(13, +1)** | +100 | **out at the front edge** — the blow |
+| 12 | 0.4000 | **(12, +3)** | +115 | the overshoot drops |
+| 13 | 0.4333 | (12, +3) | +118 | sheathed |
+| 18 | 0.6000 | **(0, +2)** | −150 | back to the hip, unseen |
+
+| Measured across the active window (frames 6 → 10, 0.133 s) | |
+|---|---|
+| the **hilt** travels forward | **10 px** |
+| the **tip** travels horizontally | **38 px**, across a **10 px** figure |
+| the tip finishes at x | **+28.8**, clear of the front edge at +13 |
+
+The scene's own `SwordArm.position` becomes **(0, 2)** and `RESET` holds it,
+so a scene opened cold has the sword at the hip rather than mid-swing.
+
+## 5. Three read-back rules now, not two
+
+7.0.2 §3's two rules stand. r3 adds the one the author's second report names:
+
+> **R3. The hilt is behind the torso's back edge at full cock, out in front
+> of it on the last active frame, and travels at least 8 px between them.**
+
+And two consequences of it, asserted from the keys rather than described:
+the tip's horizontal sweep across the active window must exceed the figure's
+own width, and the tip must finish **outside** the front edge. All of it is
+computed from `position` and `rotation_degrees` together — neither track
+alone can answer it, which is the clearest thing in this assignment about
+what a rig clip is for.
+
+**`swing` now has eight tracks**, `RESET` ten.

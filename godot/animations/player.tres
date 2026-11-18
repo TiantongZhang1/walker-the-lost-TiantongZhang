@@ -241,6 +241,32 @@ tracks/6/keys = {
 "update": 1,
 "values": [false, true, false]
 }
+; r3, 2026-11-18. The HAND TRAVELS. r2 fixed which way the arc went and left
+; the pivot nailed to one point -- and that point was x = +3, which the
+; column profile of cell 6 says is the BACK EDGE of the torso: solid pixels
+; per column jump from 17 at x = +2 to 23 at x = +3 and stay above 23 out to
+; x = +13. The dense mass is +3..+15. So the hilt sat at the character's back
+; and the blade pivoted about it like a clock hand. The author saw exactly
+; that and said the centre belongs in FRONT.
+;
+; It does -- AT THE STRIKE. A wind-up pulls the hand back behind the
+; shoulder; the strike drives it forward past the chest. So the pivot is
+; keyed, not placed: (0,+2) sheathed at the hip, (3,-5) behind the shoulder
+; at full cock, (13,+1) out in front on the last active frame. 10 px of
+; forward travel on the hilt, under the same Rig.scale.x that mirrors
+; everything else. CHANGE-BRIEF.md revision 7.0.3.
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Rig/SwordArm:position")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0, 0.1333333, 0.2, 0.3333333, 0.4, 0.4333333, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 2), Vector2(2, -4), Vector2(3, -5), Vector2(13, 1), Vector2(12, 3), Vector2(12, 3), Vector2(0, 2)]
+}
 
 ; --- the held clips the state machine plays ---------------------------------
 ; Each one hides the rig's legs, because every pose cell already contains the
@@ -590,6 +616,18 @@ tracks/8/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [-150.0]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("Rig/SwordArm:position")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 2)]
 }
 
 [resource]

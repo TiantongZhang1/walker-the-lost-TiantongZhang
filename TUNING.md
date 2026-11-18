@@ -649,4 +649,125 @@ the right quantity, asked without reference to the rest of the picture.
 
 ### 7. My verdict in the running game
 
-_To be written by the author after playing r2._
+Played 2026-11-18. Recorded verbatim, English in square brackets:
+
+> 刀没挥出区，已刀把为中心在旋转，而且旋转的中心点在人物背部，我觉得应该在前面
+>
+> [the sword isn't swinging out, it's rotating about the hilt, and the centre
+> of rotation is at the character's **back** — I think it should be in front]
+
+**Rejected, and the diagnosis is the author's, not Claude's.** r2 fixed which
+way the arc travelled and left the pivot where r1 put it. The author did not
+say "it still looks wrong"; they said **where** it was wrong and **where it
+should be**, and a column profile of the sheet says they were right to the
+pixel. r3 is below.
+
+---
+
+## 2026-11-18 — the swing, r2 → r3. The pivot was on the character's spine.
+
+### 1. What I saw, in the running game, before Claude read anything
+
+> 刀没挥出去，已刀把为中心在旋转，而且旋转的中心点在人物背部，我觉得应该在前面
+>
+> [the sword isn't swinging out, it's rotating about the hilt, and the centre
+> of rotation is at the character's **back** — I think it should be in front]
+
+**This is not "it still looks wrong".** It names the defect and it names the
+fix, and both are correct. It is the third revision in a row where the author
+playing the game found something no test in this repository was asking about,
+and the first where the author supplied the diagnosis as well.
+
+### 2. The measurement — and the number r2 used was the wrong number
+
+`tools/check_sword_reach.py` was written for this revision. It takes a
+**column profile** of sheet cell 6 (`p7-live`): solid pixels per column, with
+the scarf's purple ramp excluded, over the committed sheet.
+
+```
+  columns with >= 20 solid px run +3 .. +13
+  so the torso's BACK edge is x = +3 and its FRONT edge x = +13
+```
+
+**The pivot was at x = +3.** The back edge, to the pixel.
+
+How it got there: r2 reasoned from the cells' **ink bounding box**, which
+starts at x = −11 and gives a centre of about +2. But x = −11 is the
+**scarf**, streaming out behind a figure that faces right. A bounding box
+containing a trailing scarf has its centre dragged backwards, so +3 read as
+"the middle of the torso" on paper and sat on the character's spine in the
+game.
+
+That is the same shape as r1's error and as r2's wrong prediction: **a
+correctly computed measurement of the wrong quantity.** Three times now. The
+pattern is not carelessness with arithmetic; it is choosing what to measure
+without asking what the eye is actually looking at.
+
+### 3. Why r2's fix could not have worked, as geometry
+
+The blade is 16 px; the torso is 10 px wide. **With the hilt fixed anywhere
+inside the silhouette, the blade's near end never moves** and the far end
+traces a circle centred on the character. That is a clock hand. Changing
+which *direction* it turns does not change what it is — which is exactly why
+the author's second report sounded like the first. r2's two rules were
+necessary and not sufficient, and the brief said they were sufficient.
+
+### 4. The change
+
+**`Rig/SwordArm:position` becomes a keyed track.** The pivot stops being a
+constant in the scene and becomes part of the animation. Rotation keys,
+phase boundaries, hitbox keys and clocks are all untouched.
+
+| | r2 | r3 |
+|---|---|---|
+| pivot at full cock (frame 6) | (3, −2), fixed | **(3, −5)** — behind the shoulder |
+| pivot at the blow (frame 10) | (3, −2), fixed | **(13, +1)** — at the front edge |
+| pivot at rest | (3, −2) | **(0, +2)** — sheathed at the hip |
+| hilt travel, active window | **0 px** | **10 px forward** |
+| tip travel, active window | 28 px | **38 px**, across a 10 px figure |
+| tip's final x | +18.8 | **+28.8**, clear of the front edge (+13) |
+
+### 5. The rule, and the two things it makes checkable
+
+> **R3. The hilt is behind the torso's back edge at full cock, out in front
+> of it on the last active frame, and travels at least 8 px between them.**
+
+`test_swing_clip.gd` asserts R3 and two consequences: the tip's horizontal
+sweep must exceed the figure's own width, and the tip must finish **outside**
+the front edge. **All three are computed from `position` and
+`rotation_degrees` together** — neither track alone can answer any of them.
+That is the sharpest thing this assignment has produced about what a cutout
+rig is for: a frame track has one number per frame, and no pair of numbers to
+reason about.
+
+`TORSO_BACK` and `TORSO_FRONT` are no longer typed in. `check_sword_reach.py`
+asserts them against the sheet on every run, and **it caught `TORSO_FRONT`
+wrong the first time it was run** — 15 had been taken from the sparse ink
+edge; the dense mass ends at 13.
+
+### 6. What r3 measured
+
+`captures/swing/r3-strip.png`, same frames, same band, same tool.
+
+| | r1 | r2 | **r3** |
+|---|---|---|---|
+| frames identical to the one before | 4 of 24 | 9 of 24 | **9 of 24** |
+| range of the non-zero changes | 126–1568 | 117–1524 | **147–1576** |
+| mid-arc frames (tables 7–11) | 165–295 | 165–295 | **279–315** |
+
+The held-frame count is unchanged at 9, as it had to be: `Blade:visible` did
+not move, so the same seven frames are sheathed. **The mid-arc frames all
+grew**, which is the position track showing up — the blade is now translating
+as well as rotating, so more of the picture changes per frame even though the
+angles are identical to r2's.
+
+**The strip is not the evidence for this revision.** A pixel count cannot
+distinguish "the blade swept past the body" from "the blade swept through
+it"; both change the same number of pixels. The evidence that r3 fixes what
+the author reported is the geometry in section 4, asserted in section 5, and
+then the author's eye. That is section 9 of the brief working as intended
+rather than as a formality.
+
+### 7. My verdict in the running game
+
+_To be written by the author after playing r3._

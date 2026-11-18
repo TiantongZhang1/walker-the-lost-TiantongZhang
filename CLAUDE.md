@@ -25,7 +25,7 @@ Both live in `godot/animations/player.tres`, on `player.tscn`; `CHANGE-BRIEF.md`
 | | **`run` — the cycle** | **`swing` — the committing action** |
 |---|---|---|
 | Route | **2D cutout rig** — `Node2D` pivots, rotation and position | **`Sprite2D` + `hframes`/`vframes`, frame track** |
-| Plays on | `Rig`, `Rig/LegFront`, `Rig/LegBack` | `Rig/Body`, `Hitbox` |
+| Plays on | `Rig`, `Rig/LegFront`, `Rig/LegBack` | `Rig/Body`, `Hitbox`, **`Rig/SwordArm` (pos + rot)** |
 | Rate, length | **12 fps**, 0.250 s = one stride, `LOOP_LINEAR`, step **1/12** | **30 fps**, 18 frames, 0.600 s, `LOOP_NONE`, step **1/30** |
 | Shape | seam: every interpolated track ends where it started | startup 0–5, active 6–9, recovery 10–17 |
 
@@ -85,11 +85,11 @@ runtime**; effect settings live in `godot/effects/`. Every prediction and
 
 **Exactly one node writes to each animated node. Never add a second writer.**
 `Player/AnimationPlayer` is that node for all of them: `Rig:position:y`,
-`Rig/Body:frame`, both legs' `rotation_degrees` and `visible`, and
-`Hitbox:monitoring`. `Rig/Body.texture` is set once in the scene, never at
-runtime. `player_anim.gd` calls `play()` and writes `Rig.scale.x` (facing),
-which **no clip keys**; it runs on the **physics** tick, like the mixer and
-like `player.gd`. `CHANGE-BRIEF.md` §5 states that wrinkle, not hides it.
+`Rig/Body:frame`, both legs' `rotation_degrees` and `visible`, **`Rig/SwordArm`'s
+`position` AND `rotation_degrees`**, `Blade:visible`, `Hitbox:monitoring`.
+`Rig/Body.texture` is set once in the scene. `player_anim.gd` calls `play()` and
+writes `Rig.scale.x` (facing), which **no clip keys**; it runs on the **physics**
+tick, like the mixer. `CHANGE-BRIEF.md` §5 states that wrinkle, not hides it.
 
 ## Godot 4 names
 
