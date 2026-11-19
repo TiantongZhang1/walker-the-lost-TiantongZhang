@@ -83,6 +83,9 @@ func _init() -> void:
 	var player: Player = main.get_node(^"Player")
 	var ap: AnimationPlayer = player.get_node(^"AnimationPlayer")
 	var hitbox: Area2D = player.get_node(^"Hitbox")
+	# Revision 7.0.6 checks the FACING, which is Rig.scale.x: the one
+	# thing a swing still commits you to.
+	var rig: Node2D = player.get_node(^"Rig")
 	await _settle(player)
 
 	# ----------------------------------------------------------------- A
@@ -149,7 +152,13 @@ func _init() -> void:
 	for row in trace:
 		if row[3]:
 			moved = maxf(moved, absf(row[4] - x0))
-	_check("the player moves 0 px for the whole lock",
+	# Revision 7.0.6 reworded this rather than deleting it. A swing no
+	# longer locks movement, so "0 px" is no longer a statement about the
+	# LOCK -- it is a statement about DRIFT. No direction key is held
+	# anywhere in section A, so the player must stay exactly where it was;
+	# anything else would be the clip or the plant moving it on its own.
+	# Section D is where a key IS held.
+	_check("with no direction held, the swing moves the player 0 px",
 		is_equal_approx(moved, 0.0), "max drift %.4f px" % moved)
 	_note("the hitbox masks layer 3, Enemy. This room has none, so the "
 		+ "window opens on nothing — CHANGE-BRIEF.md §11 says so")
@@ -227,9 +236,20 @@ func _init() -> void:
 		+ "airborne branch in player_anim.gd",
 		ap.current_animation == "swing", str(ap.current_animation))
 
-	# Steering is locked out; momentum is not.
+	# Revision 7.0.6: steering is NOT locked out any more, in the air or on
+	# the ground. r5 asserted the opposite one revision ago and the author
+	# changed the design the next day; the assertion is inverted rather than
+	# deleted, so the file still says what the rule is.
+	#
+	# **What is still locked is the FACING.** `player_anim.gd` only updates
+	# `_facing` when `not is_locked()`, so holding the opposite direction
+	# walks the character backwards without flipping `Rig.scale.x` -- and
+	# `Rig.scale.x` is what mirrors the whole sword arm. Turning mid-arc
+	# would teleport the blade across the body in one frame.
+	var face_before: float = rig.scale.x
 	_key(KEY_A, true)                       # hold the OPPOSITE direction
-	var carried := true
+	var steered := false
+	var flipped := false
 	var fell := false
 	var vy_rose := false
 	var prev_vy: float = player.velocity.y
@@ -237,19 +257,22 @@ func _init() -> void:
 		await process_frame
 		if player.is_on_floor():
 			break
-		if not is_equal_approx(player.velocity.x, vx_air):
-			carried = false
+		if player.velocity.x < -1.0:
+			steered = true
+		if not is_equal_approx(rig.scale.x, face_before):
+			flipped = true
 		if player.velocity.y > prev_vy:
 			vy_rose = true
 		prev_vy = player.velocity.y
 		fell = true
 	_key(KEY_A, false)
-	_check("the jump's horizontal velocity is CARRIED through the air swing",
-		carried, "was %.1f" % vx_air)
-	_check("holding the opposite direction does not turn the swing around",
-		carried)
+	_check("steering WORKS during an air swing (revision 7.0.6)", steered,
+		"vx on entry was %.1f" % vx_air)
+	_check("but the FACING does not flip, so the blade does not teleport "
+		+ "across the body mid-arc", not flipped,
+		"Rig.scale.x %.1f -> %.1f" % [face_before, rig.scale.x])
 	_check("gravity still runs during an air swing", fell and vy_rose)
-	_check("it was moving, so 'carried' is not trivially true",
+	_check("it entered the swing moving, so none of this is trivially true",
 		absf(vx_air) > 1.0, "vx %.1f (walking was %.1f)" % [vx_air, vx_before])
 
 	# Jump is still refused mid-swing, in the air as on the ground.
@@ -266,16 +289,52 @@ func _init() -> void:
 	_check("the air swing ends on its own", not player.is_locked(),
 		"%d physics frames" % n)
 
-	# And landing plants, because the lock re-tests is_on_floor() every tick.
+	# ----------------------------------------------------------------- D
+	# MOVING THROUGH A GROUND SWING. Revision 7.0.6, and the inverse of what
+	# section A used to assert about the lock.
 	await _settle(player)
+	var face0: float = rig.scale.x
+	var gx0: float = player.global_position.x
 	_key(KEY_D, true)
 	for i in range(10):
 		await process_frame
 	await _tap(KEY_J)
 	await process_frame
-	_key(KEY_D, false)
-	_check("a GROUND swing still plants: x velocity is 0",
-		is_zero_approx(player.velocity.x), "%.3f" % player.velocity.x)
+	_check("a ground swing does NOT plant any more: x velocity is full SPEED",
+		absf(player.velocity.x) > 90.0, "%.3f" % player.velocity.x)
+	var travelled := 0.0
+	var flipped_ground := false
+	var still_locked_at_18 := false
+	var fr := 0
+	while player.is_locked() and fr < 120:
+		if fr == 20:                         # mid-recovery, turn around
+			_key(KEY_D, false)
+			_key(KEY_A, true)
+		await process_frame
+		fr += 1
+		travelled = maxf(travelled, absf(player.global_position.x - gx0))
+		# **Only while STILL LOCKED.** The first version of this check sampled
+		# the facing after the `await` without re-testing the lock, so on the
+		# loop's last turn the swing had already ended and `player_anim.gd` had
+		# correctly flipped the facing on that same physics tick. It failed,
+		# and it was the test that was wrong, not the game: a flip one frame
+		# AFTER the commitment ends is the commitment ending.
+		if player.is_locked() and not is_equal_approx(rig.scale.x, face0):
+			flipped_ground = true
+		if fr == F_END - 2:
+			still_locked_at_18 = player.is_locked()
+	_key(KEY_A, false)
+	_check("the player TRAVELS during a ground swing", travelled > 20.0,
+		"%.1f px over %d physics frames" % [travelled, fr])
+	_check("reversing mid-swing does not flip the facing", not flipped_ground,
+		"Rig.scale.x stayed %.1f" % face0)
+	_check("and it is still committed: the clip ran to its own end, not to "
+		+ "a key release", still_locked_at_18 and fr >= F_END - 2,
+		"%d physics frames" % fr)
+	_note("the swing hides the cut-out legs, so a MOVING swing slides: the "
+		+ "body cell is static while the character travels. Effect C still "
+		+ "spawns a dust puff every 24 px. Whether that reads is the "
+		+ "author's, CHANGE-BRIEF.md revision 7.0.6 section 4")
 	await _settle(player)
 
 	main.queue_free()

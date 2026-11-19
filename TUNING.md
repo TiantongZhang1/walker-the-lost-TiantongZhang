@@ -973,4 +973,113 @@ fixing it is not this assignment.
 
 ### 6. My verdict in the running game
 
-_To be written by the author after playing r5._
+Played 2026-11-19. Recorded verbatim, English in square brackets:
+
+> 空中挥刀可以了
+>
+> [the air swing is fine now]
+
+**Kept.**
+
+---
+
+## 2026-11-19 — the swing, r5 → r6. Movement, and what is left of "committing".
+
+### 1. What I asked for, in the running game
+
+> 空中挥刀可以了，人挥刀的时候也要可以移动
+>
+> [the air swing is fine now — the character should be able to move while
+> swinging too]
+
+The first clause closes r5. **Kept.**
+
+### 2. This one was argued before it was built
+
+Every other revision in this assignment fixed something that was wrong. This
+one changes what the thing *is*, and the objection was put to the author
+before the change rather than discovered in review:
+
+A7 asks for one looping cycle and one **committing action**, and §0 grounded
+that in `GDD.md:198` — *"holding attack is a real risk"*. **The movement
+lock was the risk.** Taking it out takes the cost of attacking with it.
+
+The author's answer was to do it anyway, which is theirs to decide. What
+`CHANGE-BRIEF.md` revision 7.0.6 does is make a reviewer weigh the same
+trade instead of finding it.
+
+### 3. What survives, and it is not nothing
+
+A movement lock is **one way** to make a commitment read; it is not what
+makes a clip a committing action. Unchanged: it cannot be cancelled, cannot
+be restarted, always plays all 18 frames, forbids jump, is not interrupted
+by damage — **and forbids turning.**
+
+That last one is the good one. `Rig.scale.x` mirrors the whole sword arm, so
+a turn mid-arc teleports the blade across the body in one frame. You may now
+walk backwards out of your own swing; you may not change which way the blade
+is going. **Direction is what the arc depends on, so direction is what the
+swing commits you to.** That is a smaller commitment than before and it is a
+real one.
+
+### 4. The cost, and it is the author's to judge
+
+`swing` hides the cut-out legs and holds one static body cell, so **a moving
+swing slides.** Effect C still spawns a dust puff every 24 px, because it is
+driven by distance — so there will be dust under a figure whose legs are not
+moving. That is revision 7.0.1 §2's complaint — *the dust looked like it
+belonged to something else* — arriving from the opposite direction, a year of
+commits later.
+
+Fixing it means two clips at once, which means an `AnimationTree`, which §7
+declined for reasons that still hold. **Not done, and named.** Whether the
+slide reads as acceptable is a HUMAN row and it is new: §6 below.
+
+### 5. Two tests changed their expectations, and both were INVERTED
+
+`CLAUDE.md` forbids this except for `test_input_map.gd`'s count, so both are
+named as authorised crossings:
+
+| test | was | is |
+|---|---|---|
+| `test_player_states.gd` | "holding right during the swing moves the player 0 px" | "…**DOES** move the player now", plus: still playing `swing`, not `run` |
+| `test_swing_edges.gd` §A | "the player moves 0 px for the whole lock" | "with **no direction held**, the swing moves the player 0 px" |
+
+The second one's **number did not change** — section A holds no direction
+key, so it is still 0 px. The *claim* changed: it is about drift now, not
+about a lock. A number that stays the same while its meaning moves is worth
+more scrutiny than one that breaks, not less.
+
+Both inverted rather than deleted. **A test left asserting a superseded rule
+is the loudest available way to learn the design moved; a test deleted for
+failing is the quietest.**
+
+### 6. What is asserted now — section D, and 37 checks
+
+| | measured |
+|---|---|
+| ground swing, first frame | `velocity.x` = **96.000**, full `SPEED`, no plant |
+| travelled across the lock | **51.2 px over 35 physics frames** |
+| reversing mid-swing | facing **does not flip**, `Rig.scale.x` stays 1.0 |
+| still committed | the clip ran to its own end, not to a key release |
+| air swing, steering | **works** |
+| air swing, facing | **does not flip** |
+| jump during either | still ignored |
+
+**One of these failed first, and the test was wrong, not the game.** The
+facing was sampled after `await process_frame` without re-testing the lock,
+so on the loop's last turn the swing had already ended and `player_anim.gd`
+had correctly flipped the facing on that same physics tick. A flip one frame
+*after* a commitment ends is the commitment ending. Fixed in the test, and
+recorded, because "the test was wrong" is a thing this project has to be
+able to say out loud.
+
+### 7. A new HUMAN row for §9
+
+| Rule | Checked by | How |
+|---|---|---|
+| **Does a moving swing read, or does it just slide?** | **HUMAN** | hold a direction through several swings, on the lit floor and in the unlit gap |
+
+### 8. My verdict in the running game
+
+_To be written by the author after playing r6._

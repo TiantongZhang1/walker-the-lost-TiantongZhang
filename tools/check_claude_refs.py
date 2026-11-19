@@ -36,7 +36,7 @@ EXPECT = {
     # 127 -> 147: revision 7.0.5 dropped the is_on_floor() gate on the
     # attack and made the lock plant only on the ground, which added
     # twenty lines of comment above this one.
-    "godot/features/player/player.gd:147": "died.emit()",
+    "godot/features/player/player.gd:149": "died.emit()",
     "godot/features/traps/spike_trap.gd:27": "enum State",
     # A6: the four timings whose sum is the 1.40 s cycle that bounds how many
     # Effect A bursts can be alive at once. CHANGE-BRIEF.md section 1.4, A4.

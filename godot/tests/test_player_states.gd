@@ -135,13 +135,24 @@ func _init() -> void:
 	_check("swing_count incremented", player.swing_count == before + 1,
 		"%d -> %d" % [before, player.swing_count])
 
-	# Locked means locked: holding a direction moves nothing.
+	# **Inverted by revision 7.0.6**, not deleted. Until then this asserted
+	# "holding right during the swing moves the player 0 px", and it passed
+	# for a year of commits. The author then asked to be able to walk while
+	# swinging, so the rule changed and the assertion changed with it -- a
+	# test left asserting the old rule would have been the loudest possible
+	# way to find out the design had moved, which is why it is inverted here
+	# rather than removed.
+	#
+	# What a commitment still forbids is asserted in `test_swing_edges.gd`
+	# section D: no cancel, no restart, no jump, no TURN, all 18 frames.
 	var x0 := player.global_position.x
 	await _run(6, [KEY_D])
 	_key(KEY_D, false)
-	_check("holding right during the swing moves the player 0 px",
-		is_equal_approx(player.global_position.x, x0),
-		"drift %.4f px" % absf(player.global_position.x - x0))
+	_check("holding right during the swing DOES move the player now",
+		absf(player.global_position.x - x0) > 1.0,
+		"travelled %.4f px" % absf(player.global_position.x - x0))
+	_check("and it is still playing `swing`, not `run`",
+		ap.current_animation == "swing", ap.current_animation)
 
 	# Let it finish. 0.600 s is 36 frames at 60 fps, plus slack. The count
 	# starts at the frame the swing began, NOT here -- six frames of holding

@@ -68,38 +68,41 @@ func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity.y += GRAVITY * delta
 
+	# **Revision 7.0.6: a swing no longer locks movement.** The author asked
+	# to be able to walk while swinging, so the movement block below now runs
+	# whether or not a swing owns the player. Revision 7.0.5's ground-plant /
+	# air-carry split goes with it: there is nothing left to plant or to carry
+	# once the axis is read every tick either way.
+	#
+	# **What a commitment still means here, and it is not nothing:**
+	#   * it cannot be CANCELLED -- no input sets `action` back to NONE;
+	#   * it cannot be RESTARTED -- a second attack is ignored in startup and
+	#     active and buffered in recovery, the phase coming from the clip's
+	#     own playhead rather than from a timer kept here;
+	#   * it always plays ALL 18 FRAMES; `animation_finished` is the only way
+	#     out of it, and death;
+	#   * **no jump** -- still gated by `is_locked()` below;
+	#   * **no turn.** `player_anim.gd` freezes `Rig.scale.x` while locked, so
+	#     you may walk backwards out of your own swing but you may not change
+	#     which way the blade is going. Direction is the commitment that
+	#     survives, and it is the one the blade's arc actually depends on.
+	#
+	# What is lost is the movement COST -- the half of `GDD.md:198` that made
+	# holding attack a risk. CHANGE-BRIEF.md revision 7.0.6 argues that trade
+	# instead of hiding it.
 	if is_locked():
-		# Committed. No steering, no turn, no jump. A second attack is
-		# ignored in startup and active and buffered in recovery -- the
-		# phase comes from the clip's own playhead, not from a timer here.
-		#
-		# **On the ground the swing PLANTS: velocity.x is held at 0 every
-		# tick. In the air it does not.** There is nothing to plant against
-		# mid-jump, and zeroing x would stop the arc dead and drop the
-		# player straight down. What a commitment locks out is INPUT, not
-		# physics: the horizontal velocity the jump already had is carried,
-		# and no key can change it. Revision 7.0.5.
-		if is_on_floor():
-			velocity.x = 0.0
 		if Input.is_action_just_pressed("attack") \
 				and _anim.current_animation == SWING_CLIP \
 				and _anim.current_animation_position >= RECOVERY_START:
 			_buffered_attack = true
-		move_and_slide()
-		return
-
-	if Input.is_action_just_pressed("jump") and is_on_floor():
-		velocity.y = JUMP_VELOCITY
-
-	# **No `is_on_floor()` here since revision 7.0.5**: the author asked for
-	# the swing in the air. Gravity still runs above, the clip is still
-	# `LOOP_NONE` and still 0.600 s, and `player_anim.gd` already ranks
-	# `is_locked()` above the airborne branch, so `swing` wins over
-	# `rising`/`falling` without that file changing at all.
-	if Input.is_action_just_pressed("attack") and health > 0:
-		_start_swing()
-		move_and_slide()
-		return
+	else:
+		if Input.is_action_just_pressed("jump") and is_on_floor():
+			velocity.y = JUMP_VELOCITY
+		# No `is_on_floor()` on the attack since revision 7.0.5: the swing
+		# works in the air. `player_anim.gd` ranks `is_locked()` above the
+		# airborne branch, so `swing` wins over `rising` / `falling`.
+		if Input.is_action_just_pressed("attack") and health > 0:
+			_start_swing()
 
 	var direction := Input.get_axis("move_left", "move_right")
 	if is_zero_approx(direction):
@@ -113,11 +116,10 @@ func _physics_process(delta: float) -> void:
 func _start_swing() -> void:
 	action = Action.SWING
 	swing_count += 1
-	# Planted on the ground, momentum kept in the air. Landing mid-swing
-	# plants on the tick the floor is found, because the lock re-tests
-	# `is_on_floor()` every tick rather than remembering this one.
-	if is_on_floor():
-		velocity.x = 0.0
+	# Revision 7.0.6: this no longer touches velocity at all. A swing
+	# that planted the player on its first frame and let them walk on
+	# the second would read as a stutter, and the movement block runs
+	# on this frame too now.
 
 
 func _on_animation_finished(name: StringName) -> void:

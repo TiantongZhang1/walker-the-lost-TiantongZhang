@@ -1087,3 +1087,106 @@ plants at exactly 0. Eleven new checks, 23 → **34**.
 One of them exists only to keep another honest: *"it was moving, so
 'carried' is not trivially true"*. A test that the velocity is unchanged
 passes beautifully when the velocity is zero.
+
+---
+
+# Revision 7.0.6 — 2026-11-19 — a swing no longer locks movement, and what "committing" still means
+
+**Supersedes §7's interrupt row for `move_left` / `move_right`, §2.2's
+"what it communicates", revision 7.0.5 §3 entirely, and §11's boundary 2.**
+It also changes two existing tests' expectations, which `CLAUDE.md` puts out
+of scope — named here, before the fact, as boundary crossings the author
+authorised.
+
+## 1. Why
+
+> 人挥刀的时候也要可以移动
+>
+> [the character should be able to move while swinging too]
+
+## 2. The objection, stated before the change rather than after
+
+This is the one revision in Assignment 7 that touches the assignment's own
+vocabulary. A7 asks for **one looping cycle and one committing action**, and
+§0 of this brief grounded "committing" in the game's own GDD:
+
+> `GDD.md:198` — *"The combo is committed: once a swing starts it finishes,
+> so holding attack is a real risk and letting go is a real choice."*
+
+**The movement lock was that risk.** Removing it removes the cost of
+attacking, and §2.2's claim that the swing "communicates that the attack is
+a commitment" is weaker for it. The author was told this and asked for the
+change anyway, which is their call to make; it is recorded here so a
+reviewer weighs the same trade rather than discovering it.
+
+## 3. What makes it still a committing action
+
+A movement lock is **one way** to make a commitment read. It is not what
+makes a clip a committing action. All of this is unchanged:
+
+| | |
+|---|---|
+| **cannot be cancelled** | no input sets `action` back to `NONE`. Only `animation_finished` and death |
+| **cannot be restarted** | a second attack is ignored in startup and active, buffered in recovery — the phase read from the clip's own playhead |
+| **always 18 frames** | `LOOP_NONE`, 0.600 s, every time |
+| **no jump** | still gated by `is_locked()` |
+| **damage does not interrupt** | unchanged |
+| **no TURN** | `player_anim.gd` freezes `Rig.scale.x` while locked |
+
+**The last row is the commitment that survives, and it is the right one.**
+`Rig.scale.x` mirrors the entire sword arm, so a turn mid-arc would teleport
+the blade from one side of the body to the other in a single frame. You may
+now walk backwards out of your own swing; you may not change which way the
+blade is going. Direction is what the arc depends on, so direction is what
+the swing commits you to.
+
+## 4. The cost, which is visual and is the author's to judge
+
+`swing` hides the cut-out legs (`Rig/LegFront:visible` and
+`Rig/LegBack:visible` are keyed `false`) and holds one static body cell. So
+**a moving swing slides**: the character travels with no leg motion under
+them. Effect C still spawns a dust puff every 24 px, because it is driven by
+distance travelled — so there will be dust under a figure whose legs are not
+moving, which is the exact complaint revision 7.0.1 §2 built the leg rig to
+answer, arriving from the other direction.
+
+Showing the legs during a moving swing would mean two clips at once, which
+means an `AnimationTree`, which §7 declined with reasons that still hold.
+**Not done, and named rather than left to be found.**
+
+## 5. What the code became
+
+The lock block no longer touches `velocity` at all — the movement block runs
+on every tick whether or not a swing owns the player, and `_start_swing()`
+no longer plants. Revision 7.0.5's ground-plant / air-carry split is gone
+with it: there is nothing to plant or carry once the axis is read either
+way.
+
+## 6. Two existing tests changed their expectations, and both were inverted rather than deleted
+
+`CLAUDE.md` forbids changing an existing test's expectations except
+`test_input_map.gd`'s count. Two were changed:
+
+- `test_player_states.gd`: *"holding right during the swing moves the player
+  0 px"* → *"…DOES move the player now"*, plus a new check that it is still
+  playing `swing` and not `run`.
+- `test_swing_edges.gd` §A: *"the player moves 0 px for the whole lock"* →
+  *"with no direction held, the swing moves the player 0 px"*. Section A
+  holds no direction key, so the number is the same and the **claim** is
+  different: it is now about drift, not about a lock.
+
+Both were **inverted, not removed**, so the file still states the rule. A
+test left asserting a superseded rule is the loudest available way to find
+out the design moved; a test deleted for failing is the quietest.
+
+`test_swing_edges.gd` gains section **D**, which asserts the new rule and
+everything §3 says survives: full `SPEED` on the swing's first frame, 51.2 px
+travelled across the lock, the facing unflipped through a mid-swing reversal,
+and the clip still running to its own end rather than to a key release.
+23 → 34 → **37** checks.
+
+**One of those checks failed first, and the test was wrong, not the game.**
+The facing was sampled after `await process_frame` without re-testing the
+lock, so on the loop's final turn the swing had already ended and
+`player_anim.gd` had correctly flipped the facing on that same physics tick.
+A flip one frame *after* a commitment ends is the commitment ending.
