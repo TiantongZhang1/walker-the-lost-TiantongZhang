@@ -188,6 +188,96 @@ func _init() -> void:
 				% [press_on, label, want],
 			got == want, "got %d" % got)
 
+	# ----------------------------------------------------------------- C
+	# THE SWING IN THE AIR. Revision 7.0.5. The author asked for it, and
+	# until then `player.gd` gated the attack on `is_on_floor()` -- a gate
+	# NO TEST IN THIS REPOSITORY EVER ASSERTED. It could have been deleted
+	# by accident at any point in A7 and every suite would have stayed
+	# green. Both sides of the new rule are asserted here.
+	#
+	# The rule: a commitment locks out INPUT, not physics. On the ground the
+	# swing plants (x velocity held at 0). In the air the jump's horizontal
+	# velocity is carried, because there is nothing to plant against, and no
+	# key can change it.
+	await _settle(player)
+	var base_air := player.swing_count
+	await _tap(KEY_D)                       # face and move right
+	_key(KEY_D, true)
+	for i in range(10):
+		await process_frame
+	var vx_before: float = player.velocity.x
+	_key(KEY_SPACE, true)
+	await process_frame
+	_key(KEY_SPACE, false)
+	for i in range(6):                      # get clear of the floor
+		await process_frame
+	_key(KEY_D, false)
+
+	_check("the test is airborne before it swings", not player.is_on_floor(),
+		"on_floor=%s y=%.1f" % [player.is_on_floor(), player.velocity.y])
+	var vx_air: float = player.velocity.x
+	await _tap(KEY_J)
+	await process_frame
+
+	_check("attack in the AIR starts a swing",
+		player.swing_count - base_air == 1,
+		"swing_count +%d" % (player.swing_count - base_air))
+	_check("the lock is on in the air", player.is_locked())
+	_check("`swing` beats `rising`/`falling` -- is_locked() outranks the "
+		+ "airborne branch in player_anim.gd",
+		ap.current_animation == "swing", str(ap.current_animation))
+
+	# Steering is locked out; momentum is not.
+	_key(KEY_A, true)                       # hold the OPPOSITE direction
+	var carried := true
+	var fell := false
+	var vy_rose := false
+	var prev_vy: float = player.velocity.y
+	for i in range(10):
+		await process_frame
+		if player.is_on_floor():
+			break
+		if not is_equal_approx(player.velocity.x, vx_air):
+			carried = false
+		if player.velocity.y > prev_vy:
+			vy_rose = true
+		prev_vy = player.velocity.y
+		fell = true
+	_key(KEY_A, false)
+	_check("the jump's horizontal velocity is CARRIED through the air swing",
+		carried, "was %.1f" % vx_air)
+	_check("holding the opposite direction does not turn the swing around",
+		carried)
+	_check("gravity still runs during an air swing", fell and vy_rose)
+	_check("it was moving, so 'carried' is not trivially true",
+		absf(vx_air) > 1.0, "vx %.1f (walking was %.1f)" % [vx_air, vx_before])
+
+	# Jump is still refused mid-swing, in the air as on the ground.
+	var y_before: float = player.velocity.y
+	await _tap(KEY_SPACE)
+	_check("jump is still ignored during an air swing",
+		player.velocity.y >= y_before, "%.1f -> %.1f"
+			% [y_before, player.velocity.y])
+
+	var n := 0
+	while player.is_locked() and n < 120:
+		await process_frame
+		n += 1
+	_check("the air swing ends on its own", not player.is_locked(),
+		"%d physics frames" % n)
+
+	# And landing plants, because the lock re-tests is_on_floor() every tick.
+	await _settle(player)
+	_key(KEY_D, true)
+	for i in range(10):
+		await process_frame
+	await _tap(KEY_J)
+	await process_frame
+	_key(KEY_D, false)
+	_check("a GROUND swing still plants: x velocity is 0",
+		is_zero_approx(player.velocity.x), "%.3f" % player.velocity.x)
+	await _settle(player)
+
 	main.queue_free()
 	await process_frame
 	print("")

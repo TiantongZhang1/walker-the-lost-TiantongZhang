@@ -882,4 +882,95 @@ is the likeliest reason and it is the design.
 
 ### 6. My verdict in the running game
 
-_To be written by the author after playing r4._
+Played 2026-11-18. Recorded verbatim, English in square brackets:
+
+> 刀长度可以了
+>
+> [the blade's length is fine now]
+
+**Kept.** `SWORD_LEN` stays at 20.
+
+---
+
+## 2026-11-18 — the swing, r4 → r5. In the air, and a gate nothing was guarding.
+
+### 1. What I asked for, in the running game
+
+> 刀长度可以了，让角色在空中也能挥刀
+>
+> [the blade's length is fine now — let the character swing in the air too]
+
+The first clause closes r4. **Kept**: `SWORD_LEN` stays at 20.
+
+### 2. The change
+
+A design change, not a tuning one, so `CHANGE-BRIEF.md` revision 7.0.5 holds
+the table and §7's `SWING` entry condition is superseded. `is_on_floor()` is
+deleted from the attack gate and from the buffered restart; in exchange two
+*new* `is_on_floor()` tests appear, around the planting:
+
+> **A commitment locks out INPUT, not physics.**
+
+On the ground the swing plants — `velocity.x` held at 0 every tick, so you
+cannot slide into or out of your own attack. In the air there is nothing to
+plant against, and zeroing `x` would stop the jump arc dead and drop the
+character straight down. The jump's horizontal velocity is carried and no
+key changes it. The guard is re-tested every tick rather than remembered, so
+**landing mid-swing plants on the frame the floor is found**.
+
+`player_anim.gd` did not change. `_clip_for_state()` already ranked
+`is_locked()` above the airborne branch, so `swing` beat `rising`/`falling`
+from the first air swing. That was written for the ground case and happens
+to be right here — which is luck until a test says it, so a test says it.
+
+### 3. The finding: nothing was guarding the gate
+
+**No test in this repository ever pressed `attack` in the air.** Not the
+nine interrupt cases, not the frame-by-frame trace of the whole window, not
+the structure test, not the pin. `is_on_floor()` could have been deleted by
+accident on any day of this assignment and all 23 checks would have stayed
+green.
+
+That is the same shape as everything else A7 has turned up, with one
+difference worth naming: the earlier three were **wrong things that no test
+asked about**. This one was a **right thing that no test held in place** — a
+rule the brief stated, the code obeyed, and nothing defended. Both are the
+same gap seen from opposite sides.
+
+### 4. What is asserted now
+
+Eleven new checks in `test_swing_edges.gd`, 23 → **34**, both sides of the
+rule:
+
+| | measured |
+|---|---|
+| attack in the air starts a swing | `swing_count` +1 while `is_on_floor()` is false |
+| the lock is on in the air | yes |
+| `swing` beats `rising`/`falling` | `current_animation == "swing"` |
+| the jump's x velocity is carried | **96.0 px/s, unchanged for the whole lock** |
+| holding the opposite direction | does **not** turn it around |
+| gravity still runs | `velocity.y` rises every frame |
+| jump during an air swing | ignored: y went 10.0 → 25.0, which is gravity, not −260 |
+| the air swing ends on its own | 24 further physics frames |
+| a ground swing still plants | `velocity.x` exactly 0.000 |
+
+One check exists only to keep another honest — *"it was moving, so
+'carried' is not trivially true"* — because an assertion that the velocity
+is unchanged passes beautifully when the velocity is zero. That is the
+fourth time in this assignment a check has needed a check.
+
+### 5. Found, not fixed, not new
+
+`test_swing_edges.gd` and `test_player_states.gd` both print `ObjectDB
+instances were leaked` and `resources still in use at exit`. **Pre-existing**:
+`test_swing_edges.gd` at the previous commit, before any of this, printed 4
+and 2; it now prints 8 and 4, scaling with how much of the scene the run
+exercises. `scripts/run-test.sh` deliberately does not fail on either line —
+its rule 4b lists `SHADER ERROR`, `SCRIPT ERROR` and `Failed loading
+resource`, and these are neither. Recorded rather than chased: it is a
+`SceneTree` test tearing down a scene at `quit()`, it predates A7, and
+fixing it is not this assignment.
+
+### 6. My verdict in the running game
+
+_To be written by the author after playing r5._

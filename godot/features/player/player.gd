@@ -69,10 +69,18 @@ func _physics_process(delta: float) -> void:
 		velocity.y += GRAVITY * delta
 
 	if is_locked():
-		# Committed. No move, no turn, no jump. A second attack is ignored
-		# in startup and active and buffered in recovery -- the phase comes
-		# from the clip's own playhead, not from a timer kept here.
-		velocity.x = 0.0
+		# Committed. No steering, no turn, no jump. A second attack is
+		# ignored in startup and active and buffered in recovery -- the
+		# phase comes from the clip's own playhead, not from a timer here.
+		#
+		# **On the ground the swing PLANTS: velocity.x is held at 0 every
+		# tick. In the air it does not.** There is nothing to plant against
+		# mid-jump, and zeroing x would stop the arc dead and drop the
+		# player straight down. What a commitment locks out is INPUT, not
+		# physics: the horizontal velocity the jump already had is carried,
+		# and no key can change it. Revision 7.0.5.
+		if is_on_floor():
+			velocity.x = 0.0
 		if Input.is_action_just_pressed("attack") \
 				and _anim.current_animation == SWING_CLIP \
 				and _anim.current_animation_position >= RECOVERY_START:
@@ -83,7 +91,12 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("jump") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
 
-	if Input.is_action_just_pressed("attack") and is_on_floor() and health > 0:
+	# **No `is_on_floor()` here since revision 7.0.5**: the author asked for
+	# the swing in the air. Gravity still runs above, the clip is still
+	# `LOOP_NONE` and still 0.600 s, and `player_anim.gd` already ranks
+	# `is_locked()` above the airborne branch, so `swing` wins over
+	# `rising`/`falling` without that file changing at all.
+	if Input.is_action_just_pressed("attack") and health > 0:
 		_start_swing()
 		move_and_slide()
 		return
@@ -100,14 +113,21 @@ func _physics_process(delta: float) -> void:
 func _start_swing() -> void:
 	action = Action.SWING
 	swing_count += 1
-	velocity.x = 0.0
+	# Planted on the ground, momentum kept in the air. Landing mid-swing
+	# plants on the tick the floor is found, because the lock re-tests
+	# `is_on_floor()` every tick rather than remembering this one.
+	if is_on_floor():
+		velocity.x = 0.0
 
 
 func _on_animation_finished(name: StringName) -> void:
 	if name != SWING_CLIP:
 		return
 	action = Action.NONE
-	if _buffered_attack and health > 0 and is_on_floor():
+	# The buffered swing no longer needs the floor either -- otherwise a
+	# swing buffered during an airborne recovery would be silently dropped,
+	# which is H6's failure wearing a different hat.
+	if _buffered_attack and health > 0:
 		_buffered_attack = false
 		_start_swing()
 	else:

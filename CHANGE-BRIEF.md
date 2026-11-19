@@ -1012,3 +1012,78 @@ the jump branch at `:83`, so for the 0.600 s of a swing no jump is read. That
 is *"the combo is committed"* in code and `test_swing_edges.gd` asserts it.
 If the spacebar felt dead, this is the likeliest reason, and it is the
 feature rather than a fault.
+
+---
+
+# Revision 7.0.5 — 2026-11-18 — the swing works in the air
+
+**Supersedes §7's `SWING` entry condition and its transition row.** One
+condition is deleted. No clip, no key, no timing, no phase boundary, no
+authority and no hitbox behaviour changes.
+
+## 1. Why
+
+> 让角色在空中也能挥刀
+>
+> [let the character swing in the air too]
+
+§7 required `is_on_floor()` to enter `SWING`, which came from the GDD's
+ground combat and was never argued for in this brief. The author wants an
+air attack. That is a design call and it is theirs.
+
+## 2. What changes, in one line of code each
+
+| | before | after |
+|---|---|---|
+| entering `SWING` | `attack` pressed **and `is_on_floor()`** and `action == NONE` | `attack` pressed and `health > 0` and `action == NONE` |
+| the buffered second swing | restarts only if `is_on_floor()` | restarts regardless |
+| `_start_swing()` | `velocity.x = 0.0` | `velocity.x = 0.0` **only on the floor** |
+| the lock, every tick | `velocity.x = 0.0` | `velocity.x = 0.0` **only on the floor** |
+
+**`player_anim.gd` does not change at all.** `_clip_for_state()` already
+tests `is_locked()` *above* the airborne branch, so `swing` outranks
+`rising`/`falling` the moment an air swing starts. That ordering was written
+for the ground case and happens to be right for this one; the test now says
+so out loud rather than leaving it to luck.
+
+## 3. The rule the two `is_on_floor()` guards encode
+
+> **A commitment locks out INPUT, not physics.**
+
+On the ground the swing **plants**: `velocity.x` is held at 0 every tick, so
+you cannot slide into or out of your own attack. In the air there is nothing
+to plant against — zeroing `x` would stop the jump arc dead and drop the
+character straight down, which is a different game's air attack. So the
+horizontal velocity the jump already had is **carried**, and no key changes
+it. Gravity runs exactly as before.
+
+The guard is re-tested **every tick, not remembered at the start**, so
+landing mid-swing plants on the frame the floor is found.
+
+## 4. What stays locked
+
+Everything §7's interrupt table already said, now true in the air as well:
+no turn, no steering, **no jump**, a second attack ignored in startup and
+active and buffered in recovery, damage does not interrupt, death aborts.
+The clip is still `LOOP_NONE`, still 0.600 s, and `Hitbox:monitoring` still
+opens at 0.200 and closes at 0.3333 — the window is on the clip's timeline
+and knows nothing about the floor.
+
+## 5. The part worth recording
+
+**The `is_on_floor()` gate was never asserted by any test.** Nine interrupt
+cases, a frame-by-frame trace of the whole window, a state-machine structure
+test, a pin — and not one of them pressed `attack` in the air. The gate
+could have been deleted by accident at any point in Assignment 7 and every
+suite would have stayed green.
+
+So this revision's own rule is asserted on both sides, in
+`test_swing_edges.gd`: the swing starts in the air, the lock is on, `swing`
+beats `rising`/`falling`, the horizontal velocity is carried, **holding the
+opposite direction does not turn it around**, gravity still runs, jump is
+still refused, the clip still ends on its own — and a ground swing still
+plants at exactly 0. Eleven new checks, 23 → **34**.
+
+One of them exists only to keep another honest: *"it was moving, so
+'carried' is not trivially true"*. A test that the velocity is unchanged
+passes beautifully when the velocity is zero.
