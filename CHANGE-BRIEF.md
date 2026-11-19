@@ -937,3 +937,78 @@ alone can answer it, which is the clearest thing in this assignment about
 what a rig clip is for.
 
 **`swing` now has eight tracks**, `RESET` ten.
+
+---
+
+# Revision 7.0.4 — 2026-11-18 — the blade is 20 px, and the length now lives in one place
+
+**Supersedes revision 7.0.3 §4's tip-reach numbers and revision 7.0.2 §1's
+"3 × 16".** One number changed. No key, no timing, no phase boundary and no
+rule moved.
+
+## 1. Why
+
+The author played r3 and asked for a longer blade. That is the whole reason
+and it does not need a measurement behind it: how long a sword should look is
+a judgement, and §9 puts judgements about how a thing reads with the author.
+
+## 2. What changed
+
+| | r3 | r4 |
+|---|---|---|
+| `sword.png` | 3 × 16 | **3 × 20** |
+| of which cutting edge | 11 px | **15 px** |
+| `Blade.offset` | (0, −8) | **(0, −10)** |
+
+`offset` is **−LEN / 2** so that the hilt lands exactly on the pivot. It is
+not a free parameter: get it wrong and the blade pivots about its own middle,
+which is the clock-hand failure of r1 and r2 arriving by a different door.
+
+## 3. What it does to r3's geometry
+
+| Across the active window (frames 6 → 10) | r3 (16 px) | r4 (20 px) |
+|---|---|---|
+| the hilt travels forward | 10 px | **10 px** (unchanged — it is the pivot) |
+| the tip travels horizontally | 38 px | **45 px**, across a 10 px figure |
+| the tip finishes at x | +28.8 | **+32.7**, clear of the front edge at +13 |
+
+All three of revision 7.0.3 §5's rules still pass, and they pass by a wider
+margin than before, because a longer blade reaches further from the same
+pivot. That is worth stating plainly: **r4 cannot have fixed r3's defect and
+was not asked to.** It made a correct swing bigger.
+
+## 4. The length now has one home, and two checks
+
+Before this revision the number 16 was written in three places that nothing
+compared: the generator, the sprite's `offset` in the scene, and
+`BLADE_PX` in `test_swing_clip.gd`, which the tip-reach assertions are
+computed from. Three copies of one number is this project's recurring fault —
+the same shape as `test_input_map.gd`'s hard-coded count and the strip tool's
+fixed sentence.
+
+`tools/make_sprites.py`'s **`SWORD_LEN`** is the source now, and
+`tools/check_sword_reach.py` asserts, on every run:
+
+- the generated PNG is `SWORD_LEN` tall;
+- `player.tscn`'s `Blade.offset.y` is exactly `−SWORD_LEN / 2`;
+- `test_swing_clip.gd`'s `BLADE_PX` equals `SWORD_LEN`.
+
+## 5. Not changed, and checked rather than assumed: the jump binding
+
+The author asked in the same breath for jump to be on the spacebar. **It
+already was** — `project.godot`'s `jump` action carries physical SPACE, W and
+UP, and has since before this assignment. `CLAUDE.md` and §11 both put the
+existing input bindings out of scope, and nothing needed to move.
+
+But "it already is" was a claim about a file, and `test_input_map.gd` only
+ever asserted that the **action exists**. An action can exist with the wrong
+key on it, or with no key at all, and every check in that test would still be
+green. So the keys are pressed now, through `Input.parse_input_event`, and
+released again: six new checks, 7 → **13**.
+
+**Where jump genuinely does nothing is §7's interrupt table, by design.**
+`player.gd:71` returns from `_physics_process` while `is_locked()`, before
+the jump branch at `:83`, so for the 0.600 s of a swing no jump is read. That
+is *"the combo is committed"* in code and `test_swing_edges.gd` asserts it.
+If the spacebar felt dead, this is the likeliest reason, and it is the
+feature rather than a fault.

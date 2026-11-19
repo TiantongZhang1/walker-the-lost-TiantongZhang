@@ -75,12 +75,40 @@ def main() -> int:
         m = re.search(r"const %s := ([-\d.]+)" % name, src)
         return None if m is None else float(m.group(1))
 
+    # The blade's length lives in make_sprites.py and is USED by the test's
+    # tip-reach assertions. Two copies of one number drift silently, which is
+    # this project's recurring fault, so they are compared here.
+    gen = io.open(ROOT / "tools" / "make_sprites.py", encoding="utf-8").read()
+    m = re.search(r"SWORD_LEN = (\d+)", gen)
+    blade = None if m is None else float(m.group(1))
+    png = Image.open(ROOT / "godot" / "assets" / "sprites" / "sword.png")
+    scene = io.open(ROOT / "godot" / "features" / "player" / "player.tscn",
+                    encoding="utf-8").read()
+    off = re.search(r'ExtResource\("7_sword"\)\s*\noffset = '
+                    r'Vector2\(0, (-[\d.]+)\)', scene)
+    print("")
+    print("  the blade's length, in the three places it is written:")
+    print("    make_sprites.py SWORD_LEN   %s" % blade)
+    print("    sword.png                   %d px tall" % png.size[1])
+    print("    player.tscn Blade.offset.y  %s  (must be -LEN/2: the hilt on "
+          "the pivot)" % (off and off.group(1)))
+
     bad = 0
-    for name, want in (("TORSO_BACK", back), ("TORSO_FRONT", front)):
+    if blade is None or png.size[1] != blade:
+        bad += 1
+        print("    MISMATCH: the PNG is not SWORD_LEN tall. Re-run "
+              "tools/make_sprites.py")
+    if off is None or abs(float(off.group(1)) + blade / 2.0) > 0.01:
+        bad += 1
+        print("    MISMATCH: Blade.offset.y is not -LEN/2, so the hilt is not "
+              "on the pivot")
+
+    for name, want in (("TORSO_BACK", back), ("TORSO_FRONT", front),
+                       ("BLADE_PX", blade)):
         got = const(name)
         ok = got is not None and abs(got - want) < 0.5
         bad += 0 if ok else 1
-        print("  %-12s test says %s, the sheet says %+d   %s"
+        print("  %-12s test says %s, the source says %+d   %s"
               % (name, got, want, "OK" if ok else "MISMATCH"))
 
     print("")

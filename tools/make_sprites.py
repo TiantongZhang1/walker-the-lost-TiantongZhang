@@ -30,6 +30,12 @@ CLEAR = (0, 0, 0, 0)
 # The blade's two greys are the character's own, already in every pose,
 # so its steel reads as this character's rather than as something pasted
 # on. TUNING.md, 2026-11-18.
+# The sword's length, 2026-11-18 (r4). 16 px first; the author played r3 and
+# asked for a longer blade, so it is 20. `Blade.offset` in player.tscn is
+# (0, -LEN/2) so the HILT sits on the pivot, and `test_swing_clip.gd`'s
+# BLADE_PX must equal LEN -- the tip-reach assertions are computed from it.
+SWORD_LEN = 20
+SWORD_EDGE = 15                   # rows 0..14 are blade; row 15 is the guard
 STEEL = (0x9A, 0xA7, 0xBD, 255)
 STEEL_DK = (0x5E, 0x64, 0x72, 255)
 GRIP = (0x16, 0x23, 0x3D, 255)
@@ -236,7 +242,7 @@ def player_sheet(torso: Image.Image) -> Image.Image:
 
 
 def sword() -> Image.Image:
-    """The blade, 3 x 16, hilt at the BOTTOM so the pivot sits in the hand.
+    """The blade, 3 x 20, hilt at the BOTTOM so the pivot sits in the hand.
 
     Added back on 2026-11-18. The original brief had it; revision 7.0.1
     deleted it believing the poses already carried a weapon. They do not --
@@ -249,17 +255,19 @@ def sword() -> Image.Image:
     something pasted on. No pose file is touched: the blade is a separate
     sprite on a separate node, which is what a cutout rig is for.
     """
-    img = Image.new("RGBA", (3, 16), CLEAR)
+    LEN, EDGE = SWORD_LEN, SWORD_EDGE
+    img = Image.new("RGBA", (3, LEN), CLEAR)
     px = img.load()
-    for y in range(0, 11):            # blade, lit on its left edge
+    for y in range(0, EDGE):          # blade, lit on its left edge
         px[0, y] = STEEL
         px[1, y] = STEEL
         px[2, y] = STEEL_DK
     px[1, 0] = STEEL_DK               # a blunted tip reads better than a point
     for x in range(3):                # crossguard
-        px[x, 11] = STEEL_DK
-    for y in range(12, 16):           # grip
+        px[x, EDGE] = STEEL_DK
+    for y in range(EDGE + 1, LEN):    # grip
         px[1, y] = GRIP
+    assert img.size == (3, LEN), img.size
     return img
 
 def main() -> None:

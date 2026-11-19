@@ -795,3 +795,91 @@ every assertion was written **after** a person said what they saw.
 That is the finding this assignment actually produced, and it is not "write
 more tests". A read-back sees only the questions it was written to ask. The
 questions came from playing.
+
+---
+
+## 2026-11-18 — the swing, r3 → r4. A longer blade, and one number with three homes.
+
+### 1. What I asked for, in the running game
+
+> 刀再长一点，然后把跳跃改成空格键
+>
+> [make the sword a bit longer, and change jump to the spacebar]
+
+### 2. The change
+
+`SWORD_LEN` 16 → **20**, cutting edge 11 → 15 px, `Blade.offset` (0, −8) →
+(0, −10). Nothing else: no key, no timing, no phase boundary, no rule.
+
+There is no measurement behind this one and there should not be. How long a
+sword should look is a judgement, and `CHANGE-BRIEF.md` §9 puts judgements
+about how a thing *reads* with the author. The arithmetic only says what the
+judgement costs:
+
+| Across the active window | r3 (16 px) | r4 (20 px) |
+|---|---|---|
+| hilt travels forward | 10 px | **10 px** — unchanged; it is the pivot |
+| tip travels horizontally | 38 px | **45 px**, across a 10 px figure |
+| tip finishes at x | +28.8 | **+32.7**, front edge is +13 |
+
+**r4 cannot have fixed r3's defect and was not asked to.** The three rules
+r2 and r3 shipped all still pass, by a wider margin, because a longer blade
+reaches further from the same pivot. Saying so matters: a revision that
+happens to widen a margin is not evidence that the margin was the problem.
+
+### 3. What the recapture measured
+
+`captures/swing/r4-strip.png`, same frames, same band, same tool.
+
+| | r3 (16 px) | r4 (20 px) |
+|---|---|---|
+| frames identical to the one before | 9 of 24 | **9 of 24** |
+| the blade appearing (table 2) | 147 | **195** |
+| the blade vanishing (table 13) | 157 | **204** |
+| mid-arc frames (tables 7–11) | 279–315 | **375–412** |
+| the body cell stepping (tables 0, 6, 12, 18) | 1524 / 1672 / 1648 / 1524 | same ±0 at 0 and 18 |
+
+The blade-only frames grew by about **30 %**, which is what a 25 % longer
+sprite sweeping a wider arc should do, and the held-frame count did not move
+at all, because `Blade:visible` did not. Tables 0 and 18 are **1524 in r1,
+r2, r3 and r4** — the blade is sheathed on both, so its length cannot show
+there. A number that refuses to move when an unrelated thing changes is worth
+as much as one that moves.
+
+### 4. One number had three homes, and nothing compared them
+
+16 was written in `tools/make_sprites.py`, in `player.tscn`'s `Blade.offset`,
+and in `test_swing_clip.gd`'s `BLADE_PX` — which every tip-reach assertion is
+computed from. Change one and the other two go on being wrong quietly: the
+test would compute the tip of a 16 px blade on a 20 px sprite and report
+PASS.
+
+`SWORD_LEN` is the source now, and `tools/check_sword_reach.py` asserts the
+PNG's height, the scene's `offset` (which must be **−LEN / 2**, or the blade
+pivots about its own middle — r1's failure arriving by another door), and
+`BLADE_PX`, every run.
+
+This is the fourth instance of the same fault in this assignment:
+`test_input_map.gd`'s hard-coded count, the strip tool's fixed sentence, the
+caption that described one capture, and now a length in three places.
+
+### 5. The jump binding — not changed, because it was already right
+
+Space already pressed jump, along with W and UP, and has since before this
+assignment. Nothing moved.
+
+**But `test_input_map.gd` only asserted that the action EXISTS.** An action
+can exist carrying the wrong key, or no key, and all seven of its checks
+would still be green — so "it already is" was a claim about a file, not a
+measurement. The three keys are pressed and released now through
+`Input.parse_input_event`. 7 checks → **13**.
+
+Where the spacebar genuinely does nothing is the 0.600 s of a swing:
+`player.gd:71` returns from `_physics_process` while `is_locked()`, before
+the jump branch at `:83`. That is §7's interrupt table and `GDD.md:198` in
+code, and `test_swing_edges.gd` asserts it. If space felt dead in play, that
+is the likeliest reason and it is the design.
+
+### 6. My verdict in the running game
+
+_To be written by the author after playing r4._

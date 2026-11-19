@@ -35,6 +35,26 @@ func _init() -> void:
 	Input.flush_buffered_events()
 	_check("releasing D clears move_right", not Input.is_action_pressed("move_right"))
 
+	# 2026-11-18. The author asked for jump to be on the spacebar. It already
+	# was -- `jump` carries SPACE, W and UP -- but "it already is" is a claim
+	# about a file, and this test only ever asserted that the ACTION EXISTS.
+	# An action can exist with the wrong key on it, or with no key at all, and
+	# every check above would still be green. So the key is pressed.
+	for key in [[KEY_SPACE, "SPACE"], [KEY_W, "W"], [KEY_UP, "UP"]]:
+		var k := InputEventKey.new()
+		k.physical_keycode = key[0]
+		k.pressed = true
+		Input.parse_input_event(k)
+		Input.flush_buffered_events()
+		_check("physical %s presses jump" % key[1],
+			Input.is_action_pressed("jump"))
+		k = k.duplicate()
+		k.pressed = false
+		Input.parse_input_event(k)
+		Input.flush_buffered_events()
+		_check("releasing %s clears jump" % key[1],
+			not Input.is_action_pressed("jump"))
+
 	# The count was hard-coded as 5. It stayed 5 when a fourth action
 	# was added and the run grew to seven checks -- a summary that lied
 	# about its own test. It is counted now.

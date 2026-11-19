@@ -44,9 +44,11 @@ const REST_DEG := -150.0
 ## sat for r1 and r2. The ink BOUNDING BOX starts at x = -11, but that is
 ## the scarf streaming out behind; trusting it is what made +3 look
 ## central on paper while it sat on the character's back in the game.
-## The Blade sprite is 3 x 16 with offset (0, -8), so the hilt sits ON the
-## pivot and the tip is BLADE_PX away along the arm's local -Y.
-const BLADE_PX := 16.0
+## The Blade sprite is 3 x 20 with offset (0, -10), so the hilt sits ON the
+## pivot and the tip is BLADE_PX away along the arm's local -Y. 16 first; the
+## author played r3 and asked for a longer blade. tools/make_sprites.py's
+## SWORD_LEN is the source and check_sword_reach.py asserts they agree.
+const BLADE_PX := 20.0
 const TORSO_BACK := 3.0
 const TORSO_FRONT := 13.0
 const REST_POS := Vector2(0, 2)
