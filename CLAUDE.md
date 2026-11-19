@@ -47,7 +47,7 @@ godot --headless --path godot --import          # once after cloning
 ```
 
 At **60**: every `test_*_config.gd`, `test_input_map.gd`, `check_assets_3d.gd`,
-`test_materials.gd`, the read-backs, the pins, the edge tests. At **30, 60 and
+`test_materials.gd`, the read-backs, the pins, the edge tests, `measure_clocks.gd`. At **30, 60 and
 144**: `test_trap_warning.gd`, `test_trap_shader_driver.gd`,
 `test_step_dust_state.gd`. `cost_effects.gd` as `60 300`; `realtime` for tests
 that wait on audio. `gpu_cost_effects.gd` is **windowed**

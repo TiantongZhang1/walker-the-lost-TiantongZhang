@@ -1,0 +1,83 @@
+Assignment 7 section 8 -- THE TWO CLOCKS, measured.
+Commit f350c74, 2026-11-19.
+  ./scripts/run-test.sh measure_clocks.gd 60
+
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+  trace around the boundary, mode 0:
+    f0   playhead 0.0667  monitoring false
+    f1   playhead 0.0000  monitoring false
+    f2   playhead 0.0167  monitoring false
+    f3   playhead 0.0333  monitoring false
+    f4   playhead 0.0500  monitoring false
+    f5   playhead 0.0667  monitoring false
+    f6   playhead 0.0833  monitoring false
+    f7   playhead 0.1000  monitoring false
+    f8   playhead 0.1167  monitoring false
+    f9   playhead 0.1333  monitoring false
+    f10  playhead 0.1500  monitoring false
+    f11  playhead 0.1667  monitoring false
+    f12  playhead 0.1833  monitoring false
+    f13  playhead 0.2000  monitoring true
+    f14  playhead 0.2167  monitoring true
+    f15  playhead 0.2333  monitoring true
+    f16  playhead 0.2500  monitoring true
+
+  trace around the boundary, mode 1:
+    f0   playhead 0.0833  monitoring false
+    f1   playhead 0.0167  monitoring false
+    f2   playhead 0.0333  monitoring false
+    f3   playhead 0.0500  monitoring false
+    f4   playhead 0.0667  monitoring false
+    f5   playhead 0.0833  monitoring false
+    f6   playhead 0.1000  monitoring false
+    f7   playhead 0.1167  monitoring false
+    f8   playhead 0.1333  monitoring false
+    f9   playhead 0.1500  monitoring false
+    f10  playhead 0.1667  monitoring false
+    f11  playhead 0.1833  monitoring false
+    f12  playhead 0.2000  monitoring true
+    f13  playhead 0.2167  monitoring true
+    f14  playhead 0.2333  monitoring true
+    f15  playhead 0.2500  monitoring true
+    f16  playhead 0.2667  monitoring true
+
+
+  mode                    clip starts   window opens   playhead there
+  PHYSICS (what ships)        f1            f13            0.2000
+  IDLE (engine default)       f1            f12            0.2000
+
+  playhead on the frame `swing` becomes current:
+    PHYSICS  0.0000      IDLE  0.0167   <- the whole difference
+  frames from THAT frame to the window opening:
+    PHYSICS  12            IDLE  11        (key at 0.200 s = 12 frames)
+
+PASS  PHYSICS: the window opens on the frame the playhead reads 0.2000 -- writer and reader share a tick, so the disagreement is ZERO   [0.2000]
+PASS  IDLE: it opens on the frame its playhead reads 0.2000 TOO   [0.2000]
+PASS  on the frame `swing` becomes current, the PHYSICS clip is at 0.0000   [0.0000]
+PASS  and the IDLE clip is already one step in, at 0.0167   [0.0167]
+PASS  but the two clips are offset by exactly one physics step   [1 frames]
+
+  WHAT THIS MEASURES, AND WHERE CHANGE-BRIEF.md SECTION 8 WAS WRONG
+
+  Section 8 predicted the idle figure would be UP TO ONE PHYSICS
+  STEP LATE. Measured, it is one physics step EARLY, and the cause
+  is not read latency at all. An idle-mode mixer gets an extra
+  advance during the idle step of the frame the clip STARTS -- a
+  step the physics-mode mixer does not get until the next frame.
+  So the idle clip runs one step ahead of the physics clip for the
+  whole of its length.
+
+  Section 8's actual CLAIM survives, and is what the first two
+  checks establish: the window opens on the frame the playhead
+  reaches 0.2000, in both modes. Writer and reader share a tick.
+  The disagreement between the clip's write and gameplay's read
+  is ZERO SECONDS, which is what shipping on physics buys.
+
+NOTE  WHAT THIS RUN CANNOT SEE. `--fixed-fps` locks the render tick to the physics tick, so the idle step always falls between the same
+NOTE  two physics steps and every run of this file is identical. Section 8 also predicts the idle figure JITTERS between runs, and
+NOTE  THAT is where idle's real unreliability lives: at a free frame rate the idle step wanders. It needs a windowed run and is NOT
+NOTE  established here. The SIZE of the offset is measured; its VARIANCE is not. Running this three times under a locked clock
+NOTE  would be one measurement repeated, not three measurements.
+
+5 checks, 0 failures

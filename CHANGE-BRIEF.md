@@ -1338,3 +1338,79 @@ for this clip instead:
 sentence in this assignment to outlive the fact it stated, after
 `test_input_map.gd`'s count, the strip tool's holding sentence, the table-10
 caption, and the blade's length in three places.
+
+---
+
+# Revision 7.0.8 — 2026-11-19 — §8's prediction was wrong in sign, and the claim under it survives
+
+**Supersedes §8's prediction paragraph.** Nothing in the game changes. A
+measurement was added, `godot/tests/measure_clocks.gd`, and it disagrees
+with what §8 said it would find.
+
+## 1. What §8 predicted, written 2026-11-15
+
+> at physics, the physics frame corresponding to 0.200 s; at idle, up to
+> **one physics step late — 1/60 s ≈ 0.0167 s** — and jittering between runs
+> because the render tick is not locked to the physics tick.
+
+## 2. What it measures
+
+`evidence/a7/clocks.txt` holds the run.
+
+| mode | `swing` becomes current on | playhead **on that frame** | window opens | playhead there |
+|---|---|---|---|---|
+| **PHYSICS** (ships) | f1 | **0.0000** | f13 | **0.2000** |
+| **IDLE** (engine default) | f1 | **0.0167** | f12 | **0.2000** |
+
+**Idle is one physics step EARLY, not late.** The sign is the other way
+round, and the cause is not read latency.
+
+## 3. Where the frame actually goes
+
+Both modes make `swing` the current animation on the **same** physics frame.
+The difference is the playhead *on* that frame.
+
+`player.gd` starts the swing in `_physics_process`; `player_anim.gd` reads
+that and calls `play()` + `seek(0, true)` in its own `_physics_process`.
+
+- **Physics mode.** The `AnimationPlayer` is earlier in the tree than
+  `PlayerAnim`, so its advance for that physics step **already happened**
+  before `play()` was called. The clip's first advance is next frame.
+  Playhead on the starting frame: **0.0000**.
+- **Idle mode.** The mixer advances in the frame's *idle* step, which comes
+  after every `_physics_process`. So it takes its first step on the frame
+  the clip starts. Playhead on the starting frame: **0.0167**.
+
+One step, gained at the start, carried for the clip's whole length.
+
+## 4. §8's actual claim survives, and this is what establishes it
+
+> **The window opens on the frame whose playhead reads 0.2000, in both
+> modes.** Writer and reader share a tick; the disagreement between the
+> clip's write and gameplay's read is **zero seconds.**
+
+That is the thing shipping on physics was for, and it is now measured rather
+than argued. The one-frame offset is a different quantity — *when the clip
+starts relative to the button* — and §8 did not distinguish them. It does
+now.
+
+## 5. What the run cannot see, and does not claim
+
+`scripts/run-test.sh` passes `--fixed-fps`, which locks the render tick to
+the physics tick on purpose. So the idle step always falls between the same
+two physics steps and **every run of this file is identical.**
+
+§8 also predicted the idle figure would **jitter between runs**, and that is
+where idle's real unreliability lives: at a free frame rate the idle step
+wanders between physics steps. **It is not established here**, it needs a
+windowed run, and the file says so in its own output rather than letting a
+reader assume a repeated number is a replicated one. Running a deterministic
+measurement three times is one measurement printed three times.
+
+## 6. Why this is recorded as a correction and not a patch
+
+§8's prediction is tagged **[proposal]**, which in this brief means *derived
+by Claude and not yet confirmed*. It was not confirmed. The tag did its job:
+the number was never treated as a fact, the measurement was built to test it
+rather than to agree with it, and the disagreement is in the file instead of
+being quietly rewritten to match.

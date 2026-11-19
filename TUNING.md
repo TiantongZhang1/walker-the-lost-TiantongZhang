@@ -1183,4 +1183,14 @@ What carries weight instead:
 
 ### 7. My verdict in the running game
 
-_To be written by the author after playing it._
+Played 2026-11-19. Recorded verbatim, English in square brackets:
+
+> 没问题了
+>
+> [it's fine now]
+
+**Kept.** The run cycle closes here. The limitation in §5 stands and is
+recorded as a HUMAN row in `CHANGE-BRIEF.md` §9 rather than as a defect:
+the cycle alternates, it does not stride, and making it stride means
+drawing a longer leg, which is the author's call about their character's
+art and not Claude's.
