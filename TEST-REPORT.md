@@ -1533,3 +1533,468 @@ like it ran.* It looked instead like thirteen broken suites. `GODOT=` is the
 documented override and with it every suite is green. Worth recording because
 the failure mode was read backwards for a minute, and the thing that settled
 it was the wrapper's own comment.
+
+---
+
+# Assignment 7
+
+**The two clips, the one authority, and the two clocks.**
+`CHANGE-BRIEF.md` plus revisions 7.0.1 – 7.0.8 is the contract this section
+reports against. Every number below was produced by a command in this
+repository; where a number is read off a picture instead, it says so.
+
+The through-line of this assignment, stated before the evidence rather than
+discovered in it:
+
+> **A read-back only sees the questions it was written to ask.**
+> Eight revisions, seven of them started by the author playing the game and
+> none by a test going red.
+
+---
+
+## Baseline, through Assignment 7's wrapper
+
+`scripts/run-test.sh` gained one rule for A7, in a commit of its own:
+`Failed loading resource` now fails the run. Godot prints it and exits 0, so
+without the rule a scene whose texture is missing passes every assertion
+about a clip while drawing nothing.
+
+| Suite | Tick | Checks | Failures |
+|---|---|---|---|
+| `test_hit_burst_config.gd` | 60 | 80 | 0 |
+| `test_hit_burst_state.gd` | 60 | 22 | 0 |
+| `test_dungeon_motes_config.gd` | 60 | 39 | 0 |
+| `test_dungeon_motes_state.gd` | 60 | 19 | 0 |
+| `test_step_dust_config.gd` | 60 | 63 | 0 |
+| **`test_player_clips.gd`** | 60 | **82** | 0 |
+| **`test_swing_clip.gd`** | 60 | **82** | 0 |
+| **`test_player_states.gd`** | 60 | **26** | 0 |
+| **`test_swing_edges.gd`** | 60 | **37** | 0 |
+| **`pin_player_states.gd`** | 60 | **15** | 0 |
+| **`measure_clocks.gd`** | 60 | **5** | 0 |
+| `test_input_map.gd` | 60 | 13 | 0 |
+| `test_materials.gd` | 60 | 48 | 0 |
+| `check_assets_3d.gd` | 60 | ALL PASSED | 0 |
+| `test_trap_warning.gd` | 30 / 60 / 144 | 22 each | 0 |
+| `test_trap_shader_driver.gd` | 30 / 60 / 144 | 24 each | 0 |
+| `test_step_dust_state.gd` | 30 / 60 / 144 | 26 each | 0 |
+
+`evidence/a7/suite.txt` is the run.
+
+**One suite is not in that table and does not load.**
+`godot/tests/test_keyboard.gd` preloads `res://game/session.gd`, which has
+**never existed in this repository** — it is a file from
+`walker-ninja-TiantongZhang`. It has been unloadable since `e7b4d1d`
+(2026-10-17), the commit that changed the game, and it is unloadable at tag
+`a6.1` and at `1d32214`. Nothing in A7 touched it, it is not in the suite
+`CLAUDE.md` names, and it is recorded rather than deleted: removing a
+previous assignment's file is not this assignment's call.
+
+---
+
+## The evidence split, and what each instrument cannot do
+
+`CHANGE-BRIEF.md` §9 is the table. Restated as capability:
+
+| Instrument | Sees | **Cannot see** |
+|---|---|---|
+| read-back | key times, values, `step`, `loop_mode`, update mode, every track's node-and-property path | whether the motion reads; whether the numbers describe the right geometry |
+| pin | that a sequence of states and the frames they land on did not move | anything about a behaviour the pin does not drive — A7's pin presses no attack |
+| edge test | the frame a boundary lands on, driven through real synthesized input | anything drawn |
+| structure test | which clip is current in which state | the same |
+| measurement | the clocks' offset, in frames and seconds | its own variance, under `--fixed-fps` |
+| frame strip | what a windowed run actually drew | nothing invisible — a hitbox contributes zero pixels open or shut |
+| **the author** | all of it | — |
+
+Every HUMAN row in §9 was answered by the author in play, and `TUNING.md`
+records each verdict verbatim in their own words.
+
+---
+
+## The read-backs
+
+### `test_player_clips.gd` — the rig clip, 82 checks
+
+Asserts: every track in every clip resolves to a real node **and** a real
+property, branched on track type (a 3D transform track's subname is a bone,
+a blend-shape track's a blend shape — the branch is there because the check
+is wrong without it, and this project has no 3D tracks); the cycle's length,
+`step` and `loop_mode`; that every rotation key is inside the generator's
+measured band; the continuous-track seam rule; which clips show the legs and
+which show the blade; the held clips' cells, update mode and loop mode.
+
+Three assertions in it exist **because of defects the author found**:
+
+- **antiphase, as arithmetic.** `front + back` must be the same number on
+  every key. Measured: `24.0, 24.0, 24.0, 24.0, 24.0`. The cycle this
+  replaced had two legs that came within **2.0°** of each other; these
+  separate by **52°** at both contacts.
+- **both legs resolve to the same texture**, because the trailing-leg cut is
+  a stub (below).
+- **the hips are the measured joints**, not an assumed (20, 20).
+
+### `test_swing_clip.gd` — the committing action, 82 checks
+
+Asserts the phase table's key times with a tolerance of half a frame period
+(never `==`, because key times are 32-bit floats), `LOOP_NONE`, `step`
+1/30, the hitbox keys, the legs hidden, and **three rules that exist only
+because the author played the game**:
+
+> **R1.** While the blade is visible the arc travels one way.
+> **R2.** It finishes below the hand, past ±90°.
+> **R3.** The hilt is behind the torso's back edge at full cock, out in
+> front of it on the last active frame, and travels ≥ 8 px between them.
+
+R3 and its two consequences — the tip's sweep exceeds the figure's width,
+and the tip finishes outside the front edge — are computed from `position`
+**and** `rotation_degrees` together. **Neither track alone can answer any of
+them**, which is the sharpest thing this assignment produced about what a
+rig clip is for: a frame track has one number per frame and no pair of
+numbers to reason about.
+
+---
+
+## The pins
+
+`pin_player_states.gd`, 15 checks, unchanged through all eight revisions:
+
+```
+FALLING -> IDLE -> RUN -> IDLE -> RISING -> FALLING -> IDLE -> DEAD
+frames   1 /  16 /  22 /  52 /  53 /  71 /  88 / 120
+```
+
+**It passed unchanged after every one of them, and that is worth reading
+carefully rather than as reassurance.** The pin presses no attack, so the
+one behaviour A7 alters is outside what it covers. A green pin here means
+*the states A7 did not touch did not move* — which is what a pin is for, and
+is not evidence about the swing.
+
+---
+
+## The edge tests — `test_swing_edges.gd`, 37 checks
+
+Run at **60**, this project's physics tick, so one table frame at 30 fps is
+two physics frames and the boundaries land on even numbers. A frame count is
+only meaningful at a pinned rate.
+
+**Section A — the window, traced rather than timed by hand.** One clean
+swing is recorded frame by frame: playhead, `Hitbox.monitoring`, the lock,
+the player's x. The boundaries are asserted against that trace, which is the
+difference between measuring the clip and measuring the test's own reflexes.
+
+```
+hitbox opens   physics frame 12   0.2000 s
+hitbox closes  physics frame 20   0.3333 s
+lock releases  physics frame 36   0.6000 s
+```
+
+one frame before, on, and one frame after each boundary, by name.
+
+**Section B — nine interrupts**, one per named frame, each a fresh swing:
+
+| pressed on | expected | got |
+|---|---|---|
+| startup, first frame | 1 swing (ignored) | 1 |
+| startup, one before active | 1 | 1 |
+| active, on open / one after / one before close | 1 | 1 |
+| recovery, first frame / one in / one before end | 2 (buffered) | 2 |
+| one frame after the end | 2 (a fresh swing) | 2 |
+
+**The interrupt assertions were checked against a mutation before being
+trusted.** Moving `RECOVERY_START` to 0.0 made five of them fail, exactly
+the startup and active cases. A check that cannot fail is this project's
+recurring fault and it was looked for rather than hoped about.
+
+**Section C — the swing in the air** (revision 7.0.5). The author asked for
+it; until then `player.gd` gated the attack on `is_on_floor()`, **a gate no
+test in this repository ever asserted.** Nine interrupt cases, a
+frame-by-frame trace, a structure test and a pin, and not one of them
+pressed attack in the air. The gate could have been deleted by accident on
+any day of A7 and all 23 checks would have stayed green.
+
+**Section D — moving through a swing** (revision 7.0.6). Measured: full
+`SPEED` 96.000 on the swing's first frame, **51.2 px travelled over 35
+physics frames**, the facing unflipped through a mid-swing reversal, and the
+clip still running to its own end rather than to a key release.
+
+One check in section C exists only to keep another honest — *"it entered the
+swing moving, so none of this is trivially true"* — because an assertion
+that a velocity is unchanged passes beautifully when the velocity is zero.
+
+---
+
+## The two clocks — `measure_clocks.gd`, and §8 predicted the wrong sign
+
+Until this file existed, the only thing in the repository about the two
+clocks was an assertion that `callback_mode_process` is PHYSICS. **That is a
+check on a setting, not a measurement.** `evidence/a7/clocks.txt` is the run.
+
+| mode | `swing` becomes current | playhead **on that frame** | window opens | playhead there |
+|---|---|---|---|---|
+| **PHYSICS** (ships) | f1 | **0.0000** | f13 | **0.2000** |
+| **IDLE** (engine default) | f1 | **0.0167** | f12 | **0.2000** |
+
+§8 predicted idle would be *"up to one physics step **late**"*. Measured, it
+is one physics step **early**, and the cause is not read latency.
+
+**Where the frame goes.** Both modes make `swing` current on the same
+physics frame; the difference is the playhead *on* that frame. `player.gd`
+starts the swing in `_physics_process` and `player_anim.gd` calls `play()` +
+`seek(0, true)` in its own. In physics mode the `AnimationPlayer` is earlier
+in the tree, so its advance for that step **already happened** before
+`play()` was called — first advance next frame, playhead 0.0000. In idle
+mode the mixer advances in the frame's **idle** step, after every
+`_physics_process`, so it takes a step on the starting frame — playhead
+0.0167. One step, gained at the start, carried for the clip's length.
+
+**§8's actual claim survives, and the measurement is what establishes it:**
+
+> The window opens on the frame whose playhead reads **0.2000, in both
+> modes.** Writer and reader share a tick, so the disagreement between the
+> clip's write and gameplay's read is **zero seconds.**
+
+The one-frame offset is a *different quantity* — when the clip starts
+relative to the button — and §8 did not distinguish the two. Revision 7.0.8
+does.
+
+**What the run cannot see, and does not claim.** `run-test.sh` passes
+`--fixed-fps`, which locks the render tick to the physics tick on purpose,
+so the idle step always falls between the same two physics steps and **every
+run of this file is identical.** §8 also predicted the idle figure would
+*jitter between runs*, and that is where idle's real unreliability lives: at
+a free frame rate the idle step wanders. Not established here. **Running a
+deterministic measurement three times is one measurement printed three
+times**, and the file says so in its own output.
+
+---
+
+## The mutations
+
+Re-run against `deec1de`, three revisions after their first run at
+`1d32214`. Each gets its own `git worktree`, which is **imported** and then
+removed; the working tree is never touched. `evidence/a7/mutations.txt`.
+
+| | mutation | exit | the assertion that fired |
+|---|---|---|---|
+| **M1** | rename the property a track names | 1 | `LegFront has no property rotation_degrres`, in `run` **and** `RESET` |
+| **M2** | the cycle set to `LOOP_NONE` | 1 | `run loops (LOOP_LINEAR) [0]` |
+| **M3** | a frame key of 8 in a 4 × 2 sheet | 1 | `cell is inside the sheet (< 8)` |
+| **M5** | pin `SwordArm:position` to one fixed point | 1 | `the hilt travels forward through the active window` |
+| **M4** | delete `godot/.godot` and reimport | **0** | 0 import errors, both read-backs pass |
+
+**The first attempt at the re-run was wrong, and the evidence file records
+it rather than only the corrected run.** A fresh worktree has no
+`godot/.godot`, so the sheet's `.import` had never run and **every** mutation
+exited 1 on `FAIL the sheet is loaded` whether or not its own assertion
+fired. M3 exited 1 on that alone. *A mutation that passes for a reason
+unrelated to the mutation proves nothing*, which is exactly what mutations
+are for. Each worktree is imported first now, and each run names the
+assertion that must fire and checks that it did.
+
+**M4 passes, and the assignment asks why.** It is the mutation that catches
+an imported rig whose loop mode was set in the scene instead of in the
+importer's per-animation settings. This rig is not imported — the glTF probe
+on 2026-11-15 found `skins: 0` and no animations in all three `.glb` files —
+so there is no per-animation importer setting to lose. What M4 establishes
+here is narrower and still worth having: **nothing in either clip depends on
+a setting that exists only in the cache**, so a fresh clone gets the clips
+this working tree has.
+
+**The `AnimatedSprite2D` fifth mutation does not apply:** that route was
+declined in §2.1 and no `SpriteFrames` resource exists to rename.
+
+---
+
+## The frame strips — FIXTURE CAPTURES
+
+`godot/previews/swing_preview.tscn` and `run_preview.tscn`, both over a real
+stretch of this level — the same backdrop, floor and three traps the game
+draws — with the player clear of `SpikeTrap1`'s detection zone so no trap
+fires mid-strip. Captured at **30 fps**, the phase table's own rate, so one
+captured frame is one table frame.
+
+**A capture needs a window and is the author's to run.** A headless run
+draws nothing.
+
+`tools/build_anim_strips.py` composes them and **measures** the per-frame
+pixel change. Across four swing revisions:
+
+| | r1 | r2 | r3 | r4 |
+|---|---|---|---|---|
+| frames identical to the one before | 4 of 24 | 9 of 24 | 9 of 24 | 9 of 24 |
+| the blade appearing (table 2) | — | 146 | 147 | **195** |
+| the blade vanishing (table 13) | — | 154 | 157 | **204** |
+| mid-arc (tables 7–11) | 165–295 | 165–295 | 279–315 | **375–412** |
+| body cell stepping (tables 0, 6, 12, 18) | 1562 / 1394 / 1451 / 1568 | 1524 / 1496 / 1424 / 1524 | 1524 / 1576 / 1566 / 1524 | 1524 / 1672 / 1648 / 1524 |
+
+Three things that are facts rather than readings:
+
+1. **`UPDATE_DISCRETE` holds in a real render.** Frames between keys change
+   by 0 on a frame track.
+2. **A continuous track moves the picture on every frame between keys.**
+   r0's 19-of-24 held frames became 4 the moment a rotation track was added.
+   That is the clearest evidence in this assignment that a rig clip and a
+   frame clip are different mechanisms, and it came out of a measurement.
+3. **The active window closing changes no pixel.** A hitbox is invisible: it
+   contributes zero pixels whether open or shut, so **no strip can show that
+   boundary at all** and `test_swing_edges.gd` is what checks it. Table 10
+   does change in r2–r4, by 280–412 px, and all of it is the blade mid-arc.
+
+**A measurement of the blade's own size, which fell out of a wrong
+prediction.** r2 predicted the blade vanishing would be the largest
+single-frame change in the visible span. It is one of the smallest: ~150 px
+against a body cell's ~1450. **A 3 × 16 blade is about a tenth of the event
+that a 32 × 32 cell change is.** The prediction compared the blade to itself
+instead of to the rest of the picture.
+
+---
+
+## The tuning loop — eight revisions, seven started by playing
+
+`TUNING.md` holds each one with the author's words verbatim. The table a
+reviewer should read:
+
+| | the author said | what was actually wrong | **what no test was asking** |
+|---|---|---|---|
+| r0 → r1 | can't see the sword | there was no sword — the poses are unarmed martial poses | whether the art contained what the brief claimed |
+| r1 → r2 | it spins above the body | the arc reversed direction twice about an overhead pivot: 330° in 0.6 s | which **way** the arc travelled, and how **low** it got |
+| r2 → r3 | the centre of rotation is at the back | the pivot sat on the torso's back edge, x = +3, to the pixel | **where the pivot was at all** |
+| r3 → r4 | make it longer | nothing — a judgement | the blade's length lived in three files that nothing compared |
+| r4 → r5 | let me swing in the air | nothing — a design call | `is_on_floor()` on the attack: **a right thing no test held in place** |
+| r5 → r6 | let me move while swinging | nothing — a design call, argued against first | — |
+| r6 → r7 | the legs waggle, they don't alternate | **three** defects at once (below) | the band's sign, the back leg's length, the pivot's position |
+| — → r8 | — | §8's prediction was the wrong sign | the clocks had never been measured, only asserted |
+
+**r1, r2, r3 and r7 were all fully visible to a headless run before the game
+was ever launched** — in the key table, in the sheet, in the generator's own
+output. They are all asserted now, and **every one of those assertions was
+written after a person said what they saw.**
+
+### r7, the worst of them: three wrong measurements under one complaint
+
+**The safe band was in the wrong sign.** `tools/make_sprites.py` measures
+with PIL's `rotate()`, which turns the opposite way from Godot's
+`rotation_degrees`. Rendered at the same angles both ways, the two
+lowest-row tables are exact mirror images:
+
+```
+ deg    PIL rotate()   Godot rotation_degrees
+ -34       33.0 THROUGH     23.5
+  +0       29.0             29.0
+ +34       23.0             33.1 THROUGH FLOOR
+```
+
+So the band reported as `−2 .. +34` is really `−34 .. +2`, and the shipped
+keys drove the planted foot **3.3 px through the floor** — with
+`test_player_clips.gd` asserting every key was inside the band, and passing.
+**A test can only be as right as the number it is handed.**
+
+Revision 7.0.1 §4 is worth quoting against itself: *"The paper version of
+this had the sign backwards, and a rendered measurement caught it."* The
+rendered measurement had it backwards too. **Moving a calculation from paper
+into a renderer does not make it right; it makes it harder to check.**
+
+**`leg_back.png` is not a leg.**
+
+| | `leg_front` | `leg_back` |
+|---|---|---|
+| length, hip to foot | 12.2 px | **4.0 px** |
+| lowest inked row | 29 — on the floor | **24 — five px short of it** |
+| foot sweep across its range | 5.0 px | **1.6 px** |
+
+A 14 × 4 horizontal stub that can never plant and therefore can never take a
+step. One real leg rocking and one stub twitching beside it is precisely
+what the author described.
+
+**The pivot was not the hip.** `HIP` was *assumed* to be (20, 20); the cut
+surface is row 20, columns 25–29, so the joint is **(27, 20)** — seven
+pixels to the side. The leg swung like a pendulum on a bar.
+
+**And the first fix was wrong too, in the same way.** It ran −52 .. 0, which
+in Godot's sign is straight-down to 52° **forward**: both feet kicking out
+in front, never behind. Every assertion passed — range, antiphase,
+separation, seam — because every assertion was about **shape**, and the
+shape was right while the **direction** was wrong. The recapture caught it,
+by being looked at.
+
+---
+
+## Known limitations, measured and named
+
+1. **The run cycle alternates; it does not stride.** Across 88° of rotation
+   the foot moves about **10 px**, against a **24 px** step: an 8.6 px leg
+   with its foot almost directly under the hip mostly changes apparent
+   length when rotated. No key value fixes this. Drawing a longer leg in the
+   generator would, and that is a change to the character's art — which
+   revision 7.0.1 exists because the author rejected. §9 carries it as a
+   HUMAN row and it is theirs.
+2. **A moving swing slides.** `swing` hides the cut-out legs and holds one
+   static body cell, so a swing with a direction held travels with no leg
+   motion under it, while Effect C still spawns a puff every 24 px. Fixing
+   it means two clips at once, which means an `AnimationTree`, which §7
+   declined for reasons that still hold.
+3. **The band assertion is weak.** Once the floor rule was corrected — one
+   pixel into the floor lip is *contact*, not sinking — the band became the
+   whole ±60 scan. The test says so in its own comment. What carries weight
+   for that clip is the antiphase and separation arithmetic instead.
+4. **The hitbox can hit nothing.** This room has no enemy. The window is
+   real, measured at every boundary, and what it would *do* is a later
+   assignment. §11 said so before it was built.
+5. **The idle-mode jitter is not measured**, only its offset. See the clocks
+   section.
+6. **`test_keyboard.gd` does not load**, and predates A7. See the baseline.
+7. **Two `SceneTree` tests leak at exit** — `ObjectDB instances were leaked`
+   and `resources still in use`. Pre-existing: `test_swing_edges.gd` printed
+   4 and 2 before any of A7's work and prints 8 and 4 now, scaling with how
+   much of the scene a run exercises. `run-test.sh` rule 4b lists
+   `SHADER ERROR`, `SCRIPT ERROR` and `Failed loading resource`; these are
+   neither.
+
+---
+
+## Five sentences that outlived the facts they stated
+
+Each was true when written and false afterwards, and each was found by
+something other than a test:
+
+1. `test_input_map.gd` printed a hard-coded check count of 5 while running 7.
+2. `build_anim_strips.py` printed *"every other frame is identical to the one
+   before it"* — true of a frame clip, false the moment a rotation track was
+   added. It counts the frames now.
+3. A strip caption said table 10 had *"the same pixels as table 6"* — true of
+   one capture, not of the table it claimed to describe.
+4. The blade's length, 16, was written in the generator, in the scene's
+   `offset` and in the test's `BLADE_PX`, with nothing comparing them.
+   `check_sword_reach.py` compares all three now — **and caught
+   `TORSO_FRONT` wrong on its first run.**
+5. `build_anim_strips.py` captioned the run strip *"the cycle is 0.250 s"*.
+   It reads `length` out of `player.tres` now.
+
+A sixth belongs with them: a patch script once **reported RESET as having
+nine tracks while the engine saw seven**, because it appended them outside
+the `sub_resource` and then counted the text it had just written. *A report
+that reads the same wrong text it wrote is not a check.* The read-back caught
+it, by asking the engine.
+
+---
+
+## The evidence table
+
+| Claim | Established by | Where |
+|---|---|---|
+| every track resolves to a real node and property | read-back | `test_player_clips.gd` |
+| the cycle's length, step, loop mode, seam | read-back | same |
+| the legs are exact antiphase, 52° apart at contact | read-back | same |
+| the swing's phase boundaries | read-back + edge test | `test_swing_clip.gd`, `test_swing_edges.gd` |
+| the arc travels one way, finishes low, and the hilt travels | read-back | `test_swing_clip.gd` |
+| the window opens 0.2000 and closes 0.3333 | edge test, traced | `test_swing_edges.gd` §A |
+| interrupts per phase | edge test, 9 cases | §B |
+| the swing works in the air and keeps its facing | edge test | §C |
+| movement during a swing, and what is still committed | edge test | §D |
+| the right clip in each state | structure test | `test_player_states.gd` |
+| the states A7 did not touch did not move | pin | `pin_player_states.gd` |
+| **the clocks' offset, in frames and seconds** | **measurement** | `measure_clocks.gd`, `evidence/a7/clocks.txt` |
+| every assertion can fail | 5 mutations | `evidence/a7/mutations.txt` |
+| a fresh cache changes nothing | M4 | same |
+| what a windowed run actually draws | frame strips | `captures/swing/r1–r4`, `captures/run/r1` |
+| **whether any of it reads** | **the author, in play** | `TUNING.md` |
