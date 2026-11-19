@@ -39,9 +39,9 @@
 ; LIFTS the planted foot. The paper version of this had the sign backwards.
 [sub_resource type="Animation" id="Animation_run"]
 resource_name = "run"
-length = 0.25
+length = 0.5
 loop_mode = 1
-step = 0.0833333
+step = 0.125
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -49,10 +49,10 @@ tracks/0/path = NodePath("Rig/LegFront:rotation_degrees")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.0833333, 0.1666667, 0.25),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
+"times": PackedFloat32Array(0, 0.125, 0.25, 0.375, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
-"values": [0.0, 24.0, 12.0, 0.0]
+"values": [38.0, 12.0, -14.0, 12.0, 38.0]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -61,10 +61,10 @@ tracks/1/path = NodePath("Rig/LegBack:rotation_degrees")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.0833333, 0.1666667, 0.25),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
+"times": PackedFloat32Array(0, 0.125, 0.25, 0.375, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
-"values": [22.0, -2.0, 10.0, 22.0]
+"values": [-14.0, 12.0, 38.0, 12.0, -14.0]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
@@ -73,10 +73,10 @@ tracks/2/path = NodePath("Rig:position:y")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.0833333, 0.1666667, 0.25),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
+"times": PackedFloat32Array(0, 0.125, 0.25, 0.375, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
-"values": [0.0, -1.0, -1.0, 0.0]
+"values": [0.0, -1.0, 0.0, -1.0, 0.0]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -543,7 +543,7 @@ tracks/2/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [22.0]
+"values": [-14.0]
 }
 tracks/3/type = "value"
 tracks/3/imported = false

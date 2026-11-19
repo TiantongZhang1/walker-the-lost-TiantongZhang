@@ -1082,4 +1082,105 @@ able to say out loud.
 
 ### 8. My verdict in the running game
 
-_To be written by the author after playing r6._
+Played 2026-11-19. The author moved straight on to the run cycle, which is
+the entry below; the moving swing drew no complaint and is **kept**.
+
+---
+
+## 2026-11-19 — the run, r0 → r1. Three wrong measurements under one complaint.
+
+### 1. What I saw, in the running game, before Claude read anything
+
+> 跑步的时候腿部姿势有点奇怪，不是两个腿交替着跑而是两个腿在各自晃悠
+>
+> [the legs look odd when running — it isn't two legs alternating, it's two
+> legs each waggling on their own]
+
+### 2. Three defects, all measured, none found by a test
+
+**The safe band was in the wrong sign.** `make_sprites.py` measures with
+PIL's `rotate()`, which turns the opposite way from Godot's
+`rotation_degrees`. Rendered at the same angles both ways, the two
+lowest-row tables are exact mirror images. So the band reported as
+`−2 .. +34` is really `−34 .. +2`, and the shipped keys drove the planted
+foot **3.3 px through the floor** — with `test_player_clips.gd` asserting
+every key was inside the band, and passing.
+
+Revision 7.0.1 §4 is worth quoting against itself:
+
+> *The paper version of this had the sign backwards, and a rendered
+> measurement caught it.*
+
+The rendered measurement had it backwards too. **Moving a calculation from
+paper into a renderer does not make it right; it makes it harder to check.**
+
+**`leg_back.png` is not a leg.**
+
+| | `leg_front` | `leg_back` |
+|---|---|---|
+| length, hip to foot | 12.2 px | **4.0 px** |
+| lowest inked row | 29 — on the floor | **24 — five px short** |
+| foot sweep | 5.0 px | **1.6 px** |
+
+A 14 × 4 horizontal stub that can never plant. One real leg rocking and one
+stub twitching beside it is precisely 各自晃悠.
+
+**The pivot was not the hip.** `HIP` was assumed (20, 20); the cut surface is
+row 20, columns 25–29, so the joint is **(27, 20)** — seven pixels to the
+side. The leg swung like a pendulum on a bar.
+
+### 3. The change
+
+Both legs become `leg_front.png`, half a cycle apart, the back one darkened.
+The cycle returns to **two steps, 0.500 s**, which is the original §4
+arithmetic revision 7.0.1 abandoned — and the two contacts land 24 px apart,
+exactly `stride_px`, so Effect C's puff lands on **each** footfall rather
+than every other one. Keys 38, 12, −14, 12, 38 and its mirror, symmetric
+about **+12°, which is straight down, measured.**
+
+### 4. I got it wrong once in the middle, and the recapture is what caught it
+
+The first version of this revision used −52 .. 0. In Godot's sign that is
+straight-down to **52° forward**: both feet kicking out in front, never
+behind. Every assertion passed — range, antiphase, separation, seam — because
+every assertion was about *shape*, and the shape was right while the
+*direction* was wrong.
+
+`captures/run/r1-strip.png` is what caught it, by being looked at. That is
+the second time in this assignment that a sign has been the defect and the
+third that a picture caught what a number could not.
+
+### 5. The limitation, measured and named
+
+| rotation | −40° | 0° | +48° |
+|---|---|---|---|
+| foot's x relative to the hip | +6.0 | +1.5 | −4.0 |
+
+**88° of rotation moves the foot about 10 px, against a 24 px step.** An
+8.6 px leg with its foot almost under the hip mostly changes apparent length
+when you rotate it.
+
+> **This cycle alternates. It does not stride.**
+
+No key value fixes that. Drawing a longer leg in the generator would, and
+that is a change to the character's art — which is the thing revision 7.0.1
+exists because the author rejected. So it is the author's call, not Claude's,
+and §9 of the brief gains a row for it.
+
+### 6. What is asserted now
+
+The band check became **weak** when its rule was corrected (one pixel into
+the floor lip is contact, not sinking), and the test says so about itself.
+What carries weight instead:
+
+| | measured |
+|---|---|
+| `front + back` on every key | **24.0, 24.0, 24.0, 24.0, 24.0** — exact antiphase |
+| separation at the contacts | **52°** (the shipped cycle: **2.0°**) |
+| both legs' texture | the same one |
+| contact / lift | +38 / −14, symmetric about straight-down |
+| contacts, in px | **24 apart = `stride_px`** |
+
+### 7. My verdict in the running game
+
+_To be written by the author after playing it._

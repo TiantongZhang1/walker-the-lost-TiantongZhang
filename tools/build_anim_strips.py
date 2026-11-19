@@ -149,6 +149,20 @@ def changes(folder: pathlib.Path, first: int, last: int, band) -> None:
     print("  test_swing_edges.gd is what actually checks the window.")
 
 
+def run_length() -> float:
+    """The `run` clip's length, read out of the resource text.
+
+    A strip caption that states a number has to get it from the thing it is
+    describing. This one used to say "the cycle is 0.250 s" because somebody
+    typed 0.250 while that was true.
+    """
+    tres = (ROOT / "godot" / "animations" / "player.tres").read_text(
+        encoding="utf-8")
+    head = tres[tres.index('id="Animation_run"'):]
+    line = head[head.index("length = "):].splitlines()[0]
+    return float(line.split("=", 1)[1])
+
+
 def main() -> int:
     swing_dir = ROOT / (sys.argv[1] if len(sys.argv) > 1
                         else "captures/swing/r0")
@@ -159,9 +173,14 @@ def main() -> int:
           "FIXTURE  swing %s  —  captured at 30 fps, one captured frame is "
           "one table frame" % rev_s,
           swing_dir.parent / ("%s-strip.png" % rev_s))
+    # The cycle's length is READ from the clip, not typed here. It was typed
+    # here, it said 0.250 s, and revision 7.0.7 made it 0.500 s -- the fifth
+    # hard-coded sentence in this assignment to outlive the fact it stated.
+    cyc = run_length()
+    span = len(RUN_FRAMES) / 30.0
     strip(run_dir, RUN_FRAMES, BAND_RUN, {},
-          "FIXTURE  run %s  —  the cycle is 0.250 s, so these six frames are "
-          "0.8 of one cycle" % rev_r,
+          "FIXTURE  run %s  —  the cycle is %.3f s, so these six frames at "
+          "30 fps are %.0f%% of one cycle" % (rev_r, cyc, 100.0 * span / cyc),
           run_dir.parent / ("%s-strip.png" % rev_r))
     changes(swing_dir, 8, 32, BAND_SWING)
     print("\n  Both are FIXTURE captures from previews/, not the game.")

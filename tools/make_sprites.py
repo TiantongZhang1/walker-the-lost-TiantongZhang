@@ -172,10 +172,17 @@ def player() -> Image.Image:
 CELL = 32
 SHEET_H = 4
 SHEET_V = 2
+SCAN = 60              # how far the leg-rotation measurement looks
 FEET_ROW = 29          # the lowest inked row of every standing pose, measured
 LEG_TOP = 20           # rows at or below this are legs, from the row scan
 SPLIT_X = 25           # left of this is the trailing leg, right is the planted
-HIP = (20, 20)         # the pivot both legs hang from, in cell coordinates
+# The pivot both legs hang from, in cell coordinates. It is MEASURED from
+# the cut surface -- the top row of inked pixels left after the cut --
+# because that is where the leg was severed and therefore where it hangs
+# from. (20, 20) was assumed, and it is 7 px to the side of the real
+# joint, so the leg swung like a pendulum on a bar instead of a leg on a
+# hip. Revision 7.0.7. `hip_of()` below reports what it actually is.
+HIP = (20, 20)         # the CUT line: everything below row 20 is leg
 
 POSES = pathlib.Path(__file__).resolve().parent.parent / "godot" / "assets" / "poses"
 SHEET_ORDER = ["<run torso>", "p1-idle", "p3-rising", "p4-falling",
@@ -342,21 +349,83 @@ def main() -> None:
     # not derived on paper -- the paper version had the sign backwards.
     for leg_name in ("leg_front.png", "leg_back.png"):
         leg = images[leg_name]
+        lp0 = leg.load()
+        ink = [(x, y) for y in range(CELL) for x in range(CELL)
+               if lp0[x, y][3]]
+        top = min(y for _, y in ink)
+        cols = [x for x, y in ink if y <= top + 1]
+        hip = ((min(cols) + max(cols)) / 2.0, float(top))
+        foot_row = max(y for _, y in ink)
+        print("  %-14s %d inked px, cut surface row %d cols %d..%d"
+              % (leg_name, len(ink), top, min(cols), max(cols)))
+        print("  %-14s HIP JOINT is texture (%.1f, %.0f); lowest row %d"
+              % ("", hip[0], hip[1], foot_row))
+        if foot_row < FEET_ROW:
+            print("  %-14s ** this cut NEVER REACHES THE FLOOR (%d px short)."
+                  % ("", FEET_ROW - foot_row))
+            print("  %-14s ** It cannot plant, so it cannot take a step. The"
+                  % "")
+            print("  %-14s ** scene does not use it; player.tscn gives BOTH"
+                  % "")
+            print("  %-14s ** legs leg_front.png. Revision 7.0.7."
+                  % "")
         safe = []
-        for deg in range(-34, 35):
+        # +/-60, not +/-34. Revision 7.0.7's cycle swings to -52, and a
+        # scan that stops at -34 would report a band that merely ends
+        # where the SCAN ends -- a limit of the instrument read as a
+        # limit of the leg.
+        for deg in range(-SCAN, SCAN + 1):
             big = Image.new("RGBA", (CELL * 3, CELL * 3), CLEAR)
-            big.paste(leg, (CELL + CELL - HIP[0], CELL + CELL - HIP[1]))
-            big = big.rotate(deg, resample=Image.NEAREST,
-                             center=(CELL * 2 - HIP[0] + HIP[0],
-                                     CELL * 2 - HIP[1] + HIP[1]))
+            # about the leg's OWN measured hip joint, not the cut line
+            hx, hy = int(round(hip[0])), int(round(hip[1]))
+            big.paste(leg, (CELL + CELL - hx, CELL + CELL - hy))
+            # **MINUS deg.** PIL's rotate() turns the opposite way from
+            # Godot's rotation_degrees -- verified pixel for pixel, the two
+            # lowest-row tables are exact mirror images. Without this the
+            # band below is reported in the WRONG SIGN, which is how the
+            # shipped cycle came to drive the planted foot 3.3 px through
+            # the floor while test_player_clips.gd called every key legal.
+            big = big.rotate(-deg, resample=Image.NEAREST,
+                             center=(CELL * 2, CELL * 2))
             lp = big.load()
             rows = [y for y in range(big.height)
                     if any(lp[x, y][3] for x in range(big.width))]
-            low = max(rows) - (CELL + CELL - HIP[1]) if rows else -99
-            if low <= FEET_ROW:
+            low = max(rows) - (CELL + CELL - hy) if rows else -99
+            # **FEET_ROW + 1, not FEET_ROW.** "never below row 29" is
+            # "never touches the floor", which is the wrong rule for a
+            # PLANTED foot: the whole point of contact is that the foot is
+            # ON row 29, and nearest-neighbour rotation puts its lowest
+            # inked pixel one row either side of that. One pixel into the
+            # floor lip is contact; more is sinking. Revision 7.0.7.
+            if low <= FEET_ROW + 1:
                 safe.append(deg)
-        print("  %-14s may rotate %+d .. %+d degrees without the foot "
-              "going below row %d" % (leg_name, min(safe), max(safe), FEET_ROW))
+        # **The CONTIGUOUS band around 0, not min/max of the whole set.**
+        # A short leg lifts its foot again past 60 degrees, so min/max of a
+        # scattered set reports a band that contains angles which are not
+        # safe. Same shape as every other bad measurement in this file's
+        # history: computed correctly, answering the wrong question.
+        lo = hi = 0
+        while lo - 1 in safe:
+            lo -= 1
+        while hi + 1 in safe:
+            hi += 1
+        print("  %-14s contact band %+d .. %+d degrees (GODOT's sign): the "
+              "foot" % (leg_name, lo, hi))
+        print("  %-14s rests ON row %d and never sinks past row %d."
+              % ("", FEET_ROW, FEET_ROW + 1))
+        if lo <= -SCAN and hi >= SCAN:
+            print("  %-14s ** that is the whole SCAN, so it is a weak check."
+                  % "")
+            print("  %-14s ** This leg is 8.6 px long with its foot almost"
+                  % "")
+            print("  %-14s ** under the hip, so rotating it barely moves the"
+                  % "")
+            print("  %-14s ** foot: %+d..%+d degrees shifts it about 10 px"
+                  % ("", -SCAN, SCAN))
+            print("  %-14s ** against a 24 px step. The cycle ALTERNATES; it"
+                  % "")
+            print("  %-14s ** cannot STRIDE. CHANGE-BRIEF.md revision 7.0.7."
+                  % "")
 
 if __name__ == "__main__":
     main()

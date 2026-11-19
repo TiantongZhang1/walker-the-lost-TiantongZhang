@@ -22,16 +22,55 @@ const SHEET_H := 4
 const SHEET_V := 2
 
 ## CHANGE-BRIEF.md §4. One stride: stride_px 24 / SPEED 96 = 0.250 s.
-const RUN_FPS := 12.0
-const RUN_LENGTH := 0.25
+## **Revision 7.0.7: a gait cycle is TWO steps, so it is two strides.**
+## 2 * stride_px 24 / SPEED 96 = 0.500 s, which is the original section 4's
+## arithmetic returning. Revision 7.0.1 halved it because only one of the
+## two cut legs was usable; both legs are the same usable leg now.
+## Five keys -- contact, pass, contact, pass, contact -- so the key interval
+## is a quarter cycle and `step` is 0.125 s.
+const RUN_FPS := 8.0
+const RUN_LENGTH := 0.5
 
 ## tools/make_sprites.py measures these by rendering each leg at every degree
 ## and reporting where the foot stops falling below row 29. They are pasted
 ## here from its output, and the generator prints them on every run.
-const FRONT_MIN := -2.0
-const FRONT_MAX := 34.0
-const BACK_MIN := -34.0
-const BACK_MAX := 34.0
+## **These were in the WRONG SIGN until revision 7.0.7.** PIL's rotate()
+## turns the opposite way from Godot's rotation_degrees, so the generator
+## reported -2 .. +34 for a band that is really -34 .. +2 -- and this test
+## passed a cycle that drove the planted foot 3.3 px THROUGH the floor.
+## Both legs now use `leg_front.png` on its measured hip joint, where the
+## foot is almost straight under the pivot and turning either way lifts it.
+## Pasted from the generator, which prints these on every run and measures
+## them about each leg's OWN hip joint. Both legs use `leg_front.png` now.
+## The generator's CONTACT band: the foot rests on row 29 and never sinks
+## past row 30. It is the whole scan, so **this is a weak check and the file
+## says so** -- the leg is 8.6 px long with its foot almost under the hip, so
+## rotating it barely moves the foot. The assertions that carry weight for
+## this clip are the antiphase and separation ones below.
+const FRONT_MIN := -60.0
+const FRONT_MAX := 60.0
+const BACK_MIN := -60.0
+const BACK_MAX := 60.0
+
+## The cycle's own extremes, inside that band. 0 degrees is CONTACT: the
+## foot is on row 29, the floor. -52 is the lifted end of the swing.
+## **+12 degrees is STRAIGHT DOWN** -- measured, not assumed: the foot
+## hangs lowest there, because it sits 1.8 px forward of the hip. The swing
+## is symmetric about it, so each leg goes BEHIND the body and in front of
+## it. The first version of this revision ran -52..0, which is straight-down
+## to 52 degrees FORWARD: a high kick with both feet, never a stride. The
+## recapture is what caught it; no assertion here could have.
+const STRAIGHT_DOWN := 12.0
+const CONTACT_DEG := 38.0
+const LIFT_DEG := -14.0
+
+## The hip joint, measured by the generator from the cut surface.
+## Two hips, 4 px apart, so the pair reads as two legs rather than fusing
+## into one blob at the torso's front edge -- which is what one shared hip
+## looked like in `captures/run/r1-strip.png`.
+const HIP_FRONT := Vector2(10, 4)
+const HIP_BACK := Vector2(6, 4)
+const HIP_OFFSET := Vector2(-11, -4)
 
 ## Which clips show the cut-out legs. Every pose cell already contains the
 ## character's own legs, so only `run` may.
@@ -136,8 +175,9 @@ func _init() -> void:
 		"" if body.texture == null else str(body.texture.get_size()))
 	for leg in ["Rig/LegFront", "Rig/LegBack"]:
 		var s: Sprite2D = scene.get_node(NodePath(leg))
-		_check("%s hangs from the hip at (4, 4)" % leg,
-			s.position == Vector2(4, 4) and s.offset == Vector2(-4, -4),
+		var want_hip: Vector2 = HIP_FRONT if leg.ends_with("Front") else HIP_BACK
+		_check("%s hangs from %s, on the measured hip joint" % [leg, want_hip],
+			s.position == want_hip and s.offset == HIP_OFFSET,
 			"pos %s offset %s" % [s.position, s.offset])
 		_check("%s starts hidden" % leg, not s.visible)
 
@@ -156,7 +196,7 @@ func _init() -> void:
 
 	# --- the cycle, CHANGE-BRIEF.md §4 ------------------------------------
 	var run := ap.get_animation("run")
-	_check("run length is %.3f s, one stride" % RUN_LENGTH,
+	_check("run length is %.3f s: a gait cycle is TWO steps" % RUN_LENGTH,
 		absf(run.length - RUN_LENGTH) < _tol, "%.6f" % run.length)
 	_check("run step is one frame period at %d fps" % RUN_FPS,
 		is_equal_approx(run.step, 1.0 / RUN_FPS), "%.7f" % run.step)
@@ -205,6 +245,56 @@ func _init() -> void:
 				str(first), str(last)]
 	_check("seam: every interpolated track ends where it started", seam_ok,
 		seam_detail)
+
+	# --- revision 7.0.7 -------------------------------------------------
+	# **Both legs are the same sprite.** `leg_back.png` is a 14 x 4 stub
+	# whose lowest row is 24 -- five pixels short of the floor -- so it can
+	# never plant and therefore can never take a step. The generator says so
+	# on every run. The scene gives both legs `leg_front.png`, which is what
+	# a cutout cycle does anyway: one leg, two phases.
+	var lf: Sprite2D = scene.get_node(^"Rig/LegFront")
+	var lb: Sprite2D = scene.get_node(^"Rig/LegBack")
+	_check("both legs use the same texture, half a cycle apart",
+		lf.texture == lb.texture,
+		"%s vs %s" % [lf.texture, lb.texture])
+
+	# **ANTIPHASE, asserted as arithmetic.** If back(t) = 2C - front(t) then
+	# front + back is the same number on every key, and the legs are exact
+	# mirror images about the centre of the swing. The shipped cycle was
+	# not: its two legs came within 2.0 degrees of each other and read as
+	# two legs wobbling rather than one pair alternating.
+	var ft := find_track(run, "Rig/LegFront:rotation_degrees")
+	var back_t := find_track(run, "Rig/LegBack:rotation_degrees")
+	if ft >= 0 and back_t >= 0:
+		_check("the two legs have the same number of keys",
+			run.track_get_key_count(ft) == run.track_get_key_count(back_t))
+		var sums: Array[float] = []
+		var seps: Array[float] = []
+		for k in mini(run.track_get_key_count(ft), run.track_get_key_count(back_t)):
+			var a: float = run.track_get_key_value(ft, k)
+			var b: float = run.track_get_key_value(back_t, k)
+			sums.append(a + b)
+			seps.append(absf(a - b))
+		var anti := true
+		for v in sums:
+			if absf(v - sums[0]) > 0.01:
+				anti = false
+		_check("front + back is CONSTANT on every key: the legs are exact "
+			+ "antiphase, not two legs wobbling", anti, str(sums))
+		_check("and they are far apart at the contacts: max separation "
+			+ "%.0f degrees" % seps.max(), seps.max() >= 40.0, str(seps))
+		_check("the front leg reaches CONTACT (%.0f deg, behind the hip)"
+			% CONTACT_DEG,
+			absf(float(run.track_get_key_value(ft, 0)) - CONTACT_DEG) < 0.01,
+			str(run.track_get_key_value(ft, 0)))
+		_check("and it reaches the LIFT end (%.0f deg)" % LIFT_DEG,
+			absf(float(run.track_get_key_value(back_t, 0)) - LIFT_DEG) < 0.01,
+			str(run.track_get_key_value(back_t, 0)))
+
+	# A gait cycle is two steps, so the two contacts are one stride apart.
+	_note("contacts at t = 0.000 and t = %.3f, %.0f px apart at SPEED 96 "
+		% [RUN_LENGTH / 2.0, 96.0 * RUN_LENGTH / 2.0]
+		+ "-- that is stride_px, so Effect C's puff lands on each one")
 	_note("whether the wrap READS as smooth is the human check; "
 		+ "a headless run draws nothing")
 

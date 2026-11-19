@@ -388,6 +388,8 @@ disagreement in seconds". **[proposal — the prediction]**
 | **Do startup, active and recovery read as distinct?** | **HUMAN** | swing many times in normal play |
 | **Does the character drift within its cells?** | **HUMAN** | the cycle's frame strip |
 | **Both clips over the darkest and lightest level art** | **HUMAN** | the unlit trap gap at x 208 and the torch pool at x 320 |
+| **Is "alternates but does not stride" good enough?** | **HUMAN** | revision 7.0.7 §6: the cut leg moves its foot ~10 px against a 24 px step. Drawing a longer leg is the only fix and it changes the character's art |
+| **Does a moving swing read, or does it just slide?** | **HUMAN** | revision 7.0.6 §4: hold a direction through several swings, lit floor and unlit gap |
 
 No headless run establishes any HUMAN row. That is the point of the split.
 
@@ -1190,3 +1192,149 @@ The facing was sampled after `await process_frame` without re-testing the
 lock, so on the loop's final turn the swing had already ended and
 `player_anim.gd` had correctly flipped the facing on that same physics tick.
 A flip one frame *after* a commitment ends is the commitment ending.
+
+---
+
+# Revision 7.0.7 — 2026-11-19 — the run cycle, rebuilt on three measurements that were wrong
+
+**Supersedes revision 7.0.1 §4 entirely** — the cycle's length, its key
+times, its key values, its safe bands and its leg textures. §9 gains a
+limitation. Nothing about `swing` changes.
+
+## 1. Why
+
+> 跑步的时候腿部姿势有点奇怪，不是两个腿交替着跑而是两个腿在各自晃悠
+>
+> [the legs look odd when running — it isn't two legs alternating, it's two
+> legs each waggling on their own]
+
+Measured, and it is three separate defects at once. None was found by a test
+and two of them a test was actively vouching for.
+
+## 2. Defect 1 — the safe band was in the wrong sign
+
+Revision 7.0.1 §4 says, with some pride:
+
+> **The paper version of this had the sign backwards**, and a rendered
+> measurement caught it.
+
+**The rendered measurement has it backwards too.** `tools/make_sprites.py`
+measures the band with PIL's `Image.rotate()`, which turns the opposite way
+from Godot's `rotation_degrees`. Rendering the same leg at the same angles
+both ways gives tables that are exact mirror images:
+
+```
+ deg    PIL rotate()   Godot rotation_degrees
+ -34       33.0 THROUGH     23.5
+  +0       29.0             29.0
+ +34       23.0             33.1 THROUGH FLOOR
+```
+
+So the reported band `leg_front: −2 .. +34` is really **−34 .. +2**, and the
+shipped cycle's keys — 0, +24, +12, 0 — drove the planted foot **3.3 px
+through the floor**, while `test_player_clips.gd` asserted every key was
+inside the band and passed. A test can only be as right as the number it is
+handed.
+
+## 3. Defect 2 — `leg_back.png` is not a leg
+
+| | `leg_front.png` | `leg_back.png` |
+|---|---|---|
+| length, hip to foot | 12.2 px | **4.0 px** |
+| lowest inked row | 29, **on the floor** | **24, five pixels short of it** |
+| foot sweep across its range | 5.0 px | **1.6 px** |
+
+`p2-run`'s trailing leg is tucked up and seen nearly end-on, so cutting it
+yields a 14 × 4 horizontal stub that **can never plant and therefore can
+never take a step**. One real leg rocking and one stub twitching beside it
+is exactly what the author described.
+
+The scene now gives **both legs `leg_front.png`**, half a cycle apart, which
+is what a cutout cycle does anyway: one leg, two phases, the back one
+darkened with `modulate`. `leg_back.png` is still generated, because
+`assert_lossless_cut()` still proves the cut is lossless — it is just no
+longer used by the scene, and the generator prints why on every run.
+
+## 4. Defect 3 — the pivot was not the hip
+
+`HIP` was assumed to be texture (20, 20). The leg's **cut surface** — the top
+row of ink left after the cut — is row 20, columns 25–29, so the joint is at
+**(27, 20)**. The leg was swinging from a point seven pixels to its side,
+like a pendulum on a bar rather than a leg on a hip. The generator measures
+it now and prints it.
+
+## 5. The cycle, revised
+
+**A gait cycle is two steps, so it is two strides.** Revision 7.0.1 halved it
+to one stride because only one of the two cut legs was usable; both legs are
+the same usable leg now, so the original §4 arithmetic returns:
+
+```
+2 * stride_px / SPEED = 48 / 96 = 0.500 s
+```
+
+and the two contacts fall **0.250 s = 24 px apart**, which is `stride_px`
+exactly — so Effect C's puff lands on each one, not on every other one.
+
+| | |
+|---|---|
+| Length | **0.500 s** |
+| `step` | **0.125 s** — a quarter cycle, because a gait has four landmarks |
+| Keys | 0, 0.125, 0.250, 0.375, 0.500 — contact, pass, contact, pass, contact |
+| `LegFront:rotation_degrees` | **38, 12, −14, 12, 38** |
+| `LegBack:rotation_degrees` | **−14, 12, 38, 12, −14** |
+| `Rig:position:y` | 0, −1, 0, −1, 0 — one bob per footfall |
+| Hips | `LegFront` (10, 4), `LegBack` (6, 4), both `offset` (−11, −4) |
+
+**+12° is straight down**, measured: the foot sits 1.8 px forward of the hip,
+so it hangs lowest there. The swing is symmetric about it, ±26°, so each leg
+goes behind the body *and* in front of it.
+
+**The first attempt at this revision ran −52 .. 0**, which is straight-down
+to 52° *forward* — a high kick with both feet, never a stride. The recapture
+caught it; no assertion could have, because every assertion in the file was
+about range and antiphase and that clip satisfied both.
+
+## 6. The limitation, measured and stated
+
+| rotation | −40° | 0° | +48° |
+|---|---|---|---|
+| foot's x, relative to the hip | +6.0 | +1.5 | −4.0 |
+
+**Across 88° the foot moves about 10 px, against a 24 px step.** The leg is
+8.6 px long with its foot almost directly under the hip, so rotating it
+mostly changes its apparent length rather than moving the foot.
+
+> **This cycle ALTERNATES. It does not STRIDE.**
+
+That is a property of cutting a rig out of one drawn pose, not of the keys,
+and no key value fixes it. Drawing a longer leg in the generator would — and
+that is a change to the character's art, which revision 7.0.1 exists because
+the author rejected. It is named here and left to them. §9 gains a row.
+
+## 7. The floor rule was wrong, and that is why the band check was useless
+
+The generator asked for angles where the foot is **never below row 29**,
+which is "never touches the floor" — the wrong rule for a *planted* foot,
+whose whole job is to be on row 29. With nearest-neighbour rotation its
+lowest inked pixel lands a row either side. The rule is **row 30 — one pixel
+into the floor lip is contact, more is sinking.**
+
+Relaxed, the band is the whole ±60 scan, so **the band assertion is now a
+weak check and the test says so in its own comment.** What carries weight
+for this clip instead:
+
+- `front + back` is the same number on every key — exact antiphase,
+  arithmetic rather than description. The shipped cycle's two legs came
+  within **2.0°** of each other; these separate by **52°** at both contacts;
+- both legs resolve to the same texture;
+- the swing reaches contact at +38 and lift at −14;
+- the hips are the measured joints.
+
+## 8. A fifth hard-coded sentence
+
+`tools/build_anim_strips.py` captioned the run strip *"the cycle is
+0.250 s"*. It reads `length` out of `player.tres` now. That is the fifth
+sentence in this assignment to outlive the fact it stated, after
+`test_input_map.gd`'s count, the strip tool's holding sentence, the table-10
+caption, and the blade's length in three places.
