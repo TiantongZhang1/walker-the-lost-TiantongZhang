@@ -1194,3 +1194,53 @@ recorded as a HUMAN row in `CHANGE-BRIEF.md` §9 rather than as a defect:
 the cycle alternates, it does not stride, and making it stride means
 drawing a longer leg, which is the author's call about their character's
 art and not Claude's.
+
+---
+
+## 2026-11-20 — §9's HUMAN rows, answered in the running game
+
+`CHANGE-BRIEF.md` §9 has eight rows that say **HUMAN**, and the whole
+evidence split rests on the claim that no headless run establishes any of
+them. This is where they get answered. Played at the project's window size,
+2026-11-20, with A/D, space and J.
+
+Recorded verbatim, English in square brackets:
+
+> 跑步接缝没问题，灰尘也对得上，三段分得开，都没问题
+>
+> [the run's seam is fine, the dust lines up too, the three phases are
+> distinguishable — it's all fine]
+
+| §9 row | answered | by |
+|---|---|---|
+| Does the run read as a run? | **yes** | r7's verdict, 2026-11-19: *没问题了* |
+| Does the cycle wrap without a seam? | **yes** | *跑步接缝没问题*, five wraps or more |
+| Do the dust puffs land under the planted foot? | **yes** | *灰尘也对得上* |
+| Do startup, active and recovery read as distinct? | **yes** | *三段分得开* |
+| Is "alternates but does not stride" good enough? | **yes** | r7's verdict closed it; the limitation stays stated, not fixed |
+| Does the character drift within its cells? | *see below* | |
+| Both clips over the darkest and lightest level art | *see below* | |
+| Does a moving swing read, or does it just slide? | *see below* | |
+
+**Three of the eight were named and three were not, and this file does not
+promote a blanket "都没问题" into answers for rows the author did not name.**
+That is the same discipline as everything else here: a sentence that covers
+more than it was asked about is how a summary starts lying. The three
+unnamed rows are outstanding and are listed as outstanding.
+
+### Why the dust row is the one worth pausing on
+
+It is the only HUMAN row with arithmetic standing behind it, and the
+arithmetic had to be rebuilt twice to get there.
+
+- The original §4 derived a two-stride cycle from `stride_px` and `SPEED`.
+- Revision 7.0.1 **halved it** to one stride, because only one of the two cut
+  legs was usable — and the dust then landed under every *other* footfall,
+  which nobody noticed because nobody had looked.
+- Revision 7.0.7 restored the two-step cycle once both legs became the same
+  usable leg, and the two contacts fall **0.250 s = 24 px apart, which is
+  `stride_px` exactly**.
+
+So *灰尘也对得上* is not a pleasant coincidence. It is the arithmetic in §4
+being right again after two revisions of being wrong, and **the only
+instrument that could confirm it was a person watching a foot land.**

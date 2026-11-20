@@ -1606,8 +1606,18 @@ previous assignment's file is not this assignment's call.
 | frame strip | what a windowed run actually drew | nothing invisible — a hitbox contributes zero pixels open or shut |
 | **the author** | all of it | — |
 
-Every HUMAN row in §9 was answered by the author in play, and `TUNING.md`
-records each verdict verbatim in their own words.
+**Five of §9's eight HUMAN rows are answered**, in play, and `TUNING.md`
+records each verdict verbatim in the author's own words — including the one
+that rejected a revision and the one that rejected a whole sheet.
+
+*An earlier draft of this line said "every HUMAN row", which was not true
+when it was written.* Three rows are outstanding: drift within the cells,
+both clips over the darkest and lightest level art, and whether a moving
+swing reads or merely slides. They are listed as outstanding in `TUNING.md`
+rather than covered by the author's closing *都没问题* — **a blanket "it's
+all fine" is not an answer to a question nobody asked out loud**, and
+promoting it into one is exactly how the five stale sentences in this report
+got started.
 
 ---
 
