@@ -167,6 +167,47 @@ and recorded in `CLAUDE.md`.
 six emitters has a texture: the look is a `color_ramp`, a `scale_curve` and a
 blend mode. There is nothing new to credit or license.
 
+## 7b. Assignment 7 — the two clips
+
+Same split. Every file below is Claude Code's work under my review.
+
+| File | |
+|---|---|
+| `godot/animations/player.tres` | both clips as **resource text**, never built in code at runtime: `run` (rig, `LOOP_LINEAR`), `swing` (frame track, `LOOP_NONE`), the four held clips, and `RESET` |
+| `godot/features/player/player.tscn` | the `Rig` — `Body`, two legs, `SwordArm`/`Blade` — plus the `AnimationPlayer` on the **physics** tick and the new `Hitbox` |
+| `godot/features/player/player.gd` | the state machine. Locking is gameplay, not presentation, so it lives here |
+| `godot/features/player/player_anim.gd` | **replaces `pose_driver.gd`.** Reads state, plays clips, writes no animated property. Runs on the physics tick |
+| `godot/tests/test_player_clips.gd`, `test_swing_clip.gd` | the two read-backs, 164 checks |
+| `godot/tests/test_player_states.gd`, `test_swing_edges.gd` | the structure test and the four-section edge test, 63 checks |
+| `godot/tests/measure_clocks.gd` | §8's measurement, which found the brief's own prediction was the wrong sign |
+| `tools/check_sword_reach.py` | measures the torso's edges from the committed sheet and asserts the test's constants against them. It caught `TORSO_FRONT` wrong on its first run |
+| `tools/build_anim_strips.py` | composes the frame strips **and measures** the per-frame pixel change |
+| `godot/previews/swing_preview.tscn`, `run_preview.tscn`, `.gd` | the two fixtures the strips are captured from |
+| `CHANGE-BRIEF.md` revisions 7.0.1–7.0.8, `TUNING.md`'s A7 entries, `TEST-REPORT.md`'s A7 section | drafted by Claude; **every `TUNING.md` verdict and every prediction is mine**, quoted verbatim in the Chinese they were said in |
+
+**The sheet is CUT, not drawn.** `tools/make_sprites.py` gained a cutter
+that slices `p2-run` into a torso and two legs and **asserts the cut is
+lossless** — `assert_lossless_cut()` recomposites the three layers and fails
+unless they equal the source pixel for pixel. The first version of A7's
+sheet *was* drawn by code, in the existing 16 × 28 silhouette style, and I
+rejected it on sight; it is in history at `d303899` so the comparison is
+checkable rather than asserted. `CHANGE-BRIEF.md` revision 7.0.1 is that
+reversal.
+
+**One thing in the sheet is drawn rather than cut: the sword.** `sword()` in
+`tools/make_sprites.py` draws a 3 × 20 blade in **two greys that are already
+in every pose** — `#9AA7BD` and `#5E6472` — so the steel reads as this
+character's rather than as something pasted on. No pose file is edited; the
+blade is a separate sprite on a separate node, which is what a cutout rig is
+for. `walker-ninja`'s character fought unarmed, so there was no sword to
+cut.
+
+**No texture, model, sound or music was added by Assignment 7.** The three
+new PNGs — `player_sheet.png`, `leg_front.png`, `leg_back.png` — are
+`make_sprites.py`'s output from poses already credited in
+`ATTRIBUTION.md` §1.6, and `sword.png` is drawn from this game's own
+palette. There is nothing new to credit or license.
+
 ## 8. Tools
 
 | | |
@@ -183,6 +224,11 @@ blend mode. There is nothing new to credit or license.
 1. `git log --oneline` — the order the work happened in, which is the evidence
    of who wrote which lines.
 2. `git diff --stat godot/shaders/` across any agent commit — must be empty.
-3. `tools/make_sprites.py` — run it; it re-derives the sprites and asserts the
-   prediction pixels in `CHANGE-BRIEF.md` §6 still hold.
+3. `tools/make_sprites.py` — run it; it re-derives every sprite, asserts the
+   cut of `p2-run` is lossless, re-measures each leg's hip joint and rotation
+   band from the pixels, and prints the one thing it cannot fix: that
+   `leg_back.png` never reaches the floor.
+4. `tools/check_sword_reach.py` — run it; it measures the torso's edges and
+   the blade's length from the committed art and fails if
+   `test_swing_clip.gd`'s constants have drifted from them.
 4. `CHANGE-BRIEF.md`'s commit date against the first `.gdshader` commit date.

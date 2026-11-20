@@ -22,6 +22,35 @@ people standing in the room you come home to.
 
 ---
 
+## What this repository is at the `a7` tag
+
+Assignment 7 gives the player **two animations on one timeline**, and spends
+most of its evidence on the question the assignment is really about: *who is
+allowed to write to an animated node.*
+
+| | **`run` — the cycle** | **`swing` — the committing action** |
+|---|---|---|
+| Route | **2D cutout rig** — `Node2D` pivots keyed on rotation and position | **`Sprite2D` + `hframes`/`vframes`, frame track** |
+| Plays on | `Rig`, both legs | `Rig/Body`, `Hitbox`, `Rig/SwordArm` |
+| Loops | yes, `LOOP_LINEAR`, 0.500 s = two steps | no, `LOOP_NONE`, 0.600 s = 18 frames at 30 fps |
+
+**One authority.** `pose_driver.gd` used to write `Sprite2D.texture` every
+`_process`; the new clips key the same node. That collision was not
+hypothetical — it was in the repository. `pose_driver.gd` is **deleted** and
+`player_anim.gd` replaces it: it plays clips and writes **no animated
+property**. The `AnimationPlayer` is the single authority for every one of
+them. The one honest wrinkle is `Rig.scale.x`, the facing, which no clip
+keys, and `CHANGE-BRIEF.md` §5 states it rather than hiding it.
+
+**Both clips advance on the physics tick**, not the engine's idle default,
+because gameplay reads `Hitbox.monitoring` on the physics tick.
+`godot/tests/measure_clocks.gd` measures what that buys and what it does not
+— and found the brief's own prediction was the wrong sign.
+
+**Eight revisions, seven of them started by me playing the game**, none by a
+test going red. `TUNING.md` has each one with what I said, in my own words,
+before Claude read anything.
+
 ## What this repository is at the `a6` tag
 
 **Assignment 6 — Creating Particle Effects with Godot and Claude.** Three
@@ -130,18 +159,31 @@ The main scene is `res://game/main.tscn`: the three-trap room.
 
 ### Controls
 
+
 | | |
 |---|---|
 | Walk | **A** / **D**, or **←** / **→** |
 | Jump | **Space**, **W**, or **↑** |
+| **Swing** | **J** — Assignment 7's committing action |
 | **Toggle vsync** | **F9** — prints the mode and the current FPS to the console |
+
+**The swing is committed.** Once it starts it plays all 18 frames: no
+cancel, no restart, no jump, and **no turn** — you may walk backwards out of
+your own swing but you may not change which way the blade is going.
+`CHANGE-BRIEF.md` revision 7.0.6 argues what that costs, because an earlier
+version also locked movement and removing the lock removed the cost of
+attacking.
 
 **F9 is a debug key, not a project setting.** Assignment 6 asks for the frame
 rate to be compared with the effects off and on, and for that comparison to be
 made without shipping the game under different settings than the one that was
 measured. It reads the raw keycode off the event and adds no input action:
-`test_input_map.gd` asserts that the map still holds exactly three non-`ui_`
-actions with `DebugKeys` in the tree.
+`test_input_map.gd` asserts the map's actions with `DebugKeys` in the tree.
+**It used to say "exactly three", and Assignment 7 made it four** by adding
+`attack` — a change `CHANGE-BRIEF.md` §11 predicted and recorded before it
+happened. That test also used to assert only that an action *exists*; an
+action can exist carrying the wrong key, or no key, so it presses every one
+of them now through `Input.parse_input_event` and releases it again.
 
 
 Walk into a trap's detection zone and keep walking. The trap turns red for
@@ -274,19 +316,45 @@ youtube/          the explainer film and its documents
 | File | What is in it |
 |---|---|
 | `SUBMISSION.md` | The assignment's answers, the film link and its SHA-256 |
-| `CHANGE-BRIEF.md` | The Assignment 5 specification, committed 2026-10-23 before any shader existed, with four dated revisions |
-| `TEST-REPORT.md` | Every suite, every rate, every count, and the four mutations |
+| `CHANGE-BRIEF.md` | Each assignment's specification, committed **before** its first agent prompt, with dated revisions appended rather than edited in place. A5's four, A6's six, A7's eight |
+| `TEST-REPORT.md` | Every suite, every rate, every count, and every mutation — A5's four, A6's two, A7's five plus the fresh-cache one |
+| `TUNING.md` | The tuning loop. One revision per entry, each with **what I saw in the running game, in my own words, before Claude read anything**, and my verdict at the end |
 | `LANGUAGE-NOTES.md` | The language answers, in the author's own words |
 | `ATTRIBUTION.md` | Every asset, its origin and its licence |
 | `SOURCES.md` | Where every file came from — mine, Claude's, or Godot's |
 | `FRICTIONAL.md` | Dated log of the design thinking, written the same day |
 | `TOOLCHAIN.md` | What was carried over from walker-ninja and what state it is in — **two of those scripts rewrite the other repository; read it before running anything in `scripts/`** |
-| `CLAUDE.md` | The agent brief. Drafted by the session that built the repository; the author's review is a separate commit, and `tools/check_claude_refs.py` asserts all 50 claims in it by content |
+| `CLAUDE.md` | The agent brief. Drafted by the session that built the repository; the author's review is a separate commit, and `tools/check_claude_refs.py` asserts all **61** claims in it by content, in both directions |
 | `CONCEPT.md` | The game in one page, with dated revisions appended |
 | `ASSET-LOG.md` | Per-asset log. Empty by fact, not by neglect: every asset here is code-written or the author's own, so there is no prompt or licence to log |
 | `PROMPTS.md` | The build prompts used, archived |
 
 ## Known limitations
+
+### Assignment 7
+
+- **The run cycle alternates; it does not stride.** Measured: across 88° of
+  rotation the foot moves about **10 px**, against a **24 px** step. The leg
+  is 8.6 px long with its foot almost directly under the hip, so rotating it
+  mostly changes its apparent length. No key value fixes this — drawing a
+  longer leg would, and that is a change to the character's art.
+- **A swing with a direction held slides.** `swing` hides the cut-out legs
+  and holds one static body cell, while the step dust still spawns every
+  24 px. Showing the legs during a moving swing means two clips at once,
+  which means an `AnimationTree`, which §7 declined for reasons that still
+  hold.
+- **The hitbox can hit nothing.** This room has no enemy. The window is
+  real, opened and closed by a discrete track on the clip's own timeline and
+  asserted at every boundary; what it would *do* is a later assignment.
+- **`roll`, `cast` and combo-2/3** from `GDD.md:393` are not built. One
+  swing is one committing action.
+- **The idle-mode clock's jitter is not measured**, only its one-step
+  offset. `--fixed-fps` locks the render tick to the physics tick, so every
+  run of the measurement is identical; the variance needs a windowed run.
+- **`godot/tests/test_keyboard.gd` does not load.** It preloads
+  `res://game/session.gd`, a file from `walker-ninja` that has never existed
+  here, and has been unloadable since the game changed on 2026-10-17. It is
+  not in the suite `CLAUDE.md` names. Recorded rather than deleted.
 
 ### Assignment 6
 
