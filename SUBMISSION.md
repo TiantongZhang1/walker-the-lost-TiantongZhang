@@ -1,6 +1,6 @@
 # SUBMISSION.md
 
-**Assignment:** Assignment 6 - Creating Particle Effects with Godot and Claude
+**Assignment:** Assignment 7 — Animation: a sprite-sheet clip, a rig clip, and one authority
 
 **Student:** Tiantong Zhang · zhang.tiant@northeastern.edu · GitHub `TiantongZhang1`
 
@@ -8,241 +8,270 @@
 
 **GitHub repository URL:** <https://github.com/TiantongZhang1/walker-the-lost-TiantongZhang>
 
-**Git tag and submitted commit SHA:** tag **`a6.1`**. A commit cannot carry
-its own SHA, so it is in the Canvas note and is recoverable with
-`git rev-list -n 1 a6.1`.
+**Git tag and submitted commit SHA:** tag **`a7`** — _PENDING, tagged after
+the film is rendered._ A commit cannot carry its own SHA, so it goes in the
+Canvas note and is recoverable with `git rev-list -n 1 a7`.
 
-There is also a tag `a6`. It is the first cut of the film, whose narration
-said the GPU budgets had not been measured. `a6.1` measures them and re-cuts
-the beat that said so. `a6` is left where it is rather than moved, because
-`TEST-REPORT.md` finding 5 cites what was verified at it — a tag that moves
-takes its own evidence with it.
+**Game-source revision shown in the film:** _PENDING._ Every code panel,
+every hash and every capture in the film will be taken at one revision, and
+`git diff <that sha>..a7 -- godot/` is the check that nothing under `godot/`
+moved afterwards.
 
-**Game-source revision shown in the film:** **`31fb5a7`** — *A6 film capture
-driver: three takes, each asserting its own outcome*. Every code panel, every
-hash and every capture in the film was taken at it. Commits after it add film
-documentation only and change no file under `godot/`;
-`git diff 31fb5a7..a6 -- godot/` is the check and it prints nothing.
+**Film link and SHA-256:** _PENDING._
 
 **Godot version, renderer, and operating system:** Godot
-**4.7.2.stable.official** `ed1daf0bf`, **Forward+** (Vulkan 1.4.357), Windows
-11.
-
-**GPU used for the GPU price:** NVIDIA GeForce RTX 5080 Laptop GPU.
-Whole frame at the design ceiling **0.022 ms** against a combined budget of
-**0.60 ms** — `evidence/a6/gpu-cost-effects-run1.txt` and `-run2.txt`,
-`CHANGE-BRIEF.md` revision 6.0.6.
+**4.7.2.stable.official** `ed1daf0bf`, **Forward+** (Vulkan 1.4.357),
+Windows 11. Physics tick **60** — `physics_ticks_per_second` is unset, so
+the engine default, and every frame count in this submission is stated at
+that rate because a frame count is meaningless without one.
 
 ---
 
-## The effects
+## The two clips
 
-**Effect A — the grit burst.**
+Assignment 7 says *"the natural split is a looping sprite cycle and a rig
+action, but either way round works."* **This is the other way round**, and
+the reason is art rather than animation — §3 below.
 
-| | |
-|---|---|
-| Event | `signal fired` on `godot/features/traps/spike_trap.gd:24`, emitted at `:98` on entering `State.FIRING` |
-| Node type | **`GPUParticles2D` × 3** (`Flash`, `Grit`, `Dust`) under one `Node2D` |
-| Retrigger rule | **overlap** — one instance per event, nothing cut off and nothing dropped |
-
-**Effect B — the dungeon motes.**
+### `run` — the cycle, a 2D cutout rig
 
 | | |
 |---|---|
-| Job | **ambience** |
-| Condition | starts with the scene, stops on `signal died` — `godot/features/player/player.gd:16`, emitted `:48` |
-| Node type | **`GPUParticles2D` × 1** |
-| Feature Effect A does not use | **`preprocess = 8.0`**, one full lifetime, so the field is at steady state on the first drawn frame. Secondary: a **Box** emission shape against A's Point and Sphere. |
+| What it communicates | that the character moves under their own power rather than sliding. The game already kicks up step dust every 24 px; until this clip existed the body above those puffs was one frozen pose, so the dust looked like it belonged to something else |
+| Route | `Node2D` pivots keyed on `rotation_degrees` and `position`, as **resource text**, never built in code at runtime |
+| Plays on | `Rig`, `Rig/LegFront`, `Rig/LegBack` |
+| Length | **0.500 s**, `LOOP_LINEAR`, `step` 0.125 s |
+| Keys | five — contact, pass, contact, pass, contact |
 
-**Effect C — the step dust.** Not required; the assignment asks for two. It
-was added on the author's verdict on Effect B — *dust falling from the sky,
-but none at the floor* — and is specified in `CHANGE-BRIEF.md` revision
-6.0.4. Its event **does not exist in the game**: `player.gd` has no footstep
-signal and §3 keeps it out of scope, so `step_dust_driver.gd` derives one from
-measured position delta, one puff per 24 px travelled. It is the only effect
-that uses **`amount_ratio`** (0.6 a stride, 1.0 a landing) and the only one
-whose state test runs at 30, 60 and 144 fps.
+**The length is derived, not chosen.** A gait cycle is two steps, so it is
+two strides: `2 × stride_px / SPEED = 48 / 96 = 0.500 s`. The two contacts
+fall 0.250 s apart, which at 96 px/s is **24 px — `stride_px` exactly**, so
+the step dust spawns on each footfall rather than on every other one. If the
+cycle is retimed, that arithmetic is what changes first, not the keys.
 
-**Budgets, and the price each is compared on.** All three are GPU nodes, so
-all three are budgeted on **GPU time**; the headless CPU price is run as a
-control, because the prediction that it reads ≈ 0 is itself a claim worth
-testing.
+**The seam rule for a continuous track** is the one the course notes state:
+the value at `t = 0` and at `t = length` must match or the wrap jumps. Front
+38 → 38, back −14 → −14, bob 0 → 0, asserted headlessly. Whether the wrap
+*reads* smooth is a human check and it is mine.
 
-| | Peak particle count | GPU budget | GPU, measured | Headless CPU, measured |
+### `swing` — the committing action, a sprite-sheet frame track
+
+| | |
+|---|---|
+| What it communicates | that the attack is a commitment. The startup is long enough to be read; the active window is narrower than a spike trap's lethal window, so you cannot trade with a trap; the recovery is where you find out whether committing was right |
+| Route | `Sprite2D` with `hframes`/`vframes` and a **discrete** `frame` track |
+| Plays on | `Rig/Body`, `Hitbox`, and `Rig/SwordArm` (position **and** rotation) |
+| Length | **0.600 s**, 18 frames at 30 fps, `LOOP_NONE`, `step` 1/30 |
+
+| Phase | Frames | Seconds | What the game reads |
+|---|---|---|---|
+| Startup | 0–5 | 0.000–0.200 | the lock, every physics tick |
+| **Active** | 6–9 | **0.200–0.333** | `Hitbox.monitoring == true`, read by the physics server |
+| Recovery | 10–17 | 0.333–0.600 | still locked; a second attack is buffered |
+| end | 18 | 0.600 | the lock releases |
+
+**Both clips advance on the physics tick**, not the engine's idle default,
+because the fact gameplay reads — `Hitbox.monitoring` — is read on the
+physics tick.
+
+---
+
+## The one authority
+
+This assignment's collision was not hypothetical here. It was in the
+repository: `pose_driver.gd` wrote `Sprite2D.texture` and `flip_h` every
+`_process`, and the new clips key the same node.
+
+| Animated node | The one authority | What it writes |
+|---|---|---|
+| `Rig` | `AnimationPlayer` | `position:y` |
+| `Rig/Body` | `AnimationPlayer` | `frame` |
+| `Rig/LegFront`, `Rig/LegBack` | `AnimationPlayer` | `rotation_degrees`, `visible` |
+| `Rig/SwordArm` | `AnimationPlayer` | `position`, `rotation_degrees` |
+| `Rig/SwordArm/Blade` | `AnimationPlayer` | `visible` |
+| `Hitbox` | `AnimationPlayer` | `monitoring` |
+
+**`pose_driver.gd` is deleted, not disabled.** Disabling it would leave a
+second writer in the scene that happens to be asleep, and the next person to
+wake it gets a bug with no error message. `player_anim.gd` replaces it: it
+reads state, calls `play()`, and **writes no animated property at all.**
+
+**The one honest wrinkle, stated rather than hidden.** `player_anim.gd`
+writes `Rig.scale.x`, the facing, which **no clip keys** — so there is still
+exactly one writer per property and one *animation* authority per node, but
+`Rig` has two writers at the node level. The alternative, keying facing in
+every clip, doubles every clip and makes facing a property of the animation
+rather than of the character. `CHANGE-BRIEF.md` §5 records it as a
+judgement.
+
+---
+
+## The two clocks, measured
+
+`godot/tests/measure_clocks.gd`, `evidence/a7/clocks.txt`.
+
+| mode | `swing` becomes current | playhead **on that frame** | window opens | playhead there |
 |---|---|---|---|---|
-| Effect A | 96 (design ceiling; in play it is 32 — revision 6.0.2) | **0.30 ms** | +0.001 ms | +13.5 µs over baseline |
-| Effect B | 60 | **0.20 ms** | +0.005 ms | +0.5 µs, below the instrument's noise |
-| Effect C | 21 | **0.10 ms** | +0.001 ms | +8.5 µs |
-| **all three at once** | 177 | **0.60 ms** | **whole frame 0.022 ms** | — |
+| **PHYSICS** (ships) | f1 | **0.0000** | f13 | **0.2000** |
+| **IDLE** (engine default) | f1 | **0.0167** | f12 | **0.2000** |
 
-**The GPU budgets are measured** — `CHANGE-BRIEF.md` revision 6.0.6,
-2026-11-08. The whole frame, with all three effects at the brief's design
-ceiling, costs **0.022 ms** of GPU time against a combined budget of
-**0.60 ms**; a 60 fps frame is 16.67 ms, so the three effects are about
-**0.13 %** of one. Every budget is met with more than an order of magnitude
-to spare.
+**The answer to the assignment's question:** both clips advance on the
+physics tick; gameplay reads the active window on the physics tick; **the
+disagreement between the clip's write and gameplay's read is zero seconds**,
+and the measurement is what establishes it — the window opens on the frame
+whose playhead reads 0.2000, in both modes.
 
-**The per-effect figures are not prices.** Two controls in the same run say
-so: Effect B measured twice drifts by up to 0.0010 ms, which is the entire
-measured cost of A and of C; and "all three" measured *cheaper* than Effect B
-alone, which cannot be true, because all three contains B. Both runs
-reproduced to the last digit — repeatable is not the same as true. What the
-measurement establishes is the ceiling, not the price.
+**The brief's own prediction was wrong, and the file records it rather than
+being rewritten to match.** §8 predicted idle would run *up to one physics
+step late*. It runs one step **early**, because an idle-mode mixer takes an
+extra advance during the idle step of the frame the clip starts — a step the
+physics-mode mixer does not get until the next frame. The prediction was
+tagged **[proposal]**, which in this brief means *derived by Claude and not
+yet confirmed*. It was not confirmed. Revision 7.0.8.
 
+**What the run cannot see, and does not claim.** `run-test.sh` passes
+`--fixed-fps`, which locks the render tick to the physics tick, so every run
+is identical and the *jitter* §8 also predicted is **not** established — that
+needs a windowed run at a free frame rate. Running a deterministic
+measurement three times is one measurement printed three times.
 
-**That table is two runs, and the second run is the point.** The *ordering*
-is stable and the instances column is identical between runs; the microsecond
-figures are not. Effect B reads +1.3 µs in one run and +4.3 µs in the other,
-while each run's own twice-measured baseline claims a resolution of 0.5 µs.
-The reading that survives is the instances column — 30, 0 and 22 — and what it
-says is that a headless run can weigh scene instancing and nothing else.
-`evidence/a6/cost-effects-run1.txt` and `run2.txt` are the recorded output; a
-third, earlier run was discarded because it was taken while a 4K render was
-using the CPU, and it is not in the repository.
+---
 
-**Texture sources and licences (or model, version, and terms):**
+## The evidence
 
-**None of the three effects uses a texture.** Every emitter draws Godot's
-default point with no texture assigned, and the look comes from
-`color_ramp`, `scale_curve` and the blend mode. There is nothing to credit
-and nothing to license for this assignment's own work.
+`TEST-REPORT.md`'s Assignment 7 section is the full report. In short:
 
-The textures already in the game are unchanged and were all **written by
-code**: `tools/make_sprites.py` and `godot/tools/write_textures.gd`, both
-committed. `ATTRIBUTION.md` and `SOURCES.md` carry the full accounting,
-including the five generated character poses carried from
-walker-ninja-TiantongZhang and the film's locally run narration model.
+| | |
+|---|---|
+| suites | 17, **0 failures**, `evidence/a7/suite.txt` |
+| the two read-backs | 164 checks |
+| structure test, edge tests, pin | 78 checks |
+| the clocks | 5 checks, `evidence/a7/clocks.txt` |
+| mutations | 5 that must fail (all exit 1) + the fresh-cache one (exits 0), `evidence/a7/mutations.txt` |
+| frame strips | `captures/swing/r1–r4`, `captures/run/r1` — **fixture captures**, labelled as such wherever they appear |
 
-**The film.** `youtube/claude-liam-walker-the-lost-particles-gamedev/`.
-Twenty beats, six code-then-result pairs, built with the course-provided
-Brutalist `godot-gamedev` workflow in `walker` mode. Its evidence ledger
-passes the course checker — 67 source files, 40 exclusions, 6 components, 6
-exact excerpts. Five beats are engine footage from three 4K Movie Maker takes,
-each of which asserted its own outcome before a frame of it counted; take r is
-labelled SCRIPTED everywhere it appears, because the ceiling it shows cannot
-be reached by playing this room. Four beats are evidence cards whose every
-figure is recomputed from committed capture frames at build time. The reel's
-`FACTCHECK.md` marks every narrated claim MEASURED, SOURCE, REASONING or
-AUTHOR, and records the one claim that was wrong and was corrected before the
-master was rendered.
-
-**Final film URL and filename:**
-`claude-liam-walker-the-lost-particles-gamedev.mp4` —
-**TheLostParticles_TiantongZhang**, H.264 **3840 × 2160**, 30 fps, AAC 48 kHz
-stereo, **619.00 s** (10:19.00), 20 beats, 39,013,712 bytes.
-<https://northeastern-my.sharepoint.com/:f:/g/personal/zhang_tiant_northeastern_edu/IgCL96MewzyaRIXNk10qcGW_AVyrjNNiRm9X3um-M1vPqX8?e=FDgBk9>
-
-The link is to the **folder**, which holds the film and `CHECKSUM.txt`
-beside it. It is my Northeastern OneDrive and it requires a Microsoft
-sign-in. **Please download the file rather than using the web preview**
-— a preview re-encodes it and the SHA-256 below will not match.
-
-The film is not in GitHub: the assignment keeps MP4s and anything over
-25 MB out of the repository, and `.gitignore` excludes `exports/`.
-
-**Final film SHA-256:** `d9a8e521248352d96ae48d8b8b3c47812c5b7cd72e007c80f6ca8aa8b8efb36a`
+**The mutation re-run was wrong the first time, and the evidence file keeps
+that run instead of only the corrected one.** A fresh `git worktree` has no
+import cache, so every mutation exited 1 on `FAIL the sheet is loaded`
+whether or not its own assertion fired — one of them exited 1 on *that
+alone*. A mutation that passes for a reason unrelated to the mutation proves
+nothing, which is the exact thing mutations exist to detect. Each worktree is
+imported first now and each run names the assertion that must fire and checks
+that it did.
 
 ---
 
 ## Summary of my work
 
-**The specification came first.** `CHANGE-BRIEF.md` was committed as `725a940`
-before the first agent prompt of this assignment, and the first build commit
-is `fb04465`. It holds an intent block per effect — timing phases, contrast
-against the named background, scale against the character, change over life,
-variation, and each emitter's job — the settings those are meant to produce,
-the observable rules, seven predicted failures, and a price prediction and
-budget for each effect.
+**The specification came first.** `CHANGE-BRIEF.md`'s A7 text was committed
+before the first agent prompt and holds the routes, the cycle arithmetic, the
+phase table, the authority table, the two-clock prediction, the evidence
+split, the boundaries and seven predicted failures. **Eight dated revisions
+are appended rather than edited in place**, so a reader can see what changed
+and why, including the two places the brief turned out to be wrong about
+itself.
 
-**Three things were measured on the pinned engine before anything was
-specified**, and they changed what the brief could say. The one that mattered
-most: on 4.7.2 `ParticleProcessMaterial` **has** `initial_velocity`, `scale`
-and `damping` as `Vector2` properties with usage flag 12, which are never
-written to a scene file. `set("initial_velocity", 7.0)` is accepted and
-discarded. So the Godot 3 name the assignment warns about is worse here than
-described — it does not error, it silently runs at the default. Both mutations
-were run and both made the configuration test exit 1.
+**Eight revisions, seven of them started by me playing the game, none by a
+test going red.**
 
-**The tuning loop ran on strips, and the verdicts are mine.** Effect A's `Flash`
-was invisible at the size the brief first gave it; I approved raising
-`scale_min/max` from 1.6 / 2.4 to 5.0 / 7.0 and kept it after seeing it in the
-running game. Claude's prediction for that recapture was right on five frames
-of six and **wrong on frame 12**, where the two strips turned out bit-identical;
-that disagreement is in `TUNING.md` rather than quietly resolved.
+| | what I said | what was actually wrong | **what no test was asking** |
+|---|---|---|---|
+| r1 | can't see the sword | there was no sword — the poses are unarmed | whether the art held what the brief claimed |
+| r2 | it spins above the body | the arc reversed twice about an overhead pivot, 330° in 0.6 s | which **way** the arc went, and how **low** |
+| r3 | the centre of rotation is at the back | the pivot sat on the torso's back edge, to the pixel | **where the pivot was at all** |
+| r4 | make the blade longer | nothing — a judgement | its length lived in three files nothing compared |
+| r5 | let me swing in the air | nothing — a design call | `is_on_floor()`: a **right** thing no test held in place |
+| r6 | let me move while swinging | nothing — argued against first, then built | — |
+| r7 | the legs waggle, they don't alternate | **three** defects at once | the band's sign, the back leg's length, the pivot |
+| r8 | — | §8 predicted the wrong sign | the clocks had never been measured, only asserted |
 
-**What I verified, and what I caught.** The one that matters: Step 6's
-generated shader was produced from a default, empty material by mistake, and
-Claude had already pronounced it fine — it loaded, reported `MODE_PARTICLES`,
-declared 38 uniforms and printed no `SHADER ERROR`, all true. **I found it
-while counting line numbers**: the file had no `texture()` call anywhere, so
-two of the seven references the assignment asks for did not exist in it. The
-file was regenerated from Effect A's `Dust` material, which is the one
-carrying both a `color_ramp` and a `scale_curve`.
+**r1, r2, r3 and r7 were all fully visible to a headless run before the game
+was ever launched** — in the key table, in the sheet, in the generator's own
+output. They are asserted now, and every one of those assertions was written
+**after** a person said what they saw.
 
-**What Claude wrote, and where it was wrong.** Claude updated `CLAUDE.md`,
-built all three effect scenes, the previews, the trigger code, the tests and
-the cost script, read the strips and proposed every tuning change. It also
-shipped four checks that could not fail — one written as `x or true`, one as
-`arr.size() >= 0`, one comparing two runs that shared a scene tree, and one
-counting events over a different window than it measured distance over — and
-every one of them was green. `TEST-REPORT.md` records each with how it was
-caught. `FRICTIONAL.md` separates what I accepted, modified and rejected.
+**The worst finding, and it is about a measurement I was pleased with.**
+Revision 7.0.1 §4 says *"the paper version of this had the sign backwards,
+and a rendered measurement caught it."* The rendered measurement had it
+backwards too: PIL's `rotate()` turns the opposite way from Godot's
+`rotation_degrees`, so the generator's "safe band" was in the wrong sign, the
+cycle drove the planted foot **3.3 px through the floor**, and the read-back
+asserted every key was inside the band and passed. *Moving a calculation off
+paper and into a renderer does not make it right; it makes it harder to
+check.*
 
-**Authorship.** `godot/shaders/` is mine and `git log -- godot/shaders/` shows
-it, with one dated exception recorded in `CLAUDE.md`: on 2026-11-08 I
-converted the material in the editor, saved it, and told Claude to extract
-`particles_generated.gdshader` from the saved resource. The closing answer in
-`TEST-REPORT.md`'s process-shader section was written by Claude at my
-instruction and is labelled as Claude's in the file itself.
+**What I rejected.** Claude built A7's first sheet by code, in the existing
+silhouette style. I rejected it on sight — this game already has a face, and
+replacing it to make one assignment easier would have spent the game's
+identity to save a day. **The rejected version is still in history at
+`d303899`**, because "I rejected it" is a claim and a commit is evidence. The
+cost is recorded as a trade: the two clips had to swap routes, because a
+frame cycle needs several drawings of a run and this project has one.
+
+**What I asked for that the assignment argues against.** I asked to move
+while swinging. Claude put the objection first — the movement lock *was*
+`GDD.md:198`'s "real risk" — and then built it. What survives is the
+commitment that matters: no cancel, no restart, all 18 frames, no jump, and
+**no turn**, because `Rig.scale.x` mirrors the whole sword arm and a turn
+mid-arc would teleport the blade across the body in one frame.
+
+**Five sentences in this repository outlived the facts they stated**, each
+true when written: a hard-coded check count, two strip captions, the blade's
+length in three files, and the cycle's length in a caption. Each is recorded
+in `TEST-REPORT.md` with how it was found, and none of them was found by a
+test.
+
+**Authorship.** `godot/shaders/` is untouched by Assignment 7 and
+`git diff --stat godot/shaders/` prints nothing across every A7 commit.
+`scripts/run-test.sh` changed **once**, in a commit of its own, to fail on
+`Failed loading resource`. `SOURCES.md` §7b lists every A7 file and who wrote
+it; `FRICTIONAL.md` has the dated log; **every `TUNING.md` verdict and every
+prediction in it is mine**, quoted verbatim in the Chinese it was said in.
 
 ---
 
 ## Known limitations
 
-- **The GPU figures are a ceiling, not a price.** Every budget is met, with
-  more than an order of magnitude to spare — but the per-effect differences
-  are below the instrument's own floor, and the run demonstrates that rather
-  than asserting it: Effect B measured twice drifts by as much as A and C
-  cost in total, and "all three" measures cheaper than Effect B alone, which
-  cannot be true. `CHANGE-BRIEF.md` revision 6.0.6 §3. One by-eye
-  cross-check in the Visual Profiler — of the instrument, not of the effects
-  — has not been done.
-- **Effect B and Effect C have an author verdict but no tuning revision yet.**
-  B's r0 verdict was *keep*, with no setting changed; the assignment asks for
-  at least one observation-driven revision per effect.
-- **Both B and C drift dust below the floor line** — 14–22 % of the motes and
-  11–29 % of the step dust, measured against a field-off control. Neither is
-  visible in play; both are recorded in `TUNING.md` with candidate fixes.
-- **A5's evidence checker fails on `main` by construction**, from the first
-  file this assignment adds under `godot/`. The `a5` tag is unaffected and a
-  clone of it still passes. `CHANGE-BRIEF.md` §0.3 verified this by experiment
-  before any of A6 was built.
-- **Three effects instead of two** is more surface than the assignment asks
-  for, and Effect C is the least settled of them.
-- **One claim in the film was wrong and was corrected before the master was
-  rendered.** It said `Dust` was the only emitter carrying both a `color_ramp`
-  and a `scale_curve`; three of the six do. `TEST-REPORT.md`'s process-shader
-  section, which said the same thing, carries a dated correction rather than a
-  silent edit, and the reel's `FACTCHECK.md` records it.
-- **Two note panels in the film clipped mid-sentence** in their first render,
-  because the workbench's notes column holds about 165 characters and nothing
-  enforces it. Found by extracting one frame per code beat and reading them;
-  fixed and re-rendered. It is the same class of fault as everything else in
-  this report: a step that produced output, passed every automatic check, and
-  was wrong.
+- **The run cycle alternates; it does not stride.** Measured: across 88° of
+  rotation the foot moves about **10 px** against a **24 px** step, because
+  the cut leg is 8.6 px long with its foot almost directly under the hip. No
+  key value fixes it. Drawing a longer leg would, and that is a change to the
+  character's art — the thing I rejected a whole sheet over — so it stays a
+  HUMAN row in `CHANGE-BRIEF.md` §9 and my decision.
+- **A swing with a direction held slides.** The clip hides the cut-out legs
+  and holds one static body cell while the step dust keeps spawning every
+  24 px. Fixing it means two clips at once, which means an `AnimationTree`,
+  which §7 declined for reasons that still hold.
+- **The hitbox can hit nothing** — this room has no enemy. The window is
+  real, switched by a discrete track on the clip's own timeline, and asserted
+  at every boundary; what it would *do* is a later assignment. §11 said so
+  before it was built.
+- **The idle-mode clock's jitter is not measured**, only its one-step offset.
+- **`roll`, `cast` and combo-2/3** from `GDD.md:393` are not built.
+- **`godot/tests/test_keyboard.gd` does not load.** It preloads
+  `res://game/session.gd`, a `walker-ninja` file that has never existed here;
+  unloadable since the game changed on 2026-10-17, and unloadable at `a6.1`.
+  Nothing in A7 touched it and it is not in the suite `CLAUDE.md` names.
+  Recorded rather than deleted.
+- **Two `SceneTree` tests leak at exit** (`ObjectDB instances were leaked`,
+  `resources still in use`). Pre-existing and scaling with how much of the
+  scene a run exercises; the wrapper deliberately does not fail on either.
+- **Two existing tests changed their expectations**, which `CLAUDE.md`
+  otherwise forbids. Both are named in revision 7.0.6 as crossings I
+  authorised, and both were **inverted rather than deleted**, so the file
+  still states the rule. A test left asserting a superseded rule is the
+  loudest way to learn the design moved; a test deleted for failing is the
+  quietest.
 
 **Changed games since Assignment 2:** **Yes.** On 2026-10-17, using the
 course's one permitted change of game, with the written justification in
-`FRICTIONAL.md`. Assignments 1-3 were submitted from
+`FRICTIONAL.md`. Assignments 1–3 were submitted from
 `walker-ninja-TiantongZhang` under the tags `a2-submitted` and `a3`, and that
 repository has not been modified since. Per the rule the tags continue here;
-`a5` is this repository's first tag and `a6.1` is this submission's.
+`a5` is this repository's first tag and `a7` is this submission's.
 
-Assignment 6 itself changed nothing: same game and same repository as
-Assignment 4 and 5. **This field answered "No" until 2026-11-08**, which was
-wrong — it answered "did Assignment 6 change games", which is not the
-question asked. `FRICTIONAL.md` records the requirement in those words:
-*the submission note for Assignment 4 must answer "Changed games since
-Assignment 2" with yes.* Assignment 5's note did. This one is corrected
-rather than quietly fixed, because a submission field that drifted back to a
-wrong answer between two assignments is worth a reader knowing about.
+Assignment 7 itself changed nothing: same game and same repository as
+Assignments 4, 5 and 6. This field answered "No" once during Assignment 6,
+which was wrong — it answered *"did Assignment 6 change games"*, which is not
+the question asked. It is answered correctly here, and the drift is recorded
+in A6's note rather than quietly fixed.

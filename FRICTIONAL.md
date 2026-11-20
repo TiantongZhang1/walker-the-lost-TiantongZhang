@@ -897,3 +897,202 @@ met — the whole frame at the design ceiling is 0.022 ms against a combined
 cheaper than Effect B alone, which cannot be true, so the per-effect figures
 are below the instrument's floor and only the ceiling can be claimed. The
 other two are still open and are still mine to close.
+
+---
+
+## 2026-11-15 — Assignment 7 begins, and the collision it is about was already in the repository
+
+I did not have to invent the conflict this assignment teaches. It was sitting
+in `player.tscn`: `pose_driver.gd` writes `Sprite2D.texture` and `flip_h`
+every `_process`, and the clip I was about to add keys the same node. Two
+writers, and whichever runs last in the frame wins — which depends on node
+order, which is not a design.
+
+So `CHANGE-BRIEF.md` §1 is a table of what exists, measured from the files
+rather than remembered, and §5 is the resolution: `pose_driver.gd` is
+**deleted**, not disabled. I want to be exact about why. Disabling it would
+have left a second writer in the scene that happens to be asleep, and the
+next person to wake it would get a bug with no error message. Deleting it
+makes the `AnimationPlayer` the only thing that can write those properties,
+which is a fact about the scene rather than a promise about behaviour.
+
+The part I got wrong on day one was which clip should be which route. I
+wrote the run as a sprite-sheet cycle and the swing as a rig, because that
+is the obvious split and the assignment even says it is the natural one.
+Three days later I swapped them, for a reason that had nothing to do with
+animation and everything to do with art, below.
+
+---
+
+## 2026-11-18 — I rejected a sheet Claude had already built, and it was the right call for a reason I did not state well at the time
+
+§3 said the sheet would be written by code. It was. I looked at it and said:
+
+> 这个人物模型也太简陋了，不能做到保持之间咱们用gpt做好的人物形象码
+
+What I meant, and did not say clearly, is that this game already has a face.
+The hooded figure with the cyan visor and the purple scarf came out of
+`walker-ninja` and it is the only thing in this repository a stranger would
+recognise. Replacing it with a silhouette to make one assignment's sheet
+easier would have been spending the game's identity to save a day of work.
+
+The honest part of this entry is that **the first version is still in
+history at `d303899`.** I did not want it quietly removed, because "I
+rejected it" is a claim and a commit is evidence, and a reviewer should be
+able to see the thing I rejected and disagree with me.
+
+**What it cost, said plainly.** A frame cycle needs several drawings of a
+run and this project has one. So the two clips swapped routes — the run
+became the cutout rig, because a rig needs no new drawing at all, and the
+swing became the frame clip, because `p6-windup` and `p7-live` already
+exist. That is a worse fit for the assignment's suggested split and a better
+fit for the art I have. Revision 7.0.1 records it as a trade, not as a free
+win.
+
+And a consequence I did not see coming: cutting a rig out of one drawn pose
+turns out not to work very well. That is 2026-11-19, below.
+
+---
+
+## 2026-11-18 (later) — three times I said "that's wrong" and three times nothing was asking
+
+This is the entry I would keep if I could only keep one.
+
+I played the game and said, on three separate occasions:
+
+> 跑步还行，但挥刀的时候根本看不见刀
+> 刀不太对，他不是挥出去的，而是在身子上面转圈
+> 刀没挥出去，以刀把为中心在旋转，而且旋转的中心点在人物背部
+
+Every one of those was right. Every one of them was **fully visible to a
+headless run before I ever launched the game** — in the key table, in the
+sprite sheet, in the generator's own printed output. And not one test was
+asking.
+
+- There was no sword in the art. Two cells I had been told carried a weapon
+  are `walker-ninja`'s **unarmed** martial poses. A pixel count settled it
+  afterwards: 113 and 98 light-grey pixels against idle's 78 is a difference
+  of *stance*, not of weapon.
+- The restored blade's arc reversed direction twice about a pivot two pixels
+  above the waist: 330° in 0.6 s, tip never below y = −3. "Spinning above
+  the body" is not an impression, it is the range of the function.
+- The pivot sat at x = +3, which a column profile of the sheet says is the
+  torso's **back edge**, to the pixel.
+
+**The lesson is not "write more tests".** All three facts were derivable
+from files that were already committed. The lesson is that a read-back only
+ever sees the questions somebody thought to ask it, and in this project the
+questions keep arriving from a person holding a keyboard. All three are
+asserted now, and **every one of those assertions was written after I said
+what I saw**, which is the wrong order if you believe tests prevent defects
+and the right order if you believe they preserve what somebody noticed.
+
+**The uncomfortable corollary**, and I want it in writing: pasting the old
+angles back into the new test fails it in nine places. The defect was in
+reach of a headless run the whole time. I do not get to feel good about the
+nine green checks that were there instead.
+
+---
+
+## 2026-11-19 — I asked for something the assignment argues against, and the brief says so before it says yes
+
+I asked to be able to move while swinging. Claude pushed back before
+building it, which is what I want it to do: Assignment 7 asks for a
+**committing action**, and `CHANGE-BRIEF.md` §0 grounded that in this game's
+own GDD — *"holding attack is a real risk"*. The movement lock **was** the
+risk.
+
+I asked for it anyway. That is mine to decide and I am not going to pretend
+otherwise in a document whose whole purpose is not pretending.
+
+What I do think is right is the shape of the compromise, and it was not
+mine. A movement lock is one way to make a commitment read; it is not what
+makes a clip a committing action. The swing still cannot be cancelled,
+cannot be restarted, always plays all 18 frames, forbids jump — and
+**forbids turning.** `Rig.scale.x` mirrors the whole sword arm, so a turn
+mid-arc would teleport the blade across the body in a single frame.
+Direction is what the arc depends on, so direction is what the swing commits
+you to. That is a smaller commitment than before and it is a real one, and
+it is in the brief with the argument against it printed above it.
+
+The cost is named too: a moving swing **slides**, because the clip hides the
+cut-out legs while the step dust keeps spawning every 24 px. That is the
+exact complaint the leg rig was built to answer, arriving from the other
+direction. Fixing it needs two clips at once, which needs an
+`AnimationTree`, which §7 declined for reasons that still hold. Not done,
+and written down rather than left to be found.
+
+---
+
+## 2026-11-19 (later) — the legs, and a measurement that was backwards *inside a renderer*
+
+> 跑步的时候腿部姿势有点奇怪，不是两个腿交替着跑而是两个腿在各自晃悠
+
+Three defects under one sentence, and the first one is the worst thing in
+this assignment.
+
+**Revision 7.0.1 §4 contains this sentence, which I was pleased with at the
+time:** *"The paper version of this had the sign backwards, and a rendered
+measurement caught it."* The rendered measurement had it backwards too. PIL's
+`Image.rotate()` turns the opposite way from Godot's `rotation_degrees`, and
+rendering the same leg at the same angles both ways produces tables that are
+exact mirror images. So the "safe band" the generator printed was in the
+wrong sign, the cycle's keys drove the planted foot **3.3 px through the
+floor**, and `test_player_clips.gd` asserted every key was inside the band
+and passed.
+
+**Moving a calculation off paper and into a renderer does not make it right.
+It makes it harder to check.** I had treated "measured by rendering" as a
+category that does not need checking, which is exactly the habit this course
+keeps catching me in, one level up each time.
+
+The other two: `leg_back.png` is a 14 × 4 horizontal stub whose foot is five
+pixels short of the floor and sweeps 1.6 px — it can never plant, so it can
+never take a step. And the pivot was *assumed* to be texture (20, 20) when
+the leg's cut surface is at (27, 20), seven pixels to the side, so the leg
+swung like a pendulum on a bar.
+
+**And then the first fix was wrong in the same family.** It swung −52 .. 0,
+which in Godot's sign is straight-down to 52° *forward* — both feet kicking
+out in front, never behind. Every assertion passed, because every assertion
+was about **shape** — range, antiphase, separation, seam — and the shape was
+right while the **direction** was wrong. The recapture caught it, by being
+looked at. Twice in one assignment the defect has been a sign, and twice the
+thing that found it was a picture.
+
+**What I am keeping from this.** The limitation that remains is measured and
+stated rather than apologised for: across 88° of rotation the foot moves
+about 10 px against a 24 px step, so **this cycle alternates and does not
+stride**, and no key value changes that. Making it stride means drawing a
+longer leg, which is a change to my character's art, which is the thing I
+rejected a sheet over four days ago. So it is a HUMAN row in §9 and it stays
+my decision rather than becoming a quiet fix.
+
+---
+
+## 2026-11-19 (later still) — the brief predicted the clocks wrong, and the tag is why that is fine
+
+`CHANGE-BRIEF.md` §8 predicted the idle-mode clip would run **up to one
+physics step late**. `measure_clocks.gd` says it runs one step **early**, and
+the cause is not read latency: an idle-mode mixer takes an extra advance
+during the idle step of the frame the clip starts, which the physics-mode
+mixer does not get until the next frame.
+
+I am recording this as a correction rather than patching the prediction, and
+the reason is the tag. §8's prediction is **[proposal]** — "derived by Claude
+and not yet confirmed". It was not confirmed. The convention did its job
+three weeks after I adopted it: the number was never treated as a fact, the
+measurement was built to test it rather than to agree with it, and the
+disagreement is in the file instead of being rewritten to match.
+
+§8's actual *claim* survives, and the measurement is what establishes it:
+the window opens on the frame whose playhead reads 0.2000, in both modes.
+Writer and reader share a tick. The disagreement between the clip's write
+and gameplay's read is **zero seconds**, which is the thing shipping on the
+physics tick was for.
+
+And the file says what it cannot see. `--fixed-fps` locks the render tick to
+the physics tick, so every run is identical and the jitter §8 also predicted
+is **not** established. **Running a deterministic measurement three times is
+one measurement printed three times**, and I would rather that sentence be in
+the output than have a reader count three identical numbers as replication.
