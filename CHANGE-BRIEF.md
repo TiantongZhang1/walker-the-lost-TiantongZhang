@@ -327,10 +327,19 @@ tests assert.
 | Input, during | Startup | Active | Recovery |
 |---|---|---|---|
 | `attack` again | **ignored** (`GDD.md:198`) | ignored | **buffered**, plays at frame 18 |
-| `move_left` / `move_right` | ignored; no turn | ignored | ignored |
-| `jump` | ignored | ignored | ignored |
+| `move_left` / `move_right` | ~~ignored~~; no turn | ~~ignored~~ | ~~ignored~~ |
+| `jump` | ~~ignored~~ | ~~ignored~~ | ~~ignored~~ |
 | taking damage | **does not interrupt** — committed means committed | does not interrupt | does not interrupt |
 | `died` | **aborts immediately**, DEAD | aborts | aborts |
+
+**Two rows of that table are struck through, and the revisions below say
+why.** `move_left` / `move_right` stopped being ignored in **revision
+7.0.6**, and `jump` stopped being ignored in **revision 7.0.10**; both
+changed because the author played it and asked. The rows are struck rather
+than rewritten, because this section is the proposal the assignment was
+planned from and the revisions are the record of it moving. **What is left of
+the commitment is the `no turn` half of row two, the `attack` row and the
+`died` row** -- and those are the rows no revision has touched.
 
 **No `AnimationTree`.** One clip plays at a time and nothing blends, so an
 `AnimationTree` would add a second mixer with its own defaults
@@ -389,9 +398,13 @@ disagreement in seconds". **[proposal — the prediction]**
 | **Does the character drift within its cells?** | **HUMAN** | the cycle's frame strip |
 | **Both clips over the darkest and lightest level art** | **HUMAN** | the unlit trap gap at x 208 and the torch pool at x 320 |
 | **Is "alternates but does not stride" good enough?** | **HUMAN** | revision 7.0.7 §6: the cut leg moves its foot ~10 px against a 24 px step. Drawing a longer leg is the only fix and it changes the character's art |
-| **Does a moving swing read, or does it just slide?** | **HUMAN** | revision 7.0.6 §4: hold a direction through several swings, lit floor and unlit gap |
+| **Does a moving swing read, or does it just slide?** | **HUMAN** | revision 7.0.6 §4, answered by revision 7.0.9: hold a direction through several swings, lit floor and unlit gap |
+| **Does a JUMPED swing read in mid-air?** | **HUMAN** | revision 7.0.10 §6: the legs hold `legs_planted` or `legs_run` while airborne, because the swing torsos are legless and hiding the rig's legs would leave a floating torso. Whether a braced stance hanging in the air reads is not measurable here |
 
 No headless run establishes any HUMAN row. That is the point of the split.
+**Nine rows now, and the last two were added by revisions** — a HUMAN row is
+written when a change creates a question the instruments cannot answer, not
+only when the assignment is planned.
 
 ---
 
@@ -1524,3 +1537,97 @@ that travels, because nothing in it travels.**
 triggers at capture frame 10. `captures/swing_move/r0` is the evidence that
 the legs move under a travelling swing, and it is a **fixture capture**,
 labelled as one wherever it appears.
+
+---
+
+# Revision 7.0.10 — 2026-11-20 — the jump leaves the lock, and "without interrupting it" is a claim about the SWING
+
+**Supersedes §7's `jump` row** (struck through there), **revision 7.0.4 §5's
+closing paragraph**, which told a reader that a dead-feeling spacebar during
+a swing was the feature, **revision 7.0.5 §4** and **revision 7.0.6 §3's
+table row**, both of which list `no jump` among what a commitment forbids.
+The `no turn` row survives all of it.
+
+## 1. Why
+
+> 我还希望挥刀的时候也能跳起来，而且不会打断挥刀动作
+>
+> [I'd also like to be able to jump while swinging, and for it not to
+> interrupt the swing animation]
+
+## 2. The request is TWO claims, and they need different evidence
+
+| the half | what it is about | how it is established |
+|---|---|---|
+| *"be able to jump while swinging"* | the **jump** | press it mid-swing, see the player leave the floor |
+| *"without interrupting the swing"* | the **swing** | **you cannot see this by looking at the jump at all** |
+
+The second half is the interesting one. It is a statement about what the
+clip's clock did, so the only honest form of it is to run the same swing
+**twice** — once with a jump through it, once without — and compare the two
+clocks frame by frame. That is `test_swing_edges.gd` §E, and the worst
+disagreement over 36 physics frames is **0.000000 s**, in all three phases.
+
+**A suite that only asserted the first half would be fully green on a jump
+that restarts the swing on every press.** Mutation M7 does exactly that, and
+all three `LEAVES THE FLOOR` checks pass while eight others fail.
+
+## 3. The change, which is four lines and one of them is the whole argument
+
+```gdscript
+if Input.is_action_just_pressed("jump") and is_on_floor():
+    velocity.y = JUMP_VELOCITY
+```
+
+moved out of the `else` that `is_locked()` guarded. **Why it cannot
+interrupt is structural, not careful:** that branch writes `velocity.y` and
+nothing else. It does not touch `action`, `swing_count`, `_buffered_attack`,
+or any `AnimationPlayer`. There is no code path from a jump to the swing's
+clock, so there is nothing for the swing to notice. `player_anim.gd` already
+ranked `is_locked()` above its airborne branch, so leaving the floor does not
+change the clip either — that line was written for revision 7.0.5's air
+swing and this revision got it for free.
+
+## 4. `is_on_floor()` stays, and it is now the ONLY gate
+
+You may jump **out of** a ground swing. You may not jump **during an air
+swing** — and `test_swing_edges.gd` §C still asserts that, with the same
+assertion it had before and **a different reason**: there is no double jump
+in this game, and an airborne player has nothing to jump from. The lock
+stopped being the reason.
+
+*An assertion that starts passing for a new reason is worth keeping, but
+only if the new reason is written beside it.* Otherwise the next person reads
+a green check as evidence for a rule that no longer exists.
+
+## 5. What is left of the commitment
+
+| | |
+|---|---|
+| **cannot be cancelled** | no input sets `action` back to `NONE`. Only `animation_finished` and death |
+| **cannot be restarted** | a second attack is ignored in startup and active, buffered in recovery |
+| **always 18 frames** | `LOOP_NONE`, 0.600 s, every time — *now measured against a jumped run as well* |
+| **damage does not interrupt** | unchanged |
+| **no TURN** | `player_anim.gd` freezes `Rig.scale.x` while locked |
+
+The lock has now narrowed three times, each time because the author played
+it: movement in 7.0.6, the legs in 7.0.9, the jump here. **What has never
+moved is the `no turn` row**, and that is not an accident of taste —
+`Rig.scale.x` mirrors the whole sword arm, so a turn mid-arc teleports the
+blade across the body in one frame. The commitments that survive contact with
+play are the ones with a reason underneath them.
+
+## 6. What this revision does NOT claim
+
+Nothing here says a jumped swing **looks** right. While airborne the legs
+play `legs_planted` or `legs_run`, because revision 7.0.9 cut the swing
+torsos legless and hiding the rig's legs would leave a floating torso. A
+braced stance hanging in mid-air may or may not read. **That is the author's
+call in play and §9 carries it as an open row** — it is not a limitation
+being accepted, which is the mistake revision 7.0.6 §4 made.
+
+## 7. Counts
+
+`test_swing_edges.gd` 37 → **60 checks**, 0 failures. Mutations 5 → **7**,
+both new ones recorded in `evidence/a7/mutations.txt` with the method
+difference stated and one blind spot of the new checks named.

@@ -172,11 +172,15 @@ The main scene is `res://game/main.tscn`: the three-trap room.
 | **Toggle vsync** | **F9** — prints the mode and the current FPS to the console |
 
 **The swing is committed.** Once it starts it plays all 18 frames: no
-cancel, no restart, no jump, and **no turn** — you may walk backwards out of
-your own swing but you may not change which way the blade is going.
-`CHANGE-BRIEF.md` revision 7.0.6 argues what that costs, because an earlier
-version also locked movement and removing the lock removed the cost of
-attacking.
+cancel, no restart, and **no turn** — you may walk out of your own swing, and
+jump out of it, but you may not change which way the blade is going.
+`CHANGE-BRIEF.md` revision 7.0.6 argues what the walking costs, because an
+earlier version locked movement and removing the lock removed the cost of
+attacking; **revision 7.0.10 added the jump**, which is a smaller change than
+it sounds: the jump writes `velocity.y` and nothing else, so the swing's
+clock cannot notice it. That is asserted by running the same swing twice,
+once jumped through and once not, and comparing the two playheads frame by
+frame.
 
 **F9 is a debug key, not a project setting.** Assignment 6 asks for the frame
 rate to be compared with the effects off and on, and for that comparison to be

@@ -1606,18 +1606,26 @@ previous assignment's file is not this assignment's call.
 | frame strip | what a windowed run actually drew | nothing invisible — a hitbox contributes zero pixels open or shut |
 | **the author** | all of it | — |
 
-**Five of §9's eight HUMAN rows are answered**, in play, and `TUNING.md`
+**Six of §9's nine HUMAN rows are answered**, in play, and `TUNING.md`
 records each verdict verbatim in the author's own words — including the one
 that rejected a revision and the one that rejected a whole sheet.
 
 *An earlier draft of this line said "every HUMAN row", which was not true
-when it was written.* Three rows are outstanding: drift within the cells,
-both clips over the darkest and lightest level art, and whether a moving
-swing reads or merely slides. They are listed as outstanding in `TUNING.md`
-rather than covered by the author's closing *都没问题* — **a blanket "it's
-all fine" is not an answer to a question nobody asked out loud**, and
-promoting it into one is exactly how the five stale sentences in this report
-got started.
+when it was written.* **And the draft before this one still listed drift
+within the cells as outstanding after the author had answered it** — *角色
+没有飘逸*, on 2026-11-20. That is the ninth entry in the list above, and it
+is in the paragraph whose subject is stale sentences, which is as good an
+illustration as this report is going to get: a list of what is outstanding
+goes stale exactly as fast as any other sentence, and nothing reads it.
+
+Three rows are outstanding now: both clips over the darkest and lightest
+level art; whether a moving swing reads, which revision 7.0.9 changed the
+answer to and which has not been re-judged in play since; and whether a
+**jumped** swing reads in mid-air, which revision 7.0.10 added. They are
+listed as outstanding in `TUNING.md` rather than covered by the author's
+closing *都没问题* — **a blanket "it's all fine" is not an answer to a
+question nobody asked out loud**, and promoting it into one is exactly how
+the stale sentences in this report got started.
 
 ---
 
@@ -1966,7 +1974,7 @@ by being looked at.
 
 ---
 
-## Five sentences that outlived the facts they stated
+## Nine sentences that outlived the facts they stated
 
 Each was true when written and false afterwards, and each was found by
 something other than a test:
@@ -1990,6 +1998,31 @@ the `sub_resource` and then counted the text it had just written. *A report
 that reads the same wrong text it wrote is not a check.* The read-back caught
 it, by asking the engine.
 
+**The seventh is a different kind, and the worst of them.** Revision 7.0.6 §4
+stated that showing the legs during a moving swing *"would mean two clips at
+once, which means an `AnimationTree`"*. That was never measured; it was
+reasoned, written into a design document as a cost, accepted by the author,
+and quoted back for a day as settled. It is false — the rule is one authority
+per **node**, so a second `AnimationPlayer` over a disjoint set of nodes
+breaks nothing — and revision 7.0.9 fixed the slide it had excused. **A
+limitation accepted on an unexamined claim looks exactly like a measurement
+once it is in a table.**
+
+**The eighth was found while reading a file to change something else.**
+`test_swing_edges.gd` §D ended with a NOTE saying a moving swing slides,
+which revision 7.0.9 had made false the day before; the note survived the
+revision that falsified it because nothing reads a NOTE. Revision 7.0.10
+corrected it.
+
+**The ninth is in this report, and its subject is this list.** The paragraph
+in §9 above that names which HUMAN rows are outstanding went on naming drift
+within the cells after the author had answered it. A list of open questions
+is a sentence like any other, it goes stale the same way, and **nothing in
+this repository reads one.**
+
+The count is nine and **none of the nine was found by a test**, which is the
+one sentence in this report that has not needed correcting.
+
 ---
 
 ## The evidence table
@@ -2005,10 +2038,12 @@ it, by asking the engine.
 | interrupts per phase | edge test, 9 cases | §B |
 | the swing works in the air and keeps its facing | edge test | §C |
 | movement during a swing, and what is still committed | edge test | §D |
+| **a jump mid-swing leaves the floor** | edge test, 3 phases | §E |
+| **and does not touch the swing’s clock** | **two full traces compared frame by frame** | §E |
 | the right clip in each state | structure test | `test_player_states.gd` |
 | the states A7 did not touch did not move | pin | `pin_player_states.gd` |
 | **the clocks' offset, in frames and seconds** | **measurement** | `measure_clocks.gd`, `evidence/a7/clocks.txt` |
-| every assertion can fail | 5 mutations | `evidence/a7/mutations.txt` |
+| every assertion can fail | 5 + 2 mutations | `evidence/a7/mutations.txt` |
 | a fresh cache changes nothing | M4 | same |
 | what a windowed run actually draws | frame strips | `captures/swing/r1–r4`, `captures/run/r1` |
 | **whether any of it reads** | **the author, in play** | `TUNING.md` |

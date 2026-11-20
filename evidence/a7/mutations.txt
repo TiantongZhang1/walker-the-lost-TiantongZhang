@@ -51,3 +51,56 @@ mutation. Each run below names the assertion that must fire and checks it.
     per-animation importer setting to lose. What M4 does establish is that
     nothing in either clip depends on a setting that exists only in the
     cache, so a fresh clone gets the clips this working tree has.
+
+================================================================
+Revision 7.0.10, 2026-11-20. Two more, for section E.
+
+METHOD DIFFERS FROM M1-M5 AND THE DIFFERENCE MATTERS. These two were run
+against the WORKING TREE, not a fresh worktree: player.gd was copied byte
+for byte to the scratchpad, mutated in place, tested, and copied back. That
+is weaker than M1-M5 in one way -- it does not prove a fresh clone behaves
+the same -- and stronger in another: the import cache was already warm, so
+neither mutation could exit 1 on 'the sheet is loaded', which is the exact
+failure the first attempt at the M1-M5 re-run had.
+
+Section E asserts the author's request, and the request has two halves that
+are separate claims. One mutation is aimed at each. THE POINT OF M7 IS THAT
+IT STILL JUMPS.
+
+=== M6  gate the jump on the lock again (revision 7.0.9's behaviour)
+    `if ... and is_on_floor() and not is_locked():`
+    test_swing_edges.gd   60 checks, 3 failures   (expected: failures)
+    FAIL  jump in startup LEAVES THE FLOOR   [off_floor=false vy<0=false]
+    FAIL  jump in the active window LEAVES THE FLOOR   [off_floor=false vy<0=false]
+    FAIL  jump in recovery LEAVES THE FLOOR   [off_floor=false vy<0=false]
+    [OK] the NAMED assertion fired, in all three phases. Nothing else moved:
+    the swing's clock is identical whether or not the jump was allowed,
+    which is correct -- a jump that does not happen also does not interrupt.
+
+=== M7  the jump happens AND restarts the swing clip
+    `velocity.y = JUMP_VELOCITY` then `if is_locked(): _anim.seek(0.0, true)`
+    test_swing_edges.gd   60 checks, 8 failures   (expected: failures)
+    PASS  jump in startup LEAVES THE FLOOR
+    PASS  jump in the active window LEAVES THE FLOOR
+    PASS  jump in recovery LEAVES THE FLOOR
+    FAIL  the playhead is IDENTICAL ... (jump in startup)   [worst 0.066667 s]
+    FAIL  the active window opens and closes on the same frames (startup)
+    FAIL  the jumped swing still ends on its own clock (startup)   [4 extra frames]
+    FAIL  the playhead is IDENTICAL ... (active window)   [worst 0.233333 s]
+    FAIL  the active window opens and closes on the same frames (active)
+    FAIL  the jumped swing still ends on its own clock (active)   [14 extra]
+    FAIL  the playhead is IDENTICAL ... (recovery)   [worst 0.433333 s]
+    FAIL  the jumped swing still ends on its own clock (recovery)   [26 extra]
+    [OK] the NAMED assertion fired. **Every LEAVES THE FLOOR check passed**,
+    which is the whole point: a suite that only asserted "jump works" would
+    be fully green on a jump that restarts the swing every time it is
+    pressed. The half of the request that is about the SWING is carried
+    entirely by the trace comparison.
+
+    ONE BLIND SPOT, RECORDED RATHER THAN HIDDEN: 'the active window opens
+    and closes on the same frames' PASSED for the recovery case under M7.
+    Restarting at frame 26 puts the next active window at frame 38, past
+    the 36 frames the trace records, so there is no second opening to see.
+    The playhead comparison catches it; the window comparison alone would
+    not. An assertion that is green because the evidence ran out is not an
+    assertion that passed.

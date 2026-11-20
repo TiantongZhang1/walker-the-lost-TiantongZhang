@@ -28,15 +28,15 @@ EXPECT = {
     "godot/project.godot:15": "Forward Plus",
     "godot/project.godot:19": "viewport_width",
     "godot/project.godot:65": "default_texture_filter",
-    "godot/features/player/player.gd:26": "16 px = 1 m",
+    "godot/features/player/player.gd:32": "16 px = 1 m",
     # A6: the state Effect B reads, and the number Effect A's grit falls at.
-    "godot/features/player/player.gd:29": "signal died",
-    "godot/features/player/player.gd:38": "const GRAVITY",
-    "godot/features/player/player.gd:45": "var health",
+    "godot/features/player/player.gd:35": "signal died",
+    "godot/features/player/player.gd:44": "const GRAVITY",
+    "godot/features/player/player.gd:51": "var health",
     # 127 -> 147: revision 7.0.5 dropped the is_on_floor() gate on the
     # attack and made the lock plant only on the ground, which added
     # twenty lines of comment above this one.
-    "godot/features/player/player.gd:149": "died.emit()",
+    "godot/features/player/player.gd:171": "died.emit()",
     "godot/features/traps/spike_trap.gd:27": "enum State",
     # A6: the four timings whose sum is the 1.40 s cycle that bounds how many
     # Effect A bursts can be alive at once. CHANGE-BRIEF.md section 1.4, A4.
@@ -58,8 +58,8 @@ EXPECT = {
     # A7. The cycle's frame rate is derived from these two numbers, so if
     # either moves the brief's arithmetic in section 4 is wrong before any
     # key is.
-    "godot/features/player/player.gd:36": "SPEED := 96.0",
-    "godot/features/player/player.gd:37": "JUMP_VELOCITY",
+    "godot/features/player/player.gd:42": "SPEED := 96.0",
+    "godot/features/player/player.gd:43": "JUMP_VELOCITY",
     "godot/game/main.tscn:78": "stride_px = 24.0",
     "godot/features/traps/trap_warning_driver.gd:1": "class_name TrapWarningDriver",
     "godot/tests/test_trap_warning.gd:33": "process_priority",

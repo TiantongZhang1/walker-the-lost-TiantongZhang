@@ -65,6 +65,34 @@ func _tap(code: Key) -> void:
 	_key(code, false)
 
 
+## Start one swing from a settled, idle player and record the clip's clock
+## for `F_END` physics frames. `jump_on >= 0` presses SPACE on that frame of
+## the swing; `-1` is the baseline.
+##
+## Each row is `[playhead, monitoring, locked, clip, on_floor, velocity.y]`.
+## The first four are the swing's own state and must not depend on the jump;
+## the last two are the jump's, and must.
+func _swing_trace(player: Player, ap: AnimationPlayer, hitbox: Area2D,
+		jump_on: int) -> Array:
+	var rows: Array = []
+	_key(KEY_J, true)
+	await process_frame
+	_key(KEY_J, false)
+	for fr in range(F_END):
+		if jump_on >= 0:
+			if fr == jump_on:
+				_key(KEY_SPACE, true)
+			elif fr == jump_on + 1:
+				_key(KEY_SPACE, false)
+		rows.append([ap.current_animation_position, hitbox.monitoring,
+			player.is_locked(), String(ap.current_animation),
+			player.is_on_floor(), player.velocity.y])
+		await process_frame
+	if jump_on >= 0:
+		_key(KEY_SPACE, false)
+	return rows
+
+
 ## Drop the player onto the floor and leave it idle.
 func _settle(player: Player) -> void:
 	var n := 0
@@ -275,10 +303,21 @@ func _init() -> void:
 	_check("it entered the swing moving, so none of this is trivially true",
 		absf(vx_air) > 1.0, "vx %.1f (walking was %.1f)" % [vx_air, vx_before])
 
-	# Jump is still refused mid-swing, in the air as on the ground.
+	# **Revision 7.0.10: this assertion survives, and its REASON changed.**
+	# Jump is still refused here -- but not because the swing forbids it any
+	# more. `player.gd` reads jump on every tick now, locked or not, and the
+	# only gate left is `is_on_floor()`. The player is in the air, so there
+	# is nothing to jump from, exactly as in any other airborne frame of
+	# this game: there is no double jump.
+	#
+	# An assertion that passes for a new reason is worth more than a deleted
+	# one, but only if the reason is written down. Section E is the half that
+	# would NOT have passed before.
 	var y_before: float = player.velocity.y
+	_check("the test is still off the floor, so this is the no-double-jump "
+		+ "rule and not the lock", not player.is_on_floor())
 	await _tap(KEY_SPACE)
-	_check("jump is still ignored during an air swing",
+	_check("jump does nothing during an AIR swing -- no double jump",
 		player.velocity.y >= y_before, "%.1f -> %.1f"
 			% [y_before, player.velocity.y])
 
@@ -331,10 +370,96 @@ func _init() -> void:
 	_check("and it is still committed: the clip ran to its own end, not to "
 		+ "a key release", still_locked_at_18 and fr >= F_END - 2,
 		"%d physics frames" % fr)
-	_note("the swing hides the cut-out legs, so a MOVING swing slides: the "
-		+ "body cell is static while the character travels. Effect C still "
-		+ "spawns a dust puff every 24 px. Whether that reads is the "
-		+ "author's, CHANGE-BRIEF.md revision 7.0.6 section 4")
+	_note("since revision 7.0.9 the legs keep their gait through a moving "
+		+ "swing -- `LegAnim` owns them and never hears about the sword -- "
+		+ "so this no longer slides. The note that used to be here said it "
+		+ "did, and was a revision out of date")
+	await _settle(player)
+
+	# ----------------------------------------------------------------- E
+	# JUMPING OUT OF A GROUND SWING. Revision 7.0.10, and the author's
+	# request has two halves that are different claims:
+	#
+	#   "I want to jump while swinging"        -> the jump happens
+	#   "without interrupting the swing"       -> the swing does not notice
+	#
+	# The first half is one assertion. **The second half is not assertable by
+	# looking at the jump at all** -- it is a claim about what the swing's
+	# clock did, so the only honest form of it is to run the SAME swing twice,
+	# once with a jump through it and once without, and compare the two clocks
+	# frame by frame. That is what this section does. If the playhead, the
+	# hitbox window, the lock and the clip name all agree on all 36 physics
+	# frames, "it did not interrupt" is a measurement rather than a feeling.
+	#
+	# The jump is tried in all three phases, because "does not interrupt"
+	# said once about startup says nothing about recovery, where a second
+	# attack IS buffered and the input path is therefore not empty.
+	await _settle(player)
+	var plain := await _swing_trace(player, ap, hitbox, -1)
+	var plain_floor := true
+	for row in plain:
+		if not row[4]:
+			plain_floor = false
+	_check("the baseline swing never leaves the floor, so the comparison "
+		+ "below is not trivially true", plain_floor)
+
+	for case in [[4, "startup"], [14, "the active window"], [26, "recovery"]]:
+		var jump_on: int = case[0]
+		var phase: String = case[1]
+		await _settle(player)
+		var count_before := player.swing_count
+		var jumped := await _swing_trace(player, ap, hitbox, jump_on)
+
+		var left_floor := false
+		var rose := false
+		for i in range(jump_on + 1, F_END):
+			if not jumped[i][4]:
+				left_floor = true
+			if jumped[i][5] < -1.0:
+				rose = true
+		_check("jump in %s LEAVES THE FLOOR" % phase, left_floor and rose,
+			"off_floor=%s vy<0=%s" % [left_floor, rose])
+
+		# --- and the swing's own clock is untouched, frame for frame ------
+		var drift := 0.0
+		var window_differs := false
+		var lock_differs := false
+		var clip_differs := false
+		for i in range(F_END):
+			drift = maxf(drift, absf(plain[i][0] - jumped[i][0]))
+			if plain[i][1] != jumped[i][1]:
+				window_differs = true
+			if plain[i][2] != jumped[i][2]:
+				lock_differs = true
+			if plain[i][3] != jumped[i][3]:
+				clip_differs = true
+		_check("the playhead is IDENTICAL to the un-jumped swing for all "
+			+ "%d frames (jump in %s)" % [F_END, phase],
+			drift <= 0.0005, "worst disagreement %.6f s" % drift)
+		_check("the active window opens and closes on the same frames "
+			+ "(jump in %s)" % phase, not window_differs)
+		_check("the lock is on for the same frames (jump in %s)" % phase,
+			not lock_differs)
+		_check("`swing` is still the clip while airborne -- is_locked() "
+			+ "outranks rising/falling (jump in %s)" % phase,
+			not clip_differs)
+		_check("the jump started NO new swing (jump in %s)" % phase,
+			player.swing_count - count_before == 1,
+			"swing_count +%d" % (player.swing_count - count_before))
+
+		var n2 := 0
+		while player.is_locked() and n2 < 120:
+			await process_frame
+			n2 += 1
+		_check("the jumped swing still ends on its own clock, not on the "
+			+ "landing (jump in %s)" % phase, not player.is_locked() and n2 <= 2,
+			"%d extra frames past frame %d" % [n2, F_END])
+
+	_note("nothing here says the jumped swing LOOKS right. While airborne "
+		+ "the legs play `legs_planted` or `legs_run`, because the swing "
+		+ "torsos are legless and hiding the rig's legs would leave a "
+		+ "floating torso. Whether a braced stance reads in mid-air is the "
+		+ "author's call in play")
 	await _settle(player)
 
 	main.queue_free()

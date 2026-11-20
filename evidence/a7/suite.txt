@@ -33,3 +33,22 @@ It preloads res://game/session.gd, which has NEVER existed in this repository
 a6.1 and at 1d32214 as well. Nothing in A7 touched it. Recorded here rather
 than deleted: it is a previous assignment's file and removing it is not this
 assignment's call.
+
+====================================================================
+Revision 7.0.10, 2026-11-20. Full suite after the jump change.
+Godot 4.7.2.stable.official ed1daf0bf, Forward+, physics tick 60.
+
+test_player_clips      82 checks, 0 failures
+test_swing_clip        79 checks, 0 failures
+test_player_states     26 checks, 0 failures
+test_swing_edges       60 checks, 0 failures
+pin_player_states      15 checks, 0 failures
+test_input_map         13 checks, 0 failures
+measure_clocks         5 checks, 0 failures
+step_dust @30           26 checks, 0 failures at 30 fps
+step_dust @60           26 checks, 0 failures at 60 fps
+step_dust @144          26 checks, 0 failures at 144 fps
+
+test_swing_edges 37 -> 60 checks: section E is new (jump in three phases,
+each compared frame by frame against an un-jumped baseline).
+check_claude_refs.py: 61 assertions, 0 problems, CLAUDE.md 119 lines.

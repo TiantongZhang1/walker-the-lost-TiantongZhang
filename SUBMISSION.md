@@ -210,16 +210,25 @@ frame cycle needs several drawings of a run and this project has one.
 
 **What I asked for that the assignment argues against.** I asked to move
 while swinging. Claude put the objection first — the movement lock *was*
-`GDD.md:198`'s "real risk" — and then built it. What survives is the
-commitment that matters: no cancel, no restart, all 18 frames, no jump, and
-**no turn**, because `Rig.scale.x` mirrors the whole sword arm and a turn
-mid-arc would teleport the blade across the body in one frame.
+`GDD.md:198`'s "real risk" — and then built it. I then asked to jump
+mid-swing too. What survives is the commitment that matters: no cancel, no
+restart, all 18 frames, and **no turn**, because `Rig.scale.x` mirrors the
+whole sword arm and a turn mid-arc would teleport the blade across the body
+in one frame. The jump is the narrowest of the three changes — it writes
+`velocity.y` and touches nothing the swing reads — and that *"touches
+nothing"* is measured rather than argued: the same swing is run with a jump
+through it and without, and the two playheads agree on all 36 physics frames
+to 0.000000 s.
 
-**Five sentences in this repository outlived the facts they stated**, each
+**Nine sentences in this repository outlived the facts they stated**, each
 true when written: a hard-coded check count, two strip captions, the blade's
-length in three files, and the cycle's length in a caption. Each is recorded
-in `TEST-REPORT.md` with how it was found, and none of them was found by a
-test.
+length in three files, the cycle's length in a caption, a patch script that
+counted text it had just written, a limitation I accepted on an unexamined
+claim about the engine, a note inside a test file that was a revision out of
+date, and — my favourite — the list of open questions, which went on listing
+one I had already answered. Each is recorded in `TEST-REPORT.md` with how it was found, and
+**not one of them was found by a test.** The last two were found by reading
+the file while changing something else, which is luck.
 
 **Authorship.** `godot/shaders/` is untouched by Assignment 7 and
 `git diff --stat godot/shaders/` prints nothing across every A7 commit.

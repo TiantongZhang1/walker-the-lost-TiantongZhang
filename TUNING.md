@@ -1317,3 +1317,52 @@ a stationary fixture cannot capture motion.
 ### 6. My verdict in the running game
 
 _To be written by the author._
+
+---
+
+## 2026-11-20, later — jumping out of a swing, and the difference between "it jumps" and "it didn't interrupt"
+
+### 1. What I asked
+
+> 我还希望挥刀的时候也能跳起来，而且不会打断挥刀动作
+>
+> [I'd also like to be able to jump while swinging, and for it not to
+> interrupt the swing animation]
+
+### 2. What I want recorded about how it was checked
+
+I asked for one thing and it was treated as two, which is right. *"It
+jumps"* I could have confirmed myself in ten seconds. *"It didn't interrupt"*
+I could not — not reliably. A swing that restarted on the jump, mid-startup,
+would look like a swing.
+
+So the swing was run twice, once jumped through and once not, and the two
+playheads were compared on every one of the 36 physics frames. They agree to
+**0.000000 s**. Then a mutation made the jump restart the clip: *every* check
+that the jump works stayed green, and eight others went red. **That mutation
+is the argument for why the second half needed its own evidence.**
+
+### 3. The old assertion that now passes for a different reason
+
+`test_swing_edges.gd` §C says jump does nothing during an **air** swing. It
+said that before and it says it now. Before, it was the lock. Now it is that
+there is no double jump. Same green check, different rule — and the file says
+so beside it. A green check whose reason has quietly changed is a test that
+has stopped testing what its name says.
+
+### 4. Two more sentences that had outlived their facts
+
+Found by reading files while changing something else, not by any test:
+
+- `test_swing_edges.gd` §D ended with a NOTE saying a moving swing slides —
+  false since yesterday's revision 7.0.9, and it survived because **nothing
+  reads a NOTE**.
+- `player.gd`'s own header still said a swing *"LOCKS movement until the clip
+  ends"*, which stopped being true in revision 7.0.6, four revisions ago.
+
+The running count in `TEST-REPORT.md` is eight, and none of the eight was
+found by a test.
+
+### 5. My verdict in the running game
+
+_To be written by the author._

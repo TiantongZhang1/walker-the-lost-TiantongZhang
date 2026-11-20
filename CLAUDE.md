@@ -11,7 +11,7 @@ Every fact carries the file it came from. Check them; do not trust them.
 | Engine, renderer | Godot **4.7.2.stable.official** `ed1daf0bf`, **Forward+** | the banner every `scripts/run-test.sh` run prints; `godot/project.godot:15` |
 | Main scene, resolution | `res://game/main.tscn`; 640 × 360, nearest-neighbour | `godot/project.godot:14` `:19` `:65` |
 | **Physics tick** | **60** — `physics_ticks_per_second` is unset, so the engine default | `godot/project.godot`, no `[physics]` section |
-| Player | 16 px = 1 m; `SPEED = 96.0`, `JUMP_VELOCITY = -260.0`, `GRAVITY`, `health`, `signal died` | `godot/features/player/player.gd:26` `:36` `:37` `:38` `:45` `:29` |
+| Player | 16 px = 1 m; `SPEED = 96.0`, `JUMP_VELOCITY = -260.0`, `GRAVITY`, `health`, `signal died` | `godot/features/player/player.gd:32` `:42` `:43` `:44` `:51` `:35` |
 | Step-dust stride | `stride_px = 24.0` — the cycle's frame rate is derived from it | `godot/game/main.tscn:78` |
 | Trap timings | 0.40 + 0.18 + 0.22 + 0.60 = **1.40 s** | `godot/features/traps/spike_trap.gd:39` `:40` `:41` `:42` |
 
@@ -20,7 +20,7 @@ renumbers nodes. `tools/check_claude_refs.py` asserts these both ways.
 
 ### The two clips, and the state machine that plays them
 
-`godot/animations/player.tres` (body, arm, hitbox) and `legs.tres` (the legs), on `player.tscn`. `CHANGE-BRIEF.md` §3–§7 plus revisions 7.0.1–7.0.9 hold the cells, cycle spec, phase table and transitions.
+`godot/animations/player.tres` (body, arm, hitbox) and `legs.tres` (the legs), on `player.tscn`. `CHANGE-BRIEF.md` §3–§7 plus revisions 7.0.1–7.0.10 hold the cells, cycle spec, phase table and transitions.
 
 | | **`run` — the cycle** | **`swing` — the committing action** |
 |---|---|---|
@@ -32,10 +32,11 @@ renumbers nodes. `tools/check_claude_refs.py` asserts these both ways.
 Sheet `godot/assets/sprites/player_sheet.png`: **32 × 32 cells, 4 × 2**, CUT
 from the committed GPT-6 poses by `tools/make_sprites.py`, which asserts the
 cut is lossless; cell 7 is blank on purpose. `player.gd` owns the state
-machine — locking movement is gameplay, not presentation — with states `IDLE`,
-`RUN`, `AIRBORNE`, `SWING`, `DEAD`. `features/player/player_anim.gd` reads it,
-plays the clips, writes no game state, and **replaces `pose_driver.gd`**,
-which wrote `Sprite2D.texture` every `_process`.
+machine (`IDLE`, `RUN`, `AIRBORNE`, `SWING`, `DEAD`) because committing is
+gameplay. **The lock narrowed three times (7.0.6 movement, 7.0.9 legs, 7.0.10
+jump); a swing still cannot be cancelled, restarted or TURNED.**
+`player_anim.gd` reads it, plays the clips, writes no game state, and
+**replaces `pose_driver.gd`**, which wrote `Sprite2D.texture` each `_process`.
 
 **Test commands.** Always through the wrapper: it is the only thing that fails
 on `SHADER ERROR`, `SCRIPT ERROR` or **`Failed loading resource`**, all of
@@ -106,10 +107,9 @@ unsure a property exists here, say so instead of guessing**;
 Do not touch: collision layers and existing shapes, `SPEED`, `JUMP_VELOCITY`,
 `GRAVITY`, the existing input bindings, the trap's state machine or its timings,
 any existing test's expectations except `test_input_map.gd`'s action count, the
-`.glb` files, `godot/shaders/`, every A6 effect scene, and the five pose PNGs in
-`godot/assets/poses/`, which stay committed and credited. Presentation reads
-game state, never writes it — the one exception A7 names is the `swing` clip
-writing `Hitbox.monitoring`, a gameplay fact on the timeline.
+`.glb` files, `godot/shaders/`, every A6 effect scene, and `godot/assets/poses/`.
+Presentation reads game state, never writes it — the one exception A7 names is
+the `swing` clip writing `Hitbox.monitoring`, a gameplay fact on the timeline.
 
 ## Unconfirmed
 

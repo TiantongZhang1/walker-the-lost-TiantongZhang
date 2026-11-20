@@ -144,7 +144,11 @@ func _init() -> void:
 	# rather than removed.
 	#
 	# What a commitment still forbids is asserted in `test_swing_edges.gd`
-	# section D: no cancel, no restart, no jump, no TURN, all 18 frames.
+	# section D: no cancel, no restart, no TURN, all 18 frames. **Jump left
+	# that list in revision 7.0.10** -- section E runs the same swing with a
+	# jump through it and without, and compares the two playheads frame by
+	# frame, because "it does not interrupt" is a claim about the SWING and
+	# cannot be checked by looking at the jump.
 	var x0 := player.global_position.x
 	await _run(6, [KEY_D])
 	_key(KEY_D, false)

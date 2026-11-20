@@ -10,12 +10,18 @@ extends CharacterBody2D
 ##
 ## **Assignment 7 changes movement, and `CHANGE-BRIEF.md` §11 names the
 ## change before it happens.** Speed, jump velocity, gravity and the existing
-## bindings are untouched. What is new is that a swing LOCKS movement until
-## the clip ends, which is `GDD.md:198` in code: *"The combo is committed:
-## once a swing starts it finishes, so holding attack is a real risk and
-## letting go is a real choice."*
+## bindings are untouched. What is new is a SWING that cannot be cancelled,
+## which is `GDD.md:198` in code: *"The combo is committed: once a swing
+## starts it finishes, so holding attack is a real risk and letting go is a
+## real choice."*
 ##
-## **This script owns the state machine, because locking movement is
+## **The lock has narrowed twice since it was written, and both times because
+## the author played it.** Revision 7.0.6 let the player walk during a swing;
+## revision 7.0.10 let them jump. What is left of the commitment is that the
+## clip always runs to its own end and the facing cannot change -- a swing
+## cannot be ABANDONED, but it no longer freezes the body.
+##
+## **This script owns the state machine, because committing is
 ## gameplay.** `player_anim.gd` reads it and plays clips; it writes nothing
 ## here. The one thing that crosses the other way is the clip's own clock:
 ## this script listens to `AnimationPlayer.animation_finished` to learn that
@@ -81,7 +87,6 @@ func _physics_process(delta: float) -> void:
 	#     own playhead rather than from a timer kept here;
 	#   * it always plays ALL 18 FRAMES; `animation_finished` is the only way
 	#     out of it, and death;
-	#   * **no jump** -- still gated by `is_locked()` below;
 	#   * **no turn.** `player_anim.gd` freezes `Rig.scale.x` while locked, so
 	#     you may walk backwards out of your own swing but you may not change
 	#     which way the blade is going. Direction is the commitment that
@@ -90,19 +95,36 @@ func _physics_process(delta: float) -> void:
 	# What is lost is the movement COST -- the half of `GDD.md:198` that made
 	# holding attack a risk. CHANGE-BRIEF.md revision 7.0.6 argues that trade
 	# instead of hiding it.
+	#
+	# **Revision 7.0.10: the jump is read on every tick, locked or not.** The
+	# author asked to be able to jump mid-swing *without interrupting it*, and
+	# the two halves of that sentence are different claims:
+	#
+	#   * *jumping works* is this branch moving out of the `else`;
+	#   * *it does not interrupt* is the fact that the jump writes **one
+	#     field, `velocity.y`, and nothing else**. It does not touch `action`,
+	#     `swing_count`, `_buffered_attack`, or any AnimationPlayer. There is
+	#     no code path from a jump to the swing's clock, so the swing cannot
+	#     notice. `player_anim.gd` ranks `is_locked()` above its airborne
+	#     branch, so leaving the floor does not change the clip either.
+	#
+	# `is_on_floor()` stays, and it is now the ONLY gate: you may jump out of
+	# a ground swing, and you may not jump during an air swing, for the same
+	# reason you may not jump twice without a swing -- there is no double
+	# jump in this game. The lock stopped being the reason.
+	if Input.is_action_just_pressed("jump") and is_on_floor():
+		velocity.y = JUMP_VELOCITY
+
 	if is_locked():
 		if Input.is_action_just_pressed("attack") \
 				and _anim.current_animation == SWING_CLIP \
 				and _anim.current_animation_position >= RECOVERY_START:
 			_buffered_attack = true
-	else:
-		if Input.is_action_just_pressed("jump") and is_on_floor():
-			velocity.y = JUMP_VELOCITY
-		# No `is_on_floor()` on the attack since revision 7.0.5: the swing
-		# works in the air. `player_anim.gd` ranks `is_locked()` above the
-		# airborne branch, so `swing` wins over `rising` / `falling`.
-		if Input.is_action_just_pressed("attack") and health > 0:
-			_start_swing()
+	# No `is_on_floor()` on the attack since revision 7.0.5: the swing works
+	# in the air. `player_anim.gd` ranks `is_locked()` above the airborne
+	# branch, so `swing` wins over `rising` / `falling`.
+	elif Input.is_action_just_pressed("attack") and health > 0:
+		_start_swing()
 
 	var direction := Input.get_axis("move_left", "move_right")
 	if is_zero_approx(direction):
