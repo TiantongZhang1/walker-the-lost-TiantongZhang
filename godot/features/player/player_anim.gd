@@ -28,6 +28,12 @@ const MOVING_EPS := 1.0
 
 @onready var _body: Player = get_parent() as Player
 @onready var _anim: AnimationPlayer = _body.get_node_or_null(^"AnimationPlayer")
+## **The legs have their own authority.** Revision 7.0.9: `LegAnim` owns
+## `Rig/LegFront` and `Rig/LegBack` and nothing else; `_anim` owns the
+## body, the sword arm and the hitbox and never touches a leg. No node is
+## written by both, which is the rule as stated -- one authority per
+## NODE, not one player per scene.
+@onready var _leg_anim: AnimationPlayer = _body.get_node_or_null(^"LegAnim")
 @onready var _rig: Node2D = _body.get_node_or_null(^"Rig")
 
 ## The poses are drawn facing right. `player.gd` has no facing of its own --
@@ -50,7 +56,7 @@ var _last_swing := -1
 ## The AnimationPlayer is already on physics (`callback_mode_process = 0`),
 ## so writer, reader and mixer now share one tick.
 func _physics_process(_delta: float) -> void:
-	if _body == null or _anim == null or _rig == null:
+	if _body == null or _anim == null or _rig == null or _leg_anim == null:
 		return
 
 	if not _body.is_locked() and absf(_body.velocity.x) > MOVING_EPS:
@@ -61,6 +67,14 @@ func _physics_process(_delta: float) -> void:
 	var restart := want == "swing" and _body.swing_count != _last_swing
 	if restart:
 		_last_swing = _body.swing_count
+	var legs := _leg_clip()
+	if legs != _leg_anim.current_animation:
+		# No seek. Going run -> moving swing -> run does not change the name,
+		# so no call is made at all and the gait keeps its phase across the
+		# swing. That is the whole point of the split: the legs do not know
+		# the sword exists.
+		_leg_anim.play(legs)
+
 	if want != _anim.current_animation or restart:
 		_anim.play(want)
 		if restart:
@@ -68,6 +82,28 @@ func _physics_process(_delta: float) -> void:
 			# `update` true applies frame 0's keys on this tick rather than
 			# on the next one.
 			_anim.seek(0.0, true)
+
+
+## Which leg clip, read from the same state the body clip is read from.
+##
+## **`legs_hidden` is not "no legs".** Five of the eight sheet cells still
+## carry their own painted legs -- idle, rising, falling, dead -- so the rig's
+## legs are switched OFF under them or the character grows a second pair. The
+## three cells the rig drives are the run torso and the two swing torsos,
+## which revision 7.0.9 cut legless for exactly this reason.
+func _leg_clip() -> StringName:
+	if _body.health <= 0:
+		return &"legs_hidden"
+	var body := _clip_for_state()
+	if body == &"run":
+		return &"legs_run"
+	if body == &"swing":
+		# A swing that is going somewhere gets the gait; a swing standing
+		# still gets a braced stance. This is what stops a moving swing
+		# sliding, which is what the author rejected on 2026-11-20.
+		return (&"legs_run" if absf(_body.velocity.x) > MOVING_EPS
+			else &"legs_planted")
+	return &"legs_hidden"
 
 
 func _clip_for_state() -> StringName:

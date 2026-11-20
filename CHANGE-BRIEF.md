@@ -1414,3 +1414,113 @@ by Claude and not yet confirmed*. It was not confirmed. The tag did its job:
 the number was never treated as a fact, the measurement was built to test it
 rather than to agree with it, and the disagreement is in the file instead of
 being quietly rewritten to match.
+
+---
+
+# Revision 7.0.9 — 2026-11-20 — the legs get their own authority, and the rule turns out to be a partition
+
+**Supersedes revision 7.0.6 §4** — the sliding swing it named as a cost is
+fixed rather than lived with — **and revision 7.0.1 §3's cell table**, because
+two more cells are cut legless. §5's authority table becomes a partition over
+two players. **No `AnimationTree`**; §7 declined one and still does.
+
+## 1. Why
+
+> 我不是很想让角色边挥刀边滑行
+>
+> [I don't really want the character sliding while it swings]
+
+## 2. Why it slid, which is a chain and not a bug
+
+1. A moving swing travels.
+2. `swing` **hid** the cut-out legs.
+3. It hid them because `p6-windup` and `p7-live` **carry their own painted
+   legs** — show the rig's legs on top and the character has four.
+4. So the figure translated with nothing moving under it.
+
+Revision 7.0.6 §4 said fixing this "would mean two clips at once, which means
+an `AnimationTree`". **That was wrong, and it was wrong in an interesting
+way.** It is only true if the legs and the body have to come from the same
+player. They do not.
+
+## 3. The rule is one authority per NODE, not one player per scene
+
+`CLAUDE.md` has said *"exactly one node writes to each animated node"* since
+Assignment 7's first day. A **second `AnimationPlayer`** breaks nothing in
+that sentence as long as the two players' track paths do not intersect.
+
+| player | owns | writes |
+|---|---|---|
+| **`LegAnim`** *(new)* | `Rig/LegFront`, `Rig/LegBack` | `rotation_degrees`, `visible` |
+| `AnimationPlayer` | `Rig`, `Rig/Body`, `Rig/SwordArm`, `Blade`, `Hitbox` | `position:y`, `frame`, `position`, `rotation_degrees`, `visible`, `monitoring` |
+
+Both are on the **physics** tick. `player_anim.gd` plays both and still
+writes no animated property.
+
+**This is asserted as a partition, in both directions**, in
+`test_player_clips.gd`:
+
+- no node appears in both players' track paths;
+- every path on `LegAnim` begins `Rig/Leg`;
+- **no** path on `AnimationPlayer` begins `Rig/Leg`.
+
+The third is not redundant with the first two. *A partition checked one way
+round is only a subset*, and the check that would have been easy to write —
+"LegAnim writes the legs" — is satisfied by a scene where both players write
+them. Putting one leg track back on the body player fails two of the three.
+
+## 4. Two more legless cells
+
+`p6-windup` and `p7-live` are cut at row 20, exactly as `p2-run` already was,
+and **each cut is asserted lossless**: torso + legs recomposited must equal
+the source pixel for pixel, or the generator exits.
+
+```
+  <windup torso> cut from p6-windup: torso 332 px, legs 122 px, lossless
+  <live torso>   cut from p7-live:   torso 322 px, legs 117 px, lossless
+```
+
+The grid does not grow: cells 5 and 6 were windup and live, and they are
+legless windup and legless live now. **Still no pose file is edited** — the
+GPT-6 art is unchanged on disk and the cut is proved rather than claimed.
+
+Registration: the generator's "every pose cell ends on row 29" check now
+excludes **three** torso cells by name instead of one, because a cell whose
+legs were removed ends higher on purpose.
+
+## 5. The leg clips
+
+`godot/animations/legs.tres`, a separate `AnimationLibrary`:
+
+| clip | |
+|---|---|
+| `legs_run` | the gait cycle — revision 7.0.7's keys, `LOOP_LINEAR`, 0.500 s |
+| `legs_planted` | a braced stance, held. A swing that is **not** moving |
+| `legs_hidden` | both legs off, for the five cells that keep their own legs |
+| `RESET` | the default pose, legs off |
+
+`player_anim.gd` picks one from the same state it picks the body clip from:
+`run` → `legs_run`; `swing` → `legs_run` if moving, else `legs_planted`;
+anything else → `legs_hidden`.
+
+**Nothing seeks.** Going run → moving swing → run does not change the leg
+clip's *name*, so no call is made at all and the gait keeps its phase
+straight through the swing. That is the whole point of the split: **the legs
+do not know the sword exists.**
+
+## 6. What this does not change
+
+The phase table, the hitbox keys, the clocks, the `swing` timings, the state
+machine, `Rig.scale.x` as the facing, and the measured limitation in revision
+7.0.7 §6 — the cycle still alternates and still does not stride. `swing` now
+has **six** tracks rather than eight, because two of them left.
+
+## 7. A fixture that can see it
+
+`swing_preview.tscn` swings standing still, which is what §10's table
+describes and what `captures/swing/r1`–`r4` are. **It cannot show a swing
+that travels, because nothing in it travels.**
+`godot/previews/swing_move_preview.tscn` holds **D** from the first frame and
+triggers at capture frame 10. `captures/swing_move/r0` is the evidence that
+the legs move under a travelling swing, and it is a **fixture capture**,
+labelled as one wherever it appears.

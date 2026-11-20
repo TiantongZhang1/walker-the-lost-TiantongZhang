@@ -1938,11 +1938,15 @@ by being looked at.
    generator would, and that is a change to the character's art — which
    revision 7.0.1 exists because the author rejected. §9 carries it as a
    HUMAN row and it is theirs.
-2. **A moving swing slides.** `swing` hides the cut-out legs and holds one
-   static body cell, so a swing with a direction held travels with no leg
-   motion under it, while Effect C still spawns a puff every 24 px. Fixing
-   it means two clips at once, which means an `AnimationTree`, which §7
-   declined for reasons that still hold.
+2. ~~A moving swing slides.~~ **Fixed in revision 7.0.9**, and what had to
+   be fixed first was a sentence in the brief. 7.0.6 §4 called it unfixable
+   without an `AnimationTree`; that is only true if the legs and the body
+   come from one player, and the rule was always *one authority per NODE*.
+   The legs have their own `AnimationPlayer`, the partition is asserted in
+   both directions, and `p6`/`p7` are cut legless the way `p2-run` already
+   was. **A limitation accepted on an unexamined claim is still a defect**,
+   and it is the only one in this report that no measurement would have
+   found — it needed someone to re-read a sentence.
 3. **The band assertion is weak.** Once the floor rule was corrected — one
    pixel into the floor lip is *contact*, not sinking — the band became the
    whole ±60 scan. The test says so in its own comment. What carries weight

@@ -1244,3 +1244,76 @@ arithmetic had to be rebuilt twice to get there.
 So *灰尘也对得上* is not a pleasant coincidence. It is the arithmetic in §4
 being right again after two revisions of being wrong, and **the only
 instrument that could confirm it was a person watching a foot land.**
+
+---
+
+## 2026-11-20 — the swing, r6 → r9. The sliding was a chain, and one link was a wrong sentence of mine.
+
+### 1. What I said, in the running game
+
+> 角色没有飘逸，但我不是很想让角色边挥刀边滑行
+>
+> [there's no drift in the cells, but I don't really want the character
+> sliding while it swings]
+
+The first clause closes §9's drift row. The second **rejects** the cost
+revision 7.0.6 §4 wrote down and asked me to judge.
+
+### 2. The chain
+
+A moving swing travelled with nothing moving under it, because `swing` hid
+the cut-out legs, because `p6-windup` and `p7-live` carry their own painted
+legs and showing the rig's on top gives the character four.
+
+### 3. The link that was a wrong sentence
+
+Revision 7.0.6 §4, written by Claude and accepted by me:
+
+> Showing the legs during a moving swing would mean two clips at once, which
+> means an `AnimationTree`, which §7 declined with reasons that still hold.
+
+**That is only true if the legs and the body have to come from the same
+`AnimationPlayer`, and nothing ever said they did.** `CLAUDE.md` has said
+*one authority per animated NODE* since day one. A second player breaks
+nothing in that sentence as long as the two players' paths do not intersect.
+
+So the fix is a **partition**, not an `AnimationTree`: `LegAnim` owns the two
+legs and nothing else; the original player owns everything else and no longer
+mentions a leg. And `p6`/`p7` get cut legless, the same way `p2-run` already
+was, each cut asserted lossless.
+
+**What I want recorded is the shape of the mistake.** It was not an error of
+arithmetic — those this assignment has had four of. It was a *limitation
+accepted on an unexamined claim about what the engine requires*, written into
+the brief as a reason, and then quoted back as settled. A sentence in a
+design document is not a measurement, and this one sat there for a day
+looking like one.
+
+### 4. The partition is asserted in BOTH directions
+
+| | |
+|---|---|
+| no node appears in both players' paths | ✔ |
+| every `LegAnim` path begins `Rig/Leg` | ✔ |
+| **no** `AnimationPlayer` path begins `Rig/Leg` | ✔ |
+
+The third is not redundant. **A partition checked one way round is only a
+subset** — "LegAnim writes the legs" is satisfied by a scene where *both*
+players write them, which is exactly the failure the rule exists to stop.
+Mutating one leg track back onto the body player fails two of the three.
+
+### 5. A fixture that can see the thing being fixed
+
+`swing_preview.tscn` swings standing still. **It cannot show a sliding swing,
+because nothing in it slides** — so four revisions of swing strips are silent
+about the defect I reported, and would have stayed silent.
+`swing_move_preview.tscn` holds a direction through the swing.
+`captures/swing_move/r0` shows the legs stepping under a travelling swing.
+
+That is the third time in this assignment that the instrument could not see
+the defect: a hitbox contributes no pixels, a headless run draws nothing, and
+a stationary fixture cannot capture motion.
+
+### 6. My verdict in the running game
+
+_To be written by the author._

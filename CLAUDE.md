@@ -20,13 +20,13 @@ renumbers nodes. `tools/check_claude_refs.py` asserts these both ways.
 
 ### The two clips, and the state machine that plays them
 
-Both live in `godot/animations/player.tres`, on `player.tscn`; `CHANGE-BRIEF.md` §3–§7 and revision 7.0.1 hold the cells, cycle spec, phase table and transitions.
+`godot/animations/player.tres` (body, arm, hitbox) and `legs.tres` (the legs), on `player.tscn`. `CHANGE-BRIEF.md` §3–§7 plus revisions 7.0.1–7.0.9 hold the cells, cycle spec, phase table and transitions.
 
 | | **`run` — the cycle** | **`swing` — the committing action** |
 |---|---|---|
 | Route | **2D cutout rig** — `Node2D` pivots, rotation and position | **`Sprite2D` + `hframes`/`vframes`, frame track** |
-| Plays on | `Rig`, `Rig/LegFront`, `Rig/LegBack` | `Rig/Body`, `Hitbox`, **`Rig/SwordArm` (pos + rot)** |
-| Rate, length | **12 fps**, 0.250 s = one stride, `LOOP_LINEAR`, step **1/12** | **30 fps**, 18 frames, 0.600 s, `LOOP_NONE`, step **1/30** |
+| Plays on | **`LegAnim`**: both legs | `Rig/Body`, `Hitbox`, `Rig/SwordArm` (pos + rot) |
+| Rate, length | 0.500 s = **two steps**, `LOOP_LINEAR`, step **0.125** (rev 7.0.7) | **30 fps**, 18 frames, 0.600 s, `LOOP_NONE`, step **1/30** |
 | Shape | seam: every interpolated track ends where it started | startup 0–5, active 6–9, recovery 10–17 |
 
 Sheet `godot/assets/sprites/player_sheet.png`: **32 × 32 cells, 4 × 2**, CUT
@@ -47,12 +47,11 @@ godot --headless --path godot --import          # once after cloning
 ```
 
 At **60**: every `test_*_config.gd`, `test_input_map.gd`, `check_assets_3d.gd`,
-`test_materials.gd`, the read-backs, the pins, the edge tests, `measure_clocks.gd`. At **30, 60 and
-144**: `test_trap_warning.gd`, `test_trap_shader_driver.gd`,
-`test_step_dust_state.gd`. `cost_effects.gd` as `60 300`; `realtime` for tests
-that wait on audio. `gpu_cost_effects.gd` is **windowed**
-(`scripts/run-gpu-cost.sh`), never headless. `godot` is not on PATH —
-`scripts/run-test.sh:51` resolves it, `GODOT=` overrides.
+`test_materials.gd`, the read-backs, the pins, the edge tests, `measure_clocks.gd`.
+At **30, 60 and 144**: `test_trap_warning.gd`, `test_trap_shader_driver.gd`,
+`test_step_dust_state.gd`. `cost_effects.gd` as `60 300`; `realtime` for audio.
+`gpu_cost_effects.gd` is **windowed** (`scripts/run-gpu-cost.sh`), never
+headless. `godot` is not on PATH — `scripts/run-test.sh:51` resolves it.
 
 ### Headless facts
 
@@ -83,13 +82,14 @@ runtime**; effect settings live in `godot/effects/`. Every prediction and
 
 ## One authority
 
-**Exactly one node writes to each animated node. Never add a second writer.**
-`Player/AnimationPlayer` is that node for all of them: `Rig:position:y`,
-`Rig/Body:frame`, both legs' `rotation_degrees` and `visible`, **`Rig/SwordArm`'s
-`position` AND `rotation_degrees`**, `Blade:visible`, `Hitbox:monitoring`.
-`Rig/Body.texture` is set once in the scene. `player_anim.gd` calls `play()` and
-writes `Rig.scale.x` (facing), which **no clip keys**; it runs on the **physics**
-tick, like the mixer. `CHANGE-BRIEF.md` §5 states that wrinkle, not hides it.
+**Exactly one node writes to each animated node.** **TWO** `AnimationPlayer`s,
+partitioned BY NODE (revision 7.0.9): `LegAnim` owns `Rig/LegFront` and
+`Rig/LegBack`; `AnimationPlayer` owns `Rig:position:y`, `Rig/Body:frame`,
+`Rig/SwordArm`'s `position` AND `rotation_degrees`, `Blade:visible`,
+`Hitbox:monitoring`. No node is on both lists and `test_player_clips.gd`
+asserts the partition **both ways**. `Rig/Body.texture` is set once in the
+scene. `player_anim.gd` plays both and writes `Rig.scale.x` (facing), which
+**no clip keys**; both players and it are on the **physics** tick.
 
 ## Godot 4 names
 

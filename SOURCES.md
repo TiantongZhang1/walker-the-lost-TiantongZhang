@@ -182,7 +182,8 @@ Same split. Every file below is Claude Code's work under my review.
 | `godot/tests/measure_clocks.gd` | §8's measurement, which found the brief's own prediction was the wrong sign |
 | `tools/check_sword_reach.py` | measures the torso's edges from the committed sheet and asserts the test's constants against them. It caught `TORSO_FRONT` wrong on its first run |
 | `tools/build_anim_strips.py` | composes the frame strips **and measures** the per-frame pixel change |
-| `godot/previews/swing_preview.tscn`, `run_preview.tscn`, `.gd` | the two fixtures the strips are captured from |
+| `godot/previews/swing_preview.tscn`, `run_preview.tscn`, `swing_move_preview.tscn`, `.gd` | the three fixtures the strips are captured from. The third holds a direction through the swing, which is the only way to capture the thing revision 7.0.9 fixes |
+| `godot/animations/legs.tres` | the leg clips, on their own `AnimationPlayer`. Revision 7.0.9 |
 | `CHANGE-BRIEF.md` revisions 7.0.1–7.0.8, `TUNING.md`'s A7 entries, `TEST-REPORT.md`'s A7 section | drafted by Claude; **every `TUNING.md` verdict and every prediction is mine**, quoted verbatim in the Chinese they were said in |
 
 **The sheet is CUT, not drawn.** `tools/make_sprites.py` gained a cutter

@@ -159,7 +159,8 @@ func _init() -> void:
 		absf(sw.length - LENGTH) < _tol, "%.6f" % sw.length)
 	_check("swing step is one frame period at %d fps" % FPS,
 		is_equal_approx(sw.step, 1.0 / FPS), "%.7f" % sw.step)
-	_check("swing has eight tracks", sw.get_track_count() == 8,
+	# Six, not eight: the two leg tracks moved to LegAnim.
+	_check("swing has six tracks", sw.get_track_count() == 6,
 		str(sw.get_track_count()))
 
 	# --- the body cells, key by key, against the phase table --------------
@@ -315,17 +316,17 @@ func _init() -> void:
 		_note("the blade is visible for frames 2..13 of 18; the 268-degree "
 			+ "return to rest is travelled sheathed")
 
-	# --- the cut-out legs stay hidden: the pose cells have their own ------
-	for leg in ["Rig/LegFront:visible", "Rig/LegBack:visible"]:
-		var lt := _track(sw, leg)
-		_check("swing hides %s" % leg,
-			lt >= 0 and sw.track_get_key_value(lt, 0) == false,
-			"no track" if lt < 0 else str(sw.track_get_key_value(lt, 0)))
+	# **The legs are not here any more.** Revision 7.0.9 gave them their own
+	var leg_tracks := 0
+	for t in sw.get_track_count():
+		if str(sw.track_get_path(t)).begins_with("Rig/Leg"):
+			leg_tracks += 1
+	_check("`swing` names no leg at all: the body player CANNOT write one",
+		leg_tracks == 0, "%d leg tracks" % leg_tracks)
 
 	# --- RESET holds the default pose -------------------------------------
 	var reset := ap.get_animation("RESET")
-	for path in ["Rig/Body:frame", "Rig/LegFront:rotation_degrees",
-			"Rig/LegBack:rotation_degrees", "Hitbox:monitoring"]:
+	for path in ["Rig/Body:frame", "Hitbox:monitoring"]:
 		_check("RESET holds %s" % path, _track(reset, path) >= 0)
 	var rr := _track(reset, "Hitbox:monitoring")
 	if rr >= 0:

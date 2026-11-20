@@ -185,12 +185,47 @@ SPLIT_X = 25           # left of this is the trailing leg, right is the planted
 HIP = (20, 20)         # the CUT line: everything below row 20 is leg
 
 POSES = pathlib.Path(__file__).resolve().parent.parent / "godot" / "assets" / "poses"
+# Revision 7.0.9: THREE cells are legless torsos now, not one. The swing's
+# cells carried their own painted legs, which is why `swing` had to hide the
+# rig's legs, which is why a moving swing slid. Cut them the same way p2-run
+# was cut and the rig can drive the legs under a swing too.
+TORSO_CELLS = {"<run torso>": "p2-run",
+               "<windup torso>": "p6-windup",
+               "<live torso>": "p7-live"}
 SHEET_ORDER = ["<run torso>", "p1-idle", "p3-rising", "p4-falling",
-               "p8-death", "p6-windup", "p7-live", "<blank>"]
+               "p8-death", "<windup torso>", "<live torso>", "<blank>"]
 
 
 def _load(name: str) -> Image.Image:
     return Image.open(POSES / (name + ".png")).convert("RGBA")
+
+
+def cut_pose(name: str):
+    """Any pose -> (source, torso with no legs, everything below LEG_TOP).
+
+    The row split is all a legless torso needs; `cut_run_pose` keeps the
+    column split as well because the run's two legs become two sprites.
+    """
+    src = _load(name)
+    px = src.load()
+    torso = Image.new("RGBA", (CELL, CELL), CLEAR)
+    legs = Image.new("RGBA", (CELL, CELL), CLEAR)
+    tp, lp = torso.load(), legs.load()
+    for y in range(CELL):
+        for x in range(CELL):
+            c = px[x, y]
+            if not c[3]:
+                continue
+            if y < LEG_TOP:
+                tp[x, y] = c
+            else:
+                lp[x, y] = c
+    rebuilt = Image.new("RGBA", (CELL, CELL), CLEAR)
+    rebuilt.alpha_composite(legs)
+    rebuilt.alpha_composite(torso)
+    if list(rebuilt.getdata()) != list(src.getdata()):
+        raise SystemExit("  FAIL the cut of %s is not lossless" % name)
+    return src, torso, legs
 
 
 def cut_run_pose():
@@ -236,11 +271,11 @@ def assert_lossless_cut(run, torso, back, front) -> None:
     print("  the cut is lossless: torso + trailing + planted == p2-run exactly")
 
 
-def player_sheet(torso: Image.Image) -> Image.Image:
+def player_sheet(torsos: dict) -> Image.Image:
     sheet = Image.new("RGBA", (CELL * SHEET_H, CELL * SHEET_V), CLEAR)
-    cells = [torso]
-    for name in SHEET_ORDER[1:-1]:
-        cells.append(_load(name))
+    cells = []
+    for name in SHEET_ORDER[:-1]:
+        cells.append(torsos[name] if name in TORSO_CELLS else _load(name))
     cells.append(Image.new("RGBA", (CELL, CELL), CLEAR))     # 7, blank
     for i, cell in enumerate(cells):
         sheet.paste(cell, ((i % SHEET_H) * CELL, (i // SHEET_H) * CELL))
@@ -287,7 +322,17 @@ def main() -> None:
     }
     run, torso, back, front = cut_run_pose()
     assert_lossless_cut(run, torso, back, front)
-    images["player_sheet.png"] = player_sheet(torso)
+    torsos = {"<run torso>": torso}
+    for cell, pose in TORSO_CELLS.items():
+        if cell == "<run torso>":
+            continue
+        _, t, legs = cut_pose(pose)
+        torsos[cell] = t
+        print("  %s cut from %s: torso %d px, legs %d px, lossless"
+              % (cell, pose,
+                 sum(1 for p in t.getdata() if p[3]),
+                 sum(1 for p in legs.getdata() if p[3])))
+    images["player_sheet.png"] = player_sheet(torsos)
     images["leg_front.png"] = front
     images["leg_back.png"] = back
     images["sword.png"] = sword()
@@ -334,7 +379,9 @@ def main() -> None:
         # lies down and still ends there, which is the point of checking it.
         # The run torso has had its legs removed, so it ends higher by
         # construction and is excluded by name rather than by a loose rule.
-        if SHEET_ORDER[i] != "<run torso>" and max(rows) != FEET_ROW:
+        # All three torso cells end higher than FEET_ROW on purpose:
+        # their legs were cut off. Only the uncut poses are registered.
+        if SHEET_ORDER[i] not in TORSO_CELLS and max(rows) != FEET_ROW:
             problems.append("cell %d (%s): lowest ink row %d, FEET_ROW is %d"
                             % (i, SHEET_ORDER[i], max(rows), FEET_ROW))
     if problems:

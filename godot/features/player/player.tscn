@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" path="res://assets/sprites/player_sheet.png" id="2_sheet"]
 [ext_resource type="Script" path="res://features/player/player_anim.gd" id="3_anim"]
 [ext_resource type="AnimationLibrary" path="res://animations/player.tres" id="4_anim"]
+[ext_resource type="AnimationLibrary" path="res://animations/legs.tres" id="8_legs"]
 [ext_resource type="Texture2D" path="res://assets/sprites/leg_front.png" id="5_legf"]
 [ext_resource type="Texture2D" path="res://assets/sprites/leg_back.png" id="6_legb"]
 [ext_resource type="Texture2D" path="res://assets/sprites/sword.png" id="7_sword"]
@@ -68,6 +69,13 @@ root_node = NodePath("..")
 callback_mode_process = 0
 libraries = {
 &"": ExtResource("4_anim")
+}
+
+[node name="LegAnim" type="AnimationPlayer" parent="."]
+root_node = NodePath("..")
+callback_mode_process = 0
+libraries = {
+&"": ExtResource("8_legs")
 }
 
 [node name="PlayerAnim" type="Node" parent="."]

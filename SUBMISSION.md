@@ -86,7 +86,7 @@ repository: `pose_driver.gd` wrote `Sprite2D.texture` and `flip_h` every
 |---|---|---|
 | `Rig` | `AnimationPlayer` | `position:y` |
 | `Rig/Body` | `AnimationPlayer` | `frame` |
-| `Rig/LegFront`, `Rig/LegBack` | `AnimationPlayer` | `rotation_degrees`, `visible` |
+| `Rig/LegFront`, `Rig/LegBack` | **`LegAnim`** | `rotation_degrees`, `visible` |
 | `Rig/SwordArm` | `AnimationPlayer` | `position`, `rotation_degrees` |
 | `Rig/SwordArm/Blade` | `AnimationPlayer` | `visible` |
 | `Hitbox` | `AnimationPlayer` | `monitoring` |
@@ -238,10 +238,12 @@ prediction in it is mine**, quoted verbatim in the Chinese it was said in.
   key value fixes it. Drawing a longer leg would, and that is a change to the
   character's art — the thing I rejected a whole sheet over — so it stays a
   HUMAN row in `CHANGE-BRIEF.md` §9 and my decision.
-- **A swing with a direction held slides.** The clip hides the cut-out legs
-  and holds one static body cell while the step dust keeps spawning every
-  24 px. Fixing it means two clips at once, which means an `AnimationTree`,
-  which §7 declined for reasons that still hold.
+- ~~A swing with a direction held slides.~~ **Fixed in revision 7.0.9, and
+  the sentence that called it unfixable was the defect.** 7.0.6 §4 said
+  showing the legs during a moving swing "means two clips at once, which
+  means an `AnimationTree`". That is only true if the legs and the body come
+  from the same player, and nothing ever said they did. They have their own
+  `AnimationPlayer` now; the rule was always *one authority per node*.
 - **The hitbox can hit nothing** — this room has no enemy. The window is
   real, switched by a discrete track on the clip's own timeline, and asserted
   at every boundary; what it would *do* is a later assignment. §11 said so

@@ -74,7 +74,10 @@ const HIP_OFFSET := Vector2(-11, -4)
 
 ## Which clips show the cut-out legs. Every pose cell already contains the
 ## character's own legs, so only `run` may.
-const LEGS_VISIBLE_IN := ["run"]
+## Revision 7.0.9: which of `LegAnim`'s clips show the legs. Five of the
+## eight sheet cells still carry their own painted legs, so the rig's legs
+## are switched OFF under them or the character grows a second pair.
+const LEGS_VISIBLE_IN := ["legs_run", "legs_planted"]
 
 var _checks := 0
 var _failures := 0
@@ -161,6 +164,7 @@ func _init() -> void:
 	await process_frame
 
 	var ap: AnimationPlayer = scene.get_node(^"AnimationPlayer")
+	var legs_ap: AnimationPlayer = scene.get_node(^"LegAnim")
 	var body: Sprite2D = scene.get_node(^"Rig/Body")
 
 	# --- the rig the clip assumes ----------------------------------------
@@ -183,9 +187,49 @@ func _init() -> void:
 
 	# --- every track resolves --------------------------------------------
 	var problems := track_problems(ap)
-	_check("every track in every clip resolves", problems.is_empty(),
-		"; ".join(problems))
-	_note("clips: " + ", ".join(ap.get_animation_list()))
+	problems.append_array(track_problems(legs_ap))
+	_check("every track in every clip resolves, on BOTH players",
+		problems.is_empty(), "; ".join(problems))
+	_note("body clips: " + ", ".join(ap.get_animation_list()))
+	_note("leg clips:  " + ", ".join(legs_ap.get_animation_list()))
+
+	# --- THE AUTHORITY, asserted as a PARTITION --------------------------
+	# Revision 7.0.9 split the legs onto their own AnimationPlayer so that a
+	# moving swing could keep its gait. The rule it has to satisfy is not
+	# "one player" -- it is **one authority per NODE**, and that is a
+	# partition: every track on `LegAnim` names a leg, every track on
+	# `AnimationPlayer` names something that is not a leg, and no node
+	# appears on both. Asserted both ways round, because a partition that is
+	# only checked in one direction is a subset.
+	var body_nodes := {}
+	var leg_nodes := {}
+	for pair in [[ap, body_nodes], [legs_ap, leg_nodes]]:
+		var player: AnimationPlayer = pair[0]
+		var bag: Dictionary = pair[1]
+		for clip_name in player.get_animation_list():
+			var clip := player.get_animation(clip_name)
+			for t in clip.get_track_count():
+				bag[clip.track_get_path(t).get_concatenated_names()] = true
+	var overlap: Array[String] = []
+	for n in leg_nodes:
+		if body_nodes.has(n):
+			overlap.append(str(n))
+	_check("NO node is written by both players -- the authority is a "
+		+ "partition, not a preference", overlap.is_empty(),
+		"both write: " + ", ".join(overlap))
+	var stray: Array[String] = []
+	for n in leg_nodes:
+		if not str(n).begins_with("Rig/Leg"):
+			stray.append(str(n))
+	_check("LegAnim writes ONLY the two legs", stray.is_empty(),
+		", ".join(stray))
+	var body_legs: Array[String] = []
+	for n in body_nodes:
+		if str(n).begins_with("Rig/Leg"):
+			body_legs.append(str(n))
+	_check("and AnimationPlayer writes NO leg", body_legs.is_empty(),
+		", ".join(body_legs))
+	_note("body writes: " + ", ".join(body_nodes.keys()))
 
 	# --- the two clocks: written, not defaulted ---------------------------
 	_check("the AnimationPlayer advances on the PHYSICS tick",
@@ -195,7 +239,9 @@ func _init() -> void:
 			% ap.callback_mode_process)
 
 	# --- the cycle, CHANGE-BRIEF.md §4 ------------------------------------
-	var run := ap.get_animation("run")
+	# The cycle lives on the LEG player now; the body player's `run` clip
+	# holds only the torso cell and the bob.
+	var run := legs_ap.get_animation("legs_run")
 	_check("run length is %.3f s: a gait cycle is TWO steps" % RUN_LENGTH,
 		absf(run.length - RUN_LENGTH) < _tol, "%.6f" % run.length)
 	_check("run step is one frame period at %d fps" % RUN_FPS,
@@ -252,6 +298,15 @@ func _init() -> void:
 	# never plant and therefore can never take a step. The generator says so
 	# on every run. The scene gives both legs `leg_front.png`, which is what
 	# a cutout cycle does anyway: one leg, two phases.
+	_check("LegAnim advances on the PHYSICS tick too", legs_ap
+			.callback_mode_process
+			== AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_PHYSICS,
+		"callback_mode_process = %d" % legs_ap.callback_mode_process)
+	_check("LegAnim has a RESET clip of its own",
+		legs_ap.has_animation("RESET"))
+	_check("and a held stance for a swing that is not moving",
+		legs_ap.has_animation("legs_planted"))
+
 	var lf: Sprite2D = scene.get_node(^"Rig/LegFront")
 	var lb: Sprite2D = scene.get_node(^"Rig/LegBack")
 	_check("both legs use the same texture, half a cycle apart",
@@ -323,11 +378,11 @@ func _init() -> void:
 		else:
 			_check("%s never shows the blade" % clip_name, not shown)
 
-	# --- the legs are shown by `run` and by nothing else -------------------
-	for clip_name in ap.get_animation_list():
+	# --- the legs are shown by `legs_run` / `legs_planted` and nothing else
+	for clip_name in legs_ap.get_animation_list():
 		if clip_name == "RESET":
 			continue
-		var clip := ap.get_animation(clip_name)
+		var clip := legs_ap.get_animation(clip_name)
 		var want := LEGS_VISIBLE_IN.has(clip_name)
 		for leg in ["Rig/LegFront:visible", "Rig/LegBack:visible"]:
 			var t := find_track(clip, leg)

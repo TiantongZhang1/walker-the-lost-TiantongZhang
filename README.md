@@ -34,7 +34,11 @@ allowed to write to an animated node.*
 | Plays on | `Rig`, both legs | `Rig/Body`, `Hitbox`, `Rig/SwordArm` |
 | Loops | yes, `LOOP_LINEAR`, 0.500 s = two steps | no, `LOOP_NONE`, 0.600 s = 18 frames at 30 fps |
 
-**One authority.** `pose_driver.gd` used to write `Sprite2D.texture` every
+**One authority, and it is a PARTITION.** Two `AnimationPlayer`s:
+`LegAnim` owns the two cut-out legs, `AnimationPlayer` owns the body, the
+sword arm and the hitbox. **No node is written by both**, and the read-back
+asserts that in both directions — a partition checked one way round is only
+a subset. `pose_driver.gd` used to write `Sprite2D.texture` every
 `_process`; the new clips key the same node. That collision was not
 hypothetical — it was in the repository. `pose_driver.gd` is **deleted** and
 `player_anim.gd` replaces it: it plays clips and writes **no animated
@@ -338,11 +342,12 @@ youtube/          the explainer film and its documents
   is 8.6 px long with its foot almost directly under the hip, so rotating it
   mostly changes its apparent length. No key value fixes this — drawing a
   longer leg would, and that is a change to the character's art.
-- **A swing with a direction held slides.** `swing` hides the cut-out legs
-  and holds one static body cell, while the step dust still spawns every
-  24 px. Showing the legs during a moving swing means two clips at once,
-  which means an `AnimationTree`, which §7 declined for reasons that still
-  hold.
+- **A swing with a direction held used to slide, and no longer does.** The
+  legs have their own `AnimationPlayer` since revision 7.0.9, so a moving
+  swing keeps its gait. It needed no `AnimationTree` — what it needed was to
+  notice that the rule is *one authority per node*, not one player per
+  scene, and that `p6-windup` and `p7-live` could be cut legless the same
+  way `p2-run` already was.
 - **The hitbox can hit nothing.** This room has no enemy. The window is
   real, opened and closed by a discrete track on the clip's own timeline and
   asserted at every boundary; what it would *do* is a later assignment.
