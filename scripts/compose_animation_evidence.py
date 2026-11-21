@@ -310,10 +310,28 @@ def card_b09() -> list[str]:
     if not src.is_file():
         raise SystemExit("missing %s -- run scripts/run-test.sh "
                          "measure_clocks.gd 60 and record it" % src)
-    text = io.open(src, encoding="utf-8").read().split("\n")
-    keep = [r.rstrip() for r in text
-            if r.strip() and not r.startswith(("PASS", "FAIL", "Godot Engine"))]
-    lines = [r for r in keep if len(r) < 92][:9]
+    text = [r.rstrip() for r in io.open(src, encoding="utf-8").read().split("\n")]
+
+    # **The SUMMARY block, located by its own column header** -- not the
+    # first nine printable lines, which is what this did first and which
+    # drew the mode-0 frame trace onto the card whose subject is both modes.
+    head = next((i for i, r in enumerate(text)
+                 if "clip starts" in r and "window opens" in r), -1)
+    if head < 0:
+        raise SystemExit(
+            "%s has no summary block -- looked for a row containing both "
+            "'clip starts' and 'window opens'. The card is not drawn from "
+            "whatever the file happens to begin with." % src.name)
+    lines = []
+    for r in text[head:]:
+        if r.startswith(("PASS", "FAIL")) or "WHAT THIS MEASURES" in r:
+            break
+        lines.append(r)
+    lines = [r for r in lines if len(r) < 92]
+    while lines and not lines[-1].strip():
+        lines.pop()
+    if not any("PHYSICS" in r for r in lines) or not any("IDLE" in r for r in lines):
+        raise SystemExit("%s: the summary block names only one mode" % src.name)
 
     # The frame the window actually opens on, found in the take rather than
     # asserted: the first frame of the first swing whose hitbox is live.

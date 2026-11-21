@@ -165,10 +165,12 @@ film found in them:
 
 | | |
 |---|---|
-| Rendered by | `./art final`, 3840 × 2160, 30 fps |
-| Length | _PENDING — filled when the master is rendered_ |
-| SHA-256 | _PENDING_ |
-| Link | _PENDING_ |
+| File | `exports/landscape/claude-liam-walker-the-lost-animation-gamedev.mp4` |
+| Rendered by | `./art final`, 3840 × 2160, 30 fps, h264 + aac 48 kHz |
+| Length | **9:30.57** — 570.567 s, 18/18 slots filled |
+| Size | 35,983,725 bytes |
+| SHA-256 | `6eb488d454fc98899c4ed77445250247c80bd2b5883810db88469c39e8e5646f` |
+| Link | _PENDING — the upload is the author's_ |
 
 **`build-state.json` is not committed.** It is rewritten on every render, full
 of absolute paths, and names the export under its pre-rename slug. Its one

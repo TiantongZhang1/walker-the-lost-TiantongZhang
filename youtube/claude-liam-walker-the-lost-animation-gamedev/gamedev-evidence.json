@@ -1055,7 +1055,7 @@
       "observation": "C4 RESULT. The recorded output of measure_clocks.gd, both modes, from evidence/a7/clocks.txt. It also states what the run CANNOT see, which is the jitter half of the prediction.",
       "media": {
         "path": "media/B09.png",
-        "sha256": "12fe6bf4a99e792d70e40f7740f64c0c0d42db384e4373c42e8164e551c88e42"
+        "sha256": "b5b880dfedb9813a1f61ae4b9d091f81023e741e29929c6b8d49ca518a0cf8d6"
       }
     },
     {

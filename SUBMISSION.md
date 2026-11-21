@@ -8,16 +8,22 @@
 
 **GitHub repository URL:** <https://github.com/TiantongZhang1/walker-the-lost-TiantongZhang>
 
-**Git tag and submitted commit SHA:** tag **`a7`** — _PENDING, tagged after
-the film is rendered._ A commit cannot carry its own SHA, so it goes in the
-Canvas note and is recoverable with `git rev-list -n 1 a7`.
+**Git tag and submitted commit SHA:** tag **`a7`**. A commit cannot carry
+its own SHA, so it goes in the Canvas note and is recoverable with
+`git rev-list -n 1 a7`.
 
-**Game-source revision shown in the film:** _PENDING._ Every code panel,
-every hash and every capture in the film will be taken at one revision, and
-`git diff <that sha>..a7 -- godot/` is the check that nothing under `godot/`
-moved afterwards.
+**Game-source revision shown in the film:** **`b33b06c`**. Every code panel,
+every hash and every capture in the film is taken at that one revision, and
+**`git diff b33b06c..a7 -- godot/` prints nothing** — which is the check that
+says so. Commits after it add film documentation and film scripts only.
 
-**Film link and SHA-256:** _PENDING._
+**The film:** `TheLostAnimation_TiantongZhang.mp4` —
+3840 × 2160, 30 fps, **9:30.57** (570.567 s), 34.3 MB, 18 beats.
+
+SHA-256 **`6eb488d454fc98899c4ed77445250247c80bd2b5883810db88469c39e8e5646f`**
+
+**Film link:** _PENDING — the upload is mine to do; the hash above is what
+the uploaded file must match._
 
 **Godot version, renderer, and operating system:** Godot
 **4.7.2.stable.official** `ed1daf0bf`, **Forward+** (Vulkan 1.4.357),

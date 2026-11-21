@@ -1,6 +1,11 @@
 Assignment 7 section 8 -- THE TWO CLOCKS, measured.
-Commit f350c74, 2026-11-19.
   ./scripts/run-test.sh measure_clocks.gd 60
+
+Run on 2026-11-19 against the tree at f350c74 WITH measure_clocks.gd not yet
+committed -- which is why the original header here named a commit the file
+does not exist at. The file was committed in 37bcc37 and `git diff` reports
+it unchanged from there to b33b06c, the revision this film is pinned at, so
+the numbers below hold at the pin. Corrected 2026-11-21.
 
 Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
 
