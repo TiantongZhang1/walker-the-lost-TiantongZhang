@@ -1,0 +1,12 @@
+Two frames of ONE take, at the same playhead, one grounded and one
+airborne. Found by searching the take's own log, not chosen by eye.
+
+  grounded : f115  playhead 0.1833  x 182.4  on_floor True
+  airborne : f339  playhead 0.1833  x 96.0  on_floor False
+  playhead difference: 0.000000 s
+
+The blade is at the same angle in both, because the angle is a
+function of the playhead alone and the jump never touched it.
+
+Section E's own comparison, over all 36 frames in three phases:
+  0.000000 s  0.000000 s  0.000000 s

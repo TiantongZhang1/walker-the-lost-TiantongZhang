@@ -1,0 +1,35 @@
+Ten revisions, who reported each, and what kind of thing it was.
+Sourced from CHANGE-BRIEF.md revisions 7.0.1 - 7.0.10 and the dated
+entries in TUNING.md. Every count on the card is computed from this.
+
+  READ-BACK  a fact about committed data. A read-back COULD have
+             caught it and none was asking.
+  design     the game was not wrong; the author wanted something
+             else. Not a failure of any instrument.
+  art        a judgement about how it looks. No fact to check.
+  MEASURED   found by an instrument written to test a prediction.
+  doc        a sentence in a design document nobody ever checked.
+
+  7.0.1    author  art        the generated sheet was a silhouette; the GPT-6 art already existed. A look, not a defect
+  7.0.2    author  READ-BACK  the blade spun above the head. The key table's own range never puts the tip below -3 px in any of the 18 frames
+  7.0.3    author  READ-BACK  the pivot sat on the torso's BACK edge, x +3. A column profile of the cell says the torso runs +3..+13
+  7.0.4    author  art        a longer blade. How long a sword should look is a judgement
+  7.0.5    author  design     swing in the air. The is_on_floor() gate was never asserted by any test either, which is its own finding
+  7.0.6    author  design     move while swinging. The brief argued against it and built it
+  7.0.7    author  READ-BACK  the legs waggled. The safe band was measured with PIL, which rotates the opposite way from Godot: the planted foot was 3.3 px through the floor while the band assertion passed
+  7.0.8    Claude  MEASURED   the brief's clock prediction was wrong in SIGN. Found by the measurement written to test it, because it was tagged [proposal]
+  7.0.9    author  doc        the sliding swing. A sentence in a design document said fixing it needed an AnimationTree. It was never measured, and it was false
+  7.0.10   author  design     jump while swinging. The lock narrowed a third time
+
+  MEASURED 1, READ-BACK 3, art 2, design 3, doc 1
+
+9 of 10 reported by the author in play.
+3 were READ-BACK.
+
+ONE was found by an instrument: 7.0.8, and it is worth being exact
+about. It was not an existing test going red. It was a measurement
+written on purpose to test a prediction the brief had tagged
+[proposal] -- derived, not confirmed. The tag is what caused the
+measurement to be built, and the measurement is what found the
+prediction wrong in sign. Nothing in this assignment was found by a
+test that had been passing and started failing.

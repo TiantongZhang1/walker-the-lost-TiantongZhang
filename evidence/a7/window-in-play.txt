@@ -1,0 +1,9 @@
+The active window, located in take-s rather than asserted.
+
+  last frame with monitoring false : f73, playhead 0.1833
+  first frame with monitoring true : f74, playhead 0.2000
+
+The clip's own key is at 0.2000. A hitbox contributes NO PIXELS:
+these two frames differ only in the blade's angle, and the thing
+the card is about cannot be seen in either of them. That is the
+reason the measurement exists.

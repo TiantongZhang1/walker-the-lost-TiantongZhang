@@ -1,0 +1,11 @@
+The authority, read out of the two committed resources.
+godot/animations/player.tres  -- 7 body clips
+godot/animations/legs.tres    -- 4 leg clips
+
+AnimationPlayer writes: Hitbox, Rig, Rig/Body, Rig/SwordArm, Rig/SwordArm/Blade
+LegAnim writes:         Rig/LegBack, Rig/LegFront
+
+intersection: EMPTY
+
+Read as TEXT here and through the engine in test_player_clips.gd.
+Two readings of the same fact by different routes; they agree.

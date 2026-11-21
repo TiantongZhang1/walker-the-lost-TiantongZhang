@@ -1,0 +1,908 @@
+{
+  "metadata": {
+    "title": "TheLostAnimation_TiantongZhang",
+    "slug": "claude-liam-walker-the-lost-animation-gamedev",
+    "topic": "WALKER - GODOT ANIMATION TEARDOWN",
+    "kind": "gamedev",
+    "playlist": "Brutalist",
+    "brand": "claude-liam",
+    "audience": "Course reviewers reading a Godot animation pass",
+    "register": "Teardown",
+    "engine": "kokoro",
+    "voice": "am_onyx",
+    "voice_kokoro": "am_onyx",
+    "palette": "claude",
+    "style_preset": "claude",
+    "ground": "#FAF9F5",
+    "aspect_ratio": "16:9",
+    "fit": "contain",
+    "captions": false,
+    "channel_title": "@NikBearBrown",
+    "channel": "@NikBearBrown",
+    "folderLabel": "@NikBearBrown",
+    "greeting": "Sawubona, Liam",
+    "greeting_note": "hello lexicon: Sawubona (Zulu), one word. Wagwan is Bear's alone.",
+    "mode": "walker",
+    "teaching_contract": "code-then-result-v1",
+    "game": "godot"
+  },
+  "beats": [
+    {
+      "beat_id": "B00",
+      "act": "ASK",
+      "role_note": "WALKER BOOKEND 1/4 - ClaudeComposerAsk. The prompt is a reconstruction and is said aloud to be one. Liam is named in the first breath.",
+      "narration_text": "Sawubona - this is Liam, in for Bear. The prompt on screen is a reconstruction, written to be illustrative. It was never sent. The game under it is real: a dungeon slice in Godot four, a character who could walk and jump and nothing else. What we are taking apart is two animation clips - one that loops and one that commits - and the question that turned out to matter more than either of them. Which questions was anything actually asking.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 23.2,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "type-on",
+        "show": [
+          {
+            "at": "0.03",
+            "event": "composer card fades in"
+          },
+          {
+            "at": "0.14",
+            "event": "greeting lands"
+          },
+          {
+            "at": "0.32",
+            "event": "the Walker prompt types on"
+          },
+          {
+            "at": "0.82",
+            "event": "RECONSTRUCTION label holds"
+          }
+        ],
+        "remotion": {
+          "pattern": "ClaudeComposerAsk",
+          "props": {
+            "greeting": "Sawubona, Liam",
+            "topic": "WALKER - GODOT ANIMATION TEARDOWN",
+            "segment": "The Lost, in motion",
+            "command": "Please use Walker to animate the player in The Lost - a side-view dungeon crawler where every hazard announces itself before it can hurt you. A run that loops and a sword swing that commits. Write the clips and the read-backs; the verdict on how they look in play is mine.",
+            "runningText": "RECONSTRUCTION - this prompt was never sent",
+            "modelLabel": "Claude Opus 5",
+            "effortLabel": "High",
+            "durationSeconds": 23.2
+          }
+        }
+      }
+    },
+    {
+      "beat_id": "B01",
+      "act": "RESULT",
+      "role_note": "WALKER BOOKEND 2/4 - hesitant writer, one working single-word correction with measured time to complete it. The correction is the film's thesis in one word: the revisions were not FOUND, they were REPORTED.",
+      "narration_text": "Here is what actually changed. Two clips. A run cycle on a cut-out rig, and a sword swing on a sprite sheet - which is the opposite way round from the obvious one, for a reason that is about art rather than about animation. Two hundred and eighty automated checks stand behind them, and seven deliberate breakages stand behind the checks. And ten tuning revisions, nine of them found - correction - nine of them reported, by the author, playing the game. The tenth came from a measurement written to test a prediction. Not one of the ten started with a test that had been passing and started failing.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 30.9,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "write-on",
+        "show": [
+          {
+            "at": "0.06",
+            "event": "the summary begins writing"
+          },
+          {
+            "at": "0.38",
+            "event": "'found' struck through, 'reported' written in"
+          },
+          {
+            "at": "0.78",
+            "event": "the zero lands"
+          }
+        ],
+        "remotion": {
+          "pattern": "BrutalistHesitantWriter",
+          "props": {
+            "text": "Two clips. One authority.\nTen revisions in six days.\n280 checks, 7 mutations.\nStarted by a failing test: 0.",
+            "triggerWords": "found",
+            "replacementWords": "reported",
+            "charMs": 16,
+            "face": "serif",
+            "fontSize": 62,
+            "lineSpacing": 1.35,
+            "align": "left",
+            "contextTitle": "What was built",
+            "brandLabel": "@NikBearBrown",
+            "contextItems": [
+              {
+                "label": "By hand",
+                "detail": "The brief, every verdict, every revision asked for."
+              },
+              {
+                "label": "By Claude",
+                "detail": "2 clips, 2 players, 280 checks, the rigs."
+              },
+              {
+                "label": "Predicted first",
+                "detail": "7 failures named in the brief before any code."
+              }
+            ],
+            "durationSeconds": 30.9
+          }
+        }
+      }
+    },
+    {
+      "beat_id": "B02",
+      "act": "BUILD",
+      "role_note": "C1 CODE. The cycle's length is arithmetic, not taste. Paired with B03.",
+      "narration_text": "Start with the loop. This is the whole cycle as resource text - never built in code at runtime - and the number to look at is the first one. Length, nought point five seconds. That is not a choice. The game already spawns a puff of dust every twenty four pixels and the player walks at ninety six pixels a second, so a stride takes a quarter of a second and a gait cycle is two strides. Half a second, exactly. Step is nought point one two five - a quarter cycle, because a gait has four landmarks: contact, pass, contact, pass. And the values: thirty eight, twelve, minus fourteen, twelve, thirty eight. Front leg. The back leg runs the same five numbers in the opposite order, so front plus back is twenty four on every single key. The facing mirrors the whole rig, so one set of keys is correct both ways round and a cycle that only ran one way would never show it. That is exact antiphase as arithmetic, and the read-back checks it as arithmetic, because the cycle this replaced had two legs that came within two degrees of each other and read as two legs wobbling.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 57.2,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "code-highlight",
+        "show": [
+          {
+            "at": "0.04",
+            "event": "the excerpt is framed"
+          },
+          {
+            "at": "0.45",
+            "event": "the named line highlights"
+          },
+          {
+            "at": "0.80",
+            "event": "the note column holds"
+          }
+        ],
+        "remotion": {
+          "pattern": "GodotDevWorkbench",
+          "props": {
+            "mode": "code",
+            "title": "The cycle, and why it is 0.500 s",
+            "project": "walker-the-lost-TiantongZhang",
+            "path": "godot/animations/legs.tres  lines 24-38",
+            "source": "godot/animations/legs.tres",
+            "code": "length = 0.5\nloop_mode = 1\nstep = 0.125\ntracks/0/type = \"value\"\ntracks/0/imported = false\ntracks/0/enabled = true\ntracks/0/path = NodePath(\"Rig/LegFront:rotation_degrees\")\ntracks/0/interp = 1\ntracks/0/loop_wrap = true\ntracks/0/keys = {\n\"times\": PackedFloat32Array(0, 0.125, 0.25, 0.375, 0.5),\n\"transitions\": PackedFloat32Array(1, 1, 1, 1, 1),\n\"update\": 0,\n\"values\": [38.0, 12.0, -14.0, 12.0, 38.0]\n}",
+            "startLine": 24,
+            "codeFontSize": 24,
+            "inspectorLabel": "Source notes - not Inspector values",
+            "notes": [
+              {
+                "label": "Why 0.500 s",
+                "value": "2 x stride_px / SPEED = 48 / 96. Retime it and this arithmetic changes first, not the keys."
+              },
+              {
+                "label": "Why loop_mode = 1",
+                "value": "LOOP_LINEAR. Godot 3's boolean `loop` loads without complaint and plays the cycle once."
+              }
+            ],
+            "cues": [
+              {
+                "at": 5.72,
+                "line": 24,
+                "label": "derived from the stride, not chosen"
+              },
+              {
+                "at": 22.88,
+                "line": 26,
+                "label": "a quarter cycle: four landmarks"
+              },
+              {
+                "at": 41.18,
+                "line": 37,
+                "label": "front; back is these five reversed"
+              }
+            ],
+            "durationSeconds": 57.2
+          }
+        }
+      }
+    },
+    {
+      "beat_id": "B03",
+      "act": "RESULT",
+      "role_note": "C1 RESULT. take-c, PLAYED: held keys through the real input map, nothing teleported. The take asserts nine cycle wraps, both facings and twenty three dust puffs before a frame of it counts. It never crosses a trap, deliberately.",
+      "narration_text": "There it is, in play. Both facings - and the dust lands under the planted foot, because the cycle and the dust share a clock.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 7.1,
+      "shot": {
+        "type": "FOOTAGE",
+        "class": "SHOW",
+        "source": "capture",
+        "motion": "gameplay",
+        "capture": "take-c",
+        "evidence_media": "capture/take-c.mp4",
+        "window_s": [
+          0.6,
+          7.7
+        ],
+        "show": [
+          {
+            "at": "0.05",
+            "event": "the first strides, facing right"
+          },
+          {
+            "at": "0.40",
+            "event": "dust under the planted foot"
+          },
+          {
+            "at": "0.72",
+            "event": "the turn - the same gait, mirrored"
+          }
+        ]
+      }
+    },
+    {
+      "beat_id": "B04",
+      "act": "BUILD",
+      "role_note": "C2 CODE. The hitbox window is a track, not a timer. Paired with B05.",
+      "narration_text": "Now the clip that commits. Eighteen frames at thirty, nought point six seconds, and it does not loop. The track on screen is the interesting one, and it is not a drawing. It is the hitbox. Monitoring goes true at nought point two and false at nought point three three three, which makes the sword dangerous for exactly four frames out of eighteen - and the strike itself, frame six to frame ten, is a hundred and fifty degrees in a hundred and thirty three milliseconds, five times the speed of the wind-up. That difference is the whole reason it reads as a strike rather than a gesture. Two things about the track. Update equals one - discrete - so the value cuts rather than interpolating, which for a boolean is the difference between a hitbox and a dimmer switch. And it is on the clip's own timeline rather than in a timer somewhere, which is the point the course notes make in so many words: a gameplay fact like the hitbox is live should not depend on a tween that can be killed halfway. The window is narrower than the spike trap's own lethal window on purpose. You cannot trade with a trap.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 57.7,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "code-highlight",
+        "show": [
+          {
+            "at": "0.04",
+            "event": "the excerpt is framed"
+          },
+          {
+            "at": "0.45",
+            "event": "the named line highlights"
+          },
+          {
+            "at": "0.80",
+            "event": "the note column holds"
+          }
+        ],
+        "remotion": {
+          "pattern": "GodotDevWorkbench",
+          "props": {
+            "mode": "code",
+            "title": "The active window, as a track",
+            "project": "walker-the-lost-TiantongZhang",
+            "path": "godot/animations/player.tres  lines 110-121",
+            "source": "godot/animations/player.tres",
+            "code": "tracks/1/type = \"value\"\ntracks/1/imported = false\ntracks/1/enabled = true\ntracks/1/path = NodePath(\"Hitbox:monitoring\")\ntracks/1/interp = 1\ntracks/1/loop_wrap = true\ntracks/1/keys = {\n\"times\": PackedFloat32Array(0, 0.2, 0.3333333),\n\"transitions\": PackedFloat32Array(1, 1, 1),\n\"update\": 1,\n\"values\": [false, true, false]\n}",
+            "startLine": 110,
+            "codeFontSize": 24,
+            "inspectorLabel": "Source notes - not Inspector values",
+            "notes": [
+              {
+                "label": "Why discrete",
+                "value": "update = 1. A continuous track would interpolate a bool and the window would have edges."
+              },
+              {
+                "label": "Why on the clip",
+                "value": "0.200 to 0.3333 = 4 of 18 frames. The trap's own lethal window is 0.18 s - wider."
+              }
+            ],
+            "cues": [
+              {
+                "at": 8.08,
+                "line": 113,
+                "label": "a gameplay fact, keyed"
+              },
+              {
+                "at": 26.54,
+                "line": 117,
+                "label": "opens 0.200, closes 0.3333"
+              },
+              {
+                "at": 43.85,
+                "line": 119,
+                "label": "discrete: it cuts, it does not blend"
+              }
+            ],
+            "durationSeconds": 57.7
+          }
+        }
+      }
+    },
+    {
+      "beat_id": "B05",
+      "act": "RESULT",
+      "role_note": "C2 RESULT. take-s, PLAYED: four fresh swings with a half-second gap, so none of them is a buffered second attack. The take asserts the window opened exactly four times and every clip ran its own 36 physics frames.",
+      "narration_text": "Four swings. Startup, strike, recovery - and the strike is five times the speed of the wind-up.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 4.8,
+      "shot": {
+        "type": "FOOTAGE",
+        "class": "SHOW",
+        "source": "capture",
+        "motion": "gameplay",
+        "capture": "take-s",
+        "evidence_media": "capture/take-s.mp4",
+        "window_s": [
+          0.45,
+          5.25
+        ],
+        "show": [
+          {
+            "at": "0.08",
+            "event": "the wind-up, blade drawn back"
+          },
+          {
+            "at": "0.34",
+            "event": "the strike - the fastest thing on the timeline"
+          },
+          {
+            "at": "0.66",
+            "event": "recovery, and the blade sheathes"
+          }
+        ]
+      }
+    },
+    {
+      "beat_id": "B06",
+      "act": "BUILD",
+      "role_note": "C3 CODE. The assignment's one-authority rule, and the thing it actually says. Paired with B07.",
+      "narration_text": "This assignment's hardest rule is one authority per animated node, and this project broke it on day one: a pose driver was writing the sprite's texture every frame and the new clip keyed the same node. That one is easy - delete the driver. The interesting version came later. The author asked for the legs to keep moving during a moving swing, and a design document in this repository said that would require an animation tree, because it needs two clips at once. That sentence was wrong, and nobody had checked it. The rule is one authority per NODE. A second animation player breaks nothing as long as the two players' track paths do not intersect. So the legs got their own player - and the check on screen asserts the partition in BOTH directions. Read the last one. No track on the body player names a leg. That is not redundant with the other two: a partition checked one way round is only a subset, and a scene where both players write the legs satisfies the easy version perfectly.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 50.9,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "code-highlight",
+        "show": [
+          {
+            "at": "0.04",
+            "event": "the excerpt is framed"
+          },
+          {
+            "at": "0.45",
+            "event": "the named line highlights"
+          },
+          {
+            "at": "0.80",
+            "event": "the note column holds"
+          }
+        ],
+        "remotion": {
+          "pattern": "GodotDevWorkbench",
+          "props": {
+            "mode": "code",
+            "title": "One authority - asserted as a partition",
+            "project": "walker-the-lost-TiantongZhang",
+            "path": "godot/tests/test_player_clips.gd  lines 217-230",
+            "source": "godot/tests/test_player_clips.gd",
+            "code": "\t_check(\"NO node is written by both players -- the authority is a \"\n\t\t+ \"partition, not a preference\", overlap.is_empty(),\n\t\t\"both write: \" + \", \".join(overlap))\n\tvar stray: Array[String] = []\n\tfor n in leg_nodes:\n\t\tif not str(n).begins_with(\"Rig/Leg\"):\n\t\t\tstray.append(str(n))\n\t_check(\"LegAnim writes ONLY the two legs\", stray.is_empty(),\n\t\t\", \".join(stray))\n\tvar body_legs: Array[String] = []\n\tfor n in body_nodes:\n\t\tif str(n).begins_with(\"Rig/Leg\"):\n\t\t\tbody_legs.append(str(n))\n\t_check(\"and AnimationPlayer writes NO leg\", body_legs.is_empty(),",
+            "startLine": 217,
+            "codeFontSize": 24,
+            "inspectorLabel": "Source notes - not Inspector values",
+            "notes": [
+              {
+                "label": "Why both directions",
+                "value": "\"LegAnim writes the legs\" is true in a scene where BOTH players write them. That is the failure."
+              },
+              {
+                "label": "Why no AnimationTree",
+                "value": "Nothing blends. One clip per player, two players, disjoint node sets."
+              }
+            ],
+            "cues": [
+              {
+                "at": 15.27,
+                "line": 217,
+                "label": "no node is on both lists"
+              },
+              {
+                "at": 29.52,
+                "line": 224,
+                "label": "every leg track is on LegAnim"
+              },
+              {
+                "at": 41.74,
+                "line": 230,
+                "label": "and NO leg track is on the other"
+              }
+            ],
+            "durationSeconds": 50.9
+          }
+        }
+      }
+    },
+    {
+      "beat_id": "B07",
+      "act": "RESULT",
+      "role_note": "C3 RESULT. The partition read back out of the two committed resources, plus the mutation that puts one leg track back on the body player and the two assertions it turns red.",
+      "narration_text": "Read out of the two resource files, not typed. Six tracks on one player, six on the other, and the intersection is empty. Put a single leg track back on the body player and two of the three checks go red - which is how you know the third one was worth writing.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 15.0,
+      "shot": {
+        "type": "STILL",
+        "class": "SHOW",
+        "source": "capture",
+        "motion": "hold",
+        "evidence_media": "media/B07.png",
+        "title": "The authority, as a partition",
+        "path": "godot/animations/player.tres + legs.tres",
+        "image_label": "read back from the committed resources",
+        "show": [
+          {
+            "at": "0.08",
+            "event": "the two track lists"
+          },
+          {
+            "at": "0.46",
+            "event": "the empty intersection"
+          },
+          {
+            "at": "0.78",
+            "event": "the mutation, and what it turns red"
+          }
+        ]
+      }
+    },
+    {
+      "beat_id": "B08",
+      "act": "BUILD",
+      "role_note": "C4 CODE. The two-clocks measurement, which disagreed with the brief's own prediction. Paired with B09.",
+      "narration_text": "Two clocks. The clip advances on one tick and gameplay reads the hitbox on another, and this assignment asks what the largest disagreement is. The brief predicted that leaving the player on Godot's default idle tick would make the window open up to one physics step LATE, and jitter between runs. It is on screen being tested rather than being agreed with, and it was wrong - wrong in sign. Idle is one step EARLY, not late, and the reason is not read latency at all. Both modes make the clip current on the same physics frame; the difference is where the playhead is ON that frame. The physics-mode mixer already took its step for that frame before anything called play. The idle-mode mixer takes its step afterwards. One frame, gained at the start, carried for the whole clip. And the claim underneath the prediction survives intact: in both modes the window opens on the frame whose playhead reads nought point two exactly, so writer and reader disagree by zero seconds.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 48.4,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "code-highlight",
+        "show": [
+          {
+            "at": "0.04",
+            "event": "the excerpt is framed"
+          },
+          {
+            "at": "0.45",
+            "event": "the named line highlights"
+          },
+          {
+            "at": "0.80",
+            "event": "the note column holds"
+          }
+        ],
+        "remotion": {
+          "pattern": "GodotDevWorkbench",
+          "props": {
+            "mode": "code",
+            "title": "The measurement, not the setting",
+            "project": "walker-the-lost-TiantongZhang",
+            "path": "godot/tests/measure_clocks.gd  lines 131-138",
+            "source": "godot/tests/measure_clocks.gd",
+            "code": "\t# --- what the brief asked for ----------------------------------------\n\t_check(\"PHYSICS: the window opens on the frame the playhead reads \"\n\t\t+ \"%.4f -- writer and reader share a tick, so the disagreement \"\n\t\t\t% T_ACTIVE_OPEN + \"is ZERO\",\n\t\tabsf(phys[1] - T_ACTIVE_OPEN) < 0.0005, \"%.4f\" % phys[1])\n\t_check(\"IDLE: it opens on the frame its playhead reads %.4f TOO\"\n\t\t\t% T_ACTIVE_OPEN,\n\t\tabsf(idle[1] - T_ACTIVE_OPEN) < 0.0005, \"%.4f\" % idle[1])",
+            "startLine": 131,
+            "codeFontSize": 24,
+            "inspectorLabel": "Source notes - not Inspector values",
+            "notes": [
+              {
+                "label": "What was predicted",
+                "value": "Up to one physics step LATE, jittering. Tagged [proposal] in the brief, which is why it was tested."
+              },
+              {
+                "label": "What was measured",
+                "value": "One step EARLY. The window still opens at playhead 0.2000 in both modes: disagreement 0 s."
+              }
+            ],
+            "cues": [
+              {
+                "at": 20.33,
+                "line": 132,
+                "label": "the claim that survived"
+              },
+              {
+                "at": 33.88,
+                "line": 136,
+                "label": "and the one that did not"
+              }
+            ],
+            "durationSeconds": 48.4
+          }
+        }
+      }
+    },
+    {
+      "beat_id": "B09",
+      "act": "RESULT",
+      "role_note": "C4 RESULT. The recorded output of measure_clocks.gd, both modes, from evidence/a7/clocks.txt. It also states what the run CANNOT see, which is the jitter half of the prediction.",
+      "narration_text": "The run, both modes. And read the last line before the numbers: this cannot see the jitter. The test wrapper locks the render tick to the physics tick on purpose, so every run of this file is identical, and running a deterministic measurement three times is one measurement printed three times. The file says so in its own output rather than letting you assume a repeated number is a replicated one.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 20.1,
+      "shot": {
+        "type": "STILL",
+        "class": "SHOW",
+        "source": "capture",
+        "motion": "hold",
+        "evidence_media": "media/B09.png",
+        "title": "Two clocks, measured in both modes",
+        "path": "evidence/a7/clocks.txt",
+        "image_label": "recorded run - scripts/run-test.sh measure_clocks.gd 60",
+        "show": [
+          {
+            "at": "0.10",
+            "event": "the two rows"
+          },
+          {
+            "at": "0.44",
+            "event": "the playhead column"
+          },
+          {
+            "at": "0.76",
+            "event": "what the run cannot see"
+          }
+        ]
+      }
+    },
+    {
+      "beat_id": "B10",
+      "act": "BUILD",
+      "role_note": "C5 CODE. The last revision, and the two different claims hiding in one sentence. Paired with B11.",
+      "narration_text": "The tenth revision, and the shortest. The author asked to be able to jump while swinging, without interrupting the swing. That is one sentence and two completely different claims. The jump happening is this branch moving out of an else. The swing not noticing is the fact that this branch writes one field - vertical velocity - and nothing else. It does not touch the action state, the swing counter, the buffered attack, or any animation player. There is no code path from a jump to the clip's clock, so the clip cannot notice. Which means the second half of the request is not something you can see by looking at the jump at all.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 32.6,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "code-highlight",
+        "show": [
+          {
+            "at": "0.04",
+            "event": "the excerpt is framed"
+          },
+          {
+            "at": "0.45",
+            "event": "the named line highlights"
+          },
+          {
+            "at": "0.80",
+            "event": "the note column holds"
+          }
+        ],
+        "remotion": {
+          "pattern": "GodotDevWorkbench",
+          "props": {
+            "mode": "code",
+            "title": "Four lines, and one of them is the argument",
+            "project": "walker-the-lost-TiantongZhang",
+            "path": "godot/features/player/player.gd  lines 111-118",
+            "source": "godot/features/player/player.gd",
+            "code": "\t# `is_on_floor()` stays, and it is now the ONLY gate: you may jump out of\n\t# a ground swing, and you may not jump during an air swing, for the same\n\t# reason you may not jump twice without a swing -- there is no double\n\t# jump in this game. The lock stopped being the reason.\n\tif Input.is_action_just_pressed(\"jump\") and is_on_floor():\n\t\tvelocity.y = JUMP_VELOCITY\n\n\tif is_locked():",
+            "startLine": 111,
+            "codeFontSize": 24,
+            "inspectorLabel": "Source notes - not Inspector values",
+            "notes": [
+              {
+                "label": "Why it cannot interrupt",
+                "value": "It writes velocity.y. Not `action`, not `swing_count`, not any AnimationPlayer. Structural, not careful."
+              },
+              {
+                "label": "Why is_on_floor stays",
+                "value": "It is the only gate now. No double jump - the lock stopped being the reason."
+              }
+            ],
+            "cues": [
+              {
+                "at": 7.17,
+                "line": 115,
+                "label": "the only gate left"
+              },
+              {
+                "at": 18.26,
+                "line": 116,
+                "label": "one field written, and nothing else"
+              }
+            ],
+            "durationSeconds": 32.6
+          }
+        }
+      }
+    },
+    {
+      "beat_id": "B11",
+      "act": "RESULT",
+      "role_note": "C5 RESULT. take-m, PLAYED: a direction held through two swings, then two swings jumped out of. The take asserts a hundred and eight frames of travelling swing with the gait playing under it, and two swings that left the floor without the swing counter moving.",
+      "narration_text": "Both of the last two revisions, in one take. A swing that travels with its gait still under it, and a swing jumped out of.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 7.1,
+      "shot": {
+        "type": "FOOTAGE",
+        "class": "SHOW",
+        "source": "capture",
+        "motion": "gameplay",
+        "capture": "take-m",
+        "evidence_media": "capture/take-m.mp4",
+        "window_s": [
+          0.5,
+          7.6
+        ],
+        "show": [
+          {
+            "at": "0.08",
+            "event": "a swing with a direction held"
+          },
+          {
+            "at": "0.42",
+            "event": "the gait continues under it"
+          },
+          {
+            "at": "0.74",
+            "event": "and one jumped out of"
+          }
+        ]
+      }
+    },
+    {
+      "beat_id": "B12",
+      "act": "BUILD",
+      "role_note": "C6 CODE. How you establish that something did NOT happen. Paired with B13.",
+      "narration_text": "So how do you check that a swing did not notice? You cannot. Not by watching the swing. What you can do is run the same swing twice - once with a jump through it, once without - and compare the two clocks frame by frame. That is this loop. Playhead, hitbox window, lock, clip name, on all thirty six physics frames, in all three phases. The legs, by the way, keep their phase straight through a swing because nothing ever seeks them - that is the ninth revision, and the whole point of giving them their own player. And here is why this comparison is not over-engineering. There is a deliberate breakage in this repository that makes the jump restart the clip every time it is pressed. Every single check that the jump WORKS stays green under it. All three of them. Eight others go red, and all eight come from this comparison.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 43.6,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "code-highlight",
+        "show": [
+          {
+            "at": "0.04",
+            "event": "the excerpt is framed"
+          },
+          {
+            "at": "0.45",
+            "event": "the named line highlights"
+          },
+          {
+            "at": "0.80",
+            "event": "the note column holds"
+          }
+        ],
+        "remotion": {
+          "pattern": "GodotDevWorkbench",
+          "props": {
+            "mode": "code",
+            "title": "Proving a negative about a clock",
+            "project": "walker-the-lost-TiantongZhang",
+            "path": "godot/tests/test_swing_edges.gd  lines 428-438",
+            "source": "godot/tests/test_swing_edges.gd",
+            "code": "\t\tfor i in range(F_END):\n\t\t\tdrift = maxf(drift, absf(plain[i][0] - jumped[i][0]))\n\t\t\tif plain[i][1] != jumped[i][1]:\n\t\t\t\twindow_differs = true\n\t\t\tif plain[i][2] != jumped[i][2]:\n\t\t\t\tlock_differs = true\n\t\t\tif plain[i][3] != jumped[i][3]:\n\t\t\t\tclip_differs = true\n\t\t_check(\"the playhead is IDENTICAL to the un-jumped swing for all \"\n\t\t\t+ \"%d frames (jump in %s)\" % [F_END, phase],\n\t\t\tdrift <= 0.0005, \"worst disagreement %.6f s\" % drift)",
+            "startLine": 428,
+            "codeFontSize": 24,
+            "inspectorLabel": "Source notes - not Inspector values",
+            "notes": [
+              {
+                "label": "Why run it twice",
+                "value": "\"It did not interrupt\" is a claim about the SWING. The jump is the wrong thing to look at."
+              },
+              {
+                "label": "What mutation M7 shows",
+                "value": "A jump that restarts the clip: 3 'jump works' checks green, 8 comparison checks red."
+              }
+            ],
+            "cues": [
+              {
+                "at": 12.21,
+                "line": 428,
+                "label": "every frame of both runs"
+              },
+              {
+                "at": 27.03,
+                "line": 436,
+                "label": "the claim, as a measurement"
+              }
+            ],
+            "durationSeconds": 43.6
+          }
+        }
+      }
+    },
+    {
+      "beat_id": "B13",
+      "act": "RESULT",
+      "role_note": "C6 RESULT. The recorded section E output, and beside it mutation M7, whose point is that it still jumps. From evidence/a7/mutations.txt.",
+      "narration_text": "Nought point zero zero zero zero zero zero seconds, in all three phases. And beside it the mutation, kept because of what stayed green rather than what went red. One more thing from that run, recorded rather than hidden: in the recovery case, one of the comparison checks passed under the mutation too - restarting at frame twenty six puts the next window past the end of what the trace records. An assertion that is green because the evidence ran out is not an assertion that passed.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 24.6,
+      "shot": {
+        "type": "STILL",
+        "class": "SHOW",
+        "source": "capture",
+        "motion": "hold",
+        "evidence_media": "media/B13.png",
+        "title": "The same swing, twice, compared",
+        "path": "evidence/a7/mutations.txt + test_swing_edges.gd section E",
+        "image_label": "recorded run - 60 checks, 0 failures; mutation M7, 8 failures",
+        "show": [
+          {
+            "at": "0.12",
+            "event": "the three phases, and the drift column"
+          },
+          {
+            "at": "0.48",
+            "event": "M7: what stayed green"
+          },
+          {
+            "at": "0.80",
+            "event": "the blind spot, named"
+          }
+        ]
+      }
+    },
+    {
+      "beat_id": "B14",
+      "act": "TURN",
+      "role_note": "The film's actual subject, as a table: ten revisions, who started each one, and whether a headless run could have seen the defect. Composed from TUNING.md and CHANGE-BRIEF.md.",
+      "narration_text": "Here is the thing this assignment actually taught, and it is not about animation. Ten revisions. Nine of them started with the author playing the game and saying something was wrong. Now look at the last column, because the honest version of this is not that everything was missed. Three of the ten were design calls - the game was not wrong, the author wanted something else. Two were judgements about how a thing looks, and there is no fact to check in those. But three of them say read-back, and those three are the subject. The sword spinning above the head was literally what the key table described - the tip is never below minus three pixels in any of the eighteen frames, and that is the range of the function, not an impression. The pivot sitting on the character's spine was a correctly computed bounding box of the wrong quantity, because it included a trailing scarf. And the legs that waggled had a planted foot three pixels through the floor while the assertion about that foot was green, because the band it was checked against had been measured in the wrong sign. The read-backs did not miss these. They were never asked. A read-back only sees the questions it was written to ask, and the questions came from someone playing the game.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 63.4,
+      "shot": {
+        "type": "STILL",
+        "class": "SHOW",
+        "source": "capture",
+        "motion": "hold",
+        "evidence_media": "media/B14.png",
+        "title": "Ten revisions, and who found each one",
+        "path": "TUNING.md + CHANGE-BRIEF.md revisions 7.0.1 - 7.0.10",
+        "image_label": "composed from the committed revision history",
+        "show": [
+          {
+            "at": "0.10",
+            "event": "the ten rows"
+          },
+          {
+            "at": "0.42",
+            "event": "the 'who reported it' column"
+          },
+          {
+            "at": "0.76",
+            "event": "and what headless could have seen"
+          }
+        ]
+      }
+    },
+    {
+      "beat_id": "B15",
+      "act": "VERDICT",
+      "role_note": "WALKER BOOKEND 3/4 - verdict. Implemented work, limits named, and the open HUMAN rows left open rather than quietly closed.",
+      "narration_text": "The verdict, and the limits with it. Two clips, both as resource text, both on the physics tick. Two animation players over a partition that is asserted in both directions. The active window on the clip's own timeline, measured at both tick settings. Two hundred and eighty checks and seven mutations, every mutation naming the assertion that has to fire. Now the limits, and these are real. The hitbox can hit nothing, because this room has no enemy - the window is real, measured and tested, and what it would do is a later assignment. The run cycle alternates but it does not stride: the cut-out leg moves its foot about ten pixels against a twenty four pixel step, and the only fix is drawing a longer leg, which changes the character's art. And three questions in the evidence table are still open, because no headless run can answer them and the author has not judged them yet. They are listed as open rather than covered by a general it all looks fine.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 49.0,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "artifact-reveal",
+        "show": [
+          {
+            "at": "0.06",
+            "event": "the artifact card opens"
+          },
+          {
+            "at": "0.40",
+            "event": "the built lines"
+          },
+          {
+            "at": "0.70",
+            "event": "the limits"
+          },
+          {
+            "at": "0.90",
+            "event": "the open rows hold"
+          }
+        ],
+        "remotion": {
+          "pattern": "ClaudeVerdictArtifact",
+          "props": {
+            "title": "What holds, and what does not",
+            "artifactLines": [
+              "Two clips as resource text, never built at runtime.",
+              "TWO AnimationPlayers, partitioned BY NODE, asserted both ways.",
+              "Hitbox window on the clip's timeline: 0.200 to 0.3333.",
+              "Clocks measured in both modes. Disagreement: 0 s.",
+              "280 checks, 7 mutations, 0 failures.",
+              "LIMIT: the hitbox can hit nothing. No enemy in this room.",
+              "LIMIT: the cycle alternates. It does not stride.",
+              "OPEN: 3 of 9 HUMAN rows. Listed as open."
+            ],
+            "brandLabel": "@NikBearBrown",
+            "verdictLabel": "Assignment 7 - The Lost",
+            "durationSeconds": 49.0
+          }
+        }
+      }
+    },
+    {
+      "beat_id": "B16",
+      "act": "TURN",
+      "role_note": "WALKER BOOKEND 4/4 - Your Turn. One bounded change a viewer can make in their own project, with the check that would catch it.",
+      "narration_text": "Your turn, and make it small. Go and find one sentence in your own design notes that says a thing is impossible, or that some feature would require some big piece of machinery. Then check it. Not rewrite it - check it. The sentence that cost this project a day said that showing two things at once needs an animation tree, and it was written into a design document as a reason, accepted, and quoted back as settled. It was never measured. A limitation accepted on an unexamined claim looks exactly like a measurement once it is in a table.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 28.3,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "type-on",
+        "show": [
+          {
+            "at": "0.05",
+            "event": "the turn card opens"
+          },
+          {
+            "at": "0.40",
+            "event": "the bounded change types on"
+          },
+          {
+            "at": "0.84",
+            "event": "the running line holds"
+          }
+        ],
+        "remotion": {
+          "pattern": "ClaudeComposerAsk",
+          "props": {
+            "greeting": "Your turn",
+            "topic": "WALKER - GODOT ANIMATION TEARDOWN",
+            "segment": "One bounded change",
+            "command": "Find one sentence in your own notes that says something is impossible or needs a big piece of machinery. Check it against the engine rather than against the sentence. Write down what you measured, including if the sentence was right.",
+            "runningText": "A limitation accepted on an unexamined claim looks like a measurement",
+            "modelLabel": "Claude Opus 5",
+            "effortLabel": "High",
+            "durationSeconds": 28.3
+          }
+        }
+      }
+    },
+    {
+      "beat_id": "B17",
+      "act": "OUTRO",
+      "role_note": "LOCKED ClaudeTitleOutro. Exact title, @NikBearBrown, no narration over it - OUTRO-LOCK.md.",
+      "narration_text": "",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "audio_policy": "silence",
+      "estimated_duration_s": 5,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "hold",
+        "show": [
+          {
+            "at": "0.10",
+            "event": "the locked outro card holds"
+          }
+        ],
+        "remotion": {
+          "pattern": "ClaudeTitleOutro",
+          "props": {
+            "title": "TheLostAnimation_TiantongZhang",
+            "channel": "@NikBearBrown",
+            "durationSeconds": 5.0
+          }
+        }
+      }
+    }
+  ]
+}

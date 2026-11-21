@@ -1,0 +1,23 @@
+PASS  the baseline swing never leaves the floor, so the comparison below is not trivially true
+PASS  jump in startup LEAVES THE FLOOR   [off_floor=true vy<0=true]
+PASS  the playhead is IDENTICAL to the un-jumped swing for all 36 frames (jump in startup)   [worst disagreement 0.000000 s]
+PASS  the active window opens and closes on the same frames (jump in startup)
+PASS  the lock is on for the same frames (jump in startup)
+PASS  `swing` is still the clip while airborne -- is_locked() outranks rising/falling (jump in startup)
+PASS  the jump started NO new swing (jump in startup)   [swing_count +1]
+PASS  the jumped swing still ends on its own clock, not on the landing (jump in startup)   [0 extra frames past frame 36]
+PASS  jump in the active window LEAVES THE FLOOR   [off_floor=true vy<0=true]
+PASS  the playhead is IDENTICAL to the un-jumped swing for all 36 frames (jump in the active window)   [worst disagreement 0.000000 s]
+PASS  the active window opens and closes on the same frames (jump in the active window)
+PASS  the lock is on for the same frames (jump in the active window)
+PASS  `swing` is still the clip while airborne -- is_locked() outranks rising/falling (jump in the active window)
+PASS  the jump started NO new swing (jump in the active window)   [swing_count +1]
+PASS  the jumped swing still ends on its own clock, not on the landing (jump in the active window)   [0 extra frames past frame 36]
+PASS  jump in recovery LEAVES THE FLOOR   [off_floor=true vy<0=true]
+PASS  the playhead is IDENTICAL to the un-jumped swing for all 36 frames (jump in recovery)   [worst disagreement 0.000000 s]
+PASS  the active window opens and closes on the same frames (jump in recovery)
+PASS  the lock is on for the same frames (jump in recovery)
+PASS  `swing` is still the clip while airborne -- is_locked() outranks rising/falling (jump in recovery)
+PASS  the jump started NO new swing (jump in recovery)   [swing_count +1]
+PASS  the jumped swing still ends on its own clock, not on the landing (jump in recovery)   [0 extra frames past frame 36]
+60 checks, 0 failures
