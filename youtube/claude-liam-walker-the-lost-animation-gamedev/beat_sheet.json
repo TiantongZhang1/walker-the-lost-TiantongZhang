@@ -68,10 +68,12 @@
             "runningText": "RECONSTRUCTION - this prompt was never sent",
             "modelLabel": "Claude Opus 5",
             "effortLabel": "High",
-            "durationSeconds": 23.2
+            "durationSeconds": 21.87
           }
         }
-      }
+      },
+      "actual_duration_s": 21.87,
+      "audio_file": "mp3/beat-B00.mp3"
     },
     {
       "beat_id": "B01",
@@ -127,10 +129,12 @@
                 "detail": "7 failures named in the brief before any code."
               }
             ],
-            "durationSeconds": 30.9
+            "durationSeconds": 30.99
           }
         }
-      }
+      },
+      "actual_duration_s": 30.99,
+      "audio_file": "mp3/beat-B01.mp3"
     },
     {
       "beat_id": "B02",
@@ -165,9 +169,9 @@
             "mode": "code",
             "title": "The cycle, and why it is 0.500 s",
             "project": "walker-the-lost-TiantongZhang",
-            "path": "godot/animations/legs.tres  lines 24-38",
+            "path": "godot/animations/legs.tres  lines 24-36",
             "source": "godot/animations/legs.tres",
-            "code": "length = 0.5\nloop_mode = 1\nstep = 0.125\ntracks/0/type = \"value\"\ntracks/0/imported = false\ntracks/0/enabled = true\ntracks/0/path = NodePath(\"Rig/LegFront:rotation_degrees\")\ntracks/0/interp = 1\ntracks/0/loop_wrap = true\ntracks/0/keys = {\n\"times\": PackedFloat32Array(0, 0.125, 0.25, 0.375, 0.5),\n\"transitions\": PackedFloat32Array(1, 1, 1, 1, 1),\n\"update\": 0,\n\"values\": [38.0, 12.0, -14.0, 12.0, 38.0]\n}",
+            "code": "length = 0.5\nloop_mode = 1\nstep = 0.125\ntracks/0/type = \"value\"\ntracks/0/imported = false\ntracks/0/enabled = true\ntracks/0/path = NodePath(\"Rig/LegFront:rotation_degrees\")\ntracks/0/interp = 1\ntracks/0/loop_wrap = true\ntracks/0/keys = {\n\"times\": PackedFloat32Array(0, 0.125, 0.25, 0.375, 0.5),\n\"transitions\": PackedFloat32Array(1, 1, 1, 1, 1),\n\"update\": 0,",
             "startLine": 24,
             "codeFontSize": 24,
             "inspectorLabel": "Source notes - not Inspector values",
@@ -177,31 +181,37 @@
                 "value": "2 x stride_px / SPEED = 48 / 96. Retime it and this arithmetic changes first, not the keys."
               },
               {
-                "label": "Why loop_mode = 1",
-                "value": "LOOP_LINEAR. Godot 3's boolean `loop` loads without complaint and plays the cycle once."
+                "label": "The two legs",
+                "value": "front 38 12 -14 12 38. Back: the same five reversed, so front + back is 24 on EVERY key."
               }
             ],
             "cues": [
               {
-                "at": 5.72,
+                "at": 5.64,
                 "line": 24,
                 "label": "derived from the stride, not chosen"
               },
               {
-                "at": 22.88,
+                "at": 22.56,
                 "line": 26,
                 "label": "a quarter cycle: four landmarks"
               },
               {
-                "at": 41.18,
-                "line": 37,
-                "label": "front; back is these five reversed"
+                "at": 40.62,
+                "line": 34,
+                "label": "contact, pass, contact, pass, contact"
               }
             ],
-            "durationSeconds": 57.2
+            "durationSeconds": 56.41
+          },
+          "rendered": {
+            "out": "media/B02.mp4",
+            "at": "2026-11-21T20:26:27.294367+00:00"
           }
         }
-      }
+      },
+      "actual_duration_s": 56.41,
+      "audio_file": "mp3/beat-B02.mp3"
     },
     {
       "beat_id": "B03",
@@ -220,7 +230,7 @@
         "evidence_media": "capture/take-c.mp4",
         "window_s": [
           0.6,
-          7.7
+          7.58
         ],
         "show": [
           {
@@ -236,16 +246,18 @@
             "event": "the turn - the same gait, mirrored"
           }
         ]
-      }
+      },
+      "actual_duration_s": 6.98,
+      "audio_file": "mp3/beat-B03.mp3"
     },
     {
       "beat_id": "B04",
       "act": "BUILD",
       "role_note": "C2 CODE. The hitbox window is a track, not a timer. Paired with B05.",
-      "narration_text": "Now the clip that commits. Eighteen frames at thirty, nought point six seconds, and it does not loop. The track on screen is the interesting one, and it is not a drawing. It is the hitbox. Monitoring goes true at nought point two and false at nought point three three three, which makes the sword dangerous for exactly four frames out of eighteen - and the strike itself, frame six to frame ten, is a hundred and fifty degrees in a hundred and thirty three milliseconds, five times the speed of the wind-up. That difference is the whole reason it reads as a strike rather than a gesture. Two things about the track. Update equals one - discrete - so the value cuts rather than interpolating, which for a boolean is the difference between a hitbox and a dimmer switch. And it is on the clip's own timeline rather than in a timer somewhere, which is the point the course notes make in so many words: a gameplay fact like the hitbox is live should not depend on a tween that can be killed halfway. The window is narrower than the spike trap's own lethal window on purpose. You cannot trade with a trap.",
+      "narration_text": "Now the clip that commits. Eighteen frames at thirty, nought point six seconds, and it does not loop. The track on screen is the interesting one, and it is not a drawing. It is the hitbox. Monitoring goes true at nought point two and false at nought point three three three, which makes the sword dangerous for exactly four frames out of eighteen - and the strike itself, frame six to frame ten, is a hundred and fifty degrees in a hundred and thirty three milliseconds. Eleven hundred degrees a second. That is twice the average speed of the wind-up and seven times the speed the arm has slowed to in the two frames just before it fires - the arm very nearly stops before it goes, and that is the whole reason this reads as a strike rather than a gesture. Two things about the track. Update equals one - discrete - so the value cuts rather than interpolating, which for a boolean is the difference between a hitbox and a dimmer switch. And it is on the clip's own timeline rather than in a timer somewhere, which is the point the course notes make in so many words: a gameplay fact like the hitbox is live should not depend on a tween that can be killed halfway. The window is narrower than the spike trap's own lethal window on purpose. You cannot trade with a trap.",
       "voice": "am_onyx",
       "engine": "kokoro",
-      "estimated_duration_s": 57.7,
+      "estimated_duration_s": 67.4,
       "shot": {
         "type": "GRAPHIC",
         "class": "SHOW",
@@ -289,34 +301,36 @@
             ],
             "cues": [
               {
-                "at": 8.08,
+                "at": 8.53,
                 "line": 113,
                 "label": "a gameplay fact, keyed"
               },
               {
-                "at": 26.54,
+                "at": 28.04,
                 "line": 117,
                 "label": "opens 0.200, closes 0.3333"
               },
               {
-                "at": 43.85,
+                "at": 46.33,
                 "line": 119,
                 "label": "discrete: it cuts, it does not blend"
               }
             ],
-            "durationSeconds": 57.7
+            "durationSeconds": 60.96
           }
         }
-      }
+      },
+      "actual_duration_s": 60.96,
+      "audio_file": "mp3/beat-B04.mp3"
     },
     {
       "beat_id": "B05",
       "act": "RESULT",
       "role_note": "C2 RESULT. take-s, PLAYED: four fresh swings with a half-second gap, so none of them is a buffered second attack. The take asserts the window opened exactly four times and every clip ran its own 36 physics frames.",
-      "narration_text": "Four swings. Startup, strike, recovery - and the strike is five times the speed of the wind-up.",
+      "narration_text": "Four swings, four fresh presses - nothing buffered. Startup, strike, recovery.",
       "voice": "am_onyx",
       "engine": "kokoro",
-      "estimated_duration_s": 4.8,
+      "estimated_duration_s": 3.1,
       "shot": {
         "type": "FOOTAGE",
         "class": "SHOW",
@@ -325,8 +339,8 @@
         "capture": "take-s",
         "evidence_media": "capture/take-s.mp4",
         "window_s": [
-          0.45,
-          5.25
+          0.4,
+          5.5
         ],
         "show": [
           {
@@ -342,7 +356,9 @@
             "event": "recovery, and the blade sheathes"
           }
         ]
-      }
+      },
+      "actual_duration_s": 5.1,
+      "audio_file": "mp3/beat-B05.mp3"
     },
     {
       "beat_id": "B06",
@@ -377,30 +393,25 @@
             "mode": "code",
             "title": "One authority - asserted as a partition",
             "project": "walker-the-lost-TiantongZhang",
-            "path": "godot/tests/test_player_clips.gd  lines 217-230",
+            "path": "godot/tests/test_player_clips.gd  lines 220-230",
             "source": "godot/tests/test_player_clips.gd",
-            "code": "\t_check(\"NO node is written by both players -- the authority is a \"\n\t\t+ \"partition, not a preference\", overlap.is_empty(),\n\t\t\"both write: \" + \", \".join(overlap))\n\tvar stray: Array[String] = []\n\tfor n in leg_nodes:\n\t\tif not str(n).begins_with(\"Rig/Leg\"):\n\t\t\tstray.append(str(n))\n\t_check(\"LegAnim writes ONLY the two legs\", stray.is_empty(),\n\t\t\", \".join(stray))\n\tvar body_legs: Array[String] = []\n\tfor n in body_nodes:\n\t\tif str(n).begins_with(\"Rig/Leg\"):\n\t\t\tbody_legs.append(str(n))\n\t_check(\"and AnimationPlayer writes NO leg\", body_legs.is_empty(),",
-            "startLine": 217,
+            "code": "\tvar stray: Array[String] = []\n\tfor n in leg_nodes:\n\t\tif not str(n).begins_with(\"Rig/Leg\"):\n\t\t\tstray.append(str(n))\n\t_check(\"LegAnim writes ONLY the two legs\", stray.is_empty(),\n\t\t\", \".join(stray))\n\tvar body_legs: Array[String] = []\n\tfor n in body_nodes:\n\t\tif str(n).begins_with(\"Rig/Leg\"):\n\t\t\tbody_legs.append(str(n))\n\t_check(\"and AnimationPlayer writes NO leg\", body_legs.is_empty(),",
+            "startLine": 220,
             "codeFontSize": 24,
             "inspectorLabel": "Source notes - not Inspector values",
             "notes": [
               {
-                "label": "Why both directions",
-                "value": "\"LegAnim writes the legs\" is true in a scene where BOTH players write them. That is the failure."
+                "label": "The third check, line 217",
+                "value": "No node is written by BOTH players. It is above this excerpt and it is the one that fails first."
               },
               {
-                "label": "Why no AnimationTree",
-                "value": "Nothing blends. One clip per player, two players, disjoint node sets."
+                "label": "Why both directions",
+                "value": "\"LegAnim writes the legs\" is true in a scene where BOTH players write them. That is the failure."
               }
             ],
             "cues": [
               {
-                "at": 15.27,
-                "line": 217,
-                "label": "no node is on both lists"
-              },
-              {
-                "at": 29.52,
+                "at": 27.13,
                 "line": 224,
                 "label": "every leg track is on LegAnim"
               },
@@ -410,10 +421,12 @@
                 "label": "and NO leg track is on the other"
               }
             ],
-            "durationSeconds": 50.9
+            "durationSeconds": 52.17
           }
         }
-      }
+      },
+      "actual_duration_s": 52.17,
+      "audio_file": "mp3/beat-B06.mp3"
     },
     {
       "beat_id": "B07",
@@ -446,7 +459,9 @@
             "event": "the mutation, and what it turns red"
           }
         ]
-      }
+      },
+      "actual_duration_s": 13.82,
+      "audio_file": "mp3/beat-B07.mp3"
     },
     {
       "beat_id": "B08",
@@ -499,20 +514,22 @@
             ],
             "cues": [
               {
-                "at": 20.33,
+                "at": 21.93,
                 "line": 132,
                 "label": "the claim that survived"
               },
               {
-                "at": 33.88,
+                "at": 36.55,
                 "line": 136,
                 "label": "and the one that did not"
               }
             ],
-            "durationSeconds": 48.4
+            "durationSeconds": 52.21
           }
         }
-      }
+      },
+      "actual_duration_s": 52.21,
+      "audio_file": "mp3/beat-B08.mp3"
     },
     {
       "beat_id": "B09",
@@ -545,7 +562,9 @@
             "event": "what the run cannot see"
           }
         ]
-      }
+      },
+      "actual_duration_s": 20.03,
+      "audio_file": "mp3/beat-B09.mp3"
     },
     {
       "beat_id": "B10",
@@ -598,20 +617,22 @@
             ],
             "cues": [
               {
-                "at": 7.17,
+                "at": 6.99,
                 "line": 115,
                 "label": "the only gate left"
               },
               {
-                "at": 18.26,
+                "at": 17.8,
                 "line": 116,
                 "label": "one field written, and nothing else"
               }
             ],
-            "durationSeconds": 32.6
+            "durationSeconds": 31.78
           }
         }
-      }
+      },
+      "actual_duration_s": 31.78,
+      "audio_file": "mp3/beat-B10.mp3"
     },
     {
       "beat_id": "B11",
@@ -630,7 +651,7 @@
         "evidence_media": "capture/take-m.mp4",
         "window_s": [
           0.5,
-          7.6
+          7.58
         ],
         "show": [
           {
@@ -646,7 +667,9 @@
             "event": "and one jumped out of"
           }
         ]
-      }
+      },
+      "actual_duration_s": 7.08,
+      "audio_file": "mp3/beat-B11.mp3"
     },
     {
       "beat_id": "B12",
@@ -699,20 +722,22 @@
             ],
             "cues": [
               {
-                "at": 12.21,
+                "at": 10.96,
                 "line": 428,
                 "label": "every frame of both runs"
               },
               {
-                "at": 27.03,
+                "at": 24.28,
                 "line": 436,
                 "label": "the claim, as a measurement"
               }
             ],
-            "durationSeconds": 43.6
+            "durationSeconds": 39.16
           }
         }
-      }
+      },
+      "actual_duration_s": 39.16,
+      "audio_file": "mp3/beat-B12.mp3"
     },
     {
       "beat_id": "B13",
@@ -745,7 +770,9 @@
             "event": "the blind spot, named"
           }
         ]
-      }
+      },
+      "actual_duration_s": 27.32,
+      "audio_file": "mp3/beat-B13.mp3"
     },
     {
       "beat_id": "B14",
@@ -778,7 +805,9 @@
             "event": "and what headless could have seen"
           }
         ]
-      }
+      },
+      "actual_duration_s": 59.51,
+      "audio_file": "mp3/beat-B14.mp3"
     },
     {
       "beat_id": "B15",
@@ -827,10 +856,12 @@
             ],
             "brandLabel": "@NikBearBrown",
             "verdictLabel": "Assignment 7 - The Lost",
-            "durationSeconds": 49.0
+            "durationSeconds": 50.53
           }
         }
-      }
+      },
+      "actual_duration_s": 50.53,
+      "audio_file": "mp3/beat-B15.mp3"
     },
     {
       "beat_id": "B16",
@@ -869,10 +900,12 @@
             "runningText": "A limitation accepted on an unexamined claim looks like a measurement",
             "modelLabel": "Claude Opus 5",
             "effortLabel": "High",
-            "durationSeconds": 28.3
+            "durationSeconds": 29.39
           }
         }
-      }
+      },
+      "actual_duration_s": 29.39,
+      "audio_file": "mp3/beat-B16.mp3"
     },
     {
       "beat_id": "B17",
@@ -902,7 +935,8 @@
             "durationSeconds": 5.0
           }
         }
-      }
+      },
+      "actual_duration_s": 5.0
     }
   ]
 }

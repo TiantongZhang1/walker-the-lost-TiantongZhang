@@ -133,3 +133,28 @@ Also outside: Godot **4.7.2.stable.official** and Blender **5.2.2 LTS**, both
 beside this repository in the course folder. `run-game.bat` finds Godot by a
 path relative to itself, so moving the whole course folder is fine and
 separating this repository from the Godot download is not.
+
+---
+
+## Assignment 7's film chain
+
+| Script | What it does | Status |
+|---|---|---|
+| `godot/tests/capture_animation.gd` | three takes, each asserting its own outcome before a frame counts | **Keep** |
+| `scripts/build_animation_beat_sheet.py` | the beat sheet. Run it **twice, not three times** | **Keep** |
+| `scripts/compose_animation_evidence.py` | the four evidence cards and `evidence/a7/*.txt` | **Keep** |
+| `scripts/frame_animation_footage.py` | crops and frames the three gameplay beats, at integer scale only | **Keep** |
+| `scripts/build_animation_ledger.py` | `gamedev-evidence.json` | **Keep** |
+
+Two carried-over scripts were **fixed** rather than carried:
+
+- `scripts/encode_captures.py` had a hard-coded tuple of take letters and
+  silently skipped two of this film's three takes. It discovers takes from the
+  render root now, with `--takes` to override.
+- `scripts/render_takes.py` gained a third per-driver `--quit-after` table.
+  The letter `c` now means a different take in each of three tables, which is
+  why they are keyed by driver path and not merged.
+
+`scripts/finalise_beat_timing.py` and `scripts/fit_beat_panels.py` remain
+**Reshape** and must not be run: both `chdir` into
+`walker-ninja-TiantongZhang`.

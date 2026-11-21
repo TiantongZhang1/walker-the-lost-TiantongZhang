@@ -827,9 +827,23 @@ when it becomes visible.)*
 
 **Visible travel 223°, all clockwise, no reversal. The 268° return is
 sheathed.** The strike itself — frame 6 to frame 10, −50° to +100° — is
-**150° in 0.133 s, 1127°/s**, five times the speed of the wind-up. The active
-window is the fastest thing on the timeline, which is what makes it read as a
-strike rather than as a gesture.
+**150° in 0.133 s, 1125°/s**. The active window is the fastest thing on the
+timeline, which is what makes it read as a strike rather than as a gesture.
+
+> **Corrected 2026-11-21, while fact-checking the film.** This paragraph said
+> *"five times the speed of the wind-up"*. It is not. The wind-up as a whole
+> is −150° to −50° over 0.200 s = **500°/s**, so the strike is **2.25×** it.
+> "Five times" came from comparing against only the wind-up's *first* segment,
+> 675°/s, and rounding up. The comparison worth making is against its
+> **slowest** segment — the 10° it creeps through in the two frames before the
+> window opens, 150°/s — which the strike is **7.5×**. The arm nearly stops
+> before it goes.
+>
+> **It was repeated into the film's narration out of this paragraph**, rather
+> than recomputed, and writing `FACTCHECK.md`'s row for it is what found it.
+> It is the eleventh entry in `TEST-REPORT.md`'s running list of sentences in
+> this repository that outlived the facts they stated. The narration says the
+> two true ratios now.
 
 `Rig/SwordArm/Blade:visible`, discrete: `0.0000 → false`, **`0.0667 → true`**,
 **`0.4333 → false`**. `RESET` and every held clip key it `false`.

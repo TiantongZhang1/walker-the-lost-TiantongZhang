@@ -261,6 +261,29 @@ and the captures are in `captures/a5/`.
 
 ## The film
 
+`youtube/claude-liam-walker-the-lost-animation-gamedev/` —
+**TheLostAnimation_TiantongZhang.mp4**, 3840 × 2160, 30 fps, 18 beats.
+Six code-then-result pairs: every code panel is followed by the thing those
+lines produce, and no beat shows both at once. Three beats are engine footage
+from three 4K Movie Maker takes, **all three of them PLAYED** — held keys
+through the real input map, nothing teleported, no clip seeked — and each
+asserted its own outcome before a frame of it counted. Four are evidence cards
+whose every figure is recomputed at build time from the committed resources,
+take logs and recorded runs. Its evidence ledger passes the course checker —
+72 source files, 64 exclusions, 6 components.
+
+**What it is about is not animation.** Ten tuning revisions, nine of them
+reported by the author playing the game, **none of them started by a test that
+had been passing and started failing** — and three of those nine were facts
+sitting in committed data that a read-back could have printed before the game
+was ever launched. A read-back only sees the questions it was written to ask.
+
+The link, the exact length and the SHA-256 are in `SUBMISSION.md`, which is
+the one place they are recorded so they cannot disagree. Rebuild it with that
+reel's `BUILD-PROMPT.md`, which includes the two carried-over scripts that
+must **not** be run.
+
+**Assignment 6's film is still here and still builds:**
 `youtube/claude-liam-walker-the-lost-particles-gamedev/` —
 **TheLostParticles_TiantongZhang.mp4**, 3840 × 2160, 30 fps, 20 beats,
 **10:19.00**.
@@ -275,7 +298,7 @@ The link, the exact length and the SHA-256 are in `SUBMISSION.md`, which is
 the one place they are recorded so they cannot disagree. Rebuild it with that
 reel's `BUILD-PROMPT.md`.
 
-**Assignment 5's film is still here and still builds:**
+**Assignment 5's film is also still here:**
 `youtube/claude-liam-walker-the-lost-gamedev/` —
 **TheLostShaders_TiantongZhang.mp4**, 3840 × 2160, 30 fps, 18 beats. Six
 code-then-result pairs: every code panel is followed by the thing those lines

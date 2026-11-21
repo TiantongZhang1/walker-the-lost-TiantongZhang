@@ -184,7 +184,9 @@ Same split. Every file below is Claude Code's work under my review.
 | `tools/build_anim_strips.py` | composes the frame strips **and measures** the per-frame pixel change |
 | `godot/previews/swing_preview.tscn`, `run_preview.tscn`, `swing_move_preview.tscn`, `.gd` | the three fixtures the strips are captured from. The third holds a direction through the swing, which is the only way to capture the thing revision 7.0.9 fixes |
 | `godot/animations/legs.tres` | the leg clips, on their own `AnimationPlayer`. Revision 7.0.9 |
-| `CHANGE-BRIEF.md` revisions 7.0.1–7.0.8, `TUNING.md`'s A7 entries, `TEST-REPORT.md`'s A7 section | drafted by Claude; **every `TUNING.md` verdict and every prediction is mine**, quoted verbatim in the Chinese they were said in |
+| `godot/tests/capture_animation.gd` | the film's capture driver. Three takes, **all PLAYED**, each asserting its own outcome before a frame of it counts |
+| `scripts/build_animation_beat_sheet.py`, `compose_animation_evidence.py`, `frame_animation_footage.py`, `build_animation_ledger.py` | Assignment 7's film chain. Every code panel is read from the file at build time and re-read by the ledger |
+| `CHANGE-BRIEF.md` revisions 7.0.1–7.0.10, `TUNING.md`'s A7 entries, `TEST-REPORT.md`'s A7 section | drafted by Claude; **every `TUNING.md` verdict and every prediction is mine**, quoted verbatim in the Chinese they were said in |
 
 **The sheet is CUT, not drawn.** `tools/make_sprites.py` gained a cutter
 that slices `p2-run` into a torso and two legs and **asserts the cut is
@@ -194,6 +196,30 @@ sheet *was* drawn by code, in the existing 16 × 28 silhouette style, and I
 rejected it on sight; it is in history at `d303899` so the comparison is
 checkable rather than asserted. `CHANGE-BRIEF.md` revision 7.0.1 is that
 reversal.
+
+## 7c. Assignment 7's film
+
+`youtube/claude-liam-walker-the-lost-animation-gamedev/`. Drafted by Claude
+under my review, at game-source revision **`b33b06c`**. Its own `SOURCES.md`
+is the full record; what matters here is the division:
+
+| | |
+|---|---|
+| **Mine** | every verdict quoted in it, the ten revision requests it is built around, and the decision to make the film's subject the tuning loop rather than the clips |
+| **Claude's** | the narration, the beat sheet, the four evidence cards, the capture driver, the three framing cards, the ledger, and all seven of the reel's documents |
+| **Audited, by Claude, in `FACTCHECK.md`** | every factual claim the narration makes, marked MEASURED, READ or REASONING |
+
+**One figure in the narration was wrong and was corrected before the film
+shipped.** The strike's speed was given as *"five times the wind-up"*; it is
+2.25× the wind-up's average and 7.5× its slowest segment. The figure had been
+copied out of `CHANGE-BRIEF.md` revision 7.0.2 §4 rather than recomputed, and
+writing the `FACTCHECK.md` row for it is what found it. Both the film and the
+brief carry the correction. It is the eleventh entry in `TEST-REPORT.md`'s
+running list of sentences that outlived the facts they stated.
+
+**The film's audit is written by the same person who wrote its narration**,
+and `FACTCHECK.md` says so in its own closing section. That is worth knowing
+while reading it.
 
 **One thing in the sheet is drawn rather than cut: the sword.** `sword()` in
 `tools/make_sprites.py` draws a 3 × 20 blade in **two greys that are already

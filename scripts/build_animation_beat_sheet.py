@@ -295,14 +295,17 @@ def beats():
         "came within two degrees of each other and read as two legs wobbling.",
         58,
         "The cycle, and why it is 0.500 s",
-        "godot/animations/legs.tres", 24, 38,
+        # 24-36 is THIRTEEN rows, which is what this panel holds. The first
+        # cut was 24-38 and the pilot render clipped the last two -- see
+        # BUILD-PROMPT.md. Overflowing is silent.
+        "godot/animations/legs.tres", 24, 36,
         [{"label": "Why 0.500 s",
           "value": "2 x stride_px / SPEED = 48 / 96. Retime it and this arithmetic changes first, not the keys."},
-         {"label": "Why loop_mode = 1",
-          "value": "LOOP_LINEAR. Godot 3's boolean `loop` loads without complaint and plays the cycle once."}],
+         {"label": "The two legs",
+          "value": "front 38 12 -14 12 38. Back: the same five reversed, so front + back is 24 on EVERY key."}],
         [{"at": 0.10, "line": 24, "label": "derived from the stride, not chosen"},
          {"at": 0.40, "line": 26, "label": "a quarter cycle: four landmarks"},
-         {"at": 0.72, "line": 37, "label": "front; back is these five reversed"}]))
+         {"at": 0.72, "line": 34, "label": "contact, pass, contact, pass, contact"}]))
 
     out.append(footage(
         "B03", "RESULT",
@@ -328,9 +331,12 @@ def beats():
         "three three three, which makes the sword dangerous for exactly four "
         "frames out of eighteen - and the strike itself, frame six to frame "
         "ten, is a hundred and fifty degrees in a hundred and thirty three "
-        "milliseconds, five times the speed of the wind-up. That difference "
-        "is the whole reason it reads as a strike rather than a gesture. Two "
-        "things about the track. Update equals one - "
+        "milliseconds. Eleven hundred degrees a second. That is twice the "
+        "average speed of the wind-up and seven times the speed the arm has "
+        "slowed to in the two frames just before it fires - the arm very "
+        "nearly stops before it goes, and that is the whole reason this "
+        "reads as a strike rather than a gesture. Two things about the "
+        "track. Update equals one - "
         "discrete - so the value cuts rather than interpolating, which for a "
         "boolean is the difference between a hitbox and a dimmer switch. And "
         "it is on the clip's own timeline rather than in a timer somewhere, "
@@ -355,9 +361,13 @@ def beats():
         "so none of them is a buffered second attack. The take asserts the "
         "window opened exactly four times and every clip ran its own 36 "
         "physics frames.",
-        "Four swings. Startup, strike, recovery - and the strike is five "
-        "times the speed of the wind-up.",
-        5, "s", [0.45, 5.50],
+        "Four swings, four fresh presses - nothing buffered. Startup, "
+        "strike, recovery.",
+        # The window is the whole take bar the first 0.40 s, in which the
+        # player is still falling onto the floor. 11 short sentences measured
+        # 5.10 s -- 2.2 words/s, well under the 3.53 average, because full
+        # stops get pauses. The window is sized to the MEASURED length.
+        5, "s", [0.40, 5.50],
         [{"at": 0.08, "event": "the wind-up, blade drawn back"},
          {"at": 0.34, "event": "the strike - the fastest thing on the timeline"},
          {"at": 0.66, "event": "recovery, and the blade sheathes"}]))
@@ -384,14 +394,17 @@ def beats():
         "players write the legs satisfies the easy version perfectly.",
         60,
         "One authority - asserted as a partition",
-        "godot/tests/test_player_clips.gd", 217, 230,
-        [{"label": "Why both directions",
-          "value": "\"LegAnim writes the legs\" is true in a scene where BOTH players write them. That is the failure."},
-         {"label": "Why no AnimationTree",
-          "value": "Nothing blends. One clip per player, two players, disjoint node sets."}],
-        [{"at": 0.30, "line": 217, "label": "no node is on both lists"},
-         {"at": 0.58, "line": 224, "label": "every leg track is on LegAnim"},
-         {"at": 0.82, "line": 230, "label": "and NO leg track is on the other"}]))
+        # The three checks span 14 source lines and the panel holds 13, so
+        # the two DIRECTIONS are shown and the third is named in a note with
+        # its line number. A cue pointing at a line below the panel is the
+        # failure BUILD-PROMPT.md describes, and it is silent.
+        "godot/tests/test_player_clips.gd", 220, 230,
+        [{"label": "The third check, line 217",
+          "value": "No node is written by BOTH players. It is above this excerpt and it is the one that fails first."},
+         {"label": "Why both directions",
+          "value": "\"LegAnim writes the legs\" is true in a scene where BOTH players write them. That is the failure."}],
+        [{"at": 0.52, "line": 224, "label": "every leg track is on LegAnim"},
+         {"at": 0.80, "line": 230, "label": "and NO leg track is on the other"}]))
 
     out.append(still(
         "B07", "RESULT",

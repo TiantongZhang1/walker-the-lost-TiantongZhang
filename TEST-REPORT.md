@@ -1974,7 +1974,7 @@ by being looked at.
 
 ---
 
-## Nine sentences that outlived the facts they stated
+## Eleven sentences that outlived the facts they stated
 
 Each was true when written and false afterwards, and each was found by
 something other than a test:
@@ -2020,8 +2020,32 @@ within the cells after the author had answered it. A list of open questions
 is a sentence like any other, it goes stale the same way, and **nothing in
 this repository reads one.**
 
-The count is nine and **none of the nine was found by a test**, which is the
-one sentence in this report that has not needed correcting.
+**The tenth and eleventh both came from building the film**, which is worth
+noticing: the film's job is to explain what was built, and explaining it is
+what found them.
+
+**Ten.** `scripts/encode_captures.py` carried a hard-coded tuple of take
+letters — `a b c d p r t w`, the union of four earlier films' takes.
+Assignment 7's takes are `c`, `s` and `m`. It encoded `c`, printed "no frames"
+for seven letters nobody had asked about, and **silently did not encode `s` or
+`m` at all.** The exit code was right; the output was noise, so the two
+missing takes were easy to miss. It discovers takes from the render root now.
+*This is the same sentence as number one in the list above, in a different
+file, four weeks later.*
+
+**Eleven.** The film's narration said the sword's strike was *"five times the
+speed of the wind-up"*. It is 2.25 times the wind-up's average and 7.5 times
+its slowest segment; "five" came from comparing against only the wind-up's
+first segment and rounding. **The figure was not computed for the film — it
+was copied out of `CHANGE-BRIEF.md` revision 7.0.2 §4**, which had been
+carrying it since 2026-11-18. Writing `FACTCHECK.md`'s row for it is what
+found it, which is the entire argument for writing a FACTCHECK: the file
+exists to make someone recompute every number instead of trusting the
+document it came from. The narration and the brief both say the two true
+ratios now.
+
+The count is eleven and **none of the eleven was found by a test**, which is
+the one sentence in this report that has not needed correcting.
 
 ---
 

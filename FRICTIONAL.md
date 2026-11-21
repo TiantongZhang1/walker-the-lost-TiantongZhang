@@ -1096,3 +1096,53 @@ the physics tick, so every run is identical and the jitter §8 also predicted
 is **not** established. **Running a deterministic measurement three times is
 one measurement printed three times**, and I would rather that sentence be in
 the output than have a reader count three identical numbers as replication.
+
+---
+
+## 2026-11-21 — making the film is what audited the film
+
+The film for this assignment was supposed to be the last step. It turned out
+to be an instrument, and it found three things.
+
+**One.** A script that has encoded every take of every film in this repository
+since Assignment 1 carried a hard-coded list of take letters. This
+assignment's takes are `c`, `s` and `m`. It encoded `c`, complained about
+seven letters nobody had asked for, and **silently did not encode the other
+two.** That is the same fault as the very first entry in this repository's
+list of sentences that outlived their facts — a hard-coded count in
+`test_input_map.gd` — in a different file, four weeks later. I do not think
+the lesson is "stop hard-coding lists". I think it is that a list typed once
+and consulted forever is a *claim about the world*, and claims need something
+that re-derives them.
+
+**Two.** Two of the three takes were `.gitignore`d, and the third was not —
+by luck, because Assignment 6's take `c` shares the letter. Everything looked
+right: the files were there, `git status` was clean, the ledger hashed them.
+A fresh clone of the tag would have been able to verify nothing. That exact
+failure already happened once, on 2026-10-28, with `take-w.mp4`, and the
+`.gitignore` carries a paragraph about it. **The paragraph did not stop it
+happening again**, because the paragraph was about a file and the problem is
+about a pattern. What stopped it was running `git check-ignore -v` over every
+file the ledger would hash, before the first commit.
+
+**Three, and this is the one I want to keep.** The narration said the sword's
+strike was *five times the speed of the wind-up*. It is 2.25 times. The
+number came out of `CHANGE-BRIEF.md` revision 7.0.2 §4, which has been
+carrying it since 2026-11-18, where it was computed against only the wind-up's
+first segment and rounded up.
+
+**Nothing would have caught it.** The ledger checks that the code on a panel
+matches the file; it does not check arithmetic in a sentence. The test suite
+has no opinion about the narration. The only thing that found it was writing
+the row in `FACTCHECK.md` that says *what establishes this claim* — because
+to write that row you have to go and compute the number, and computing it is
+when you find out.
+
+That is the whole case for a FACTCHECK file, and I had been treating it as
+paperwork. It is not paperwork. **It is the only instrument in this
+repository that is pointed at the sentences rather than at the code**, and it
+is the eleventh time a sentence here has outlived the fact it stated.
+
+The film's thesis is that a read-back only sees the questions it was written
+to ask. Building the film produced three more questions nobody had been
+asking, which I suppose is the thesis being true about itself.

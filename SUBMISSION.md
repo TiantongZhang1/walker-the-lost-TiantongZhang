@@ -220,13 +220,20 @@ nothing"* is measured rather than argued: the same swing is run with a jump
 through it and without, and the two playheads agree on all 36 physics frames
 to 0.000000 s.
 
-**Nine sentences in this repository outlived the facts they stated**, each
+**Eleven sentences in this repository outlived the facts they stated**, each
 true when written: a hard-coded check count, two strip captions, the blade's
 length in three files, the cycle's length in a caption, a patch script that
 counted text it had just written, a limitation I accepted on an unexamined
 claim about the engine, a note inside a test file that was a revision out of
-date, and — my favourite — the list of open questions, which went on listing
-one I had already answered. Each is recorded in `TEST-REPORT.md` with how it was found, and
+date, the list of open questions which went on listing one I had already
+answered, a second hard-coded list that silently skipped two of the film's
+three takes, and a figure in the film's own narration that was copied out of a
+design document instead of being recomputed.
+
+**The last two were found while building the film**, and the eleventh was
+found by the act of writing `FACTCHECK.md` — which is what that file is for.
+Each is recorded in `TEST-REPORT.md` with how it was found, and **not one of
+the eleven was found by a test.** Each is recorded in `TEST-REPORT.md` with how it was found, and
 **not one of them was found by a test.** The last two were found by reading
 the file while changing something else, which is luck.
 
