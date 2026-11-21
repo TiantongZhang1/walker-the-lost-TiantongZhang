@@ -150,3 +150,17 @@ godot/override.cfg
 !youtube/*/capture/take-s.mp4
 !youtube/*/capture/logs/take-m-inputs.jsonl
 !youtube/*/capture/logs/take-s-inputs.jsonl
+
+# Assignment 7's two remaining evidence cards. B07 and B09 are already
+# un-excluded above -- BY LUCK, because Assignment 5's film has stills with
+# the same two names and the `!` lines are per-filename globs. B13 and B14
+# were not, so a fresh clone of the tag had two of the four cards and could
+# neither verify the ledger nor recompile the film.
+#
+# This is the THIRD time a file the ledger needs has been silently excluded
+# (take-w.mp4 in A5, take-{s,m}.mp4 and these). `tools/check_reel_tracked.py`
+# reads every reel's ledger AND beat sheet and asks git about every media
+# path either of them names, so the fourth time is a failing check rather
+# than a reviewer's dead end.
+!youtube/*/media/B13.png
+!youtube/*/media/B14.png

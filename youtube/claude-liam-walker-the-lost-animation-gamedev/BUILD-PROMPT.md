@@ -98,12 +98,19 @@ written look normal, and the only symptom is a missing `CAPTURE OK`.
 > It discovers takes from the render root now. If you are rebuilding an
 > earlier film, nothing changes: each renders into its own reel directory.
 
-> **Check `git check-ignore -v` on every file the ledger will hash, before
-> the first commit of a reel.** `take-c.mp4` was un-excluded by luck —
-> Assignment 6's take `c` shares the letter — and `take-s.mp4` and
-> `take-m.mp4` were not. The file is present, `git status` is clean, the
-> ledger hashes it, and a fresh clone of the tag can verify nothing. That is
-> the `take-w.mp4` failure of 2026-10-28 by a new door.
+> **Run `python -I tools/check_reel_tracked.py` instead of checking by
+> hand.** `take-c.mp4` was un-excluded by luck — Assignment 6's take `c`
+> shares the letter — and `take-s.mp4` and `take-m.mp4` were not. The file is
+> present, `git status` is clean, the ledger hashes it, and a fresh clone of
+> the tag can verify nothing. That is the `take-w.mp4` failure of 2026-10-28
+> by a new door.
+>
+> **And then it happened a third time, in this film, to `media/B13.png` and
+> `media/B14.png`** — because the hand check above was pointed at the takes
+> and nobody thought about the cards. B07 and B09 survived by luck too:
+> Assignment 5's film has stills with the same filenames. That is what the
+> script is for; it reads every reel's ledger **and** beat sheet and asks git
+> about every media path either of them names.
 
 ## 4. The evidence cards
 
@@ -237,6 +244,8 @@ smaller value without complaint and the panel clips anyway.
 - `git diff b33b06c..a7 -- godot/` prints nothing.
 - `python -I tools/check_claude_refs.py` reports 0 problems and `CLAUDE.md` is
   under 120 lines.
+- **`python -I tools/check_reel_tracked.py` reports OK for every reel.** It
+  checks the thing a clean `git status` cannot tell you.
 - The master plays: code at reading size, the highlights land on the lines the
   cues name, every footage beat is labelled PLAYED, and the outro is the
   locked card with no narration over it.
