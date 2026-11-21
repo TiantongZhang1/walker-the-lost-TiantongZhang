@@ -57,6 +57,14 @@ QUIT_AFTER = {"a": 600, "b": 1500, "c": 900, "d": 1800, "p": 600, "t": 900}
 PARTICLES_DRIVER = "res://tests/capture_particles.gd"
 QUIT_AFTER_PARTICLES = {"p": 1200, "r": 1500, "c": 2000}
 
+# Assignment 7's driver names its takes c, s and m. `c` is now in its THIRD
+# table with a third meaning -- Assignment 1's take c, Assignment 6's take c,
+# and this one -- which is exactly why these tables are per-driver and keyed
+# by driver path rather than merged. Measured tick counts for this driver:
+# c 535, s 329, m 615.
+ANIMATION_DRIVER = "res://tests/capture_animation.gd"
+QUIT_AFTER_ANIMATION = {"c": 1200, "s": 900, "m": 1400}
+
 # Assignment 2's film uses a second driver. The default stays Assignment 1's,
 # so that film remains reproducible from this script unchanged.
 DEFAULT_DRIVER = "res://tests/capture_walkthrough.gd"
@@ -69,7 +77,10 @@ def png_size(path: Path) -> tuple[int, int]:
 
 
 def quit_after(take: str, driver: str) -> int:
-    table = QUIT_AFTER_PARTICLES if driver == PARTICLES_DRIVER else QUIT_AFTER
+    table = {
+        PARTICLES_DRIVER: QUIT_AFTER_PARTICLES,
+        ANIMATION_DRIVER: QUIT_AFTER_ANIMATION,
+    }.get(driver, QUIT_AFTER)
     return table.get(take, 1800)
 
 

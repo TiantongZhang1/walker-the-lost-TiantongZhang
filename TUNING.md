@@ -1316,7 +1316,10 @@ a stationary fixture cannot capture motion.
 
 ### 6. My verdict in the running game
 
-_To be written by the author._
+**Answered in the next entry, not here.** I went straight from playing r9 to
+asking for the jump, so the legs and the jump were judged in one sitting;
+writing a separate verdict for r9 after the fact would be inventing a moment
+that did not happen. See the 2026-11-20 (later) entry, section 5.
 
 ---
 
@@ -1365,4 +1368,17 @@ found by a test.
 
 ### 5. My verdict in the running game
 
-_To be written by the author._
+> 没问题了，开片子把
+>
+> [all good — start the film]
+
+Played on 2026-11-20 after revision 7.0.10, at 1280 × 720. Jumping out of a
+ground swing reads; the swing finishes. **This verdict also closes revision
+7.0.9**, whose own section 6 I left blank because I went straight on to
+asking for the jump — the legs and the jump were judged in the same sitting
+and it would be dishonest to write two separate verdicts from one.
+
+**What it does NOT cover**, and these stay open in `CHANGE-BRIEF.md` §9
+rather than being swept under a 没问题: both clips over the darkest and
+lightest level art, and whether a braced stance hanging in mid-air reads. I
+did not go looking at either.
