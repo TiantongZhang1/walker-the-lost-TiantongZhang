@@ -614,7 +614,12 @@ def beats():
         "by a general it all looks fine.",
         70, "ClaudeVerdictArtifact",
         {
-            "title": "What holds, and what does not",
+            # **The prop names are artifactTitle / artifactHeading.** The
+            # first cut passed "title" and "verdictLabel", which this
+            # pattern ignores: it rendered its defaults, "Verdict" and "The
+            # split", and nothing warned. Found by extracting a frame.
+            "artifactTitle": "Verdict",
+            "artifactHeading": "What holds, and what does not",
             "artifactLines": [
                 "Two clips as resource text, never built at runtime.",
                 "TWO AnimationPlayers, partitioned BY NODE, asserted both ways.",
@@ -626,7 +631,6 @@ def beats():
                 "OPEN: 3 of 9 HUMAN rows. Listed as open.",
             ],
             "brandLabel": "@NikBearBrown",
-            "verdictLabel": "Assignment 7 - The Lost",
         },
         "artifact-reveal",
         [{"at": 0.06, "event": "the artifact card opens"},

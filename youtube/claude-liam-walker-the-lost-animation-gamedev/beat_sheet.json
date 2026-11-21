@@ -69,6 +69,10 @@
             "modelLabel": "Claude Opus 5",
             "effortLabel": "High",
             "durationSeconds": 21.87
+          },
+          "rendered": {
+            "out": "media/B00.mp4",
+            "at": "2026-11-21T20:28:10.100078+00:00"
           }
         }
       },
@@ -130,6 +134,10 @@
               }
             ],
             "durationSeconds": 30.99
+          },
+          "rendered": {
+            "out": "media/B01.mp4",
+            "at": "2026-11-21T20:30:20.583956+00:00"
           }
         }
       },
@@ -317,6 +325,10 @@
               }
             ],
             "durationSeconds": 60.96
+          },
+          "rendered": {
+            "out": "media/B04.mp4",
+            "at": "2026-11-21T20:34:36.026626+00:00"
           }
         }
       },
@@ -422,6 +434,10 @@
               }
             ],
             "durationSeconds": 52.17
+          },
+          "rendered": {
+            "out": "media/B06.mp4",
+            "at": "2026-11-21T20:38:16.470526+00:00"
           }
         }
       },
@@ -525,6 +541,10 @@
               }
             ],
             "durationSeconds": 52.21
+          },
+          "rendered": {
+            "out": "media/B08.mp4",
+            "at": "2026-11-21T20:41:54.994082+00:00"
           }
         }
       },
@@ -628,6 +648,10 @@
               }
             ],
             "durationSeconds": 31.78
+          },
+          "rendered": {
+            "out": "media/B10.mp4",
+            "at": "2026-11-21T20:44:15.612956+00:00"
           }
         }
       },
@@ -733,6 +757,10 @@
               }
             ],
             "durationSeconds": 39.16
+          },
+          "rendered": {
+            "out": "media/B12.mp4",
+            "at": "2026-11-21T20:47:10.709667+00:00"
           }
         }
       },
@@ -843,7 +871,8 @@
         "remotion": {
           "pattern": "ClaudeVerdictArtifact",
           "props": {
-            "title": "What holds, and what does not",
+            "artifactTitle": "Verdict",
+            "artifactHeading": "What holds, and what does not",
             "artifactLines": [
               "Two clips as resource text, never built at runtime.",
               "TWO AnimationPlayers, partitioned BY NODE, asserted both ways.",
@@ -855,8 +884,11 @@
               "OPEN: 3 of 9 HUMAN rows. Listed as open."
             ],
             "brandLabel": "@NikBearBrown",
-            "verdictLabel": "Assignment 7 - The Lost",
             "durationSeconds": 50.53
+          },
+          "rendered": {
+            "out": "media/B15.mp4",
+            "at": "2026-11-21T20:58:23.284838+00:00"
           }
         }
       },
@@ -901,6 +933,10 @@
             "modelLabel": "Claude Opus 5",
             "effortLabel": "High",
             "durationSeconds": 29.39
+          },
+          "rendered": {
+            "out": "media/B16.mp4",
+            "at": "2026-11-21T20:52:44.059658+00:00"
           }
         }
       },
@@ -933,6 +969,10 @@
             "title": "TheLostAnimation_TiantongZhang",
             "channel": "@NikBearBrown",
             "durationSeconds": 5.0
+          },
+          "rendered": {
+            "out": "media/B17.mp4",
+            "at": "2026-11-21T20:53:12.200010+00:00"
           }
         }
       },

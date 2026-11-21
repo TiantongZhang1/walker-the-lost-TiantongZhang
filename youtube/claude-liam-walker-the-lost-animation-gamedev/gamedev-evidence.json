@@ -724,8 +724,8 @@
       "beat_id": "B02",
       "path": "animations/legs.tres",
       "start_line": 24,
-      "end_line": 38,
-      "text": "length = 0.5\nloop_mode = 1\nstep = 0.125\ntracks/0/type = \"value\"\ntracks/0/imported = false\ntracks/0/enabled = true\ntracks/0/path = NodePath(\"Rig/LegFront:rotation_degrees\")\ntracks/0/interp = 1\ntracks/0/loop_wrap = true\ntracks/0/keys = {\n\"times\": PackedFloat32Array(0, 0.125, 0.25, 0.375, 0.5),\n\"transitions\": PackedFloat32Array(1, 1, 1, 1, 1),\n\"update\": 0,\n\"values\": [38.0, 12.0, -14.0, 12.0, 38.0]\n}"
+      "end_line": 36,
+      "text": "length = 0.5\nloop_mode = 1\nstep = 0.125\ntracks/0/type = \"value\"\ntracks/0/imported = false\ntracks/0/enabled = true\ntracks/0/path = NodePath(\"Rig/LegFront:rotation_degrees\")\ntracks/0/interp = 1\ntracks/0/loop_wrap = true\ntracks/0/keys = {\n\"times\": PackedFloat32Array(0, 0.125, 0.25, 0.375, 0.5),\n\"transitions\": PackedFloat32Array(1, 1, 1, 1, 1),\n\"update\": 0,"
     },
     {
       "beat_id": "B04",
@@ -737,9 +737,9 @@
     {
       "beat_id": "B06",
       "path": "tests/test_player_clips.gd",
-      "start_line": 217,
+      "start_line": 220,
       "end_line": 230,
-      "text": "\t_check(\"NO node is written by both players -- the authority is a \"\n\t\t+ \"partition, not a preference\", overlap.is_empty(),\n\t\t\"both write: \" + \", \".join(overlap))\n\tvar stray: Array[String] = []\n\tfor n in leg_nodes:\n\t\tif not str(n).begins_with(\"Rig/Leg\"):\n\t\t\tstray.append(str(n))\n\t_check(\"LegAnim writes ONLY the two legs\", stray.is_empty(),\n\t\t\", \".join(stray))\n\tvar body_legs: Array[String] = []\n\tfor n in body_nodes:\n\t\tif str(n).begins_with(\"Rig/Leg\"):\n\t\t\tbody_legs.append(str(n))\n\t_check(\"and AnimationPlayer writes NO leg\", body_legs.is_empty(),"
+      "text": "\tvar stray: Array[String] = []\n\tfor n in leg_nodes:\n\t\tif not str(n).begins_with(\"Rig/Leg\"):\n\t\t\tstray.append(str(n))\n\t_check(\"LegAnim writes ONLY the two legs\", stray.is_empty(),\n\t\t\", \".join(stray))\n\tvar body_legs: Array[String] = []\n\tfor n in body_nodes:\n\t\tif str(n).begins_with(\"Rig/Leg\"):\n\t\t\tbody_legs.append(str(n))\n\t_check(\"and AnimationPlayer writes NO leg\", body_legs.is_empty(),"
     },
     {
       "beat_id": "B08",
