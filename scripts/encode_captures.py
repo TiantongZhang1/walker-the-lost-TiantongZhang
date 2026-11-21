@@ -21,15 +21,23 @@ import shutil
 import subprocess
 import sys
 
-# Assignment 1's four walkthrough takes, Assignment 2's two gamedev takes,
-# then Assignment 5's single shader take.
-# Both films' captures encode with the same settings, so a frame from either is
-# the same kind of evidence.
-# Assignment 6's three takes are p, r and c; two of those letters are shared
-# with earlier films' takes and that is fine here -- this tuple only says
-# which letters to LOOK for under --frames, and each film renders into its own
-# reel directory.
-TAKES = ("a", "b", "c", "d", "p", "r", "t", "w")
+# **Takes are DISCOVERED from the render root, not listed here.**
+#
+# Until 2026-11-21 this was a hard-coded tuple -- a, b, c, d, p, r, t, w, the
+# union of Assignment 1's, 2's, 5's and 6's take letters. Assignment 7 renders
+# takes c, s and m, and the first run of this script encoded take c, printed
+# "no frames" for seven letters that were never meant to exist, and **silently
+# did not encode s or m at all.** The exit code was right and the output was
+# noise, so the missing two were easy to miss.
+#
+# That is this repository's recurring fault in its own tooling: a list typed
+# once, consulted forever, and never compared with the thing it describes.
+# `TEST-REPORT.md` keeps the running count.
+#
+# Discovery changes nothing for the earlier films -- each renders into its own
+# reel directory, so what is on disk under --frames is exactly that film's
+# takes -- and it removes the possibility of a new take being skipped in
+# silence.
 FPS = 60
 WIDTH, HEIGHT = 3840, 2160
 
@@ -62,13 +70,25 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--frames", required=True, type=Path)
     parser.add_argument("--reel", required=True, type=Path)
+    parser.add_argument("--takes", nargs="+", default=None,
+                        help="take letters to encode. The default is every "
+                             "take-<letter>/ directory found under --frames.")
     args = parser.parse_args()
     frames_root = args.frames.resolve()
     capture = (args.reel.resolve() / "capture")
     capture.mkdir(parents=True, exist_ok=True)
 
+    takes = args.takes
+    if takes is None:
+        takes = sorted(p.name[len("take-"):] for p in frames_root.glob("take-*")
+                       if p.is_dir())
+    if not takes:
+        print("no take-*/ directories under %s" % frames_root)
+        return 1
+    print("encoding %d take(s): %s" % (len(takes), ", ".join(takes)))
+
     ok = True
-    for letter in TAKES:
+    for letter in takes:
         src = frames_root / ("take-%s" % letter)
         pngs = sorted(src.glob("frame*.png"))
         if not pngs:

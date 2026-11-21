@@ -133,3 +133,20 @@ __pycache__/
 # and scripts/build_particles_ledger.py would inventory it into the film's
 # evidence as a file no clone has.
 godot/override.cfg
+
+# --- Assignment 7's film, claude-liam-walker-the-lost-animation-gamedev ---
+#
+# Takes c, s and m. `take-c.mp4` and its log were already un-excluded above --
+# BY LUCK, because Assignment 6's take c shares the letter -- and s and m were
+# not. That is the `take-w.mp4` failure of 2026-10-28 arriving by a new door:
+# the file is here, `git status` is clean, the ledger hashes it, and a reviewer
+# who clones the tag gets `Missing or escaping source` and can verify nothing.
+# Found by running `git check-ignore -v` on every file the ledger will hash,
+# before the first commit of this reel rather than after the tag.
+#
+# 1.5 + 1.7 + 0.8 MB. The 4K PNG sequences they were encoded from stay out,
+# under the `youtube/*/capture/take-*/` rule above.
+!youtube/*/capture/take-m.mp4
+!youtube/*/capture/take-s.mp4
+!youtube/*/capture/logs/take-m-inputs.jsonl
+!youtube/*/capture/logs/take-s-inputs.jsonl
