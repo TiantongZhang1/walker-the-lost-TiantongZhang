@@ -60,7 +60,7 @@ EXPECT = {
     # key is.
     "godot/features/player/player.gd:42": "SPEED := 96.0",
     "godot/features/player/player.gd:43": "JUMP_VELOCITY",
-    "godot/game/main.tscn:78": "stride_px = 24.0",
+    "godot/game/main.tscn:82": "stride_px = 24.0",
     "godot/features/traps/trap_warning_driver.gd:1": "class_name TrapWarningDriver",
     "godot/tests/test_trap_warning.gd:33": "process_priority",
     # A6 replaced the wrapper, which moved this line from 25 to 42. A7 added

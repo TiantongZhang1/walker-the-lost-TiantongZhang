@@ -40,6 +40,19 @@ STEEL = (0x9A, 0xA7, 0xBD, 255)
 STEEL_DK = (0x5E, 0x64, 0x72, 255)
 GRIP = (0x16, 0x23, 0x3D, 255)
 
+# The dungeon key, added 2026-11-22 for Assignment 8's FIRST animation-set
+# item -- "movement with no rig and no frames: a pickup, door, platform or
+# UI element". It is a pickup, and it is DECORATIVE: nothing collects it,
+# because making it collectible would mean a collision layer and game state,
+# both of which CLAUDE.md puts out of scope for this assignment. The brief
+# says that plainly rather than implying a mechanic.
+#
+# Drawn in the room's own warm light rather than the character's cold greys:
+# the torches are the only warm thing in this room, and a key that read as
+# steel would look like a dropped weapon.
+BRASS = (0xC8, 0x9B, 0x3C, 255)
+BRASS_DK = (0x8A, 0x66, 0x1E, 255)
+
 # The prediction pixels. Asserted at the end; a failure here means the brief
 # and the art have drifted apart, which would quietly invalidate §6.
 PREDICTION_PIXELS = {(8, 12): PLATE, (8, 3): SPIKE}
@@ -312,9 +325,35 @@ def sword() -> Image.Image:
     assert img.size == (3, LEN), img.size
     return img
 
+def key() -> Image.Image:
+    """A 9 x 9 dungeon key: ring, shaft, two wards.
+
+    **No rig and no frames.** It is one sprite; everything that moves about
+    it is a key time on a position and a rotation. That is Assignment 8's
+    item 1 exactly, and `godot/tests/test_pickup_clip.gd` asserts the clip
+    keys nothing else.
+
+    The art is deliberately plain. A key that needed its own frames would be
+    the wrong answer to "a simple animation".
+    """
+    img = Image.new("RGBA", (9, 9), CLEAR)
+    px = img.load()
+    for x, y in ((1, 2), (2, 1), (3, 2), (2, 3)):   # the ring, a diamond
+        px[x, y] = BRASS
+    px[2, 2] = BRASS_DK                              # the hole through it
+    for x in range(4, 8):                            # the shaft
+        px[x, 2] = BRASS
+    px[7, 3] = BRASS                                 # two wards
+    px[6, 3] = BRASS_DK
+    px[7, 4] = BRASS
+    assert img.size == (9, 9), img.size
+    return img
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     images = {
+        "key.png": key(),
         "spike_trap.png": spike_trap(),
         "spike_trap_fired.png": spike_trap_fired(),
         "floor_tile.png": floor_tile(),

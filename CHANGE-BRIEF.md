@@ -1,11 +1,27 @@
-# CHANGE-BRIEF.md — Assignment 7 specification
+# CHANGE-BRIEF.md — Assignment 8 specification
 
 **The Lost · walker-the-lost-TiantongZhang · Tiantong Zhang**
 
+> ### The number on this assignment, stated plainly
+>
+> **The course calls this Assignment 8 — *Animation Wired to Player
+> Actions* — and requires the tag `a8`.** Everything below, and every
+> revision after it, was written using this repository's own shorthand, in
+> which it is "A7" and its revisions are numbered 7.0.1 – 7.0.10. The
+> shorthand is left as it was written because it is woven through ten
+> revisions, a test suite and a film, and renaming it afterwards would make
+> the record harder to follow rather than easier.
+>
+> **The tag is `a8`, which is what the assignment asks for.** For a reviewer
+> following the lineage: the course's Assignment 7 (particle effects) is in
+> this repository at tag `a6.1`, under the same shorthand. The mismatch was
+> found on 2026-11-22 by re-reading the specification before submitting, and
+> it is recorded here rather than quietly corrected.
+
 Drafted 2026-11-15. Committed before the first agent prompt of this
 assignment. `CLAUDE.md` imports this file with `@CHANGE-BRIEF.md`, so it is
-the contract the agent works to. Assignment 6's brief stays in history at tag
-`a6.1`.
+the contract the agent works to. The previous assignment's brief stays in
+history at tag `a6.1`.
 
 > **Tags.** **[decided]** — chosen by the author. **[proposal]** — derived by
 > Claude and not yet confirmed. Anything the author adopts from a
@@ -1645,3 +1661,120 @@ being accepted, which is the mistake revision 7.0.6 §4 made.
 `test_swing_edges.gd` 37 → **60 checks**, 0 failures. Mutations 5 → **7**,
 both new ones recorded in `evidence/a7/mutations.txt` with the method
 difference stated and one blind spot of the new checks named.
+
+
+---
+
+# Revision 8.0.1 — 2026-11-22 — the animation set was missing its first item
+
+**Supersedes §0 and §2's "two clips".** No existing clip, key, timing, state
+or authority changes. One scene, one clip and one read-back are added, and
+one existing test gains labels.
+
+## 1. Why — the specification, re-read before submitting
+
+The assignment names a **minimum animation set of three items**, and this
+brief built two of them:
+
+| # | What the assignment asks for | This repository, before today |
+|---|---|---|
+| 1 | **Simple animation** — "movement with no rig and no frames: a pickup, door, platform or UI element" | **absent** |
+| 2 | **Sprite sheet or rig** | `swing`, a frame track plus a keyed cutout rig ✔ |
+| 3 | **Cycle** whose first and last values match | `legs_run`, `LOOP_LINEAR`, seam-checked ✔ |
+
+Item 1 was not noticed as missing for seven days, and the reason is
+instructive: **it is the only item in the set that is not about the
+character**, and every sentence in this brief is about the character. A list
+read as a theme instead of as a list loses the entry that does not fit the
+theme.
+
+The assignment allows an item to be skipped — *"if an item truly cannot
+exist in your game, say so, name the substitute, and justify it"* — and that
+escape does not apply here. A dungeon can obviously hold a door or a pickup.
+Claiming otherwise would have been the dishonest option.
+
+## 2. What was added
+
+`godot/features/pickup/floating_key.tscn`: **one `Sprite2D`**, a 9 × 9 key
+drawn by `tools/make_sprites.py`, with its own `AnimationPlayer` called
+`KeyAnim` carrying a `hover` clip and a `RESET`.
+
+| | |
+|---|---|
+| Length | **2.400 s**, `LOOP_LINEAR`, `step` 0.300 |
+| `Sprite2D:position:y` | 0, −3, 0, +3, 0 at 0 / 0.6 / 1.2 / 1.8 / 2.4 — a bob, **cubic** interpolation so the turn-around is not a corner |
+| `Sprite2D:rotation_degrees` | 0 → 360 across the whole length, linear — one slow revolution |
+| Autoplay | `hover`. Nothing in the game has to start it |
+| Placed | `main.tscn` at (272, 174), the clear stretch between the first and second traps, 26 px above the floor line |
+
+**Why those three words in the assignment each get an assertion.**
+`godot/tests/test_pickup_clip.gd`, 20 checks:
+
+- **no frames** — no track names `frame`, `frames`, `sprite_frames`,
+  `animation`, `hframes`, `vframes` or `texture`, and the sprite's `hframes`
+  and `vframes` are both 1. A sheet cell is not a simple animation.
+- **no rig** — exactly one node is animated, and no animated node is inside
+  another. A pivot carrying a child is a rig however small it is, and
+  "exactly one animated node with no animated relative" is cheaper to assert
+  than to describe.
+- **position, rotation or scale** — every track's subname is one of those.
+  A clip that modulated a colour would be an effect, not movement.
+
+## 3. The seam, and the one place the usual rule does not work
+
+The cycle rule applies to this clip too, and the bob obeys it directly:
+`position:y` is 0.0 at `t = 0` and 0.0 at `t = length`.
+
+**The rotation does not, and could not.** It runs 0 → 360, which is *the same
+pose* and *a different number*. A seam check written as `is_equal_approx`
+would force the key to end where it started — which for a rotation means
+never turning at all.
+
+> **The seam for a rotation is equality MODULO 360.**
+
+`test_pickup_clip.gd` compares `fposmod(last − first, 360)` against 0, and
+then asserts separately that the track actually travels more than a degree,
+so that a clip which never turns cannot pass the seam check by being
+trivially closed. That second assertion exists because the first one, alone,
+is satisfied by a rotation track with two identical keys.
+
+## 4. It is DECORATIVE, and the brief says so rather than the film implying it
+
+**Nothing collects this key.** Making it collectible means a collision layer
+and a piece of game state, and `CLAUDE.md` puts collision layers out of
+scope for this assignment. The assignment's item 1 asks for *a simple
+animation*, not for a mechanic.
+
+So: it floats, it turns, and it does nothing. That is stated here, in
+`SUBMISSION.md`, and in the film, because a reviewer who sees a key in a
+dungeon will reasonably assume it opens something.
+
+## 5. One existing test gained labels, and nothing else
+
+The assignment requires the pin to print its checks in **two groups, TIMING
+and INVARIANT**. `pin_player_states.gd` has been in the repository since
+2026-11-15 — `git log --diff-filter=A` shows it at `0e3dbe7`, against the
+first clip at `d303899` — but it never labelled the two kinds.
+
+**Not one expectation, value or tolerance moved.** Twelve checks are
+INVARIANT and three are TIMING:
+
+| group | which | why |
+|---|---|---|
+| **TIMING** | the fall's 120-frame bound, the one-frame deceleration, the arc's 200-frame bound | numbers a designer may move on purpose |
+| **INVARIANT** | the state the player settles into, `SPEED`, the states the arc passes through, "no input, no movement", the health arithmetic, and **the ordered state sequence itself** | facts that must survive any animation change |
+
+The split's shape is the point: what a pin mostly protects is a *sequence*,
+and a sequence is not a number.
+
+## 6. What this revision does not change
+
+Every clip, key, timing, phase boundary, transition, authority and
+measurement in revisions 7.0.1 – 7.0.10. The player scene is untouched. The
+new node has no collision, no script and no connection to anything; the
+suites all run unchanged against it.
+
+**What it does change is the film.** The film rendered on 2026-11-21 was
+taken at revision `b33b06c`, which predates this, so it shows two of the
+three animation-set items. It is re-made at the new revision rather than
+shipped with a gap, and `SUBMISSION.md` names both revisions.

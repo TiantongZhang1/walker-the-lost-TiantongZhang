@@ -31,7 +31,22 @@ TEST = ROOT / "godot" / "tests" / "test_swing_clip.gd"
 
 CELL = 32
 LIVE = 6               # CHANGE-BRIEF.md revision 7.0.1 section 3: p7-live
-DENSE = 20             # a column with this many solid pixels is torso
+# **The threshold is DERIVED from the cell, not typed.**
+#
+# It was `DENSE = 20` from 2026-11-18 until 2026-11-22, and revision 7.0.9
+# silently made it unreachable: cutting cell 6 legless removed twelve rows
+# from the cell, so the tallest torso column fell from about 25 solid pixels
+# to 19 and NO column could reach 20. This script does not crash politely --
+# it threw an IndexError on an empty list -- and nothing noticed for two
+# days, because it is not in `scripts/run-test.sh`'s list and nothing else
+# calls it.
+#
+# 0.8 x the cell's own tallest column reproduces BOTH the old constant (0.8
+# of the legged cell's ~25) and the old answer (+3 .. +13 on the legless
+# one), which is why it is the fraction and not something rounder. The
+# torso's edges have not moved; only the way of finding them has stopped
+# depending on a number that a different revision could invalidate.
+DENSE_FRACTION = 0.8
 
 
 def scarf(px):
@@ -60,8 +75,17 @@ def main() -> int:
         if solid[x]:
             print("%+4d   %-3d %s" % (x, solid[x], "#" * solid[x]))
 
+    tallest = max(solid.values())
+    DENSE = int(-(-tallest * DENSE_FRACTION // 1))     # ceil
     dense = [x for x in sorted(solid) if solid[x] >= DENSE]
+    if not dense:
+        raise SystemExit(
+            "no column reaches %d of the tallest column's %d solid pixels. "
+            "The cell is not shaped like a torso any more." % (DENSE, tallest))
     back, front = dense[0], dense[-1]
+    print("")
+    print("  tallest column %d px; dense threshold %d (%.0f%% of it)"
+          % (tallest, DENSE, DENSE_FRACTION * 100))
     print("")
     print("  columns with >= %d solid px run %+d .. %+d" % (DENSE, back, front))
     print("  so the torso's BACK edge is x = %+d and its FRONT edge x = %+d"
