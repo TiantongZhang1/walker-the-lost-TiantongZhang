@@ -88,20 +88,44 @@ func _init() -> void:
 ## The room, and four states entered by their own input. It paces the clear
 ## 190 px west of the first trap, so the figure is undamaged throughout and
 ## the take is about the states rather than about the hazard.
+## **The takes are LONG on purpose.** The first cut of this driver made
+## each one a few seconds -- just the moment a feature happens -- and the
+## beats built on it carried twenty to thirty seconds of frozen final frame
+## apiece. The skill allows a labelled hold for extra narration time; it does
+## not make a three-second action with a thirty-second hold into a
+## walkthrough. A walkthrough's body should be mostly moving.
+##
+## So each take now runs about as long as the narration laid over it, with
+## the player doing the same things repeatedly in the clear stretch west of
+## the first trap. Repetition is the point: a cycle has to be seen wrapping
+## several times before anyone can say whether it wraps cleanly.
 func _take_states() -> void:
-	await _hold(1.2)                      # FALLING, then IDLE
+	await _hold(1.4)                      # FALLING, then IDLE
+	await _hold(1.6)                      # idle, held, with nothing pressed
 	await _leg(KEY_A, 0.9)                # RUN, west
-	await _hold(0.5)                      # IDLE again
-	await _leg(KEY_D, 1.6)                # RUN, east -- the mirrored gait
-	await _hold(0.5)
-	await _tap(KEY_SPACE)                 # RISING
-	await _hold(1.0)                      # ... FALLING, then the landing
-	# **West, not east.** The first cut ran east here and walked the player
-	# onto the first trap at x 208, so a take about the STATES also showed a
-	# hit and cost a point of health. The states take stays in the clear
-	# stretch; the hazard is take d's subject and it has it to itself.
-	await _leg(KEY_A, 1.0)
-	await _hold(1.2)
+	await _hold(0.6)
+	await _leg(KEY_D, 1.7)                # east -- the mirrored gait
+	await _hold(0.6)
+	await _leg(KEY_A, 1.7)                # and back, several more wraps
+	await _hold(0.6)
+	await _leg(KEY_D, 1.7)
+	await _hold(0.8)
+	await _tap(KEY_SPACE)                 # RISING, then FALLING, then land
+	await _hold(1.4)
+	await _leg(KEY_A, 1.2)                # a running jump, both states again
+	_key(KEY_A, true)
+	await _tap(KEY_SPACE)
+	await _hold(1.1)
+	_key(KEY_A, false)
+	await _hold(1.0)
+	await _leg(KEY_D, 1.5)
+	await _hold(0.7)
+	await _leg(KEY_A, 1.5)
+	await _hold(0.7)
+	await _tap(KEY_SPACE)
+	await _hold(1.3)
+	await _leg(KEY_D, 1.4)
+	await _hold(2.6)                      # idle again, and the key turning
 
 
 ## ---------------------------------------------------------------- take b ---
@@ -110,49 +134,86 @@ func _take_states() -> void:
 ## phase each one landed in is read off the log rather than asserted from
 ## the driver's own timings.
 func _take_action() -> void:
-	await _hold(1.0)
+	await _hold(1.4)
 	await _tap(KEY_J)                     # a clean swing, all 18 frames
-	await _hold(1.1)
+	await _hold(1.6)
+	await _tap(KEY_J)                     # and another, so the phases repeat
+	await _hold(1.8)
 
-	await _tap(KEY_J)                     # and a second attack IN STARTUP
+	await _tap(KEY_J)                     # a second attack IN STARTUP
 	await _hold(0.1)                      # 0.1 s < 0.2 s: startup
 	await _tap(KEY_J)                     # -> ignored
-	await _hold(1.2)
+	await _hold(2.2)
 
-	await _tap(KEY_J)                     # a third, with the press in
-	await _hold(0.45)                     # RECOVERY: 0.45 s > 0.3333 s
+	await _tap(KEY_J)                     # again, so it is not a one-off
+	await _hold(0.1)
+	await _tap(KEY_J)                     # -> ignored again
+	await _hold(2.4)
+
+	await _tap(KEY_J)                     # now the press in RECOVERY
+	await _hold(0.45)                     # 0.45 s > 0.3333 s
 	await _tap(KEY_J)                     # -> buffered, and it plays
-	await _hold(1.6)
+	await _hold(2.4)
+	await _tap(KEY_J)                     # and once more, both swings seen
+	await _hold(0.45)
+	await _tap(KEY_J)
+	await _hold(3.0)
 
 
 ## ---------------------------------------------------------------- take c ---
 func _take_moving() -> void:
-	await _hold(1.0)
-	_key(KEY_D, true)
-	await _hold(0.7)
-	await _tap(KEY_J)                     # a swing that TRAVELS
-	await _hold(0.9)
-	_key(KEY_D, false)
-	await _hold(0.6)
+	await _hold(1.3)
+	for code in [KEY_D, KEY_A]:           # a travelling swing each way
+		_key(code, true)
+		await _hold(0.8)
+		await _tap(KEY_J)
+		await _hold(1.0)
+		_key(code, false)
+		await _hold(1.1)
 
-	await _tap(KEY_J)                     # and one jumped out of
+	await _tap(KEY_J)                     # a swing jumped out of, standing
 	await _hold(0.15)
 	await _tap(KEY_SPACE)
+	await _hold(2.2)
+
+	_key(KEY_D, true)                     # and one jumped out of, running
+	await _hold(0.8)
+	await _tap(KEY_J)
+	await _hold(0.25)
+	await _tap(KEY_SPACE)
 	await _hold(1.6)
+	_key(KEY_D, false)
+	await _hold(2.0)
+
+	await _tap(KEY_J)                     # one more travelling swing, west
+	await _hold(0.1)
+	_key(KEY_A, true)
+	await _hold(1.4)
+	_key(KEY_A, false)
+	await _hold(2.4)
 
 
 ## ---------------------------------------------------------------- take d ---
 ## The hazard, and the only state a key cannot reach. Five crossings kill.
 func _take_hazard() -> void:
-	await _hold(1.0)
+	await _hold(1.6)
 	# East across all three traps, then back, and back again. The player
-	# takes a hit per crossing; the fifth is fatal.
-	await _leg(KEY_D, 3.6)
-	await _hold(0.6)
-	await _leg(KEY_A, 2.6)
-	await _hold(0.6)
-	await _leg(KEY_D, 2.6)
-	await _hold(2.0)                      # the death pose holds
+	# takes a hit per crossing; the fifth is fatal. The pauses between legs
+	# let each trap finish its cycle on screen rather than being walked past.
+	await _leg(KEY_D, 1.5)
+	await _hold(1.6)                      # trap 1: warning, strike, re-arm
+	await _leg(KEY_D, 1.3)
+	await _hold(1.6)                      # trap 2
+	await _leg(KEY_D, 1.3)
+	await _hold(1.8)                      # trap 3
+	await _leg(KEY_A, 1.4)
+	await _hold(1.6)
+	await _leg(KEY_A, 1.4)
+	await _hold(1.6)
+	await _leg(KEY_D, 1.4)
+	await _hold(1.6)
+	await _leg(KEY_D, 1.4)
+	await _hold(4.0)                      # the death pose holds, and holds
 
 
 ## -------------------------------------------------------------- plumbing ---
@@ -367,10 +428,13 @@ func _verdict(take: String, main: Node) -> void:
 			why = "%d clips incl. idle/run/rising/falling, %d wraps, both facings" \
 				% [_probe.states.size(), _probe.wraps]
 		"b":
-			# Three presses start a swing and one is ignored: four taps, three
-			# swings. That IS the edge, counted.
-			ok = _probe.swings == 4 and _probe.window_opens == 4
-			why = "%d swings from 5 attack presses, window opened %d times" \
+			# TEN attack presses, EIGHT swings. The two that are missing are
+			# the two pressed inside a startup, and that difference IS the
+			# edge the assignment names -- counted rather than described. The
+			# four pressed inside a recovery are all there, because a
+			# buffered attack is not a lost one.
+			ok = _probe.swings == 8 and _probe.window_opens == 8
+			why = "%d swings from 10 presses (2 ignored in startup), window opened %d times" \
 				% [_probe.swings, _probe.window_opens]
 		"c":
 			ok = _probe.swings >= 2 and _probe.states.has("swing")
