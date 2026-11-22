@@ -65,6 +65,13 @@ QUIT_AFTER_PARTICLES = {"p": 1200, "r": 1500, "c": 2000}
 ANIMATION_DRIVER = "res://tests/capture_animation.gd"
 QUIT_AFTER_ANIMATION = {"c": 1200, "s": 900, "m": 1400}
 
+# Assignment 8's WALKTHROUGH driver -- a fourth table, and the fourth
+# meaning for the letter `c`. Measured tick counts: a 479, b 336, c 303,
+# d 785. Take d is the long one because five trap crossings have to happen
+# at walking speed and the death pose has to hold afterwards.
+WALKTHROUGH_DRIVER = "res://tests/capture_walkthrough.gd"
+QUIT_AFTER_WALKTHROUGH = {"a": 1100, "b": 900, "c": 900, "d": 1600}
+
 # Assignment 2's film uses a second driver. The default stays Assignment 1's,
 # so that film remains reproducible from this script unchanged.
 DEFAULT_DRIVER = "res://tests/capture_walkthrough.gd"
@@ -80,6 +87,7 @@ def quit_after(take: str, driver: str) -> int:
     table = {
         PARTICLES_DRIVER: QUIT_AFTER_PARTICLES,
         ANIMATION_DRIVER: QUIT_AFTER_ANIMATION,
+        WALKTHROUGH_DRIVER: QUIT_AFTER_WALKTHROUGH,
     }.get(driver, QUIT_AFTER)
     return table.get(take, 1800)
 
