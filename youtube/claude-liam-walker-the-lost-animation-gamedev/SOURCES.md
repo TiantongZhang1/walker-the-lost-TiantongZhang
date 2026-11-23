@@ -1,5 +1,32 @@
 # SOURCES.md — every asset in this film, and where it came from
 
+> ## This reel's ledger describes `b200c86`, not the `a8` tag
+>
+> **`./art godot-gamedev --check` FAILS against the submitted tree, and that
+> is correct rather than broken.** Assignment 8 added files under `godot/`
+> after this film was rendered — a floating key, its read-back, a second
+> capture driver — and changed two more. A ledger inventories *every* file
+> under `godot/` with its hash, so a tree that has moved no longer matches
+> one that describes an older tree.
+>
+> **It passes at the revision it is a record of**, and this is the command:
+>
+> ```bash
+> git worktree add --detach /tmp/verify-old b200c86
+> cd "$ART" && PYTHONUTF8=1 bash art godot-gamedev --check >     /tmp/verify-old/youtube/claude-liam-walker-the-lost-animation-gamedev >     --game /tmp/verify-old/godot
+> # {"status": "PASS", "source_files": 72, "exclusions": 64, ...}
+> ```
+>
+> **The ledger was not rebuilt to make the failure go away.** Rebuilding it
+> against the current tree would produce a passing check whose hashes
+> describe a room with a floating key in it — and this film's footage was
+> recorded before that key existed. A passing check that misdescribes its own
+> film is worse than a failing one with a date on it.
+>
+> **This is also not the submitted film.** The submission is
+> `claude-liam-walker-the-lost-walkthrough`, whose checker passes in a fresh
+> clone of `a8`.
+
 Game-source revision **`b33b06c`**. Every code panel, every hash, every
 capture frame and every number in this film is taken at that revision.
 `git diff b33b06c..a7 -- godot/` is the check that nothing under `godot/`

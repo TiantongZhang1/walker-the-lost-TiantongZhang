@@ -110,6 +110,13 @@ uploaded file must match._
 b38b2c8b2a8b8186981a28365aa00c22f5326ee55c8d4e342f03612b82d3cfa0
 ```
 
+> **Its evidence ledger passes at `b200c86`, the revision it describes, and
+> fails against `a8` — because Assignment 8 added files under `godot/` after
+> it was rendered. It was NOT rebuilt to make that go away: a rebuilt ledger
+> would pass while describing a room containing a floating key that the
+> film's own footage predates. That reel's `SOURCES.md` carries the command
+> that reproduces its PASS.**
+>
 > **A second film is in this repository and is NOT the submitted one.**
 > `youtube/claude-liam-walker-the-lost-animation-gamedev` is a
 > `godot-gamedev` teardown of the same work, built on 2026-11-21 before I
