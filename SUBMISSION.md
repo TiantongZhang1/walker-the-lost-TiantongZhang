@@ -1,5 +1,12 @@
 # SUBMISSION.md
 
+> **Assignment 8 is submitted from `pitch/`, not from this file.** Assignment
+> 8 asks for a `pitch/README.md` rather than this template, so
+> [`pitch/README.md`](pitch/README.md) carries the tag, the film's filename,
+> length, URL and SHA-256, and [`pitch/PROJECT-BRIEF.md`](pitch/PROJECT-BRIEF.md)
+> is the pitch itself. **Assignment 8 changed no game code**, so everything
+> below still describes the repository exactly as it stands at `a8`.
+
 **Assignment:** Assignment 7 - Doing Animation with Claude and Godot
 
 **Student:** Tiantong Zhang · zhang.tiant@northeastern.edu · GitHub `TiantongZhang1`

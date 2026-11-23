@@ -1,0 +1,906 @@
+{
+  "metadata": {
+    "title": "The Lost: Floor One",
+    "slug": "claude-liam-walker-the-lost-pitch-gdd",
+    "topic": "CSYE 7270 · FINAL PROJECT PITCH",
+    "kind": "gdd",
+    "playlist": "CSYE 7270",
+    "brand": "claude-liam",
+    "audience": "a lead engineer, a hiring manager, or a player",
+    "register": "Teardown",
+    "engine": "kokoro",
+    "voice": "am_onyx",
+    "voice_kokoro": "am_onyx",
+    "palette": "claude",
+    "style_preset": "claude",
+    "ground": "#FAF9F5",
+    "aspect_ratio": "16:9",
+    "fit": "contain",
+    "captions": false,
+    "channel_title": "@HumanitariansAI",
+    "channel": "@HumanitariansAI",
+    "folderLabel": "@HumanitariansAI",
+    "persona": "Tiantong Zhang",
+    "presenter": "Tiantong Zhang",
+    "in_for_bear": false,
+    "episode_id": "csye7270-a8-pitch",
+    "document": "pitch/PROJECT-BRIEF.md",
+    "game_source_revision": "b33b06c",
+    "note": "Assignment 8 pitch film. The document walked through is pitch/PROJECT-BRIEF.md, not the-lost-gdd/GDD.md: the GDD describes the whole four-floor game, the brief describes the project being pitched. Narration is first person and speaks as Tiantong Zhang, per the assignment. The outro card is the locked ClaudeTitleOutro with its hardcoded handle per OUTRO-LOCK.md; SOURCES.md records that it is a toolkit lock and not a credit this submission claims. Captures take-c and take-s are real played captures at game-source revision b33b06c, re-used from Assignment 7's reel with their input logs. No paid API, no upload, no game change.",
+    "tags": [
+      "CSYE 7270",
+      "final project",
+      "pitch",
+      "Godot 4",
+      "The Lost",
+      "vertical slice",
+      "Kokoro",
+      "Remotion"
+    ],
+    "build": {
+      "at": "2026-11-23T13:55:06",
+      "cut": "master",
+      "filled": 14,
+      "of": 14,
+      "slates": [],
+      "skin_warnings": []
+    }
+  },
+  "beats": [
+    {
+      "beat_id": "B00",
+      "act": "ASK",
+      "role_note": "COLD OPEN. Claude composer, explicitly a reconstruction. The ask is the real one: turn the project brief into a pitch film. Narration is first person - this film speaks as Tiantong Zhang, which Assignment 8 requires.",
+      "narration_text": "I am Tiantong Zhang. This is a pitch, not a build - most of what I describe does not exist. I have spent three assignments on one character in one room. I asked Claude to read my project brief and build this film.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 12.17,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "card-reveal-with-highlight",
+        "remotion": {
+          "props": {
+            "topic": "CSYE 7270 · FINAL PROJECT PITCH",
+            "segment": "The Lost: Floor One",
+            "greeting": "Tiantong Zhang",
+            "command": "Please use Walker to convert my game design document about The Lost - a 2D side-view dungeon crawler where you cure the boss instead of killing them - into a pitch film.",
+            "runningText": "reading pitch/PROJECT-BRIEF.md · mapping 9 sections · hashing capture evidence...",
+            "output": [
+              "9 sections found - 9 covered, 0 excluded",
+              "7 exact excerpts · 4 evidence files · 2 real captures at b33b06c"
+            ],
+            "folderLabel": "@HumanitariansAI",
+            "modelLabel": "Opus 5",
+            "effortLabel": "High",
+            "durationSeconds": 11.88
+          },
+          "pattern": "ClaudeComposerAsk",
+          "rendered": {
+            "out": "media/B00.mp4",
+            "at": "2026-11-23T18:11:54.670095+00:00"
+          }
+        }
+      },
+      "actual_duration_s": 11.883,
+      "audio_file": "mp3/beat-B00.mp3",
+      "render_duration_s": 11.9,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B00.mp4",
+        "filled_by": "remotion:ClaudeComposerAsk",
+        "at": "2026-11-23T13:55:06"
+      }
+    },
+    {
+      "beat_id": "B01",
+      "act": "BLUF",
+      "role_note": "EXECUTIVE SUMMARY. BrutalistHesitantWriter with a working single-word correction: 'finished' -> 'proposed'. The misconception this film has to kill in ten seconds is that any of the final project is built.",
+      "narration_text": "Here is the honest shape of it. One room exists, tested to an unusual depth. The game around it is proposed. The film labels which is which on every card, because a pitch that fabricates progress has already failed.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 11.04,
+      "lead_silence_s": 0.8,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "card-reveal-with-highlight",
+        "remotion": {
+          "props": {
+            "text": "The Lost is a finished game.\nOne room of it exists.",
+            "triggerWords": "finished",
+            "replacementWords": "proposed",
+            "fontSize": 96,
+            "lineSpacing": 4.0,
+            "contextTitle": "What exists, and what does not",
+            "seed": "walker-the-lost-pitch-2026",
+            "ink": "#3D3929",
+            "accent": "#D97757",
+            "bg": "#FAF9F5",
+            "face": "serif",
+            "align": "center",
+            "brandLabel": "@HumanitariansAI",
+            "durationSeconds": 12.02
+          },
+          "pattern": "BrutalistHesitantWriter",
+          "rendered": {
+            "out": "media/B01.mp4",
+            "at": "2026-11-23T18:53:40.087452+00:00"
+          }
+        }
+      },
+      "actual_duration_s": 12.011,
+      "audio_file": "mp3/beat-B01.mp3",
+      "render_duration_s": 12.033333333333333,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B01.mp4",
+        "filled_by": "remotion:BrutalistHesitantWriter",
+        "at": "2026-11-23T13:55:06"
+      }
+    },
+    {
+      "beat_id": "B02",
+      "act": "MECHANISM",
+      "role_note": "Covers brief §1. The one sentence, then the artifact and its form. Status: PROPOSED - no part of this artifact exists.",
+      "narration_text": "What is it. The Lost: Floor One - a playable vertical slice of a two-D side-view dungeon crawler in which you do not kill the boss, you cure them. The artifact is a Windows desktop export plus the tagged repository. One executable, title screen to end screen, under ten minutes, no reading. The full design has four floors; this is one of them.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 17.83,
+      "design_status": "proposed",
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "card-reveal-with-highlight",
+        "remotion": {
+          "props": {
+            "title": "What is it",
+            "section": "§1 · pitch/PROJECT-BRIEF.md",
+            "excerpt": "The Lost: Floor One — a playable vertical slice of a 2D side-view dungeon\ncrawler in which you do not kill the boss, you cure them.",
+            "source": "Exact excerpt, pitch/PROJECT-BRIEF.md lines 20-21 · brief at commit HEAD",
+            "status": "PROPOSED · nothing in this artifact exists today",
+            "visualLabel": "The artifact, and its form",
+            "layout": "flow",
+            "cards": [
+              {
+                "label": "One executable",
+                "text": "Windows desktop export. Double-click, play."
+              },
+              {
+                "label": "Title to end screen",
+                "text": "Under ten minutes. No menu, no tutorial text."
+              },
+              {
+                "label": "One floor, one boss",
+                "text": "The GDD's own cut rule: cut floor count, not floor quality."
+              },
+              {
+                "label": "Plus the tagged repo",
+                "text": "The test report a stranger can rerun."
+              }
+            ],
+            "cues": [
+              {
+                "at": 1.45,
+                "card": 0
+              },
+              {
+                "at": 6.15,
+                "card": 1
+              },
+              {
+                "at": 10.85,
+                "card": 2
+              },
+              {
+                "at": 15.19,
+                "card": 3
+              }
+            ],
+            "durationSeconds": 18.08
+          },
+          "pattern": "GodotDesignBoard",
+          "rendered": {
+            "out": "media/B02.mp4",
+            "at": "2026-11-23T18:28:22.635941+00:00"
+          }
+        }
+      },
+      "actual_duration_s": 18.069,
+      "audio_file": "mp3/beat-B02.mp3",
+      "render_duration_s": 18.1,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B02.mp4",
+        "filled_by": "remotion:GodotDesignBoard",
+        "at": "2026-11-23T13:55:06"
+      }
+    },
+    {
+      "beat_id": "B03",
+      "act": "MECHANISM",
+      "role_note": "Covers brief §2. The unique value, and the one real comparable - Hollow Knight, a game the author has played. The difference is stated as a mechanic, not as a feeling, and no market claim is made.",
+      "narration_text": "Why would anyone care. The game has two progress bars and only one is in the interface. The visible one is floors cleared. The invisible one is how many people are standing in the room you come home to. The comparable is Hollow Knight, which I have played. Dirtmouth fills with people you rescued off the critical path; the bosses are the ones you killed. Two systems that never touch. In The Lost the boss IS the resident - one system.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 22.93,
+      "design_status": "comparison",
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "card-reveal-with-highlight",
+        "remotion": {
+          "props": {
+            "title": "Why anyone would care",
+            "section": "§2 · The comparable: Hollow Knight",
+            "excerpt": "What The Lost does that Hollow Knight does not: it makes those the same\nact. In Hollow Knight the people who turn up in Dirtmouth are the ones you\nrescued off the critical path, and the bosses are the ones you killed.",
+            "source": "Exact excerpt, pitch/PROJECT-BRIEF.md lines 65-67 · comparable named by the author",
+            "status": "PROPOSED · comparison, not a market claim",
+            "visualLabel": "Two systems, or one",
+            "layout": "cards",
+            "cards": [
+              {
+                "label": "Hollow Knight · rescue",
+                "text": "Dirtmouth fills with NPCs found OFF the critical path."
+              },
+              {
+                "label": "Hollow Knight · bosses",
+                "text": "Killed. The infection is cured once, globally, in an ending."
+              },
+              {
+                "label": "The Lost",
+                "text": "The boss IS the resident. One system, not two."
+              },
+              {
+                "label": "What that buys",
+                "text": "You cannot run the main line and come home to an empty room."
+              }
+            ],
+            "cues": [
+              {
+                "at": 4.48,
+                "card": 0
+              },
+              {
+                "at": 8.15,
+                "card": 1
+              },
+              {
+                "at": 12.63,
+                "card": 2
+              },
+              {
+                "at": 17.11,
+                "card": 3
+              }
+            ],
+            "durationSeconds": 20.37
+          },
+          "pattern": "GodotDesignBoard",
+          "rendered": {
+            "out": "media/B03.mp4",
+            "at": "2026-11-23T18:29:50.479689+00:00"
+          }
+        }
+      },
+      "actual_duration_s": 20.352,
+      "audio_file": "mp3/beat-B03.mp3",
+      "render_duration_s": 20.366666666666667,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B03.mp4",
+        "filled_by": "remotion:GodotDesignBoard",
+        "at": "2026-11-23T13:55:06"
+      }
+    },
+    {
+      "beat_id": "B04",
+      "act": "EVIDENCE",
+      "role_note": "Covers brief §3. take-c, PLAYED: held keys through the real input map at game-source revision b33b06c, nothing teleported, no state written. This is what a player is actually moving in the first sixty seconds.",
+      "narration_text": "The target role is gameplay programmer. This is the game today - real captured play at revision b three three b zero six c. Held keys, real input map, nothing staged.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 8.77,
+      "design_status": "implemented",
+      "shot": {
+        "type": "FOOTAGE",
+        "class": "SHOW",
+        "source": "capture",
+        "motion": "gameplay",
+        "capture": "take-c",
+        "evidence_media": "capture/take-c.mp4",
+        "window_s": [
+          0.0,
+          8.933
+        ],
+        "show": [
+          {
+            "at": "0.05",
+            "event": "the walk, facing right - real input, not a tween"
+          },
+          {
+            "at": "0.45",
+            "event": "step dust under the planted foot"
+          },
+          {
+            "at": "0.75",
+            "event": "the turn - the same gait, mirrored"
+          }
+        ]
+      },
+      "actual_duration_s": 10.475,
+      "audio_file": "mp3/beat-B04.mp3",
+      "render_duration_s": 10.5,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B04.mp4",
+        "filled_by": "media",
+        "at": "2026-11-23T13:55:06"
+      }
+    },
+    {
+      "beat_id": "B05",
+      "act": "MECHANISM",
+      "role_note": "Covers brief §4. Course skills tied to tags that exist. The honest half is the second one: what a reviewer could NOT conclude from any of it.",
+      "narration_text": "What it proves. Four course skills, each with a tag behind it. Shaders at a five, particles and their measured cost at a six, animation and state at a seven - two clips on one timeline, two animation players asserted as a partition in both directions. Underneath it, two hundred and eighty checks and seven mutations. What it does not prove matters more: none of it says I can write an enemy or ship a build.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 21.51,
+      "design_status": "observed",
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "card-reveal-with-highlight",
+        "remotion": {
+          "props": {
+            "title": "What it proves",
+            "section": "§4 · evidence that exists today",
+            "excerpt": "What the final project adds to that list: it is the first time any of it\nhas to survive a second character being in the room, and the first time any of\nit leaves the editor as a build.",
+            "source": "Exact excerpt, pitch/PROJECT-BRIEF.md lines 117-119 · each tag is in this repository",
+            "status": "OBSERVED · every row below is at a tag you can clone",
+            "visualLabel": "Course skills, and the tag behind each",
+            "layout": "cards",
+            "cards": [
+              {
+                "label": "a5 · shaders",
+                "text": "3 hand-written shaders · 99 checks · 4 deliberate breakages"
+              },
+              {
+                "label": "a6 · particles",
+                "text": "3 effects · 249 checks / 301 results · a measured cost table"
+              },
+              {
+                "label": "a7 · animation and state",
+                "text": "2 clips, one timeline · 280 checks · 7 mutations"
+              },
+              {
+                "label": "What it does NOT prove",
+                "text": "No enemy. No boss. No export. The hitbox has hit nothing."
+              }
+            ],
+            "cues": [
+              {
+                "at": 3.69,
+                "card": 0
+              },
+              {
+                "at": 6.76,
+                "card": 1
+              },
+              {
+                "at": 9.83,
+                "card": 2
+              },
+              {
+                "at": 16.39,
+                "card": 3
+              }
+            ],
+            "durationSeconds": 20.48
+          },
+          "pattern": "GodotDesignBoard",
+          "rendered": {
+            "out": "media/B05.mp4",
+            "at": "2026-11-23T18:31:18.119206+00:00"
+          }
+        }
+      },
+      "actual_duration_s": 20.48,
+      "audio_file": "mp3/beat-B05.mp3",
+      "render_duration_s": 20.5,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B05.mp4",
+        "filled_by": "remotion:GodotDesignBoard",
+        "at": "2026-11-23T13:55:06"
+      }
+    },
+    {
+      "beat_id": "B06",
+      "act": "EVIDENCE",
+      "role_note": "Covers brief §A. take-s, PLAYED at b33b06c: four swings, the hitbox window opening four times, every clip exactly 36 physics frames. The window is real and it is empty - that is the point of showing it.",
+      "narration_text": "The committing swing, played, four times. Inside it a hitbox window, open a hundred and thirty-three milliseconds. Watch what it hits.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 5.94,
+      "design_status": "implemented",
+      "shot": {
+        "type": "FOOTAGE",
+        "class": "SHOW",
+        "source": "capture",
+        "motion": "gameplay",
+        "capture": "take-s",
+        "evidence_media": "capture/take-s.mp4",
+        "window_s": [
+          0.0,
+          5.5
+        ],
+        "show": [
+          {
+            "at": "0.10",
+            "event": "first swing - wind-up, strike, recovery"
+          },
+          {
+            "at": "0.50",
+            "event": "the arc passes through empty air"
+          },
+          {
+            "at": "0.80",
+            "event": "four swings, every one 36 physics frames"
+          }
+        ]
+      },
+      "actual_duration_s": 7.509,
+      "audio_file": "mp3/beat-B06.mp3",
+      "render_duration_s": 7.533333333333333,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B06.mp4",
+        "filled_by": "media",
+        "at": "2026-11-23T13:55:06"
+      }
+    },
+    {
+      "beat_id": "B07",
+      "act": "DESIGN-TELL",
+      "role_note": "Covers brief §A and §B. The exists/will-exist split is the honesty mechanism of the whole brief, so it gets a beat of its own rather than being implied by the status labels on the others.",
+      "narration_text": "Nothing, because there is no enemy in this project and there never has been. Which brings me to the two lists the brief ends with - the only thing stopping this film from lying. Ten things can be cloned at a tag and run, and the eleventh - the design document itself - is in no repository at all. Everything the final project adds is unstarted: not the enemy, not the boss, not the shrine, not a title screen, no export of any kind. The game has never left the editor.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 25.76,
+      "design_status": "proposed",
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "card-reveal-with-highlight",
+        "remotion": {
+          "props": {
+            "title": "Exists today · will exist",
+            "section": "§B · Will exist",
+            "excerpt": "Nothing in this list has been started.",
+            "source": "Exact excerpt, pitch/PROJECT-BRIEF.md line 288 · §A lists 11 rows, each at a tag",
+            "status": "PROPOSED · nothing in the right-hand column is started",
+            "visualLabel": "What the final project adds",
+            "layout": "cards",
+            "cards": [
+              {
+                "label": "Combat that connects",
+                "text": "Enemy · enemy behaviour · the roll and its i-frames"
+              },
+              {
+                "label": "The floor",
+                "text": "Boss in two forms · purification · the key · a chest"
+              },
+              {
+                "label": "The frame around it",
+                "text": "Shrine · four outlines · title screen · end screen · transitions"
+              },
+              {
+                "label": "And a build",
+                "text": "No export_presets.cfg exists. The game has never left the editor."
+              }
+            ],
+            "cues": [
+              {
+                "at": 5.52,
+                "card": 0
+              },
+              {
+                "at": 9.93,
+                "card": 1
+              },
+              {
+                "at": 13.68,
+                "card": 2
+              },
+              {
+                "at": 18.09,
+                "card": 3
+              }
+            ],
+            "durationSeconds": 22.07
+          },
+          "pattern": "GodotDesignBoard",
+          "rendered": {
+            "out": "media/B07.mp4",
+            "at": "2026-11-23T18:32:51.318154+00:00"
+          }
+        }
+      },
+      "actual_duration_s": 22.059,
+      "audio_file": "mp3/beat-B07.mp3",
+      "render_duration_s": 22.066666666666666,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B07.mp4",
+        "filled_by": "remotion:GodotDesignBoard",
+        "at": "2026-11-23T13:55:06"
+      }
+    },
+    {
+      "beat_id": "B08",
+      "act": "DESIGN-TELL",
+      "role_note": "Covers brief §5. In / out / first, separated. The first piece and the assertion that says it ran are both named, and the assertion is an existing measurement rather than a new one.",
+      "narration_text": "What is in, out, and first. Out, deliberately: one level only, no save system. First is one thing - an enemy the existing hitbox can hit. And here is how anyone knows it ran without watching. Measure clocks already pins the frame that window opens on: the one whose playhead reads nought point two thousand. The first test asserts the enemy's area entered signal fires on that frame. Same number, same file, now with something on the other side of it.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 22.93,
+      "design_status": "proposed",
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "card-reveal-with-highlight",
+        "remotion": {
+          "props": {
+            "title": "In · out · first",
+            "section": "§5 · the first piece",
+            "excerpt": "The hitbox is already built, already on layer 6 PlayerAttack masking layer 3\nEnemy, already opens for a measured 0.133 s, and has never touched anything\nin its life.",
+            "source": "Exact excerpt, pitch/PROJECT-BRIEF.md lines 164-166 · the window is measured in evidence/a7/clocks.txt",
+            "status": "PROPOSED first piece · OBSERVED measurement it is asserted against",
+            "visualLabel": "The first thing to make run, and its test",
+            "layout": "flow",
+            "cards": [
+              {
+                "label": "IN",
+                "text": "One floor · one enemy · the roll · a boss in two forms · the key"
+              },
+              {
+                "label": "OUT, deliberately",
+                "text": "One level only. No save system. No web export."
+              },
+              {
+                "label": "FIRST",
+                "text": "An enemy the hitbox can hit. Smallest change that is not cosmetic."
+              },
+              {
+                "label": "How you know it ran",
+                "text": "area_entered fires on the frame whose playhead reads 0.2000"
+              }
+            ],
+            "cues": [
+              {
+                "at": 2.19,
+                "card": 0
+              },
+              {
+                "at": 4.82,
+                "card": 1
+              },
+              {
+                "at": 8.76,
+                "card": 2
+              },
+              {
+                "at": 14.45,
+                "card": 3
+              }
+            ],
+            "durationSeconds": 21.9
+          },
+          "pattern": "GodotDesignBoard",
+          "rendered": {
+            "out": "media/B08.mp4",
+            "at": "2026-11-23T18:34:24.372276+00:00"
+          }
+        }
+      },
+      "actual_duration_s": 21.888,
+      "audio_file": "mp3/beat-B08.mp3",
+      "render_duration_s": 21.9,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B08.mp4",
+        "filled_by": "remotion:GodotDesignBoard",
+        "at": "2026-11-23T13:55:06"
+      }
+    },
+    {
+      "beat_id": "B09",
+      "act": "DESIGN-TELL",
+      "role_note": "Covers brief §6. One concrete risk specific to this project, with what would be done about it. The risk is derived from this repository's own revision history rather than from a generic list.",
+      "narration_text": "What could sink it. The swing commits - thirty-six physics frames, no cancel, no restart, no turn. Every piece of evidence that this feels acceptable was gathered in a room with nothing in it. The lock has narrowed three times, each time because I played it and said it felt bad with no opponent there. Put something in that room that walks behind you, and the commitment is either the best thing in the game or the reason nobody finishes the fight. The fix would not be a tuning value - sixty checks are the sixty-check suite that is my best evidence has that rule written through it. So the enemy comes first, while one suite depends on it.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 33.68,
+      "design_status": "pending",
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "card-reveal-with-highlight",
+        "remotion": {
+          "props": {
+            "title": "What could sink it",
+            "section": "§6 · the risk",
+            "excerpt": "The swing commits, and it has never committed against anything that moves.",
+            "source": "Exact excerpt, pitch/PROJECT-BRIEF.md line 179 · revisions 7.0.6, 7.0.9, 7.0.10 in CHANGE-BRIEF.md",
+            "status": "PENDING · no evidence either way exists, and none can be gathered in an empty room",
+            "visualLabel": "Why the risk is real, and what is done about it",
+            "layout": "cards",
+            "cards": [
+              {
+                "label": "The rule",
+                "text": "swing is 0.600 s, 36 physics frames. No cancel, no restart, no turn."
+              },
+              {
+                "label": "Why it is untested",
+                "text": "Every verdict on it was given in a room with no opponent."
+              },
+              {
+                "label": "What it costs if wrong",
+                "text": "A state machine change. A 60-check suite has 'cannot turn' written through it."
+              },
+              {
+                "label": "The mitigation",
+                "text": "Build the enemy FIRST - judge it while one suite depends on the rule."
+              }
+            ],
+            "cues": [
+              {
+                "at": 3.98,
+                "card": 0
+              },
+              {
+                "at": 10.93,
+                "card": 1
+              },
+              {
+                "at": 19.88,
+                "card": 2
+              },
+              {
+                "at": 27.83,
+                "card": 3
+              }
+            ],
+            "durationSeconds": 33.13
+          },
+          "pattern": "GodotDesignBoard",
+          "rendered": {
+            "out": "media/B09.mp4",
+            "at": "2026-11-23T18:36:41.464801+00:00"
+          }
+        }
+      },
+      "actual_duration_s": 33.125,
+      "audio_file": "mp3/beat-B09.mp3",
+      "render_duration_s": 33.13333333333333,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B09.mp4",
+        "filled_by": "remotion:GodotDesignBoard",
+        "at": "2026-11-23T13:55:06"
+      }
+    },
+    {
+      "beat_id": "B10",
+      "act": "MECHANISM",
+      "role_note": "Covers brief §7. New learning separated from existing skill on show, and the existing half is backed by tags rather than by assertion.",
+      "narration_text": "Why this project. A mix, and the halves are not close. Showing off: shaders, particles, a state machine, a headless harness - all at a tag, all of it repeating what I can already do. Learning: every new thing involves a second thing being in the room. And I do not know whether the purification beat reads as a reward or an anticlimax. No test can tell me. I find out by playing it and writing down what I said.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 22.64,
+      "design_status": "proposed",
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "card-reveal-with-highlight",
+        "remotion": {
+          "props": {
+            "title": "Why this project",
+            "section": "§7 · new learning vs existing skill",
+            "excerpt": "The honest sentence. I have spent three assignments making one character look\nand behave correctly in one room, and I have never made it meet anything.",
+            "source": "Exact excerpt, pitch/PROJECT-BRIEF.md lines 255-256",
+            "status": "OBSERVED left column · PROPOSED right column · one row is genuinely unknown",
+            "visualLabel": "Have, learning, and do not know yet",
+            "layout": "cards",
+            "cards": [
+              {
+                "label": "Have · evidence at a tag",
+                "text": "Shaders a5 · particles a6 · animation and state a7 · the harness"
+              },
+              {
+                "label": "Learning · nothing to point at",
+                "text": "Enemy behaviour · a boss · combat that connects · transitions · an export"
+              },
+              {
+                "label": "Do not know yet",
+                "text": "Whether purification reads as a reward or as an anticlimax."
+              },
+              {
+                "label": "How I will find out",
+                "text": "Build the beat early, play it, write down what I said. No test can do it."
+              }
+            ],
+            "cues": [
+              {
+                "at": 2.41,
+                "card": 0
+              },
+              {
+                "at": 8.04,
+                "card": 1
+              },
+              {
+                "at": 13.67,
+                "card": 2
+              },
+              {
+                "at": 17.29,
+                "card": 3
+              }
+            ],
+            "durationSeconds": 20.1
+          },
+          "pattern": "GodotDesignBoard",
+          "rendered": {
+            "out": "media/B10.mp4",
+            "at": "2026-11-23T18:38:07.224287+00:00"
+          }
+        }
+      },
+      "actual_duration_s": 20.096,
+      "audio_file": "mp3/beat-B10.mp3",
+      "render_duration_s": 20.1,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B10.mp4",
+        "filled_by": "remotion:GodotDesignBoard",
+        "at": "2026-11-23T13:55:06"
+      }
+    },
+    {
+      "beat_id": "B11",
+      "act": "VERDICT",
+      "role_note": "Verdict. Recapitulation only - no claim appears here that has not already been made and labelled. AI organised the sections and ran the checks; the scope, the comparable and whether this is worth playing are the author's.",
+      "narration_text": "The verdict on my own pitch. One room exists, tested further than it needs to be. One floor is proposed. The risk is a rule I have never tested against anything that moves. Claude mapped the sections and ran the checks; the scope, and whether it is worth playing, stayed mine.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 14.44,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "card-reveal-with-highlight",
+        "remotion": {
+          "props": {
+            "artifactTitle": "The Lost: Floor One - pitch verdict",
+            "artifactHeading": "What is built, what is proposed, and who decided",
+            "brandLabel": "@HumanitariansAI",
+            "artifactLines": [
+              "EXISTS: one room, two clips, a measured hitbox window, 280 checks at a tag",
+              "PROPOSED: one floor, one boss, the shrine, a title and end screen, an export",
+              "FIRST: an enemy the hitbox can hit, asserted on the frame reading 0.2000",
+              "RISK: a 36-frame commitment never tested against anything that moves",
+              "Claude mapped sections and ran checks; scope and worth stayed the author's"
+            ],
+            "durationSeconds": 14.45
+          },
+          "pattern": "ClaudeVerdictArtifact",
+          "rendered": {
+            "out": "media/B11.mp4",
+            "at": "2026-11-23T18:06:21.618823+00:00"
+          }
+        }
+      },
+      "actual_duration_s": 14.443,
+      "audio_file": "mp3/beat-B11.mp3",
+      "render_duration_s": 14.466666666666667,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B11.mp4",
+        "filled_by": "remotion:ClaudeVerdictArtifact",
+        "at": "2026-11-23T13:55:06"
+      }
+    },
+    {
+      "beat_id": "B12",
+      "act": "YOUR-TURN",
+      "role_note": "HANDOFF. A bounded prompt that revises one design hypothesis and names its test - which is exactly the gap this film's own §6 is about.",
+      "narration_text": "Your turn, and it is my own question. Take one rule in your game you believe feels good, and paste this: find the design rule I have the most evidence for, tell me what conditions that evidence was gathered under, and name one it has never been tested in.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 13.87,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "card-reveal-with-highlight",
+        "remotion": {
+          "props": {
+            "topic": "CSYE 7270 · FINAL PROJECT PITCH",
+            "segment": "Your Turn",
+            "greeting": "Your turn.",
+            "command": "Find the design rule I have the most evidence for. Tell me what conditions that evidence was gathered under, and name one condition it has never been tested in.",
+            "runningText": "reading the brief · reading the suites · listing conditions...",
+            "output": [
+              "most-asserted rule: the swing cannot turn - in a 60-check suite",
+              "every check ran in a room with no opponent"
+            ],
+            "folderLabel": "@HumanitariansAI",
+            "modelLabel": "Opus 5",
+            "effortLabel": "High",
+            "durationSeconds": 13.58
+          },
+          "pattern": "ClaudeComposerAsk",
+          "rendered": {
+            "out": "media/B12.mp4",
+            "at": "2026-11-23T18:19:45.203858+00:00"
+          }
+        }
+      },
+      "actual_duration_s": 13.568,
+      "audio_file": "mp3/beat-B12.mp3",
+      "render_duration_s": 13.6,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B12.mp4",
+        "filled_by": "remotion:ClaudeComposerAsk",
+        "at": "2026-11-23T13:55:06"
+      }
+    },
+    {
+      "beat_id": "B13",
+      "act": "OUTRO",
+      "role_note": "OUTRO LAW. ClaudeTitleOutro, locked per OUTRO-LOCK.md: exact title, the hardcoded handle, no narration over the card. SOURCES.md records that the handle is a toolkit lock and not a credit claimed by this submission.",
+      "narration_text": "",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 8.0,
+      "shot": {
+        "type": "GRAPHIC",
+        "class": "SHOW",
+        "source": "remotion",
+        "motion": "card-reveal-with-highlight",
+        "remotion": {
+          "props": {
+            "title": "The Lost: Floor One",
+            "slug": "claude-liam-walker-the-lost-pitch-gdd",
+            "durationSeconds": 8.0
+          },
+          "pattern": "ClaudeTitleOutro",
+          "rendered": {
+            "out": "media/B13.mp4",
+            "at": "2026-11-23T18:08:02.206327+00:00"
+          }
+        }
+      },
+      "audio_policy": "silence",
+      "render_duration_s": 8.0,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B13.mp4",
+        "filled_by": "remotion:ClaudeTitleOutro",
+        "at": "2026-11-23T13:55:06"
+      }
+    }
+  ]
+}

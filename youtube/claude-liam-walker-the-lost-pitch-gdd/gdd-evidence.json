@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "note": "The document walked through is pitch/PROJECT-BRIEF.md, not the-lost-gdd/GDD.md. The GDD describes the whole four-floor game; the brief describes the project being pitched, and a pitch film is a walk through the brief. The GDD is cited inside the brief where its cut rule and its renderer row are used, and it is in no git repository - which the brief's own §A lists as a gap.",
+  "document": {
+    "path": "pitch/PROJECT-BRIEF.md",
+    "sha256": "78c57cb02312576d0c0bde7cd9bbce3f38d8f6d49698b231fe49171e24aca7a7",
+    "captured_at": "2026-11-23T18:10:56.166584+00:00",
+    "version_note": "Assignment 8 draft of 2026-11-23, after the author settled the four open items in the first draft (comparable, target role, artifact, first piece)."
+  },
+  "game_source_revision": "b33b06c",
+  "sections": [
+    {
+      "heading": "1. What is it?",
+      "beat_ids": [
+        "B02"
+      ],
+      "coverage": "The one sentence, the artifact and its form."
+    },
+    {
+      "heading": "2. Why would anyone care?",
+      "beat_ids": [
+        "B03"
+      ],
+      "coverage": "Unique value and the one named comparable, Hollow Knight."
+    },
+    {
+      "heading": "3. Who opens it, and what do they do in the first sixty seconds?",
+      "beat_ids": [
+        "B04"
+      ],
+      "coverage": "Target role, plus real captured play of what a player actually moves in the first minute."
+    },
+    {
+      "heading": "4. What does it prove about me?",
+      "beat_ids": [
+        "B05"
+      ],
+      "coverage": "Course skills against the tags that hold their evidence, and what the evidence does not prove."
+    },
+    {
+      "heading": "5. What is in, what is out, what comes first?",
+      "beat_ids": [
+        "B08"
+      ],
+      "coverage": "In, out and first separated; the first piece's assertion named."
+    },
+    {
+      "heading": "6. What could sink it?",
+      "beat_ids": [
+        "B09"
+      ],
+      "coverage": "The one concrete risk and the mitigation."
+    },
+    {
+      "heading": "7. Why this project?",
+      "beat_ids": [
+        "B10"
+      ],
+      "coverage": "New learning separated from existing skill on show."
+    },
+    {
+      "heading": "§A. Exists today",
+      "beat_ids": [
+        "B06",
+        "B07"
+      ],
+      "coverage": "A played capture of the one mechanism this assignment's §B is built on (B06), then the list itself (B07)."
+    },
+    {
+      "heading": "§B. Will exist",
+      "beat_ids": [
+        "B07"
+      ],
+      "coverage": "The unstarted list, shown beside §A so neither can be read without the other."
+    }
+  ],
+  "excerpts": [
+    {
+      "beat_id": "B02",
+      "start_line": 20,
+      "end_line": 21,
+      "text": "The Lost: Floor One — a playable vertical slice of a 2D side-view dungeon\ncrawler in which you do not kill the boss, you cure them."
+    },
+    {
+      "beat_id": "B03",
+      "start_line": 65,
+      "end_line": 67,
+      "text": "What The Lost does that Hollow Knight does not: it makes those the same\nact. In Hollow Knight the people who turn up in Dirtmouth are the ones you\nrescued off the critical path, and the bosses are the ones you killed."
+    },
+    {
+      "beat_id": "B05",
+      "start_line": 117,
+      "end_line": 119,
+      "text": "What the final project adds to that list: it is the first time any of it\nhas to survive a second character being in the room, and the first time any of\nit leaves the editor as a build."
+    },
+    {
+      "beat_id": "B07",
+      "start_line": 288,
+      "end_line": 288,
+      "text": "Nothing in this list has been started."
+    },
+    {
+      "beat_id": "B08",
+      "start_line": 164,
+      "end_line": 166,
+      "text": "The hitbox is already built, already on layer 6 PlayerAttack masking layer 3\nEnemy, already opens for a measured 0.133 s, and has never touched anything\nin its life."
+    },
+    {
+      "beat_id": "B09",
+      "start_line": 179,
+      "end_line": 179,
+      "text": "The swing commits, and it has never committed against anything that moves."
+    },
+    {
+      "beat_id": "B10",
+      "start_line": 255,
+      "end_line": 256,
+      "text": "The honest sentence. I have spent three assignments making one character look\nand behave correctly in one room, and I have never made it meet anything."
+    }
+  ],
+  "evidence": [
+    {
+      "path": "capture/take-c.mp4",
+      "sha256": "ceba0fe4f1c2464fc1fca53aff2a3fcd4e54db5dc718ac85f4d788ba29ec0b64",
+      "method": "Godot Movie Maker at 3840x2160, driven by godot/tests/capture_animation.gd at game-source revision b33b06c. PLAYED: keys held through the real input map, nothing teleported, no state written, no clip seeked. The take asserts >=5 cycle wraps, both facings and >=12 distinct dust puffs before a frame of it counts, and exits nonzero otherwise.",
+      "supports": "B04's claim that the walk on screen is the game as it exists today, and that a player is moving within seconds without reading anything."
+    },
+    {
+      "path": "capture/take-s.mp4",
+      "sha256": "0edd692d7098bbb34ecd326497e9329ac88f6da0fa586f0ce65e87b02cb86969",
+      "method": "Same driver and revision. PLAYED. The take asserts exactly 4 swings, the hitbox window opening exactly 4 times, and every clip 34-38 physics frames.",
+      "supports": "B06's claim that the committing swing and its 0.133 s window exist, run, and connect with nothing."
+    },
+    {
+      "path": "capture/logs/take-c-inputs.jsonl",
+      "sha256": "ae62bfc5565275d82a48c108dcd369e8fd5e11da1fb7714e245c0b63c17627ab",
+      "method": "Per-physics-frame log written by the capture driver: the held action set, the player's position, velocity, state and health, one JSON object per frame.",
+      "supports": "That take-c is played input rather than a scripted animation - the log is the input, frame by frame, and can be replayed."
+    },
+    {
+      "path": "capture/logs/take-s-inputs.jsonl",
+      "sha256": "cfb5fb9a58816be2859feca9e29787abc0b049114c9eaaffd911203dc7a199d2",
+      "method": "Same log for take-s, including the frame on which each swing starts and the frames on which Hitbox.monitoring is true.",
+      "supports": "That the four swings in B06 are four real button presses and that the window opened four times."
+    }
+  ]
+}

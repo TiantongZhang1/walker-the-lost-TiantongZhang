@@ -1189,3 +1189,32 @@ shape as every other finding in this assignment: nine of the ten tuning
 revisions started with me playing the game and saying something was wrong.
 The apparatus is good at holding a decision once it is made. It is not what
 makes the decision.
+
+
+---
+
+# Assignment 8 — Final Project Pitch Film, 2026-11-23
+
+**The log for this assignment is `pitch/FRICTIONAL.md`**, because the
+assignment asks for one inside that folder and a second copy here is how a
+sentence outlives its facts. What is recorded there, in one line each:
+
+| | |
+|---|---|
+| **One day, not five** | the assignment says five days from release; Canvas said tomorrow. Nothing was played, because nothing new was built — and that is why this assignment has no HUMAN rows |
+| **I asked for the due date rather than inferring it** | the standing rule after Assignment 7's wrong-specification day. The text said five days and the answer was one |
+| **The fact-check changed three numbers** | "four assignments" → three; "eleven things at a tag" → ten, and the eleventh is in no repository at all; "sixty checks written around cannot turn" → the suite *has that rule written through it*. **All three are a true number attached to the wrong quantity** — revision 7.0.3 §2's failure, for the fourth time, in the film about honesty |
+| **The toolkit's own component failed the toolkit's own gate** | `GodotDesignBoard` draws its footer outside the title-safe inset: 14 BLOCKER `edge-bleed` defects, one per board frame. There is a per-beat `qc.full_bleed: true` that would have silenced it; **it was not used**, because the component is not full-bleed by design and writing that down would have been writing down something false. The component was fixed instead |
+| **ffmpeg's `drawtext` crashed instead of failing** | no fontconfig in this build; an access violation, not an error. A label that vanishes silently is worse than no label, so the hold label is a drawn PNG. Its first version then encoded forever, because only one of two overlays carried `shortest=1` |
+| **No `show-tell` skill in this checkout** | the assignment names it as the right format. This clone of `brutalist.art` has 22 skills and that is not one of them; `godot-gdd` with the `walker` modifier was used instead, and it is the closer shape anyway |
+| **The outro handle is a toolkit lock** | `OUTRO-LOCK.md` hardcodes `@NikBearBrown` on the final card. The **narration** complies with the assignment in full — first person, as me, no "Liam, in for Bear", the instructor's name and persona in no spoken line — and the card is named rather than left to be found |
+| **A contradiction that had been sitting in two committed files since October** | `GDD.md:369` says GL Compatibility, `godot/project.godot:15` says Forward Plus, and every number in `TEST-REPORT.md` was measured on Forward+. **No check in this project could ever have caught it**: `tools/check_claude_refs.py` checks `CLAUDE.md` against the repository, and the GDD is in no repository at all. Writing the risk section found it |
+
+**The shape is the same one this repository keeps finding.** The checker
+passed on all three wrong numbers, because it compares hashes and coverage
+and does not know what a sentence means. The gate caught a real defect that
+no human had noticed, and offered a switch that would have made it go away
+without fixing anything. And the thing nothing could have caught — two
+documents disagreeing about the renderer — was found by a person writing a
+paragraph about risk.
+

@@ -70,11 +70,26 @@ def coverage_media(cov: dict) -> list[str]:
     return out
 
 
+def gdd_media(led: dict) -> list[str]:
+    """Every file a `godot-gdd` reel's gdd-evidence.json hashes.
+
+    A fourth ledger shape, added for Assignment 8. The first version of this
+    script knew two -- `gamedev-evidence.json` and `coverage.json` -- and on
+    the pitch reel it printed `no gamedev-evidence.json or coverage.json` and
+    exited 1. **A check that cannot read your ledger is not a passing check
+    and it is not a failing one either**; it is the same dead end as the
+    three `.gitignore` incidents this file exists for, reached from the other
+    side."""
+    return [item["path"] for item in led.get("evidence", []) if item.get("path")]
+
+
 def check(reel: pathlib.Path) -> int:
     led = reel / "gamedev-evidence.json"
     cov = reel / "coverage.json"
-    if not led.is_file() and not cov.is_file():
-        print("  no gamedev-evidence.json or coverage.json in %s" % reel.name)
+    gdd = reel / "gdd-evidence.json"
+    if not led.is_file() and not cov.is_file() and not gdd.is_file():
+        print("  no gamedev-evidence.json, coverage.json or gdd-evidence.json "
+              "in %s" % reel.name)
         return 1
     ledger = json.load(led.open(encoding="utf-8")) if led.is_file() else {}
     sheet_path = reel / "beat_sheet.json"
@@ -85,7 +100,9 @@ def check(reel: pathlib.Path) -> int:
     paths = referenced(ledger, sheet)
     if cov.is_file():
         paths += coverage_media(json.load(cov.open(encoding="utf-8")))
-        paths = sorted(set(paths))
+    if gdd.is_file():
+        paths += gdd_media(json.load(gdd.open(encoding="utf-8")))
+    paths = sorted(set(paths))
     if not paths:
         print("  %s: the ledger references no media at all" % reel.name)
         return 1
@@ -96,7 +113,7 @@ def check(reel: pathlib.Path) -> int:
     # from those.
     extra = ["beat_sheet.json"]
     for name in ("gamedev-evidence.json", "coverage.json",
-                 "SOURCE-SNAPSHOT.json"):
+                 "gdd-evidence.json", "SOURCE-SNAPSHOT.json"):
         if (reel / name).is_file():
             extra.append(name)
     extra += [p.relative_to(reel).as_posix()

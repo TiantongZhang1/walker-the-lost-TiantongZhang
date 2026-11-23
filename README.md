@@ -17,8 +17,28 @@ people standing in the room you come home to.
 | Renderer | **Forward+** — Vulkan 1.4.357, NVIDIA GeForce RTX 5080 Laptop GPU, Windows 11 |
 | Resolution | 640 × 360 logical, 1280 × 720 windowed, `canvas_items` stretch, nearest filtering |
 | Scale convention | 16 px = 1 m |
-| Design document | `../the-lost-gdd/GDD.md` — moves into `design/` when A4 lands |
-| Current tag | `a6` |
+| Design document | `../the-lost-gdd/GDD.md` — **still outside this repository, and in no git repository at all.** This line used to say it would move into `design/` when A4 landed; A4 landed and it did not. `pitch/PROJECT-BRIEF.md` §A lists it as a gap rather than letting this line keep promising |
+| Current tag | **`a8`** |
+
+---
+
+## What this repository is at the `a8` tag
+
+**Assignment 8 — Final Project Pitch Film.** A pitch, not a build:
+[`pitch/PROJECT-BRIEF.md`](pitch/PROJECT-BRIEF.md) answers the assignment's
+seven questions about **The Lost: Floor One** — a vertical slice of floor one
+with one boss, shipped as a Windows desktop export — and ends with two lists,
+*exists today* with a tag against every row and *will exist* with nothing
+started. The film is a 3:54 walk through that document, built with Brutalist's
+`godot-gdd` workflow. [`pitch/README.md`](pitch/README.md) holds the film's
+filename, length, URL and SHA-256, in the one place they are recorded.
+
+**No game code changed.** `git diff b33b06c..a8 -- godot/` is empty; every
+tag's worth of engine work below is exactly as it was at `a7`.
+
+The two gameplay beats in the pitch film are Assignment 7's played captures,
+re-used at the same revision rather than re-recorded, and **3.57 s of the film
+is a held final frame, labelled on screen for the seconds it is frozen.**
 
 ---
 
