@@ -156,6 +156,12 @@ started failing.
   darkest and lightest level art; whether a moving swing reads after
   revision 7.0.9 changed the answer; and whether a braced stance hanging in
   mid-air reads. The film's verdict says the third one out loud.
+- **Three of the assignment's five play checks are not done**, and
+  `TEST-REPORT.md` names them: there is no **motion reference** for any
+  action, the **Remote scene dock** was not watched during play, and the
+  **muted-sound readability** check was not made. The slowed pass and the
+  collision-shape comparison were done on 2026-11-22 and the verdict is
+  quoted in `TUNING.md`.
 - **The film's own fact-check is written by the party that wrote its
   narration.** `FACTCHECK.md` says so in its closing section.
 

@@ -1976,8 +1976,20 @@ by being looked at.
 
 ## Assignment 8's HUMAN checks that are NOT done
 
-The assignment's "Play it" section lists five human checks. **Two areas have
-not been covered, and they are listed here rather than left to be assumed:**
+The assignment's "Play it" section lists five human checks. **Two are done
+and three are not**, and the three are listed here rather than left to be
+assumed.
+
+**Done, 2026-11-22**, verdict quoted verbatim in `TUNING.md`:
+
+- **The slowed pass.** `godot --path godot --time-scale 0.25`, every state
+  and every edge at a quarter speed.
+- **The collision-shape comparison.** `Debug > Visible Collision Shapes`,
+  the art against the shape in every pose.
+
+> 慢放和碰撞形状我看完了，没问题 — *no problems in either.*
+
+**Not done:**
 
 - **There is no motion reference.** §1 asks for one action's reference — its
   source, frame rate, and the frame counts measured from it. The swing's
@@ -1985,10 +1997,14 @@ not been covered, and they are listed here rather than left to be assumed:**
   and the cycle's from the stride arithmetic. **Both are derivations, and a
   derivation is not a reference.** Relabelling one would cost more than the
   points do.
-- **The slowed pass and the collision-shape comparison have not been run.**
-  `godot --path godot --time-scale 0.25`, the Scene dock on **Remote** while
-  the game runs, `Debug > Visible Collision Shapes` against every pose, and
-  the muted-sound readability check are all outstanding.
+- **The Remote scene dock** has not been watched while the game runs.
+- **The muted-sound readability check** has not been made.
+
+**The author's verdict covers the two checks it names and no others.** This
+report has a paragraph further down about a list of open questions that went
+on listing one that had been answered; the same discipline applies in the
+other direction, and a sentence about two checks is not a sentence about
+five.
 
 **What has been done** is ten dated play verdicts in `TUNING.md`, in the
 author's own words, nine of which produced a revision — including one that

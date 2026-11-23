@@ -1382,3 +1382,45 @@ and it would be dishonest to write two separate verdicts from one.
 rather than being swept under a 没问题: both clips over the darkest and
 lightest level art, and whether a braced stance hanging in mid-air reads. I
 did not go looking at either.
+
+---
+
+## 2026-11-22 — two of the assignment's play checks, done
+
+### 1. What I did
+
+> 慢放和碰撞形状我看完了，没问题
+>
+> [I've looked at the slowed pass and the collision shapes — they're fine]
+
+Two of the five checks the assignment's "Play it" section lists:
+
+- **`godot --path godot --time-scale 0.25`** — every state and every edge at
+  a quarter speed.
+- **`Debug > Visible Collision Shapes`** — the art against the collision
+  shape in every pose, which is what my Assignment 2 character sheet planned
+  for.
+
+### 2. My verdict
+
+**No problems in either.** The states read at a quarter speed and the art
+sits on the collision shape in every pose.
+
+### 3. What this verdict does NOT cover, because I did not do it
+
+Three things in that section are still outstanding and I am not going to let
+one sentence stand in for five:
+
+- the Scene dock on **Remote** while the game runs, watching the
+  `AnimationPlayer` change as I act;
+- whether a player can tell which state the character is in **with sound
+  muted**;
+- a **motion reference** for any action — its source, its frame rate, and
+  the frame counts I measured off it. There is none. The swing's timings
+  came from the spike trap's own windows and the cycle's from the stride
+  arithmetic, and a derivation is not a reference.
+
+`TEST-REPORT.md` lists all three as not done. That costs points. Writing
+"都没问题" across all five would cost more, and this repository already has
+a paragraph about exactly that failure — a blanket *it's all fine* is not an
+answer to a question nobody asked out loud.
