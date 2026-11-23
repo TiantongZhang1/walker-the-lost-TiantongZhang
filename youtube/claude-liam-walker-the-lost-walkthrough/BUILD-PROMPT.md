@@ -147,7 +147,29 @@ its legs.
   evidence file **and** beat sheet and asks git whether each media path is
   actually tracked. Three times in this repository a file the evidence needed
   was silently `.gitignore`d, and a clean `git status` cannot tell you.
-- The checker passes **in a fresh clone of the tag**, not only here.
+- The checker passes **in a fresh clone of the tag**, not only here, and
+  **every suite is re-run there with the time step pinned**:
+
+  ```bash
+  cd /tmp/verify-a8
+  for t in test_player_clips test_swing_clip test_player_states \
+           test_swing_edges pin_player_states test_input_map \
+           measure_clocks test_pickup_clip; do
+    timeout 180 ./scripts/run-test.sh "$t".gd 60
+  done
+  ```
+
+  > **If `test_player_clips.gd` reports `FAIL the sheet is loaded`, import
+  > again and re-run.** That happened once, in one fresh clone, on
+  > 2026-11-22: the first `--import` left `godot/.godot/imported/` without
+  > the sheet's entry, the suite failed its first assertion, a second
+  > `--import` fixed it, and the suite passed 82/0.
+  >
+  > **It did not reproduce.** A clean clone imported once gave 56 imported
+  > entries and 82/0 on the first try. So this is an observation with a
+  > remedy, not a rule — the cause is unknown and naming one would be
+  > inventing it. What it does show is why the suite's *first* assertion is
+  > that the sheet is loaded: Godot prints import failures while exiting 0.
 
 ```bash
 git clone --branch a8 --single-branch <repo> /tmp/verify-a8

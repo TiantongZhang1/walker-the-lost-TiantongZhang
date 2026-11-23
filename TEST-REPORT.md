@@ -1974,6 +1974,30 @@ by being looked at.
 
 ---
 
+## Assignment 8's HUMAN checks that are NOT done
+
+The assignment's "Play it" section lists five human checks. **Two areas have
+not been covered, and they are listed here rather than left to be assumed:**
+
+- **There is no motion reference.** §1 asks for one action's reference — its
+  source, frame rate, and the frame counts measured from it. The swing's
+  timings were derived from the spike trap's own warning and fire windows,
+  and the cycle's from the stride arithmetic. **Both are derivations, and a
+  derivation is not a reference.** Relabelling one would cost more than the
+  points do.
+- **The slowed pass and the collision-shape comparison have not been run.**
+  `godot --path godot --time-scale 0.25`, the Scene dock on **Remote** while
+  the game runs, `Debug > Visible Collision Shapes` against every pose, and
+  the muted-sound readability check are all outstanding.
+
+**What has been done** is ten dated play verdicts in `TUNING.md`, in the
+author's own words, nine of which produced a revision — including one that
+rejected a whole sprite sheet and one that rejected a shipped swing. The
+evidence split in `CHANGE-BRIEF.md` §9 keeps three further questions open
+and names each of them.
+
+---
+
 ## Eleven sentences that outlived the facts they stated
 
 Each was true when written and false afterwards, and each was found by
