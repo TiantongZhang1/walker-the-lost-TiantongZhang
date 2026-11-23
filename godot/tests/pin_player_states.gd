@@ -43,31 +43,11 @@ var _log: Array = []          # [[frame, state], ...] transitions only
 var _last := -1
 
 
-## **TIMING or INVARIANT**, which Assignment 8 requires a pin to separate.
-##
-## INVARIANT is a fact that must survive ANY animation change. TIMING is a
-## number I may move on purpose; a re-pin may change a TIMING constant and
-## may never change an INVARIANT or widen a tolerance.
-##
-## **The grouping was added on 2026-11-22; no expectation moved with it.**
-## Every assertion below keeps the value it was written with on 2026-11-15,
-## and `git log --diff-filter=A` shows this file at 0e3dbe7 against the
-## clips at d303899 -- the pin predates every animation change, which is the
-## part that cannot be added afterwards.
-const INVARIANT := "INVARIANT"
-const TIMING := "TIMING"
-
-var _by_group := {INVARIANT: [0, 0], TIMING: [0, 0]}
-
-
-func _check(label: String, ok: bool, detail := "", group := INVARIANT) -> void:
-	_by_group[group][0] += 1
-	if not ok:
-		_by_group[group][1] += 1
+func _check(label: String, ok: bool, detail := "") -> void:
 	_checks += 1
 	if not ok:
 		_failures += 1
-	print("PASS  " if ok else "FAIL  ", "%-9s  " % group, label,
+	print("PASS  " if ok else "FAIL  ", label,
 		"" if detail == "" else "   [" + detail + "]")
 
 
@@ -133,9 +113,8 @@ func _init() -> void:
 	while not player.is_on_floor() and settle < 120:
 		await _step(player)
 		settle += 1
-	# TIMING: a bound on the fall, not a fact about it.
 	_check("lands on the floor within 120 frames", player.is_on_floor(),
-		"took %d frames" % settle, TIMING)
+		"took %d frames" % settle)
 	await _run_frames(player, 5)
 	_check("settles to IDLE", _state_of(player) == S.IDLE,
 		NAMES[_state_of(player)])
@@ -154,10 +133,8 @@ func _init() -> void:
 	# player.gd decelerates with move_toward(vx, 0, SPEED), so one call lands
 	# exactly on zero. This is a behaviour, not an accident, and A7 must not
 	# change it: the run cycle's RUN -> IDLE edge is one frame wide.
-	# TIMING: a deceleration rate. `move_toward(0, SPEED)` makes it exactly
-	# one frame today; a designer may want two.
 	_check("releasing right stops in ONE frame",
-		_state_of(player) == S.IDLE, "vx %.3f" % player.velocity.x, TIMING)
+		_state_of(player) == S.IDLE, "vx %.3f" % player.velocity.x)
 
 	# --- 3. the jump arc --------------------------------------------------
 	var before_jump := _frame
@@ -172,7 +149,7 @@ func _init() -> void:
 		await _step(player)
 		air += 1
 	_check("lands again within 200 frames", player.is_on_floor(),
-		"airborne %d frames" % air, TIMING)
+		"airborne %d frames" % air)
 	_note("airborne for %d frames at 60 fps = %.3f s" % [air, air / 60.0])
 	_check("the arc passed through FALLING",
 		_sequence().has("FALLING"), " -> ".join(_sequence()))
@@ -215,14 +192,6 @@ func _init() -> void:
 	_note("x at the end of the 30-frame run: %.1f" % x_after_run)
 	_note("frames: settle %d, run from %d, jump at %d" % [
 		settle, run_from, before_jump])
-	print("")
-	print("  %-9s  %d check(s), %d failure(s)"
-		% [INVARIANT, _by_group[INVARIANT][0], _by_group[INVARIANT][1]])
-	print("  %-9s  %d check(s), %d failure(s)"
-		% [TIMING, _by_group[TIMING][0], _by_group[TIMING][1]])
-	print("  A re-pin may change a TIMING number. It may never change an")
-	print("  INVARIANT or widen a tolerance.")
-	print("")
 	_note("the jump is airborne for 0.600 s, which is exactly the swing's")
 	_note("  length in CHANGE-BRIEF.md section 6. Noticed, not designed:")
 	_note("  it means a jump and a swing cost the player the same time.")

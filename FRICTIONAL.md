@@ -1146,3 +1146,46 @@ is the eleventh time a sentence here has outlived the fact it stated.
 The film's thesis is that a read-back only sees the questions it was written
 to ask. Building the film produced three more questions nobody had been
 asking, which I suppose is the thesis being true about itself.
+
+---
+
+## 2026-11-22 — a day spent on the wrong assignment
+
+I asked Claude to check the deliverable against the specification before I
+submitted, which is a rule I made after Assignment 3. It did. It found the
+specification in `NikbearbrownGit/`, a clone of the course repository sitting
+beside my project, read `08-animation-and-state.md`, and told me this was
+Assignment 8 and the tag should be `a8`.
+
+It was not. My assignment is **Assignment 7 — Doing Animation with Claude and
+Godot**, tag `a7`, film `godot-gamedev`. The clone is a different version of
+the course.
+
+**What I want recorded is that the evidence was all there and pointed the
+other way.** The file Claude found disagreed with my repository on three
+things at once — the number, the tag, and the required film workflow — and
+my previous assignment disagreed with it in the same direction. Three
+disagreements, all consistent with *this is not his assignment*. Claude read
+them as *he has been mis-numbering since Assignment 6*, wrote that into a
+commit message, and spent a day acting on it.
+
+A single mismatch is a typo. Three mismatches that all lean the same way are
+a signal that the premise is wrong, and the moment to stop is before the
+first commit, not after the eleventh.
+
+**What it cost, and what it did not.** A day. A `godot-walkthrough` film I did
+not need, built from scratch, now deleted. A decorative pickup and its
+read-back, added to satisfy an item that does not exist in my assignment,
+now reverted. Twelve commits of churn. What it did not cost is the work
+itself: the brief, the two clips, the state machine, the pins, the edge
+tests, the four mutations, the frame strips, my ten verdicts and the
+`godot-gamedev` film were all correct the whole time and are what I am
+submitting.
+
+**And the check that caught it was me reading the thing.** Not a test, not a
+checker, not the agent re-reading its own work. I looked at what it had
+written, thought *this is assignment seven*, and said so. That is the same
+shape as every other finding in this assignment: nine of the ten tuning
+revisions started with me playing the game and saying something was wrong.
+The apparatus is good at holding a decision once it is made. It is not what
+makes the decision.

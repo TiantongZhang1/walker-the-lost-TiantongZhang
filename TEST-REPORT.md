@@ -1974,43 +1974,49 @@ by being looked at.
 
 ---
 
-## Assignment 8's HUMAN checks that are NOT done
+## The four HUMAN CHECKS, and which are answered
 
-The assignment's "Play it" section lists five human checks. **Two are done
-and three are not**, and the three are listed here rather than left to be
-assumed.
+Assignment 7's "Use It" table names four checks no headless run can make.
+Each one's verdict is the author's, dated, in `TUNING.md`, in the words it
+was said in.
 
-**Done, 2026-11-22**, verdict quoted verbatim in `TUNING.md`:
+| HUMAN CHECK | Status |
+|---|---|
+| **The cycle seam** — five wraps at normal speed, no stutter, no duplicated frame, no jump | **answered 2026-11-20** — *跑步接缝没问题* |
+| **The action in play** — triggered many times, startup / active / recovery reading as distinct | **answered 2026-11-20** — *三段分得开* |
+| **Registration** — the cycle's frame strip, no drift within the cells | **answered 2026-11-20** — *角色没有飘逸* |
+| **Against the background** — both clips over the darkest and lightest level art | **OPEN.** The unlit trap gap at x 208 and the torch pool at x 320 have not been judged |
 
-- **The slowed pass.** `godot --path godot --time-scale 0.25`, every state
-  and every edge at a quarter speed.
-- **The collision-shape comparison.** `Debug > Visible Collision Shapes`,
-  the art against the shape in every pose.
+Step 7 also asks for the preview played at normal speed **and** at
+`--time-scale 0.25`. **Answered 2026-11-22** — *慢放和碰撞形状我看完了,没问题*
+— the slowed pass, and the art against the collision shape in every pose.
 
-> 慢放和碰撞形状我看完了，没问题 — *no problems in either.*
+A fifth question arrived from the work rather than from the assignment and
+is also open: **whether a braced stance hanging in mid-air reads**, which
+revision 7.0.10 created and §9 carries. And revision 7.0.9 changed the
+answer to *does a moving swing read, or does it just slide* without its
+being re-judged since.
 
-**Not done:**
+**Three of the nine rows in `CHANGE-BRIEF.md` §9 are open, and they are
+listed as open** rather than covered by the author's closing *都没问题* — a
+blanket *it's all fine* is not an answer to a question nobody asked out
+loud, and promoting one into an answer is exactly how the stale sentences
+below got started.
 
-- **There is no motion reference.** §1 asks for one action's reference — its
-  source, frame rate, and the frame counts measured from it. The swing's
-  timings were derived from the spike trap's own warning and fire windows,
-  and the cycle's from the stride arithmetic. **Both are derivations, and a
-  derivation is not a reference.** Relabelling one would cost more than the
-  points do.
-- **The Remote scene dock** has not been watched while the game runs.
-- **The muted-sound readability check** has not been made.
+### On the reference the phase table was measured against
 
-**The author's verdict covers the two checks it names and no others.** This
-report has a paragraph further down about a list of open questions that went
-on listing one that had been answered; the same discipline applies in the
-other direction, and a sentence about two checks is not a sentence about
-five.
+The assignment says *measure your reference, write the phase table*. The
+reference here is **inside the game**, and it is named in
+`CHANGE-BRIEF.md` §6: the spike trap's own `FIRE_SECONDS = 0.18 s` and its
+0.40 s warning window, both read out of `spike_trap.gd`. The swing's active
+window is **0.133 s, deliberately narrower than the trap's**, so you cannot
+trade with a trap; its startup is **0.200 s, half the trap's warning**, long
+enough to read and short enough not to feel broken; and the whole 0.600 s
+fits inside the trap's 1.40 s cycle with room to walk out.
 
-**What has been done** is ten dated play verdicts in `TUNING.md`, in the
-author's own words, nine of which produced a revision — including one that
-rejected a whole sprite sheet and one that rejected a shipped swing. The
-evidence split in `CHANGE-BRIEF.md` §9 keeps three further questions open
-and names each of them.
+**That is a measured reference and it is not filmed motion.** No video or
+animation outside this project was measured frame by frame. The distinction
+is recorded here rather than left for a reviewer to assume either way.
 
 ---
 

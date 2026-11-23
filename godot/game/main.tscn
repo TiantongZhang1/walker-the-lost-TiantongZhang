@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://game/main.gd" id="0_main"]
 [ext_resource type="Script" path="res://game/room_backdrop.gd" id="0_backdrop"]
@@ -11,7 +11,6 @@
 [ext_resource type="PackedScene" path="res://features/traps/spike_trap.tscn" id="3_trap"]
 [ext_resource type="PackedScene" path="res://effects/dungeon_motes.tscn" id="3_motes"]
 [ext_resource type="Script" path="res://tools/capture_rig.gd" id="4_capture"]
-[ext_resource type="PackedScene" uid="uid://cq7k3y0key001" path="res://features/pickup/floating_key.tscn" id="8_key"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_floor"]
 size = Vector2(640, 160)
@@ -68,9 +67,6 @@ position = Vector2(432, 200)
 
 [node name="Player" parent="." instance=ExtResource("2_player")]
 position = Vector2(96, 150)
-
-[node name="FloatingKey" parent="." instance=ExtResource("8_key")]
-position = Vector2(272, 174)
 
 [node name="DungeonMotes" parent="." instance=ExtResource("3_motes")]
 

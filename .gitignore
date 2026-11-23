@@ -164,21 +164,3 @@ godot/override.cfg
 # than a reviewer's dead end.
 !youtube/*/media/B13.png
 !youtube/*/media/B14.png
-
-# --- Assignment 8's walkthrough film, claude-liam-walker-the-lost-walkthrough
-#
-# Four takes and their input logs. `tools/check_reel_tracked.py` reads every
-# reel's evidence file AND beat sheet and asks git about each media path, so
-# a fifth occurrence of the take-w.mp4 failure is a failing check rather than
-# a reviewer's dead end.
-#
-# 4.0 + 2.1 + 3.0 + 3.7 MB. The 4K PNG sequences they were encoded from stay
-# out under the `youtube/*/capture/take-*/` rule above.
-!youtube/*/capture/take-a.mp4
-!youtube/*/capture/take-b.mp4
-!youtube/*/capture/take-d.mp4
-!youtube/*/capture/logs/take-a-inputs.jsonl
-!youtube/*/capture/logs/take-b-inputs.jsonl
-!youtube/*/capture/logs/take-d-inputs.jsonl
-# This film's one composed still.
-!youtube/*/media/B08.png

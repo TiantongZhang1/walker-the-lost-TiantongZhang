@@ -65,12 +65,6 @@ QUIT_AFTER_PARTICLES = {"p": 1200, "r": 1500, "c": 2000}
 ANIMATION_DRIVER = "res://tests/capture_animation.gd"
 QUIT_AFTER_ANIMATION = {"c": 1200, "s": 900, "m": 1400}
 
-# Assignment 8's WALKTHROUGH driver -- a fourth table, and the fourth
-# meaning for the letter `c`. Measured tick counts: a 479, b 336, c 303,
-# d 785 at first; a 1571, b 975, c 1095, d 1516 once the takes were
-# lengthened so the beats would not sit on a frozen frame for half a minute.
-WALKTHROUGH_DRIVER = "res://tests/capture_walkthrough.gd"
-QUIT_AFTER_WALKTHROUGH = {"a": 2200, "b": 1400, "c": 1500, "d": 2100}
 
 # Assignment 2's film uses a second driver. The default stays Assignment 1's,
 # so that film remains reproducible from this script unchanged.
@@ -87,7 +81,6 @@ def quit_after(take: str, driver: str) -> int:
     table = {
         PARTICLES_DRIVER: QUIT_AFTER_PARTICLES,
         ANIMATION_DRIVER: QUIT_AFTER_ANIMATION,
-        WALKTHROUGH_DRIVER: QUIT_AFTER_WALKTHROUGH,
     }.get(driver, QUIT_AFTER)
     return table.get(take, 1800)
 

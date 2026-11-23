@@ -12,7 +12,7 @@ Every fact carries the file it came from. Check them; do not trust them.
 | Main scene, resolution | `res://game/main.tscn`; 640 × 360, nearest-neighbour | `godot/project.godot:14` `:19` `:65` |
 | **Physics tick** | **60** — `physics_ticks_per_second` is unset, so the engine default | `godot/project.godot`, no `[physics]` section |
 | Player | 16 px = 1 m; `SPEED = 96.0`, `JUMP_VELOCITY = -260.0`, `GRAVITY`, `health`, `signal died` | `godot/features/player/player.gd:32` `:42` `:43` `:44` `:51` `:35` |
-| Step-dust stride | `stride_px = 24.0` — the cycle's frame rate is derived from it | `godot/game/main.tscn:82` |
+| Step-dust stride | `stride_px = 24.0` — the cycle's frame rate is derived from it | `godot/game/main.tscn:78` |
 | Trap timings | 0.40 + 0.18 + 0.22 + 0.60 = **1.40 s** | `godot/features/traps/spike_trap.gd:39` `:40` `:41` `:42` |
 
 Scenes are referenced **by node name, never by line**; an editor save

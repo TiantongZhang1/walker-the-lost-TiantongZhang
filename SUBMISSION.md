@@ -1,169 +1,148 @@
 # SUBMISSION.md
 
-**Assignment:** Assignment 8 - Animation Wired to Player Actions
+**Assignment:** Assignment 7 - Doing Animation with Claude and Godot
 
 **Student:** Tiantong Zhang · zhang.tiant@northeastern.edu · GitHub `TiantongZhang1`
 
 **Project name:** The Lost
 
-**GitHub repository URL and tag (a8):**
-<https://github.com/TiantongZhang1/walker-the-lost-TiantongZhang>, tag **`a8`**
+**GitHub repository URL:**
+<https://github.com/TiantongZhang1/walker-the-lost-TiantongZhang>
 
-**Submitted commit SHA:** in the Canvas note. A commit cannot carry its own
-SHA; recover it with `git rev-list -n 1 a8`.
+**Git tag and submitted commit SHA:** tag **`a7`**. A commit cannot carry its
+own SHA; it is in the Canvas note and recoverable with
+`git rev-list -n 1 a7`.
 
-**Commit SHA of the pinned baseline test:** **`0e3dbe7`**, 2026-11-15
-12:27:44 −0500 — *"A7 Step 2: the behaviour pin, committed before anything
-changes."* The first animation clip is `d303899`, 2026-11-16 21:04:59, so
-`git log --diff-filter=A -- godot/tests/pin_player_states.gd` against the
-same for `godot/animations/player.tres` is the check that the pin predates
-the change it guards.
-
-**Game-source revision shown in the film:** **`5042a6b`**. Its content hash
-is in `youtube/claude-liam-walker-the-lost-walkthrough/SOURCE-SNAPSHOT.json`
-and every capture in `coverage.json` carries it:
-
-```
-11af9145937e56f29c393d2120c75f4c13d3f916dfe1a3d044fab1e12f5c1cb1
-```
-
-**`git diff 5042a6b..a8 -- godot/` prints nothing.** Commits after it add
+**Game-source revision shown in the film:** **`b33b06c`**. Every code panel,
+every hash and every capture in the film is taken at it, and
+**`git diff b33b06c..a7 -- godot/` prints nothing** — commits after it add
 film documentation and film scripts only.
 
-**Godot version and operating system:** Godot **4.7.2.stable.official**
-`ed1daf0bf`, **Forward+** (Vulkan 1.4.357), Windows 11.
+**Godot version, renderer, and operating system:** Godot
+**4.7.2.stable.official** `ed1daf0bf`, **Forward+** (Vulkan 1.4.357),
+Windows 11. Physics tick **60** — `physics_ticks_per_second` is unset, so the
+engine default, and every frame count below is stated at that rate.
 
-**Physics ticks per second and test frame rate:** **60 physics ticks per
-second** — `physics_ticks_per_second` is *unset*, so this is the engine
-default, and a tick that is a default is still the tick every frame count
-here is stated at. **Tests run at `--fixed-fps 60`**, so **one rendered
-frame holds exactly one physics tick** and the two-tick-offset rerun the
-assignment asks for *"where a frame holds more than one tick"* does not
-apply. `test_step_dust_state.gd` is run at 30, 60 and 144 anyway, because
-that suite's subject is frame-rate independence.
+**Sprite clip: route, node, scene, frame rate:**
+`swing` — **`Sprite2D` with an `AnimationPlayer` frame track**, the preferred
+sprite route. Node `Rig/Body` in `godot/features/player/player.tscn`,
+**30 fps**, `Animation.step` = 1/30, 18 frames, `LOOP_NONE`.
+The sheet is `godot/assets/sprites/player_sheet.png`, 32 × 32 cells,
+`hframes = 4`, `vframes = 2`.
 
-**Animation set (simple / sheet or rig / cycle, and any substitute):**
+**Rig clip: route, rig source, node, scene, frame rate:**
+`legs_run` — **2D cutout rig keyed as resource text**. Plain `Node2D`
+pivots, no `Bone2D`: `Rig/LegFront` and `Rig/LegBack` in the same scene,
+keyed on `rotation_degrees`, plus `Rig:position:y`. **8 fps** — four keys
+per 0.500 s — `Animation.step` = 0.125, `LOOP_LINEAR`.
+The rig source is the committed GPT-6 pose `p2-run`, **cut** into a torso and
+two legs by `tools/make_sprites.py`, which asserts the cut is lossless.
 
-| # | Item | What it is | Checked by |
-|---|---|---|---|
-| 1 | **Simple animation** | `godot/features/pickup/floating_key.tscn` — one `Sprite2D`, a `hover` clip keying `position:y` (a bob) and `rotation_degrees` (0 → 360), `LOOP_LINEAR`, 2.400 s, autoplay. **No rig, no frames.** | `test_pickup_clip.gd`, 20 checks |
-| 2 | **Sprite sheet *and* rig** | `swing` — a discrete `Rig/Body:frame` track on a 4 × 2 sheet **and** a keyed 2D cutout (`SwordArm` position + rotation, `Blade` visibility). It is both routes at once | `test_swing_clip.gd` 79, `test_swing_edges.gd` 60 |
-| 3 | **Cycle** | `legs_run` in `legs.tres` — 0.500 s, `LOOP_LINEAR`, seam-checked: every interpolated track's value at `t = 0` equals its value at `t = length` | `test_player_clips.gd`, 82 checks |
+> **The imported-3D route was checked and rejected on evidence.** A glTF JSON
+> probe on 2026-11-15 found **`skins: 0` and no animations** in all three
+> `.glb` files in `godot/assets/models/`. There is no imported rig in this
+> project to key, and the brief records the probe rather than the preference.
 
-**No substitute is claimed and none is needed.** Item 1 was missing until
-2026-11-22 and `CHANGE-BRIEF.md` revision 8.0.1 records why it was missed:
-it is the only item in the set that is not about the character, and every
-sentence in the brief is about the character.
+**Which clip loops and which commits:**
+**`legs_run` loops** — `LOOP_LINEAR`, and the seam rule that applies to it is
+the **continuous** one: every interpolated track's value at `t = 0` equals
+its value at `t = length` (front 38 → 38, back −14 → −14, bob 0 → 0).
+**`swing` commits** — `LOOP_NONE`, 18 frames at 30 fps, with the phase table
+in `CHANGE-BRIEF.md` §6: startup 0–5, active 6–9, recovery 10–17, end at 18.
 
-**State machine (where state lives, wiring, states):**
+> **This is the opposite way round from the obvious split, and the reason is
+> art rather than animation.** A frame cycle needs several drawings of a run
+> and this project has one; a cutout rig needs no new drawing at all, because
+> it cuts the legs off the pose that exists. The assignment allows either way
+> round and `CHANGE-BRIEF.md` revision 7.0.1 argues this one.
 
-- **Where it lives:** `godot/features/player/player.gd`. It owns an `action`
-  enum and a `swing_count`; **committing is gameplay, not presentation.**
-  There was a competing authority — `pose_driver.gd` wrote `Sprite2D.texture`
-  every `_process` — and it is deleted, not worked around.
-- **Wiring:** a **selector evaluated every physics tick**.
-  `player_anim.gd::_clip_for_state()` reads `health`, `action`,
-  `is_on_floor()` and `velocity` and calls `play()`. **No `AnimationTree`**:
-  one clip plays per player and nothing blends, so a tree would add a second
-  mixer with its own discrete-handling defaults for no gain.
-  `CHANGE-BRIEF.md` §7 argues it.
-- **Two `AnimationPlayer`s, partitioned BY NODE** (revision 7.0.9): `LegAnim`
-  owns `Rig/LegFront` and `Rig/LegBack`; `AnimationPlayer` owns everything
-  else and **no leg**. `test_player_clips.gd` asserts the partition in both
-  directions, because a partition checked one way round is only a subset. A
-  third player, `KeyAnim`, owns the floating key and nothing else.
-- **Five states:** `IDLE`, `RUN`, `AIRBORNE` (`rising`/`falling`), `SWING`,
-  `DEAD` — rest, movement, air, the core action, and fail.
-- **The committing action is `SWING`**, and its interrupt rule is stated:
-  it cannot be cancelled, cannot be restarted, always plays all 18 frames,
-  and **cannot turn**. It *can* be walked and jumped out of; both of those
-  are revisions the author asked for after playing, and both are argued in
-  the brief rather than slipped in.
+**The one authority over each animated node:**
 
-**Edges tested:** `test_swing_edges.gd`, 60 checks in five sections.
+| Animated node | Its one authority | What it writes |
+|---|---|---|
+| `Rig`, `Rig/Body`, `Rig/SwordArm`, `…/Blade`, `Hitbox` | `Player/AnimationPlayer` | `position:y`, `frame`, `position`, `rotation_degrees`, `visible`, `monitoring` |
+| `Rig/LegFront`, `Rig/LegBack` | `Player/LegAnim` | `rotation_degrees`, `visible` |
 
-| Edge | What it establishes |
-|---|---|
-| **An action during another action** | a second `attack` is **ignored** in startup and active and **buffered** in recovery — nine cases, one frame before each boundary, on it, and one after |
-| The active window, traced | `Hitbox.monitoring` opens on physics frame 12 and closes on 20, frame by frame |
-| A swing started **in the air** | the lock holds, `swing` outranks `rising`/`falling`, horizontal velocity is carried, the facing does not flip |
-| Movement **through** a ground swing | 51.2 px travelled, facing unflipped through a mid-swing reversal, the clip still ending on its own clock |
-| **A jump through a swing** | the same swing run **twice**, jumped and not, compared frame by frame in all three phases: worst disagreement **0.000000 s** |
+**Two `AnimationPlayer`s, and that is still one authority per node.** The
+rule is *one authority per animated NODE*, not one player per scene — so a
+second player over a **disjoint** set of nodes satisfies it exactly.
+`test_player_clips.gd` asserts the partition **in both directions**: no node
+is on both lists, every `LegAnim` path begins `Rig/Leg`, and **no**
+`AnimationPlayer` path does. The third assertion is not redundant: *a
+partition checked one way round is only a subset*, and putting one leg track
+back on the body player fails two of the three.
 
-**Mutation check:** 7, in `evidence/a7/mutations.txt`, each naming the
-assertion that must fire. **M7 is the one to read**: it makes the jump
-restart the clip, and all three *"the jump works"* checks stay green while
-eight comparison checks go red.
+`Rig/Body.texture` is set once in the scene and never written at runtime.
+`player_anim.gd` plays both players and writes **no animated property**; the
+one thing it writes is `Rig.scale.x`, the facing, which **no clip keys** —
+`CHANGE-BRIEF.md` §5 states that wrinkle rather than hiding it. Both players
+and `player_anim.gd` are on the **physics** tick.
 
-**Both tick offsets:** not applicable — see the physics-tick field above.
+**Sprite sheet source and licence (or model, version, and terms):**
+**Written by code, in this repository.** `tools/make_sprites.py` cuts and
+composes `godot/assets/sprites/player_sheet.png` from seven pose PNGs in
+`godot/assets/poses/`, generated with **GPT-6** for
+`walker-ninja-TiantongZhang` in 2026-10 and credited in `ATTRIBUTION.md`.
+Licence: **mine**; no downloaded sheet, no asset library, no 3D generator.
+**The editable source is the generator plus the poses as committed**, and
+neither is modified by the other — `assert_lossless_cut()` recomposites every
+cut and exits unless it equals the source pixel for pixel. No pose file is
+ever edited. The blade `sword.png` is drawn by the same generator in two
+greys that are already in every pose.
 
-**Final film URL and filename:**
-`TheLostPlayed_TiantongZhang.mp4`
-(`youtube/claude-liam-walker-the-lost-walkthrough/exports/landscape/claude-liam-walker-the-lost-walkthrough.mp4`),
-3840 × 2160, 30 fps, **4:16.03** (256.033 s), 15.4 MB, 12 beats.
-URL: _PENDING — the upload is mine to do; the hash below is what the
-uploaded file must match._
+**Final film URL and filename:** `TheLostAnimation_TiantongZhang.mp4`
+(`youtube/claude-liam-walker-the-lost-animation-gamedev/exports/landscape/claude-liam-walker-the-lost-animation-gamedev.mp4`),
+`godot-gamedev` with the `walker` modifier, 3840 × 2160, 30 fps,
+**9:30.57** (570.567 s), 34.3 MB, 18 beats, **six code → result pairs**.
+URL: _PENDING — the upload is mine; the hash below is what the uploaded file
+must match._
 
 **Final film SHA-256:**
 
 ```
-b38b2c8b2a8b8186981a28365aa00c22f5326ee55c8d4e342f03612b82d3cfa0
+6eb488d454fc98899c4ed77445250247c80bd2b5883810db88469c39e8e5646f
 ```
 
-> **Its evidence ledger passes at `b200c86`, the revision it describes, and
-> fails against `a8` — because Assignment 8 added files under `godot/` after
-> it was rendered. It was NOT rebuilt to make that go away: a rebuilt ledger
-> would pass while describing a room containing a floating key that the
-> film's own footage predates. That reel's `SOURCES.md` carries the command
-> that reproduces its PASS.**
->
-> **A second film is in this repository and is NOT the submitted one.**
-> `youtube/claude-liam-walker-the-lost-animation-gamedev` is a
-> `godot-gamedev` teardown of the same work, built on 2026-11-21 before I
-> re-read the specification and found it asks for `godot-walkthrough`. It is
-> kept because it is real work and its evidence ledger passes its own
-> checker, and it is labelled here so a reviewer is never in doubt which
-> film is the deliverable. The walkthrough above is.
+**Summary of my work:** `CHANGE-BRIEF.md`'s original brief plus revisions
+7.0.1 – 7.0.10. In order: the two clips swapped routes so the character's
+existing art could be kept; the blade came back; it stopped spinning; the
+pivot became part of the animation instead of a constant in the scene; the
+blade got longer; the swing worked in the air; it stopped locking movement;
+the run cycle was rebuilt on three measurements that were wrong; the clock
+prediction was measured and found **wrong in sign**; the legs got their own
+authority; and the jump left the lock.
 
-**Summary of my changes:** `CHANGE-BRIEF.md`'s original brief plus revisions
-7.0.1 – 7.0.10 and 8.0.1. In order: the two clips swapped routes so the
-character's existing art could be kept; the blade came back; it stopped
-spinning; the pivot became part of the animation; the blade got longer; the
-swing worked in the air; it stopped locking movement; the run cycle was
-rebuilt on three measurements that were wrong; the clock prediction was
-measured and found wrong in sign; the legs got their own authority; the jump
-left the lock; and the missing simple animation was built.
-
-**Nine of those eleven revisions began with me playing the game and saying
+**Nine of those ten revisions began with me playing the game and saying
 something was wrong.** None began with a test that had been passing and
-started failing.
+started failing. The tenth came from a measurement written to test a
+prediction the brief had tagged `[proposal]`.
 
 **Known limitations:**
 
-- **The hitbox can hit nothing.** This room has no enemy. The window is
-  real, measured and tested at both tick settings; what it would *do* is a
-  later assignment. `CHANGE-BRIEF.md` §11.3 said so before it was built.
+- **The hitbox can hit nothing.** This room has no enemy. The window is real,
+  measured and tested at both tick settings; what it would *do* is a later
+  assignment. `CHANGE-BRIEF.md` §11.3 said so before it was built.
 - **The run cycle alternates but does not stride.** The cut leg moves its
   foot about 10 px against a 24 px step. The only fix is drawing a longer
   leg, which changes the character's art — the thing revision 7.0.1 exists
   because I rejected.
-- **The floating key is decorative.** Nothing collects it; making it
-  collectible means a collision layer, which is out of scope here.
-- **No respawn, no menu, no hurt animation, no roll, no cast.** All five are
-  listed `planned` with reasons in the film's `coverage.json`.
-- **Three HUMAN rows in `CHANGE-BRIEF.md` §9 are still open** and are listed
-  as open rather than covered by a general verdict: both clips over the
-  darkest and lightest level art; whether a moving swing reads after
-  revision 7.0.9 changed the answer; and whether a braced stance hanging in
-  mid-air reads. The film's verdict says the third one out loud.
-- **Three of the assignment's five play checks are not done**, and
-  `TEST-REPORT.md` names them: there is no **motion reference** for any
-  action, the **Remote scene dock** was not watched during play, and the
-  **muted-sound readability** check was not made. The slowed pass and the
-  collision-shape comparison were done on 2026-11-22 and the verdict is
-  quoted in `TUNING.md`.
+- **The jitter half of §8's clock prediction is not established.**
+  `--fixed-fps` locks the render tick to the physics tick, so every run of
+  the measurement is identical. Running a deterministic measurement three
+  times is one measurement printed three times, and the file says so in its
+  own output.
+- **Three HUMAN rows in `CHANGE-BRIEF.md` §9 are still open** and listed as
+  open rather than covered by a general verdict: both clips over the darkest
+  and lightest level art; whether a moving swing reads after revision 7.0.9
+  changed the answer; and whether a braced stance hanging in mid-air reads.
 - **The film's own fact-check is written by the party that wrote its
-  narration.** `FACTCHECK.md` says so in its closing section.
+  narration**, and `FACTCHECK.md` says so in its closing section.
+
+**Changed games since Assignment 2 (yes/no; if yes, FRICTIONAL.md entry):**
+**No.** The game chosen in Assignment 2 is the one built here. The repository
+lineage is `walker-jumpman` → `walker-ninja` → `walker-the-lost`, and
+`FRICTIONAL.md` records it; the change of repository happened before
+Assignment 4, which the course allows.
 
 ---
 

@@ -261,44 +261,29 @@ and the captures are in `captures/a5/`.
 
 ## The film
 
-**The submitted film is the walkthrough.**
-`youtube/claude-liam-walker-the-lost-walkthrough/` —
-**TheLostPlayed_TiantongZhang.mp4**, 3840 × 2160, 30 fps, **4:16**, 12 beats.
-Built with the course's `godot-walkthrough` workflow and the `walker`
-modifier, which is what Assignment 8 asks for. **A third of it — 81.5
-seconds — is moving gameplay at normal speed**, uncut, with a labelled
-final-frame hold wherever the narration outruns the action and no hold over
-five seconds. Its `coverage.json` accounts for **16 implemented features and
-5 planned ones, each planned one with a reason**, and
-`./art godot-waikthrough --check` passes. Gate V reports 0 blockers and 0
-majors.
-
-The link, the exact length and the SHA-256 are in `SUBMISSION.md`.
-Rebuild it with that reel's `BUILD-PROMPT.md`.
-
-**A second film is here and is NOT the submission.**
 `youtube/claude-liam-walker-the-lost-animation-gamedev/` —
-**TheLostAnimation_TiantongZhang.mp4**, 3840 × 2160, 30 fps, 18 beats.
-Six code-then-result pairs: every code panel is followed by the thing those
-lines produce, and no beat shows both at once. Three beats are engine footage
-from three 4K Movie Maker takes, **all three of them PLAYED** — held keys
-through the real input map, nothing teleported, no clip seeked — and each
-asserted its own outcome before a frame of it counted. Four are evidence cards
-whose every figure is recomputed at build time from the committed resources,
-take logs and recorded runs. Its evidence ledger passes the course checker —
-72 source files, 64 exclusions, 6 components.
+**TheLostAnimation_TiantongZhang.mp4**, 3840 × 2160, 30 fps, 18 beats,
+**9:30.57**. Built with the course's `godot-gamedev` workflow and the
+`walker` modifier. Six code-then-result pairs: every code panel is followed
+by the thing those lines produce, and no beat shows both at once. Three
+beats are engine footage from three 4K Movie Maker takes, **all three
+PLAYED** — held keys through the real input map, nothing teleported, no clip
+seeked — and each asserted its own outcome before a frame of it counted.
+Four are evidence cards whose every figure is recomputed at build time from
+the committed resources, take logs and recorded runs. Its evidence ledger
+passes the course checker — 72 source files, 64 exclusions, 6 components.
 
 **What it is about is not animation.** Ten tuning revisions, nine of them
-reported by the author playing the game, **none of them started by a test that
-had been passing and started failing** — and three of those nine were facts
-sitting in committed data that a read-back could have printed before the game
-was ever launched. A read-back only sees the questions it was written to ask.
+reported by the author playing the game, **none started by a test that had
+been passing and started failing** — and three of those nine were facts
+sitting in committed data that a read-back could have printed before the
+game was ever launched. A read-back only sees the questions it was written
+to ask.
 
-It is a `godot-gamedev` teardown of the same work, built on 2026-11-21
-before the specification was re-read and found to ask for
-`godot-walkthrough`. It is kept because it is real work and its own ledger
-passes its own checker, and it is labelled everywhere so no reviewer is in
-doubt about which film is the deliverable.
+The link, the exact length and the SHA-256 are in `SUBMISSION.md`, which is
+the one place they are recorded so they cannot disagree. Rebuild it with
+that reel's `BUILD-PROMPT.md`, which includes the two carried-over scripts
+that must **not** be run.
 
 **Assignment 7's film (particle effects, tagged `a6.1`) is still here:**
 `youtube/claude-liam-walker-the-lost-particles-gamedev/` —

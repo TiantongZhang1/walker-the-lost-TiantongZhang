@@ -149,11 +149,16 @@ separating this repository from the Godot download is not.
 Two carried-over scripts were **fixed** rather than carried:
 
 - `scripts/encode_captures.py` had a hard-coded tuple of take letters and
-  silently skipped two of this film's three takes. It discovers takes from the
-  render root now, with `--takes` to override.
-- `scripts/render_takes.py` gained a third per-driver `--quit-after` table.
-  The letter `c` now means a different take in each of three tables, which is
-  why they are keyed by driver path and not merged.
+  silently skipped two of this film's three takes. It discovers takes from
+  the render root now, with `--takes` to override.
+- `tools/check_sword_reach.py` had been crashing since revision 7.0.9 — the
+  legless cut dropped the tallest torso column below its hard-coded
+  threshold. The threshold is derived from the cell now.
+
+`tools/check_reel_tracked.py` is new: it reads every reel's evidence file
+and beat sheet and asks git whether each media path is actually tracked.
+Three times in this repository a file the evidence needed was silently
+`.gitignore`d, and a clean `git status` cannot tell you.
 
 `scripts/finalise_beat_timing.py` and `scripts/fit_beat_panels.py` remain
 **Reshape** and must not be run: both `chdir` into
