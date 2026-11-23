@@ -57,18 +57,35 @@ def referenced(ledger: dict, sheet: dict) -> list[str]:
     return sorted(set(out))
 
 
+def coverage_media(cov: dict) -> list[str]:
+    """Every capture a walkthrough reel's coverage.json hashes, plus its
+    input log. A `godot-waikthrough` reel has no gamedev-evidence.json; its
+    evidence file is coverage.json and its media are the takes."""
+    out = []
+    for cap in cov.get("captures", {}).values():
+        if cap.get("path"):
+            out.append(cap["path"])
+        if cap.get("input_log"):
+            out.append(cap["input_log"])
+    return out
+
+
 def check(reel: pathlib.Path) -> int:
     led = reel / "gamedev-evidence.json"
-    if not led.is_file():
-        print("  no gamedev-evidence.json in %s" % reel.name)
+    cov = reel / "coverage.json"
+    if not led.is_file() and not cov.is_file():
+        print("  no gamedev-evidence.json or coverage.json in %s" % reel.name)
         return 1
-    ledger = json.load(led.open(encoding="utf-8"))
+    ledger = json.load(led.open(encoding="utf-8")) if led.is_file() else {}
     sheet_path = reel / "beat_sheet.json"
     if not sheet_path.is_file():
         print("  no beat_sheet.json in %s" % reel.name)
         return 1
     sheet = json.load(sheet_path.open(encoding="utf-8"))
     paths = referenced(ledger, sheet)
+    if cov.is_file():
+        paths += coverage_media(json.load(cov.open(encoding="utf-8")))
+        paths = sorted(set(paths))
     if not paths:
         print("  %s: the ledger references no media at all" % reel.name)
         return 1
@@ -77,7 +94,11 @@ def check(reel: pathlib.Path) -> int:
     # reviewer needs all of them. Checking only what is hashed would have let
     # the input logs through, and every number on three cards is computed
     # from those.
-    extra = ["gamedev-evidence.json", "beat_sheet.json"]
+    extra = ["beat_sheet.json"]
+    for name in ("gamedev-evidence.json", "coverage.json",
+                 "SOURCE-SNAPSHOT.json"):
+        if (reel / name).is_file():
+            extra.append(name)
     extra += [p.relative_to(reel).as_posix()
               for p in sorted((reel / "capture" / "logs").glob("*.jsonl"))]
 

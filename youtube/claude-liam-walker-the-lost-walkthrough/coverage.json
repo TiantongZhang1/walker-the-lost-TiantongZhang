@@ -2,34 +2,34 @@
   "schema_version": 1,
   "game": {
     "name": "walker-the-lost-TiantongZhang",
-    "build_id": "4bde3d80c2103d867ed3e5c27a8e09ce925a8f453ac4435371943ed98acd0d82"
+    "build_id": "11af9145937e56f29c393d2120c75f4c13d3f916dfe1a3d044fab1e12f5c1cb1"
   },
   "captures": {
     "take-a": {
       "path": "capture/take-a.mp4",
-      "sha256": "183e9b7a98cca174698b52e207e2ca057d44bb1fd10e7d38604f9f6c5f4ea520",
-      "build_id": "4bde3d80c2103d867ed3e5c27a8e09ce925a8f453ac4435371943ed98acd0d82",
+      "sha256": "96efd3879a8824191a92bafc27b1a486e7ec61784209152944c62ad0b11d9085",
+      "build_id": "11af9145937e56f29c393d2120c75f4c13d3f916dfe1a3d044fab1e12f5c1cb1",
       "method": "scripted-input",
       "input_log": "capture/take-a-inputs.jsonl"
     },
     "take-b": {
       "path": "capture/take-b.mp4",
-      "sha256": "772ee2f7bc96d0f020a4907c36ea41a73aac355246c2713f6fca2006c6d03c31",
-      "build_id": "4bde3d80c2103d867ed3e5c27a8e09ce925a8f453ac4435371943ed98acd0d82",
+      "sha256": "649c1194787e61ea4365377a8b07641d27de42cd002c0c9c5d4082e149319ebe",
+      "build_id": "11af9145937e56f29c393d2120c75f4c13d3f916dfe1a3d044fab1e12f5c1cb1",
       "method": "scripted-input",
       "input_log": "capture/take-b-inputs.jsonl"
     },
     "take-c": {
       "path": "capture/take-c.mp4",
-      "sha256": "42479b24aecd5bbdf134afa0b2437727108cdeede9804d146b278ab619f9b9ff",
-      "build_id": "4bde3d80c2103d867ed3e5c27a8e09ce925a8f453ac4435371943ed98acd0d82",
+      "sha256": "9227fae63b814ba9b5f01e6423616e465974817df278b7a04ba8012d2affc8ee",
+      "build_id": "11af9145937e56f29c393d2120c75f4c13d3f916dfe1a3d044fab1e12f5c1cb1",
       "method": "scripted-input",
       "input_log": "capture/take-c-inputs.jsonl"
     },
     "take-d": {
       "path": "capture/take-d.mp4",
-      "sha256": "4a0cd2d1509200a4b1350b10f0d73a5be9b6ef10c3b147d0359115d61ef4b539",
-      "build_id": "4bde3d80c2103d867ed3e5c27a8e09ce925a8f453ac4435371943ed98acd0d82",
+      "sha256": "2509fe36f4be90dd71edb72e33d47e23e41a993c4c85198b71e892fba3406c32",
+      "build_id": "11af9145937e56f29c393d2120c75f4c13d3f916dfe1a3d044fab1e12f5c1cb1",
       "method": "scripted-input",
       "input_log": "capture/take-d-inputs.jsonl"
     }
@@ -42,11 +42,11 @@
         {
           "capture": "take-a",
           "beat_id": "B02",
-          "start_s": 1.3,
-          "action_s": 1.5,
-          "end_s": 2.1,
-          "observation": "The player settles on the floor and holds the idle cell; no key is down and nothing moves except the room.",
-          "riff": "Idle is a held frame rather than a clip, which is why it costs nothing and why it cannot breathe. The trade is visible: this character stands perfectly still, and a player reads that as waiting rather than as alive."
+          "start_s": 0.3,
+          "action_s": 1.0,
+          "end_s": 3.0,
+          "observation": "The player settles on the floor at 0.25 s and holds the idle cell for two and three quarter seconds with no key down.",
+          "riff": "Idle is a held frame rather than a clip. It costs nothing and it cannot breathe -- the character stands perfectly still, and a player reads that as waiting rather than as alive."
         }
       ]
     },
@@ -56,12 +56,12 @@
       "evidence": [
         {
           "capture": "take-a",
-          "beat_id": "B03",
-          "start_s": 2.2,
-          "action_s": 2.6,
-          "end_s": 4.6,
-          "observation": "A direction key is held; the two cut-out legs alternate and the cycle wraps five times across the take.",
-          "riff": "The cycle's half-second is not a taste decision -- it is two strides at twenty-four pixels against a speed of ninety-six. Retime the run and that arithmetic changes first."
+          "beat_id": "B02",
+          "start_s": 3.03,
+          "action_s": 4.0,
+          "end_s": 10.88,
+          "observation": "Four held runs between x 10 and x 174; the cut-out legs alternate and the cycle wraps eighteen times across the take.",
+          "riff": "Half a second a cycle is not taste -- it is two strides at twenty-four pixels against ninety-six pixels a second. Retime the run and that arithmetic changes first, not the keys."
         }
       ]
     },
@@ -71,12 +71,12 @@
       "evidence": [
         {
           "capture": "take-a",
-          "beat_id": "B03",
-          "start_s": 3.3,
-          "action_s": 3.6,
-          "end_s": 4.6,
-          "observation": "The player reverses; the whole rig mirrors, legs and sword arm together, and the gait keeps alternating in the new facing.",
-          "riff": "Facing is one scale flip on the rig root, not a property of the animation. That is why one set of keys is correct both ways round -- and why a mid-swing turn is forbidden."
+          "beat_id": "B02",
+          "start_s": 3.93,
+          "action_s": 4.53,
+          "end_s": 7.0,
+          "observation": "The facing flips at 4.53 s; the whole rig mirrors -- legs and sword arm together -- and the gait keeps alternating.",
+          "riff": "Facing is one scale flip on the rig root, not a property of the animation, which is why one set of keys is correct both ways and why a mid-swing turn is forbidden."
         }
       ]
     },
@@ -86,12 +86,12 @@
       "evidence": [
         {
           "capture": "take-a",
-          "beat_id": "B03",
-          "start_s": 2.6,
-          "action_s": 3.0,
-          "end_s": 4.4,
+          "beat_id": "B02",
+          "start_s": 4.53,
+          "action_s": 5.2,
+          "end_s": 6.25,
           "observation": "A puff of dust is left every twenty-four pixels travelled, under the planted foot.",
-          "riff": "The dust is driven by distance, not by the animation, and the cycle's length was derived from that same distance. They agree because they were made to; nothing enforces it at runtime."
+          "riff": "The dust is driven by distance and the cycle's length was derived from the same distance. They agree because they were made to; nothing enforces it at runtime."
         }
       ]
     },
@@ -101,12 +101,27 @@
       "evidence": [
         {
           "capture": "take-a",
-          "beat_id": "B04",
-          "start_s": 5.1,
-          "action_s": 5.4,
-          "end_s": 6.6,
-          "observation": "Space leaves the floor on the next physics frame; the sprite shows the rising cell, then the falling cell, then lands.",
-          "riff": "Two states, one key. The split is the sign of the vertical velocity, which means the character reads as committed to the arc before it has reached the top of it."
+          "beat_id": "B03",
+          "start_s": 11.2,
+          "action_s": 11.68,
+          "end_s": 12.6,
+          "observation": "Space at 11.68 s leaves the floor on the next physics frame; `rising` holds until 11.98 s, then `falling` until the landing at 12.27 s.",
+          "riff": "Two states for one key, split on the sign of the vertical velocity -- so the character reads as committed to the arc before it has reached the top of it."
+        }
+      ]
+    },
+    {
+      "id": "jump-while-running",
+      "status": "implemented",
+      "evidence": [
+        {
+          "capture": "take-a",
+          "beat_id": "B03",
+          "start_s": 13.1,
+          "action_s": 14.3,
+          "end_s": 15.0,
+          "observation": "A jump taken at speed: `run` at 13.10 s, `rising` at 14.30 s, `falling` at 14.60 s, and back to `run` on the landing.",
+          "riff": "The horizontal velocity is carried straight through the arc. Nothing about the jump touches it, which is why a running jump feels like one movement rather than two."
         }
       ]
     },
@@ -116,12 +131,12 @@
       "evidence": [
         {
           "capture": "take-a",
-          "beat_id": "B05",
-          "start_s": 0.2,
-          "action_s": 1.0,
-          "end_s": 3.0,
-          "observation": "The key between the first two traps bobs three pixels and turns a full revolution every 2.4 s, with no input and nothing driving it.",
-          "riff": "One sprite, two tracks, no rig and no frames. It autoplays, so nothing in the game has to remember to start it -- and nothing collects it either, which the brief says out loud rather than letting a key in a dungeon imply a door."
+          "beat_id": "B03",
+          "start_s": 20.15,
+          "action_s": 21.5,
+          "end_s": 26.1,
+          "observation": "The key between the first two traps bobs three pixels and turns one full revolution every 2.4 s, with no input and nothing driving it.",
+          "riff": "One sprite, two tracks, no rig and no frames. It autoplays, so nothing has to remember to start it -- and nothing collects it, which the brief says out loud rather than letting a key in a dungeon imply a door."
         }
       ]
     },
@@ -131,12 +146,12 @@
       "evidence": [
         {
           "capture": "take-b",
-          "beat_id": "B06",
-          "start_s": 1.0,
-          "action_s": 1.1,
-          "end_s": 1.8,
-          "observation": "One attack press plays all eighteen frames: wind-up, strike, recovery. The strike is the fastest segment on the timeline.",
-          "riff": "The arm nearly stops before it goes -- ten degrees in the two frames before the window opens, then a hundred and fifty in four. That pause is what makes it read as a strike."
+          "beat_id": "B04",
+          "start_s": 1.42,
+          "action_s": 1.6,
+          "end_s": 2.02,
+          "observation": "One press plays all eighteen frames: `swing` at 1.42 s, back to `idle` at 2.02 s -- 0.600 s exactly.",
+          "riff": "The arm nearly stops before it goes: ten degrees in the two frames before the window opens, then a hundred and fifty in four. That pause is what makes it read as a strike."
         }
       ]
     },
@@ -146,12 +161,12 @@
       "evidence": [
         {
           "capture": "take-b",
-          "beat_id": "B06",
-          "start_s": 1.0,
-          "action_s": 1.3,
-          "end_s": 1.8,
-          "observation": "Once started the clip runs to its own end; no input shortens it.",
-          "riff": "Committing is not the same as freezing the player. You can walk and jump out of this swing -- what you cannot do is cancel it or turn it around."
+          "beat_id": "B04",
+          "start_s": 3.05,
+          "action_s": 3.3,
+          "end_s": 5.48,
+          "observation": "Three separate presses, three clips, each exactly 0.600 s. No input shortens one.",
+          "riff": "Committing is not freezing the player. You can walk out of this swing and jump out of it; what you cannot do is cancel it or turn it around."
         }
       ]
     },
@@ -161,12 +176,12 @@
       "evidence": [
         {
           "capture": "take-b",
-          "beat_id": "B07",
-          "start_s": 2.2,
-          "action_s": 2.42,
-          "end_s": 3.1,
-          "observation": "A second attack is pressed 0.1 s into a swing -- inside the 0.2 s startup -- and no new swing begins. The log shows the swing counter unchanged across the press.",
-          "riff": "This is the edge the assignment asks for, and the interesting half is that it would pass by accident: calling play() with the name already playing does nothing. The code checks the playhead instead, so the rule is a decision rather than a side effect."
+          "beat_id": "B05",
+          "start_s": 7.25,
+          "action_s": 7.35,
+          "end_s": 9.0,
+          "observation": "A swing starts at 7.25 s and a second attack is pressed 0.1 s in -- inside the 0.2 s startup. No new swing begins; the next one in the log is at 9.82 s, from a separate press.",
+          "riff": "The uncomfortable part is that this would pass by accident: calling play with the name already playing does nothing at all. The code reads the playhead instead, so it is a decision rather than a side effect."
         }
       ]
     },
@@ -176,11 +191,11 @@
       "evidence": [
         {
           "capture": "take-b",
-          "beat_id": "B07",
-          "start_s": 3.5,
-          "action_s": 3.95,
-          "end_s": 5.3,
-          "observation": "A second attack pressed 0.45 s in -- inside recovery -- is buffered, and a fresh swing starts when the first one ends.",
+          "beat_id": "B05",
+          "start_s": 9.82,
+          "action_s": 10.42,
+          "end_s": 11.02,
+          "observation": "A swing starts at 9.82 s; a press 0.45 s in -- inside recovery -- is buffered, and the log shows the next swing beginning at 10.42 s, 0.600 s after the first.",
           "riff": "Same key, same clip, opposite answer, and the only difference is where the playhead was. A buffer is how a game stops punishing a player for being early."
         }
       ]
@@ -191,12 +206,12 @@
       "evidence": [
         {
           "capture": "take-c",
-          "beat_id": "B08",
-          "start_s": 1.0,
-          "action_s": 1.75,
-          "end_s": 2.6,
-          "observation": "A direction is held through a swing; the player travels and the gait keeps running under the body cell.",
-          "riff": "The legs have their own player and never hear that a sword exists, so nothing seeks them and the gait keeps its phase straight through the swing."
+          "beat_id": "B06",
+          "start_s": 1.32,
+          "action_s": 2.12,
+          "end_s": 3.13,
+          "observation": "A direction is held through a swing at 2.12 s; the player travels from x 174 to x 232 with the gait running under the body cell.",
+          "riff": "The legs have their own animation player and never hear that a sword exists, so nothing seeks them and the gait keeps its phase straight through."
         }
       ]
     },
@@ -206,12 +221,12 @@
       "evidence": [
         {
           "capture": "take-c",
-          "beat_id": "B08",
-          "start_s": 3.3,
-          "action_s": 3.55,
-          "end_s": 4.8,
-          "observation": "Space is pressed mid-swing; the player leaves the floor and the swing continues from where it was, ending on its own clock.",
-          "riff": "The jump writes one field and nothing else, so there is no path from it to the clip's clock. That is why it cannot interrupt -- structural, rather than careful."
+          "beat_id": "B06",
+          "start_s": 7.15,
+          "action_s": 7.75,
+          "end_s": 9.0,
+          "observation": "A swing starts at 7.15 s; space is pressed mid-clip and the player leaves the floor at 7.75 s. The swing finishes on its own clock and no new one starts.",
+          "riff": "The jump writes one field and nothing else, so there is no path from it to the clip's clock. It cannot interrupt -- structural, rather than careful."
         }
       ]
     },
@@ -221,11 +236,11 @@
       "evidence": [
         {
           "capture": "take-d",
-          "beat_id": "B09",
-          "start_s": 1.8,
-          "action_s": 2.4,
-          "end_s": 3.6,
-          "observation": "A trap lights its warning band, then fires; grit comes off the floor line with the spikes.",
+          "beat_id": "B07",
+          "start_s": 1.63,
+          "action_s": 2.83,
+          "end_s": 4.2,
+          "observation": "A trap lights its warning band, then fires at 2.83 s; health goes from 5 to 4 on that frame and grit comes off the floor.",
           "riff": "The warning is four tenths of a second and the swing's startup is two. That ratio is the whole reason you can read a trap and still choose to attack near it."
         }
       ]
@@ -236,12 +251,12 @@
       "evidence": [
         {
           "capture": "take-d",
-          "beat_id": "B09",
-          "start_s": 2.4,
-          "action_s": 2.6,
-          "end_s": 3.6,
-          "observation": "The player takes a hit and keeps walking; no animation state changes and no clip restarts.",
-          "riff": "Damage is a number here, not a state. There is no hurt animation, and the brief lists that as a limit rather than letting the absence pass as a decision."
+          "beat_id": "B07",
+          "start_s": 2.83,
+          "action_s": 3.15,
+          "end_s": 6.1,
+          "observation": "Health drops at 2.83, 5.62 and 8.40 s and the animation state does not change on any of them; the player keeps walking.",
+          "riff": "Damage is a number here, not a state. No hurt clip, no stagger, no invulnerability -- a limit rather than a decision, and the brief lists it as one."
         }
       ]
     },
@@ -251,31 +266,31 @@
       "evidence": [
         {
           "capture": "take-d",
-          "beat_id": "B10",
-          "start_s": 9.6,
-          "action_s": 10.6,
-          "end_s": 12.9,
-          "observation": "The fifth trap hit takes health to zero; the dead cell plays once and holds, and input stops moving the character.",
-          "riff": "This is the only one of the five states no key can reach. It is entered by a game condition that an action caused, which is what the assignment means by a state wired to a player action."
+          "beat_id": "B07",
+          "start_s": 16.83,
+          "action_s": 17.9,
+          "end_s": 25.2,
+          "observation": "The fifth hit takes health to zero at 17.88 s; `dead` becomes current at 17.90 s and holds for the remaining seven seconds while input does nothing.",
+          "riff": "The only one of the five states no key can reach. It is entered by a game condition that a player action caused, which is the shape the assignment asks for."
         }
       ]
     },
     {
       "id": "respawn-or-retry",
       "status": "planned",
-      "reason": "There is no recovery from death in this slice: no respawn, no retry key, no reload. The film shows the death and says so rather than cutting away before the question arises.",
+      "reason": "There is no recovery from death in this slice: no respawn, no retry key, no reload. The film holds on the death for seven seconds rather than cutting away before the question arises.",
       "evidence": []
     },
     {
       "id": "enemies",
       "status": "planned",
-      "reason": "The swing's hitbox is real, measured and switched by the clip's own timeline, and it can hit NOTHING -- this room has no enemy. CHANGE-BRIEF.md section 11.3 said so before any of it was built.",
+      "reason": "The swing's hitbox is real, measured, and switched by the clip's own timeline -- and it can hit NOTHING, because this room has no enemy. CHANGE-BRIEF.md section 11.3 said so before any of it was built.",
       "evidence": []
     },
     {
       "id": "roll-cast-and-combo-2-3",
       "status": "planned",
-      "reason": "GDD.md:393 lists idle / run / jump / roll / combo-1,2,3 / cast. Five states are built. Roll, cast and the second and third combo steps are not, and are named here rather than left looking forgotten.",
+      "reason": "GDD.md:393 lists idle / run / jump / roll / combo-1,2,3 / cast. Five states are built. Roll, cast and the second and third combo steps are not, and are named rather than left looking forgotten.",
       "evidence": []
     },
     {
@@ -287,7 +302,7 @@
     {
       "id": "menus-pause-and-settings",
       "status": "planned",
-      "reason": "The slice boots straight into the room. There is no menu, no pause and no settings screen; F9 toggles vsync and prints to the console, which is a debug key rather than a setting.",
+      "reason": "The slice boots straight into the room. No menu, no pause, no settings screen. F9 toggles vsync and prints to the console, which is a debug key rather than a setting.",
       "evidence": []
     }
   ]

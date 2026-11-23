@@ -1,8 +1,8 @@
 {
-  "captured_at": "2026-11-22T23:14:03.580170+00:00",
+  "captured_at": "2026-11-22T23:38:10.560447+00:00",
   "project": "walker-the-lost-TiantongZhang",
   "engine": "Godot 4.7.2.stable.official.ed1daf0bf",
-  "git_revision": "78f12501e32835422553d185399d8cd278119b2c",
+  "git_revision": "5042a6b7dd418efc4e160fed994e658e8675c47e",
   "git_godot_clean": true,
   "hash_method": "sha256 of each file; build_id = sha256 of this object's `files` map serialized as canonical JSON (sort_keys=True, separators=(',', ':'), UTF-8)",
   "files": {
@@ -118,7 +118,7 @@
     "tests/capture_animation.gd": "d6d3372806659c1029f968507654f40a7f7b43479d7cbcd5a6f9d2e594e8ea7c",
     "tests/capture_particles.gd": "d42e07af63d42846b7c3480e10416d675dff35219d83f37b519068a567c8b40b",
     "tests/capture_shader.gd": "9ffb77fdb4a54053b3d14fbdac0e33984319f90db4b627d1b8e587f4ace06f19",
-    "tests/capture_walkthrough.gd": "73c72fd09ad627852af31e0b0d116bb86bd747fb3a84c9136063398af211b860",
+    "tests/capture_walkthrough.gd": "12bc8d149fc545e1e4fec0722182fd53c523481611aeb7a1cb205da80656c23a",
     "tests/check_assets_3d.gd": "8dd874a37e36b7237d4502d6a06124f32da1ad68e52327b0c467d1c2b2107bc1",
     "tests/cost_effects.gd": "e4109a3f0121d5b43d0055d52e10ffd4c6772963a9ad796172f1e42c7f74b017",
     "tests/gpu_cost_effects.gd": "e5a6e22bbbff4257525410863f7c8e396cb99008684ad1613be2f05a1c086394",
@@ -148,5 +148,5 @@
     "tools/write_textures.gd": "440e56b79880331faf3352235661b37badf4ddd2511d126afc1ab15802cd5838",
     "ui/.gitkeep": "1593a0fbceebd52aaea72aa92ffb4d46f200533d7c639f808516bfef89af09d7"
   },
-  "build_id": "4bde3d80c2103d867ed3e5c27a8e09ce925a8f453ac4435371943ed98acd0d82"
+  "build_id": "11af9145937e56f29c393d2120c75f4c13d3f916dfe1a3d044fab1e12f5c1cb1"
 }

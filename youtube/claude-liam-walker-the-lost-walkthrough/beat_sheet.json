@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "title": "TheLostWalkthrough_TiantongZhang",
+    "title": "TheLostPlayed_TiantongZhang",
     "slug": "claude-liam-walker-the-lost-walkthrough",
     "topic": "WALKER - THE LOST, PLAYED",
     "kind": "walkthrough",
@@ -23,17 +23,25 @@
     "greeting": "Sawubona, Liam",
     "greeting_note": "hello lexicon: Sawubona (Zulu), one word.",
     "mode": "walker",
-    "game": "godot"
+    "game": "godot",
+    "build": {
+      "at": "2026-11-22T19:10:21",
+      "cut": "master",
+      "filled": 12,
+      "of": 12,
+      "slates": [],
+      "skin_warnings": []
+    }
   },
   "beats": [
     {
       "beat_id": "B00",
       "act": "ASK",
       "role_note": "WALKER BOOKEND 1/4 - ClaudeComposerAsk. The prompt is a reconstruction and is said aloud to be one.",
-      "narration_text": "Sawubona - this is Liam, in for Bear. The prompt on screen is a reconstruction, written to be illustrative. It was never sent. What it describes is real: The Lost, a side-view dungeon slice in Godot four, where every hazard announces itself before it can hurt you. We are going to play all of it - every state the character can be in, every animation, and the edges where two things are asked for at once.",
+      "narration_text": "Sawubona - this is Liam, in for Bear. The prompt on screen is a reconstruction, written to be illustrative. It was never sent. What it describes is real: The Lost, a dungeon slice in Godot four where every hazard announces itself before it can hurt you. We are going to play all of it.",
       "voice": "am_onyx",
       "engine": "kokoro",
-      "estimated_duration_s": 21.5,
+      "estimated_duration_s": 15.3,
       "shot": {
         "type": "GRAPHIC",
         "class": "SHOW",
@@ -45,15 +53,15 @@
             "event": "composer card fades in"
           },
           {
-            "at": "0.14",
+            "at": "0.16",
             "event": "greeting lands"
           },
           {
-            "at": "0.32",
+            "at": "0.36",
             "event": "the Walker prompt types on"
           },
           {
-            "at": "0.82",
+            "at": "0.84",
             "event": "RECONSTRUCTION label holds"
           }
         ],
@@ -67,19 +75,32 @@
             "runningText": "RECONSTRUCTION - this prompt was never sent",
             "modelLabel": "Claude Opus 5",
             "effortLabel": "High",
-            "durationSeconds": 21.5
+            "durationSeconds": 15.19
+          },
+          "rendered": {
+            "out": "media/B00.mp4",
+            "at": "2026-11-22T23:48:19.038788+00:00"
           }
         }
+      },
+      "actual_duration_s": 15.19,
+      "audio_file": "mp3/beat-B00.mp3",
+      "render_duration_s": 15.2,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B00.mp4",
+        "filled_by": "remotion:ClaudeComposerAsk",
+        "at": "2026-11-22T19:10:21"
       }
     },
     {
       "beat_id": "B01",
       "act": "RESULT",
       "role_note": "WALKER BOOKEND 2/4 - what was built, in plain language, with the slice's limits rather than the GDD's promises.",
-      "narration_text": "Here is what actually exists. One room, three spike traps, and a character with five animation states: resting, running, in the air, swinging, and dead. Three animations behind them - a looping run cycle on a cut-out rig, a sword swing on a sprite sheet, and a floating key that bobs and turns and is the only thing here that needs nobody to do anything. Now the limits, and they are real - correction - and they are not small. The hitbox hits nothing, because this room has no enemy. There is no respawn. There is no menu. Three hundred automated checks stand behind what is here, and not one of them can tell you whether it reads.",
+      "narration_text": "Here is what exists. One room, three spike traps, and a character with five animation states: resting, running, in the air, swinging, and dead. Three animations behind them - a looping run cycle on a cut-out rig, a sword swing on a sprite sheet, and a floating key that needs nobody to do anything. Now the limits, and they are real - correction - and they are not small. The hitbox hits nothing. There is no respawn and no menu. Three hundred automated checks stand behind this, and not one of them can tell you whether it reads.",
       "voice": "am_onyx",
       "engine": "kokoro",
-      "estimated_duration_s": 33.4,
+      "estimated_duration_s": 27.8,
       "shot": {
         "type": "GRAPHIC",
         "class": "SHOW",
@@ -91,11 +112,11 @@
             "event": "the summary begins writing"
           },
           {
-            "at": "0.42",
+            "at": "0.44",
             "event": "'real' struck through, 'not small' written in"
           },
           {
-            "at": "0.80",
+            "at": "0.82",
             "event": "the limits land"
           }
         ],
@@ -126,16 +147,225 @@
                 "detail": "Every tuning verdict is the author's."
               }
             ],
-            "durationSeconds": 33.4
+            "durationSeconds": 28.37
+          },
+          "rendered": {
+            "out": "media/B01.mp4",
+            "at": "2026-11-22T23:50:22.858446+00:00"
           }
         }
+      },
+      "actual_duration_s": 28.37,
+      "audio_file": "mp3/beat-B01.mp3",
+      "render_duration_s": 28.4,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B01.mp4",
+        "filled_by": "remotion:BrutalistHesitantWriter",
+        "at": "2026-11-22T19:10:21"
       }
     },
     {
       "beat_id": "B02",
       "act": "BUILD",
-      "role_note": "take-a, SCRIPTED INPUT. Idle, held.",
-      "narration_text": "We start where the game starts: dropped into the room, with no key down. This is the idle state, and it is a single held frame rather than a clip. That costs nothing and it cannot breathe - the character stands perfectly still, and a player reads that as waiting rather than as alive. It is the cheapest of the five states and the one with the least to say.",
+      "role_note": "take-a, SCRIPTED INPUT. Idle, the run cycle, both facings, and the dust that shares the cycle's clock. 10.6 s of continuous play.",
+      "narration_text": "No key down: idle is a single held frame, not a clip. Now a direction. The cycle is half a second - two strides at twenty-four pixels against ninety-six a second. The dust spawns on the same twenty-four. On the turn, the whole rig mirrors.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 12.7,
+      "shot": {
+        "type": "FOOTAGE",
+        "class": "SHOW",
+        "source": "capture",
+        "motion": "gameplay",
+        "capture": "take-a",
+        "evidence_media": "capture/take-a.mp4",
+        "window_s": [
+          0.3,
+          11.0
+        ],
+        "hold_label": "FINAL FRAME HELD - the action above plays once, at speed",
+        "show": [
+          {
+            "at": "0.08",
+            "event": "idle, held"
+          },
+          {
+            "at": "0.32",
+            "event": "the cycle starts"
+          },
+          {
+            "at": "0.58",
+            "event": "dust under the planted foot"
+          },
+          {
+            "at": "0.80",
+            "event": "the turn, and the mirrored gait"
+          }
+        ]
+      },
+      "actual_duration_s": 13.4,
+      "audio_file": "mp3/beat-B02.mp3",
+      "render_duration_s": 13.4,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B02.mp4",
+        "filled_by": "media",
+        "at": "2026-11-22T19:10:21"
+      }
+    },
+    {
+      "beat_id": "B03",
+      "act": "BUILD",
+      "role_note": "take-a, SCRIPTED INPUT. Two more states, a running jump, and the simple animation that has been looping behind all of it. 15.2 s.",
+      "narration_text": "Space: two states for one key, split on the sign of the vertical velocity. The same jump at speed - the horizontal velocity carries through, so it reads as one movement. And the thing turning behind all of it: a key. No rig, no frames, two tracks. It autoplays, and nothing collects it - a key in a dungeon implies a door, and there is none.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 18.7,
+      "shot": {
+        "type": "FOOTAGE",
+        "class": "SHOW",
+        "source": "capture",
+        "motion": "gameplay",
+        "capture": "take-a",
+        "evidence_media": "capture/take-a.mp4",
+        "window_s": [
+          11.0,
+          26.1
+        ],
+        "hold_label": "FINAL FRAME HELD - the action above plays once, at speed",
+        "show": [
+          {
+            "at": "0.06",
+            "event": "rising, then falling"
+          },
+          {
+            "at": "0.26",
+            "event": "a jump taken at speed"
+          },
+          {
+            "at": "0.58",
+            "event": "the key, bobbing and turning"
+          },
+          {
+            "at": "0.86",
+            "event": "nothing collects it"
+          }
+        ]
+      },
+      "actual_duration_s": 17.77,
+      "audio_file": "mp3/beat-B03.mp3",
+      "render_duration_s": 17.8,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B03.mp4",
+        "filled_by": "media",
+        "at": "2026-11-22T19:10:21"
+      }
+    },
+    {
+      "beat_id": "B04",
+      "act": "BUILD",
+      "role_note": "take-b, SCRIPTED INPUT. The committing action, three separate presses, each the clip's own full 0.600 s. 8.0 s.",
+      "narration_text": "Eighteen frames at thirty: wind-up, strike, recovery. The arm nearly stops before it goes - ten degrees in two frames, then a hundred and fifty in four.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 7.6,
+      "shot": {
+        "type": "FOOTAGE",
+        "class": "SHOW",
+        "source": "capture",
+        "motion": "gameplay",
+        "capture": "take-b",
+        "evidence_media": "capture/take-b.mp4",
+        "window_s": [
+          1.0,
+          7.25
+        ],
+        "hold_label": "FINAL FRAME HELD - the action above plays once, at speed",
+        "show": [
+          {
+            "at": "0.08",
+            "event": "the wind-up"
+          },
+          {
+            "at": "0.22",
+            "event": "the strike"
+          },
+          {
+            "at": "0.45",
+            "event": "recovery, and the blade sheathes"
+          },
+          {
+            "at": "0.78",
+            "event": "and again, the same 0.600 s"
+          }
+        ]
+      },
+      "actual_duration_s": 9.07,
+      "audio_file": "mp3/beat-B04.mp3",
+      "render_duration_s": 9.1,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B04.mp4",
+        "filled_by": "media",
+        "at": "2026-11-22T19:10:21"
+      }
+    },
+    {
+      "beat_id": "B05",
+      "act": "BUILD",
+      "role_note": "take-b, SCRIPTED INPUT. **The edge the assignment names**: an action requested during another action, with both answers. 7.2 s.",
+      "narration_text": "The edge: a second attack a tenth of a second in, inside the startup - nothing. Now one four and a half tenths in, inside recovery - buffered, and a fresh swing starts. Same key, opposite answer; the playhead decides.",
+      "voice": "am_onyx",
+      "engine": "kokoro",
+      "estimated_duration_s": 11.3,
+      "shot": {
+        "type": "FOOTAGE",
+        "class": "SHOW",
+        "source": "capture",
+        "motion": "gameplay",
+        "capture": "take-b",
+        "evidence_media": "capture/take-b.mp4",
+        "window_s": [
+          7.25,
+          16.2
+        ],
+        "hold_label": "FINAL FRAME HELD - the action above plays once, at speed",
+        "show": [
+          {
+            "at": "0.10",
+            "event": "the press in startup - ignored"
+          },
+          {
+            "at": "0.42",
+            "event": "the press in recovery"
+          },
+          {
+            "at": "0.62",
+            "event": "the buffered swing plays"
+          },
+          {
+            "at": "0.88",
+            "event": "and once more, to show it is a rule"
+          }
+        ]
+      },
+      "actual_duration_s": 12.1,
+      "audio_file": "mp3/beat-B05.mp3",
+      "render_duration_s": 12.1,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B05.mp4",
+        "filled_by": "media",
+        "at": "2026-11-22T19:10:21"
+      }
+    },
+    {
+      "beat_id": "B06",
+      "act": "BUILD",
+      "role_note": "take-c, SCRIPTED INPUT. The two revisions the author asked for after playing. 10.7 s.",
+      "narration_text": "Two things the author asked for after playing. A direction held through a swing: the character travels and the gait keeps running underneath, because the legs have their own animation player and never hear that a sword exists. And a jump, mid-swing - the swing carries on from where it was. It cannot interrupt: that branch writes one field, and there is no path from it to the clip's clock.",
       "voice": "am_onyx",
       "engine": "kokoro",
       "estimated_duration_s": 19.8,
@@ -144,354 +374,145 @@
         "class": "SHOW",
         "source": "capture",
         "motion": "gameplay",
-        "capture": "take-a",
-        "evidence_media": "capture/take-a.mp4",
+        "capture": "take-c",
+        "evidence_media": "capture/take-c.mp4",
         "window_s": [
-          1.3,
-          2.1
-        ],
-        "hold_label": "FINAL FRAME HELD - the action above plays once, at speed",
-        "show": [
-          {
-            "at": "0.10",
-            "event": "the fall settles"
-          },
-          {
-            "at": "0.50",
-            "event": "idle holds"
-          }
-        ]
-      }
-    },
-    {
-      "beat_id": "B03",
-      "act": "BUILD",
-      "role_note": "take-a, SCRIPTED INPUT. The run cycle, both facings, and the dust that shares its clock.",
-      "narration_text": "Hold a direction and the run cycle starts. Two cut-out legs, half a second a cycle, and that half second is not a taste decision - it is two strides at twenty-four pixels against a speed of ninety-six pixels a second. Watch the dust: a puff every twenty-four pixels travelled, which is the same number, so the puff and the footfall are the same event. Now the turn. The whole rig mirrors - legs and sword arm together - because facing is one scale flip on the rig root rather than a property of the animation. One set of keys is correct both ways round, and that is also why a turn in the middle of a swing is forbidden.",
-      "voice": "am_onyx",
-      "engine": "kokoro",
-      "estimated_duration_s": 34.0,
-      "shot": {
-        "type": "FOOTAGE",
-        "class": "SHOW",
-        "source": "capture",
-        "motion": "gameplay",
-        "capture": "take-a",
-        "evidence_media": "capture/take-a.mp4",
-        "window_s": [
-          2.2,
-          4.6
+          1.32,
+          18.2
         ],
         "hold_label": "FINAL FRAME HELD - the action above plays once, at speed",
         "show": [
           {
             "at": "0.08",
-            "event": "the cycle starts"
+            "event": "a swing that travels"
           },
           {
-            "at": "0.40",
-            "event": "dust under the planted foot"
+            "at": "0.26",
+            "event": "the gait continues under it"
           },
           {
-            "at": "0.70",
-            "event": "the turn, and the mirrored gait"
+            "at": "0.58",
+            "event": "a swing jumped out of"
+          },
+          {
+            "at": "0.84",
+            "event": "and one taken at speed"
           }
         ]
-      }
-    },
-    {
-      "beat_id": "B04",
-      "act": "BUILD",
-      "role_note": "take-a, SCRIPTED INPUT. Rising and falling.",
-      "narration_text": "Space, and two more states for one key. Rising while the vertical velocity is negative, falling the moment it is not. The split is the sign of a number, which means the character reads as committed to the arc before it has reached the top of it - and the landing is a state change the player never asked for.",
-      "voice": "am_onyx",
-      "engine": "kokoro",
-      "estimated_duration_s": 17.0,
-      "shot": {
-        "type": "FOOTAGE",
-        "class": "SHOW",
-        "source": "capture",
-        "motion": "gameplay",
-        "capture": "take-a",
-        "evidence_media": "capture/take-a.mp4",
-        "window_s": [
-          5.1,
-          6.6
-        ],
-        "hold_label": "FINAL FRAME HELD - the action above plays once, at speed",
-        "show": [
-          {
-            "at": "0.12",
-            "event": "leaves the floor"
-          },
-          {
-            "at": "0.45",
-            "event": "rising becomes falling"
-          },
-          {
-            "at": "0.80",
-            "event": "the landing"
-          }
-        ]
-      }
-    },
-    {
-      "beat_id": "B05",
-      "act": "BUILD",
-      "role_note": "take-a, SCRIPTED INPUT. The simple animation, running behind everything else.",
-      "narration_text": "And the thing that has been looping behind all of this. A key, between the first two traps: one sprite, two tracks, no rig and no frames. It bobs three pixels and turns one full revolution every two point four seconds, it autoplays so nothing has to remember to start it, and nothing collects it. It is decorative, and saying that out loud matters - a key in a dungeon implies a door, and there is no door.",
-      "voice": "am_onyx",
-      "engine": "kokoro",
-      "estimated_duration_s": 22.1,
-      "shot": {
-        "type": "FOOTAGE",
-        "class": "SHOW",
-        "source": "capture",
-        "motion": "gameplay",
-        "capture": "take-a",
-        "evidence_media": "capture/take-a.mp4",
-        "window_s": [
-          0.2,
-          3.0
-        ],
-        "hold_label": "FINAL FRAME HELD - the action above plays once, at speed",
-        "show": [
-          {
-            "at": "0.15",
-            "event": "the key, bobbing"
-          },
-          {
-            "at": "0.55",
-            "event": "a full turn"
-          },
-          {
-            "at": "0.85",
-            "event": "nothing collects it"
-          }
-        ]
-      }
-    },
-    {
-      "beat_id": "B06",
-      "act": "BUILD",
-      "role_note": "take-b, SCRIPTED INPUT. The committing action, all eighteen frames.",
-      "narration_text": "The core action. One press plays eighteen frames at thirty: a wind-up, a strike, a recovery. Watch the wind-up end - the arm nearly stops. Ten degrees in the two frames before the window opens, then a hundred and fifty in the next four. That pause is what makes it read as a strike rather than a gesture. And once it starts, it finishes: no input shortens it. You can walk out of this swing, and you can jump out of it, but you cannot cancel it and you cannot turn it around.",
-      "voice": "am_onyx",
-      "engine": "kokoro",
-      "estimated_duration_s": 26.3,
-      "shot": {
-        "type": "FOOTAGE",
-        "class": "SHOW",
-        "source": "capture",
-        "motion": "gameplay",
-        "capture": "take-b",
-        "evidence_media": "capture/take-b.mp4",
-        "window_s": [
-          1.0,
-          1.8
-        ],
-        "hold_label": "FINAL FRAME HELD - the action above plays once, at speed",
-        "show": [
-          {
-            "at": "0.15",
-            "event": "the wind-up"
-          },
-          {
-            "at": "0.45",
-            "event": "the strike"
-          },
-          {
-            "at": "0.78",
-            "event": "recovery, and the blade sheathes"
-          }
-        ]
+      },
+      "actual_duration_s": 18.67,
+      "audio_file": "mp3/beat-B06.mp3",
+      "render_duration_s": 18.7,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B06.mp4",
+        "filled_by": "media",
+        "at": "2026-11-22T19:10:21"
       }
     },
     {
       "beat_id": "B07",
-      "act": "BUILD",
-      "role_note": "take-b, SCRIPTED INPUT. The edge the assignment names: an action requested during another action, twice, with the two answers.",
-      "narration_text": "Now the edge. An action asked for while another action is running - and this game gives two different answers depending on when. Here is the first: a second attack one tenth of a second in, inside the startup. Nothing happens. The swing counter does not move. And here is the second: a press four and a half tenths in, inside the recovery - that one is buffered, and a fresh swing starts the moment the first one ends. Same key, same clip, opposite answer, and the only difference is where the playhead was. The uncomfortable part is that the first one would pass by accident: calling play with the name already playing does nothing at all. The code reads the playhead instead, so it is a decision rather than a side effect.",
+      "act": "RESULT",
+      "role_note": "take-d, SCRIPTED INPUT. The hazard, what damage does not do, and the fifth state. 16.9 s, ending on the held death pose.",
+      "narration_text": "The hazard. The trap lights its band, waits four tenths of a second, and fires - four tenths against a swing's two-tenth wind-up, which is why you can read a trap and still attack near it. Watch what the hit does to the animation: nothing. Damage is a number here, not a state. No hurt clip, no invulnerability - a limit, not a decision. Five hits kill, and the fifth state is the only one no key can reach: a condition a player action caused. The dead cell plays once and holds. Then nothing - no respawn, no retry.",
       "voice": "am_onyx",
       "engine": "kokoro",
-      "estimated_duration_s": 37.7,
+      "estimated_duration_s": 28.0,
       "shot": {
         "type": "FOOTAGE",
         "class": "SHOW",
         "source": "capture",
         "motion": "gameplay",
-        "capture": "take-b",
-        "evidence_media": "capture/take-b.mp4",
+        "capture": "take-d",
+        "evidence_media": "capture/take-d.mp4",
         "window_s": [
-          2.2,
-          5.3
+          1.63,
+          25.2
         ],
         "hold_label": "FINAL FRAME HELD - the action above plays once, at speed",
         "show": [
           {
-            "at": "0.18",
-            "event": "the press in startup - ignored"
+            "at": "0.06",
+            "event": "the warning band"
           },
           {
-            "at": "0.55",
-            "event": "the press in recovery"
+            "at": "0.16",
+            "event": "the spikes, and the grit"
           },
           {
-            "at": "0.82",
-            "event": "the buffered swing plays"
+            "at": "0.34",
+            "event": "the hit changes no state"
+          },
+          {
+            "at": "0.74",
+            "event": "the fifth hit"
+          },
+          {
+            "at": "0.88",
+            "event": "dead, and held"
           }
         ]
+      },
+      "actual_duration_s": 28.15,
+      "audio_file": "mp3/beat-B07.mp3",
+      "render_duration_s": 28.166666666666668,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B07.mp4",
+        "filled_by": "media",
+        "at": "2026-11-22T19:10:21"
       }
     },
     {
       "beat_id": "B08",
-      "act": "BUILD",
-      "role_note": "take-c, SCRIPTED INPUT. Two revisions the author asked for after playing.",
-      "narration_text": "Two more things, both of which exist because the author played an earlier version and said it was wrong. First: a direction held through a swing. The character travels and the gait keeps running underneath, because the legs have their own animation player and never hear that a sword exists. Second: a jump, mid-swing. The player leaves the floor and the swing carries on from exactly where it was, ending on its own clock. It cannot interrupt, and the reason is structural rather than careful - that branch writes one field, the vertical velocity, and there is no path from it to the clip.",
-      "voice": "am_onyx",
-      "engine": "kokoro",
-      "estimated_duration_s": 29.5,
-      "shot": {
-        "type": "FOOTAGE",
-        "class": "SHOW",
-        "source": "capture",
-        "motion": "gameplay",
-        "capture": "take-c",
-        "evidence_media": "capture/take-c.mp4",
-        "window_s": [
-          1.0,
-          4.8
-        ],
-        "hold_label": "FINAL FRAME HELD - the action above plays once, at speed",
-        "show": [
-          {
-            "at": "0.12",
-            "event": "a swing that travels"
-          },
-          {
-            "at": "0.45",
-            "event": "the gait continues under it"
-          },
-          {
-            "at": "0.78",
-            "event": "and one jumped out of"
-          }
-        ]
-      }
-    },
-    {
-      "beat_id": "B09",
-      "act": "BUILD",
-      "role_note": "take-d, SCRIPTED INPUT. The hazard, and what damage does not do.",
-      "narration_text": "The hazard, and the reason the whole game is built around warnings. The trap lights its band, waits four tenths of a second, and fires. Four tenths against a swing's two-tenth wind-up is the whole reason you can read a trap and still choose to attack near it. And watch what the hit does to the animation: nothing. Damage is a number here, not a state. There is no hurt clip, no stagger, no invulnerability - which is a limit rather than a decision, and the brief lists it as one.",
-      "voice": "am_onyx",
-      "engine": "kokoro",
-      "estimated_duration_s": 25.8,
-      "shot": {
-        "type": "FOOTAGE",
-        "class": "SHOW",
-        "source": "capture",
-        "motion": "gameplay",
-        "capture": "take-d",
-        "evidence_media": "capture/take-d.mp4",
-        "window_s": [
-          1.8,
-          3.6
-        ],
-        "hold_label": "FINAL FRAME HELD - the action above plays once, at speed",
-        "show": [
-          {
-            "at": "0.15",
-            "event": "the warning band"
-          },
-          {
-            "at": "0.45",
-            "event": "the spikes, and the grit"
-          },
-          {
-            "at": "0.80",
-            "event": "the hit changes no state"
-          }
-        ]
-      }
-    },
-    {
-      "beat_id": "B10",
       "act": "RESULT",
-      "role_note": "take-d, SCRIPTED INPUT. The fifth state, and the end of the slice.",
-      "narration_text": "Five hits, and the fifth state - the only one of the five that no key can reach. It is entered by a game condition that a player action caused, which is exactly the shape the assignment asks for. The dead cell plays once and holds. And then nothing: there is no respawn in this slice, no retry key, no reload. The film shows that rather than cutting away before the question comes up.",
+      "role_note": "CAUSE AND EFFECT, before and after. The same preview fixture at the same table frame, from revision r1 and the shipped r4.",
+      "narration_text": "One cause and effect, because the assignment asks for one. On the left, the swing as it first shipped. The author played it and said: the sword is not swinging out, it is spinning in circles above the body. On the right, the same frame after the change - the rotation keys stopped reversing direction and the pivot became part of the animation instead of a constant in the scene. What is worth saying is that the defect was in the numbers the whole time. In the first version the blade's tip is never below minus three pixels in any of the eighteen frames. That is the range of a function over a key table, not an impression - and no check was asking, because nobody had thought to ask it.",
       "voice": "am_onyx",
       "engine": "kokoro",
-      "estimated_duration_s": 21.0,
-      "shot": {
-        "type": "FOOTAGE",
-        "class": "SHOW",
-        "source": "capture",
-        "motion": "gameplay",
-        "capture": "take-d",
-        "evidence_media": "capture/take-d.mp4",
-        "window_s": [
-          9.6,
-          12.9
-        ],
-        "hold_label": "FINAL FRAME HELD - the action above plays once, at speed",
-        "show": [
-          {
-            "at": "0.20",
-            "event": "the fatal hit"
-          },
-          {
-            "at": "0.55",
-            "event": "the dead cell holds"
-          },
-          {
-            "at": "0.85",
-            "event": "and nothing follows it"
-          }
-        ]
-      }
-    },
-    {
-      "beat_id": "B11",
-      "act": "RESULT",
-      "role_note": "CAUSE AND EFFECT, before and after. Two captures of the SAME preview fixture at the same table frame, from revision r1 and the shipped r4, beside the key table that changed between them.",
-      "narration_text": "One cause and effect, because the assignment asks for one and this is the clearest in the project. On the left, the swing as it first shipped. The author played it and said: the sword is not swinging out, it is spinning in circles above the body. On the right, the same frame after the change - the rotation keys stopped reversing direction, and the pivot became part of the animation instead of a constant in the scene. What is worth saying is that the defect was in the numbers the whole time. The tip is never below minus three pixels in any of the eighteen frames of the first version. That is the range of a function over a key table, not an impression - and no check was asking, because nobody had thought to ask it.",
-      "voice": "am_onyx",
-      "engine": "kokoro",
-      "estimated_duration_s": 39.1,
+      "estimated_duration_s": 37.1,
       "shot": {
         "type": "STILL",
         "class": "SHOW",
         "source": "capture",
         "motion": "hold",
-        "evidence_media": "media/B11.png",
+        "evidence_media": "media/B08.png",
         "title": "One change, and what the player saw",
         "path": "captures/swing/r1 and r4, same table frame",
         "image_label": "preview-fixture captures, cropped and not otherwise altered",
         "show": [
           {
-            "at": "0.10",
+            "at": "0.08",
             "event": "before"
           },
           {
-            "at": "0.40",
+            "at": "0.36",
             "event": "after"
           },
           {
-            "at": "0.75",
-            "event": "the key table that changed"
+            "at": "0.70",
+            "event": "the number that was there all along"
           }
         ]
+      },
+      "actual_duration_s": 35.39,
+      "audio_file": "mp3/beat-B08.mp3",
+      "render_duration_s": 35.4,
+      "build": {
+        "status": "STILL",
+        "src": "media\\B08.png",
+        "filled_by": "still",
+        "at": "2026-11-22T19:10:21"
       }
     },
     {
-      "beat_id": "B12",
+      "beat_id": "B09",
       "act": "VERDICT",
-      "role_note": "WALKER BOOKEND 3/4 - Verdict. Observed working features, then defects, untested claims and planned work, kept apart.",
-      "narration_text": "The verdict, and it comes in three parts because they are three different kinds of thing. Observed working, in the footage you just watched: five states each entered by its own input or by a condition an input caused, three animations, a committing action with two different interrupt answers, and a cycle that wraps without a seam. Checked but not watchable: three hundred automated checks and seven deliberate breakages, including the one that proves a jump does not disturb the swing's clock - the same swing run twice and compared frame by frame, agreeing to zero. Not built, and named rather than implied: no enemy, so the hitbox hits nothing; no respawn; no menu; no hurt animation; no roll and no cast. And one thing still open - whether a braced stance hanging in mid-air reads at all. Nobody has judged that yet, and no test can.",
+      "role_note": "WALKER BOOKEND 3/4 - Verdict. Observed, checked, and not built, kept apart.",
+      "narration_text": "The verdict, in three parts, because they are three different kinds of thing. Observed working, in the footage you just watched: five states each entered by its own input or by a condition an input caused, three animations, a committing action with two different interrupt answers, and a cycle that wraps without a seam. Checked but not watchable: three hundred automated checks and seven deliberate breakages, including the one that shows a jump does not move the swing's clock - the same swing run twice and compared frame by frame, agreeing to zero. Not built, and named rather than implied: no enemy, so the hitbox hits nothing; no respawn; no menu; no hurt animation; no roll and no cast. And one thing still open: whether a braced stance hanging in mid-air reads at all. Nobody has judged that, and no test can.",
       "voice": "am_onyx",
       "engine": "kokoro",
-      "estimated_duration_s": 41.6,
+      "estimated_duration_s": 40.2,
       "shot": {
         "type": "GRAPHIC",
         "class": "SHOW",
@@ -503,15 +524,15 @@
             "event": "the artifact opens"
           },
           {
-            "at": "0.35",
+            "at": "0.32",
             "event": "observed"
           },
           {
-            "at": "0.62",
+            "at": "0.58",
             "event": "checked"
           },
           {
-            "at": "0.88",
+            "at": "0.86",
             "event": "not built, and the open question"
           }
         ],
@@ -531,19 +552,32 @@
               "OPEN: does a braced stance read in mid-air? Unjudged."
             ],
             "brandLabel": "@NikBearBrown",
-            "durationSeconds": 41.6
+            "durationSeconds": 44.62
+          },
+          "rendered": {
+            "out": "media/B09.mp4",
+            "at": "2026-11-22T23:54:08.062784+00:00"
           }
         }
+      },
+      "actual_duration_s": 44.62,
+      "audio_file": "mp3/beat-B09.mp3",
+      "render_duration_s": 44.63333333333333,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B09.mp4",
+        "filled_by": "remotion:ClaudeVerdictArtifact",
+        "at": "2026-11-22T19:10:21"
       }
     },
     {
-      "beat_id": "B13",
+      "beat_id": "B10",
       "act": "TURN",
-      "role_note": "WALKER BOOKEND 4/4 - Your Turn. One concrete experiment, and Liam signs off here, before the final card.",
-      "narration_text": "Your turn, and make it one thing. Take the game you are building and find its committing action - the move that cannot be taken back. Then press its own button again, halfway through, and find out what happens. Not what you intended: what happens. In this project the answer during the startup was nothing at all, and nothing at all is also what a completely unwired version would have done. The two look identical from outside, and the only way to tell them apart is to ask the clip where its playhead was. That is Liam, in for Bear. Thanks for watching.",
+      "role_note": "WALKER BOOKEND 4/4 - Your Turn. One concrete experiment. Liam signs off here, before the final card.",
+      "narration_text": "Your turn, and make it one thing. Find the committing action in the game you are building - the move that cannot be taken back. Press its own button again, halfway through, and record what happens. Not what you intended: what happens. In this project the answer during the startup was nothing at all - and nothing at all is also what a completely unwired version would have done. The two look identical from outside, and the only way to tell them apart is to ask the clip where its playhead was. That is Liam, in for Bear. Thanks for watching.",
       "voice": "am_onyx",
       "engine": "kokoro",
-      "estimated_duration_s": 29.2,
+      "estimated_duration_s": 28.6,
       "shot": {
         "type": "GRAPHIC",
         "class": "SHOW",
@@ -555,11 +589,11 @@
             "event": "the turn card opens"
           },
           {
-            "at": "0.40",
+            "at": "0.38",
             "event": "the experiment types on"
           },
           {
-            "at": "0.86",
+            "at": "0.88",
             "event": "Liam signs off"
           }
         ],
@@ -573,15 +607,28 @@
             "runningText": "A thing that does nothing looks exactly like a thing that is not wired up",
             "modelLabel": "Claude Opus 5",
             "effortLabel": "High",
-            "durationSeconds": 29.2
+            "durationSeconds": 28.11
+          },
+          "rendered": {
+            "out": "media/B10.mp4",
+            "at": "2026-11-22T23:56:09.980526+00:00"
           }
         }
+      },
+      "actual_duration_s": 28.11,
+      "audio_file": "mp3/beat-B10.mp3",
+      "render_duration_s": 28.133333333333333,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B10.mp4",
+        "filled_by": "remotion:ClaudeComposerAsk",
+        "at": "2026-11-22T19:10:21"
       }
     },
     {
-      "beat_id": "B14",
+      "beat_id": "B11",
       "act": "OUTRO",
-      "role_note": "LOCKED ClaudeTitleOutro. Exact title, @NikBearBrown, no narration, no gameplay audio - OUTRO-LOCK.md.",
+      "role_note": "LOCKED ClaudeTitleOutro. Exact title, @NikBearBrown, no narration and no gameplay audio - OUTRO-LOCK.md.",
       "narration_text": "",
       "voice": "am_onyx",
       "engine": "kokoro",
@@ -601,11 +648,23 @@
         "remotion": {
           "pattern": "ClaudeTitleOutro",
           "props": {
-            "title": "TheLostWalkthrough_TiantongZhang",
+            "title": "TheLostPlayed_TiantongZhang",
             "channel": "@NikBearBrown",
             "durationSeconds": 5.0
+          },
+          "rendered": {
+            "out": "media/B11.mp4",
+            "at": "2026-11-23T00:05:49.155794+00:00"
           }
         }
+      },
+      "actual_duration_s": 5.0,
+      "render_duration_s": 5.0,
+      "build": {
+        "status": "VIDEO",
+        "src": "media\\B11.mp4",
+        "filled_by": "remotion:ClaudeTitleOutro",
+        "at": "2026-11-22T19:10:21"
       }
     }
   ]
