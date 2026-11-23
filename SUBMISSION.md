@@ -94,8 +94,14 @@ greys that are already in every pose.
 (`youtube/claude-liam-walker-the-lost-animation-gamedev/exports/landscape/claude-liam-walker-the-lost-animation-gamedev.mp4`),
 `godot-gamedev` with the `walker` modifier, 3840 × 2160, 30 fps,
 **9:30.57** (570.567 s), 34.3 MB, 18 beats, **six code → result pairs**.
-URL: _PENDING — the upload is mine; the hash below is what the uploaded file
-must match._
+URL: <https://northeastern-my.sharepoint.com/:v:/g/personal/zhang_tiant_northeastern_edu/IQBbhx4mHl8cSrUqTIlVUgHwAdybE_PeGflgaAEsYJrXI2Q?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=GojodN>
+
+The file is **not in this repository** — `.gitignore` keeps MP4s out — so the
+SHA-256 below is how a reviewer checks the download is the film this tag
+describes. **Download it; do not hash the web preview.** OneDrive's preview
+re-encodes, and the hash will not match what the preview plays. A
+`CHECKSUM.txt` carrying the same figures sits beside the film in that
+folder.
 
 **Final film SHA-256:**
 

@@ -280,10 +280,14 @@ sitting in committed data that a read-back could have printed before the
 game was ever launched. A read-back only sees the questions it was written
 to ask.
 
-The link, the exact length and the SHA-256 are in `SUBMISSION.md`, which is
-the one place they are recorded so they cannot disagree. Rebuild it with
-that reel's `BUILD-PROMPT.md`, which includes the two carried-over scripts
-that must **not** be run.
+**The film:** <https://northeastern-my.sharepoint.com/:v:/g/personal/zhang_tiant_northeastern_edu/IQBbhx4mHl8cSrUqTIlVUgHwAdybE_PeGflgaAEsYJrXI2Q?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=GojodN>
+— Northeastern OneDrive, Microsoft sign-in required. Download the file
+rather than using the web preview: the preview re-encodes and its bytes will
+not match the SHA-256 in `SUBMISSION.md`, which is the one place the link,
+the exact length and the hash are recorded so they cannot disagree.
+
+Rebuild it with that reel's `BUILD-PROMPT.md`, which includes the two
+carried-over scripts that must **not** be run.
 
 **Assignment 7's film (particle effects, tagged `a6.1`) is still here:**
 `youtube/claude-liam-walker-the-lost-particles-gamedev/` —
