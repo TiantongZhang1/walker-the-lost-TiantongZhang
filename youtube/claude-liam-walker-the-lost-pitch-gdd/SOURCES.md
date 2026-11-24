@@ -173,7 +173,9 @@ started by playing the game — rather than from a generic risk list.
 |---|---|
 | File | `exports/landscape/claude-liam-walker-the-lost-pitch-gdd.mp4` |
 | Rendered by | `./art final`, 3840 × 2160, 30 fps, h264 + aac 48 kHz |
-| Length | **see `pitch/README.md`** — recorded in exactly one place, with the SHA-256 |
+| Length | **3:54.20** — 234.200 s |
+| SHA-256 | `fc2ebbe4f632dc7155cc21a1e66aaef762a393e0f0933c35f1b0859728527de5` |
+| Link | recorded in `pitch/README.md`, which is the one place the link, the length and the hash sit together so they cannot disagree |
 | Beats | 14, of which 13 are narrated |
 
 `build-state.json` is not committed: it is rewritten on every render and full

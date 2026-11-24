@@ -1,7 +1,7 @@
 # pitch/ — Assignment 8, Final Project Pitch Film
 
 **Tiantong Zhang** · `zhang.tiant@northeastern.edu` · GitHub `TiantongZhang1`
-CSYE 7270, Fall 2026 · assembled 2026-11-23
+CSYE 7270, Fall 2026 · assembled 2026-11-24
 
 | | |
 |---|---|
@@ -24,7 +24,7 @@ CSYE 7270, Fall 2026 · assembled 2026-11-23
 | **Workflow** | Brutalist `godot-gdd` with the `walker` modifier. Narration: Kokoro `am_onyx`, local, **$0.00** |
 | **In the repository as** | `youtube/claude-liam-walker-the-lost-pitch-gdd/exports/landscape/claude-liam-walker-the-lost-pitch-gdd.mp4` — **not committed**; `.gitignore` keeps MP4s out |
 
-**Film URL:** _PENDING — the upload is the author's. The SHA-256 below is what the uploaded file must match._
+**Film URL:** <https://northeastern-my.sharepoint.com/:v:/g/personal/zhang_tiant_northeastern_edu/IQATPsrbUQAEQrfpPFtYnt5hAZVWs8cd66-_PUQjD3tXSE8?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=DXya9m>
 
 **Film SHA-256:**
 

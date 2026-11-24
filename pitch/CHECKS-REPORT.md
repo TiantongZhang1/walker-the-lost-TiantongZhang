@@ -1,6 +1,6 @@
 # CHECKS-REPORT.md — run at assembly time, not remembered
 
-Written by `scripts/assemble_pitch_folder.py` on 2026-11-23.
+Written by `scripts/assemble_pitch_folder.py` on 2026-11-24.
 Every row below is a live run; the Gate V report is a copy of the
 render's own output and sits beside this file as `REPORT.md`.
 
